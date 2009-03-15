@@ -1,0 +1,2 @@
+content     automatic_dictionary    chrome/content/
+overlay   chrome://messenger/content/messengercompose/messengercompose.xul chrome://automatic_dictionary/content/ad.xul

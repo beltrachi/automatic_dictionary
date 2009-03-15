@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<overlay id="sample" 
+xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
+
+ <statusbar id="status-bar">
+  <statusbarpanel id="my-panel" label="Hello, World"/>
+ </statusbar>
+</overlay>
+
