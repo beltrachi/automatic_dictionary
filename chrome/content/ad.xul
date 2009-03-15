@@ -6,7 +6,7 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
  <statusbar id="status-bar">
-  <statusbarpanel id="my-panel" label="Hello, World"/>
+  <statusbarpanel id="automatic-dictionary-panel" label=""/>
  </statusbar>
 </overlay>
 

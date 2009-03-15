@@ -8,13 +8,18 @@
 var automatic_dictionary_class = function(){};
 automatic_dictionary_class.prototype = {
   
+  //Constants
   ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
-  forced_lang: false,
+  POLLING_DELAY: 3000, //Miliseconds
+  
+  //Attributes
+  user_overriden_lang: false,
+  last_language_set: null,
   
   init: function(){
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
                                 .getService(Components.interfaces.nsIPrefBranch);
-    //Watch values!
+    
     setTimeout( "automatic_dictionary.loadData();",0 ); //Deferred
   },
   
@@ -24,9 +29,11 @@ automatic_dictionary_class.prototype = {
       eval("this.data = ("+ value+ ")");
     }catch( e ){
       //TODO: what??
-      alert(e.toString()); //FIXME
+      dump(e.toString()); //FIXME
+      throw e;
     }
-    this.saveData(); //Fixme!
+    //After data loaded, observe the adresses list to update lang if required
+    this.observeRecipients();
   },
   
   saveData: function(){
@@ -35,10 +42,93 @@ automatic_dictionary_class.prototype = {
       value = this.data.toSource();
     }else{
       //TODO: something happened!! what to do?
+      dump(this.data);
     }
     this.prefManager.setCharPref( this.ADDRESS_INFO_PREF, value );
+  },
+  
+  observeRecipients: function(){
+    this.detectUserOverridenLanguage();
+    this.deduceLanguage();
+    //Queue next call
+    if(!this.user_overriden_lang)
+      setTimeout("automatic_dictionary.observeRecipients();", this.POLLING_DELAY );
+  },
+  
+  detectUserOverridenLanguage: function(){
+    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                              .getService(Components.interfaces.nsIPrefService);
+    var sPrefs = prefService.getBranch(null);
+    var current_lang = sPrefs.getComplexValue("spellchecker.dictionary", nsISupportsString).data; 
+    
+    var arr = this.getRecipients();
+    
+    if( current_lang != this.last_language_set ){
+      //The user has set the language for the recipients
+      //We update the assignment of language for those recipients
+      for( var i in arr){
+        this.data[arr[i]] = current_lang;
+      }
+      this.saveData();
+      this.user_overriden_lang = true;
+      this.changeLabel( "User set: " + current_lang );
+    }
+    //When user removes recipients, language detection starts again
+    if(arr.length == 0){
+      this.user_overriden_lang = false;
+    }
+  },
+  
+  deduceLanguage: function(){
+    if(this.user_overriden_lang) return;
+    var arr = this.getRecipients();
+    var target_lang = null;
+    for( var idx in arr ){
+      var lang = this.getLangFor( arr[idx] );
+      if( lang ){ 
+        target_lang = lang;
+        break;
+      }
+    }
+    if(target_lang){
+      this.setCurrentLang( target_lang );
+      this.changeLabel( "Deduced: " + target_lang );
+    }
+  },
+  
+  setCurrentLang: function( target ){
+    var fake_event = { target: {value: target},stopPropagation: function(){} };
+    ChangeLanguage( fake_event );
+    this.last_language_set = target;
+  },
+  
+  getLangFor: function( addr ){
+    return this.data[addr];
+  },
+  
+  getRecipients: function(){
+    var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"].createInstance(Components.interfaces.nsIMsgCompFields);
+    Recipients2CompFields( fields );
+    var nsIMsgRecipientArrayInstance = {count:0};
+    if( fields.to ){
+      nsIMsgRecipientArrayInstance = fields.SplitRecipients( fields.to, true );
+    }
+    var arr = [];
+    if(nsIMsgRecipientArrayInstance.count > 0){
+      for(var i=0; i< nsIMsgRecipientArrayInstance.count; i++){
+        arr.push(nsIMsgRecipientArrayInstance.StringAt(i).toString());
+      }
+    }
+    return arr;
+  },
+  
+  changeLabel: function( str ){
+    var x = document.getElementById("automatic-dictionary-panel");
+    if(x) 
+      x.label = str;
   }
 }
 var automatic_dictionary = new automatic_dictionary_class();
 automatic_dictionary.init();
+
 
