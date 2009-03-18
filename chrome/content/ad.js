@@ -19,7 +19,7 @@ automatic_dictionary_class.prototype = {
   init: function(){
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
                                 .getService(Components.interfaces.nsIPrefBranch);
-    
+    this.iter = 0; //ObserveRecipients execution counter
     setTimeout( "automatic_dictionary.loadData();",0 ); //Deferred
   },
   
@@ -48,11 +48,15 @@ automatic_dictionary_class.prototype = {
   },
   
   observeRecipients: function(){
-    this.detectUserOverridenLanguage();
-    this.deduceLanguage();
-    //Queue next call
-    if(!this.user_overriden_lang)
-      setTimeout("automatic_dictionary.observeRecipients();", this.POLLING_DELAY );
+    this.iter++;
+    try{
+      this.detectUserOverridenLanguage();
+      this.deduceLanguage();
+      //Queue next call
+      this.last_timeout = setTimeout("automatic_dictionary.observeRecipients();", this.POLLING_DELAY );
+    }catch(e){
+      this.changeLabel( e.toString());
+    }
   },
   
   detectUserOverridenLanguage: function(){
@@ -62,7 +66,6 @@ automatic_dictionary_class.prototype = {
     var current_lang = sPrefs.getComplexValue("spellchecker.dictionary", nsISupportsString).data; 
     
     var arr = this.getRecipients();
-    
     if( current_lang != this.last_language_set ){
       //The user has set the language for the recipients
       //We update the assignment of language for those recipients
@@ -71,7 +74,8 @@ automatic_dictionary_class.prototype = {
       }
       this.saveData();
       this.user_overriden_lang = true;
-      this.changeLabel( "User set: " + current_lang );
+      this.last_language_set = current_lang;
+      this.changeLabel( " Saved " + current_lang + " as default for " + arr.length + " recipients" );
     }
     //When user removes recipients, language detection starts again
     if(arr.length == 0){
@@ -92,7 +96,7 @@ automatic_dictionary_class.prototype = {
     }
     if(target_lang){
       this.setCurrentLang( target_lang );
-      this.changeLabel( "Deduced: " + target_lang );
+      this.changeLabel( "Deduced " + target_lang );
     }
   },
   
@@ -126,6 +130,8 @@ automatic_dictionary_class.prototype = {
     var x = document.getElementById("automatic-dictionary-panel");
     if(x) 
       x.label = str;
+    else
+      dump("no label found");
   }
 }
 var automatic_dictionary = new automatic_dictionary_class();

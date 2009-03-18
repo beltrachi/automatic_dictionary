@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
-    <em:version>1.0</em:version>
+    <em:version>0.1</em:version>
     
    
     <!-- Target Application this extension can install into, 
@@ -20,7 +20,7 @@
    
     <!-- Front End MetaData -->
     <em:name>Automatic dictionary</em:name>
-    <em:description>Extension that tries to guess the language of the email when composing.</em:description>
+    <em:description>Extension that remembers the language of the email when composing.</em:description>
     <em:creator>Jordi Beltran</em:creator>
     <em:homepageURL>http://www.example.net/</em:homepageURL>
   </Description>
