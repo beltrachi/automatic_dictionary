@@ -30,11 +30,11 @@
 #
 # default configuration file is ./config_build.sh, unless another file is 
 # specified in command-line. Available config variables:
-APP_NAME=automatic_dictionary          # short-name, jar and xpi files name. Must be lowercase with no spaces
-CHROME_PROVIDERS="content"  # which chrome providers we have (space-separated list)
-CLEAN_UP=1          # delete the jar / "files" when done?       (1/0)
-ROOT_FILES="README"        # put these files in root of xpi (space separated list of leaf filenames)
-ROOT_DIRS="defaults"         # ...and these directories       (space separated list)
+APP_NAME=          # short-name, jar and xpi files name. Must be lowercase with no spaces
+CHROME_PROVIDERS=  # which chrome providers we have (space-separated list)
+CLEAN_UP=          # delete the jar / "files" when done?       (1/0)
+ROOT_FILES=        # put these files in root of xpi (space separated list of leaf filenames)
+ROOT_DIRS=         # ...and these directories       (space separated list)
 BEFORE_BUILD=      # run this before building       (bash command)
 AFTER_BUILD=       # ...and this after the build    (bash command)
 
@@ -54,7 +54,7 @@ ROOT_DIR=`pwd`
 TMP_DIR=build
 
 #uncomment to debug
-#set -x
+set -x
 
 # remove any left-over files from previous build
 rm -f $APP_NAME.jar $APP_NAME.xpi files
