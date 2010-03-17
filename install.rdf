@@ -1,20 +1,17 @@
-<?xml version="1.0"?>
-
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
+    <em:type>2</em:type>
     <em:version>0.1</em:version>
     
-   
     <!-- Target Application this extension can install into, 
          with minimum and maximum supported versions. --> 
     <em:targetApplication>
       <Description>
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-        <em:minVersion>1.5</em:minVersion>
-        <em:maxVersion>2.0.0.*</em:maxVersion>
+        <em:minVersion>3.0.1</em:minVersion>
+        <em:maxVersion>3.2a1pre</em:maxVersion>
       </Description>
     </em:targetApplication>
    
@@ -22,6 +19,6 @@
     <em:name>Automatic dictionary</em:name>
     <em:description>Extension that remembers the language of the email when composing.</em:description>
     <em:creator>Jordi Beltran</em:creator>
-    <em:homepageURL>http://www.example.net/</em:homepageURL>
+    <em:homepageURL>http://github.com/beltrachi/automatic_dictionary</em:homepageURL>
   </Description>
 </RDF>

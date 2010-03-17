@@ -1,14 +1,14 @@
 == Automatic dictionary extension for Thunderbird ==
 
 === Target ===
-  Users that write emails in diferent languages very often to the same users each
+  Users that write emails in diferent languages very often to the same addresses each
   time.
 
   When writing a new email or answering one, get the dictionary language correctly
   setted.
   
   The extension will keep a record of the language previously selected for the
-  recipients of the mail and choose it.
+  recipients of the mail and switch it.
   
   
 === Usage ===

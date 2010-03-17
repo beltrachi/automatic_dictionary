@@ -5,8 +5,7 @@
   - Change the language of the spellchecker to the guessed one
 */
 
-var automatic_dictionary_class = function(){};
-automatic_dictionary_class.prototype = {
+var automatic_dictionary = {
   
   //Constants
   ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
@@ -15,18 +14,25 @@ automatic_dictionary_class.prototype = {
   //Attributes
   user_overriden_lang: false,
   last_language_set: null,
+  initialized: false,
+  data: {},
   
   init: function(){
+    if(this.initalized) return;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
                                 .getService(Components.interfaces.nsIPrefBranch);
     this.iter = 0; //ObserveRecipients execution counter
-    setTimeout( "automatic_dictionary.loadData();",0 ); //Deferred
+    setTimeout( "automatic_dictionary.loadData();",10 ); //Deferred
+    this.initialized = true;
   },
   
   loadData: function(){
     var value = this.prefManager.getCharPref( this.ADDRESS_INFO_PREF );
     try{
-      eval("this.data = ("+ value+ ")");
+        if( !value ){
+            value = "{}";
+        }
+        eval("automatic_dictionary.data = ("+ value + ")");
     }catch( e ){
       //TODO: what??
       dump(e.toString()); //FIXME
@@ -113,14 +119,14 @@ automatic_dictionary_class.prototype = {
   getRecipients: function(){
     var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"].createInstance(Components.interfaces.nsIMsgCompFields);
     Recipients2CompFields( fields );
-    var nsIMsgRecipientArrayInstance = {count:0};
+    var nsIMsgRecipientArrayInstance = {length:0};
     if( fields.to ){
-      nsIMsgRecipientArrayInstance = fields.SplitRecipients( fields.to, true );
+        nsIMsgRecipientArrayInstance = fields.splitRecipients( fields.to, true, {} );
     }
     var arr = [];
-    if(nsIMsgRecipientArrayInstance.count > 0){
-      for(var i=0; i< nsIMsgRecipientArrayInstance.count; i++){
-        arr.push(nsIMsgRecipientArrayInstance.StringAt(i).toString());
+    if(nsIMsgRecipientArrayInstance.length > 0){
+      for(var i=0; i< nsIMsgRecipientArrayInstance.length; i++){
+        arr.push(nsIMsgRecipientArrayInstance[i].toString());
       }
     }
     return arr;
@@ -134,7 +140,6 @@ automatic_dictionary_class.prototype = {
       dump("no label found");
   }
 }
-var automatic_dictionary = new automatic_dictionary_class();
 automatic_dictionary.init();
 
 
