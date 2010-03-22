@@ -2,7 +2,7 @@
  TODO:
   - Detect when a recipient has been added
   - Fetch if this address has a defined language
-  - Change the language of the spellchecker to the guessed one
+  - Change the language of the spellchecker to the saved one
 */
 //Only load if its not already loaded.
 automatic_dictionary = {
@@ -71,7 +71,6 @@ automatic_dictionary = {
   
   observeRecipients: function(){
     this.log("ad: observeRecipients");
-    this.detectWindowStillOpen();
     if( !this.running ) return;
     this.log("ad: observeRecipients - running");
     this.iter++;
@@ -159,14 +158,6 @@ automatic_dictionary = {
     }
     this.log("recipients found: " + arr.toSource());
     return arr;
-  },
-  
-  detectWindowStillOpen: function(){
-      //To know if the window is still open we look for it's id.
-      if( !document.getElementById("msgcomposeWindow") ){
-          this.log("closing by detectWindowStillOpen");
-          this.stop();
-      }
   },
   
   setListeners: function(){
