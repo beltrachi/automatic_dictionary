@@ -4,8 +4,8 @@
   - Fetch if this address has a defined language
   - Change the language of the spellchecker to the guessed one
 */
-
-var automatic_dictionary = {
+//Only load if its not already loaded.
+automatic_dictionary = {
   
   //Constants
   ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
@@ -15,18 +15,34 @@ var automatic_dictionary = {
   user_overriden_lang: false,
   last_language_set: null,
   initialized: false,
+  running: false, //Stopped
   data: {},
+  last_timeout: null, //Timer object of the next poll
   
   init: function(){
-    if(this.initalized) return;
-    this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefBranch);
-    this.iter = 0; //ObserveRecipients execution counter
-    setTimeout( "automatic_dictionary.loadData();",10 ); //Deferred
-    this.initialized = true;
+    this.log("ad: init");
+    this.running = true;
+    if( !this.initalized ){
+        this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
+                                    .getService(Components.interfaces.nsIPrefBranch);
+        this.iter = 0; //ObserveRecipients execution counter
+        setTimeout( "automatic_dictionary.loadData(true);",10 ); //Deferred
+        this.initialized = true;
+    }else{
+        //already initialized
+        this.observeRecipients();
+    }
+    this.setListeners();
   },
   
-  loadData: function(){
+  stop: function(){
+    this.log("ad: stop");
+    this.running = false;
+    if( this.last_timeout ) window.clearTimeout( this.last_timeout );
+    this.last_timeout = null;
+  },
+  
+  loadData: function( initPolling ){
     var value = this.prefManager.getCharPref( this.ADDRESS_INFO_PREF );
     try{
         if( !value ){
@@ -35,11 +51,11 @@ var automatic_dictionary = {
         eval("automatic_dictionary.data = ("+ value + ")");
     }catch( e ){
       //TODO: what??
-      dump(e.toString()); //FIXME
+      this.log(e.toString()); //FIXME
       throw e;
     }
     //After data loaded, observe the adresses list to update lang if required
-    this.observeRecipients();
+    if( initPolling ) this.observeRecipients();
   },
   
   saveData: function(){
@@ -48,18 +64,23 @@ var automatic_dictionary = {
       value = this.data.toSource();
     }else{
       //TODO: something happened!! what to do?
-      dump(this.data);
+      this.log(this.data);
     }
     this.prefManager.setCharPref( this.ADDRESS_INFO_PREF, value );
   },
   
   observeRecipients: function(){
+    this.log("ad: observeRecipients");
+    this.detectWindowStillOpen();
+    if( !this.running ) return;
+    this.log("ad: observeRecipients - running");
     this.iter++;
     try{
       this.detectUserOverridenLanguage();
       this.deduceLanguage();
       //Queue next call
-      this.last_timeout = setTimeout("automatic_dictionary.observeRecipients();", this.POLLING_DELAY );
+      if( this.running )
+          this.last_timeout = setTimeout("automatic_dictionary.observeRecipients();", this.POLLING_DELAY );
     }catch(e){
       this.changeLabel( e.toString());
     }
@@ -72,7 +93,7 @@ var automatic_dictionary = {
     var current_lang = sPrefs.getComplexValue("spellchecker.dictionary", nsISupportsString).data; 
     
     var arr = this.getRecipients();
-    if( current_lang != this.last_language_set ){
+    if( arr.length > 0 && current_lang != this.last_language_set ){
       //The user has set the language for the recipients
       //We update the assignment of language for those recipients
       for( var i in arr){
@@ -91,18 +112,25 @@ var automatic_dictionary = {
   
   deduceLanguage: function(){
     if(this.user_overriden_lang) return;
-    var arr = this.getRecipients();
+    var recipients = this.getRecipients();
+    this.log("Deducing language for: " + recipients.toSource());
     var target_lang = null;
-    for( var idx in arr ){
-      var lang = this.getLangFor( arr[idx] );
+    for( var idx in recipients ){
+      var lang = this.getLangFor( recipients[idx] );
       if( lang ){ 
         target_lang = lang;
         break;
       }
     }
     if(target_lang){
-      this.setCurrentLang( target_lang );
-      this.changeLabel( "Deduced " + target_lang );
+      var worked = false;
+      try{
+        this.setCurrentLang( target_lang );
+        worked = true;
+      }catch( e ){
+        this.changeLabel( "Error: Could not set lang to "+ target_lang+ ". Maybe its not installed any more?" );
+      }
+      if(worked) this.changeLabel( "Deduced " + target_lang );
     }
   },
   
@@ -129,17 +157,45 @@ var automatic_dictionary = {
         arr.push(nsIMsgRecipientArrayInstance[i].toString());
       }
     }
+    this.log("recipients found: " + arr.toSource());
     return arr;
   },
   
+  detectWindowStillOpen: function(){
+      //To know if the window is still open we look for it's id.
+      if( !document.getElementById("msgcomposeWindow") ){
+          this.log("closing by detectWindowStillOpen");
+          this.stop();
+      }
+  },
+  
+  setListeners: function(){
+      //var w = document.getElementById("msgcomposeWindow");
+      //this.log( " w is " + w.toSource());
+      if( window ){
+          window.addEventListener("compose-window-close", function(){automatic_dictionary.stop()}, true);
+          this.log("event seem to be registered");
+      }else{
+          this.changeLabel("Internal error (Init. listeners)");
+          this.log("no window found");
+      }
+  },
+  
+  getLabel: function(){
+      return document.getElementById("automatic-dictionary-panel");
+  },
+  
   changeLabel: function( str ){
-    var x = document.getElementById("automatic-dictionary-panel");
+    var x = this.getLabel();
     if(x) 
       x.label = str;
     else
-      dump("no label found");
+      this.log("no label found");
+  },
+  
+  log:function( msg ){
+      window.dump( "automatic_dictionary: " + msg + "\n");
   }
 }
 automatic_dictionary.init();
-
 
