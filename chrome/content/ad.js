@@ -174,7 +174,7 @@ AutomaticDictionary.Class.prototype = {
   last_language_set: null,
   initialized: false,
   running: false, //Stopped
-  shared: null,
+  data: null,
   last_timeout: null, //Timer object of the next poll
   instance_number: -1,
   
@@ -215,7 +215,9 @@ AutomaticDictionary.Class.prototype = {
                               .getService(Components.interfaces.nsIPrefService);
     var sPrefs = prefService.getBranch(null);
     var current_lang = sPrefs.getComplexValue("spellchecker.dictionary", nsISupportsString).data; 
-    
+    if( this.last_language_set == null ){
+        this.last_language_set = current_lang;
+    }
     var arr = this.getRecipients();
     if( arr.length > 0 && current_lang != this.last_language_set ){
       //The user has set the language for the recipients
@@ -243,6 +245,8 @@ AutomaticDictionary.Class.prototype = {
       if( lang ){ 
         target_lang = lang;
         break;
+      }else{
+          this.changeLabel("No lang saved for these recipìents");
       }
     }
     if(target_lang){
@@ -265,7 +269,7 @@ AutomaticDictionary.Class.prototype = {
   },
   
   getLangFor: function( addr ){
-    return this.shared.data.get(addr);
+    return this.data.get(addr);
   },
   
   getRecipients: function(){
