@@ -1,4 +1,9 @@
 /** 
+ Issues:
+  * [CRITICAL] When opening a window it allways sets the current dict as the
+    default for the recipients (found replying to mails)
+  * Not support for multiple compose windows open (its a JS singleton)
+    * Concurrency issues accessing the saved preferences
  TODO:
   - Detect when a recipient has been added
   - Fetch if this address has a defined language
