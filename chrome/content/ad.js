@@ -238,6 +238,7 @@ AutomaticDictionary.Class.prototype = {
   deduceLanguage: function(){
     if(this.user_overriden_lang) return;
     var recipients = this.getRecipients();
+    if( recipients.length == 0 ) return;
     this.log("Deducing language for: " + recipients.toSource());
     var target_lang = null;
     for( var idx in recipients ){
@@ -293,6 +294,7 @@ AutomaticDictionary.Class.prototype = {
     if( window ){
         var _this = this;
         window.addEventListener("compose-window-close", function(){_this.stop()}, true);
+        window.addEventListener('compose-window-reopen', function(){_this.start()}, true);
         this.log("event seem to be registered");
     }else{
         this.changeLabel("Internal error (Init. listeners)");
