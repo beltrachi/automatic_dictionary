@@ -1,13 +1,12 @@
 /** 
- Issues:
-  * [CRITICAL] When opening a window it allways sets the current dict as the
-    default for the recipients (found replying to mails)
-  * Not support for multiple compose windows open (its a JS singleton)
-    * Concurrency issues accessing the saved preferences
+ Known issues:
+   * Concurrency issues as the spellchecking service language is shared among
+     all the compose windows. So when you change the lang on one of them, all
+     them change and the AD registers the new lang for all recipients in all
+     windows.
+
  TODO:
-  - Detect when a recipient has been added
-  - Fetch if this address has a defined language
-  - Change the language of the spellchecker to the saved one
+  - Detect when a recipient has been added in spite of observing
 */
 
 /**
@@ -33,10 +32,11 @@ AutomaticDictionary.SharedHash = function( prefPath ){
     this.prefPath = prefPath;
     this.lockPath = prefPath + ".lock";
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-                                        .getService(Components.interfaces.nsIPrefBranch);
-    this.id = (new Date()).getTime().toString() + Math.floor(Math.random()*1000000); //Taking into account that we will not init two SharedHashes at once
-    
-    return this; //Needed?
+        .getService(Components.interfaces.nsIPrefBranch);
+    //Taking into account that we will not init two SharedHashes at the same time
+    this.id = (new Date()).getTime().toString() + Math.floor(Math.random()*1000000);
+
+    return this;
 }
 AutomaticDictionary.SharedHash.prototype = {
     id: null,
@@ -69,29 +69,35 @@ AutomaticDictionary.SharedHash.prototype = {
             return {};
     },
     writeData:function(){
-        return this.prefManager.setCharPref( this.prefPath, JSON.stringify( this.data ) );
+        return this.prefManager.setCharPref(
+            this.prefPath, JSON.stringify( this.data ) );
     },
     
     sincronized:function( func, force ){
         if( force ) this.log("WARN AutomaticDictionary.SharedHash#sincronized with force");
         try{
-            this.log("lock is " + JSON.stringify(this.prefManager.getCharPref( this.lockPath )));
+            this.log("lock is " + JSON.stringify(
+                this.prefManager.getCharPref( this.lockPath )));
             var nestedSync = this.gotLock();
-            if( force || this.prefManager.getCharPref( this.lockPath ).length == 0 || nestedSync ){
+            if( force || nestedSync ||
+                    this.prefManager.getCharPref( this.lockPath ).length == 0  ){
                 this.prefManager.setCharPref( this.lockPath, this.id );
-                this.log("2 - lock is " + JSON.stringify(this.prefManager.getCharPref( this.lockPath )));
+                this.log("2 - lock is " +
+                    JSON.stringify(this.prefManager.getCharPref( this.lockPath )));
                 if( force || this.gotLock() ){
                     this.log("executing on sync");
                     func();
                     if( !nestedSync ){
                         this.prefManager.setCharPref( this.lockPath, "" ); //Release lock
-                        this.log("lock released is " + this.prefManager.getCharPref( this.lockPath ));
+                        this.log("lock released is " +
+                            this.prefManager.getCharPref( this.lockPath ));
                     }else{
                         this.log("nested lock not released");
                     }
                     return true;
                 }else{
-                    this.log("lock is not its own: " + this.prefManager.getCharPref( this.lockPath ) + " != " + this.id);
+                    this.log("lock is not its own: " +
+                        this.prefManager.getCharPref( this.lockPath ) + " != " + this.id);
                 }
             }else{
                 this.log("no force neither is empty");
@@ -143,7 +149,9 @@ AutomaticDictionary.SharedHash.prototype = {
     refresh:function(){
         if( this.version != this.readVersion() ){
             var _this = this;
-            this.sincronized_with_patience(function(){ _this.load() }, 10 );
+            this.sincronized_with_patience(function(){ 
+                _this.load()
+            }, 10 );
         }
     },
     log: function(msg){
@@ -155,7 +163,7 @@ AutomaticDictionary.Class = function(){
     this.log("ad: init");
     this.running = true;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefBranch);
+    .getService(Components.interfaces.nsIPrefBranch);
     this.iter = 0; //ObserveRecipients execution counter
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
     this.setListeners();
@@ -165,160 +173,176 @@ AutomaticDictionary.Class = function(){
 }
 
 AutomaticDictionary.Class.prototype = {
-  //Constants
-  ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
-  POLLING_DELAY: 3000, //Miliseconds
+    //Constants
+    ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
+    POLLING_DELAY: 3000, //Miliseconds
   
-  //Attributes
-  user_overriden_lang: false,
-  last_language_set: null,
-  initialized: false,
-  running: false, //Stopped
-  data: null,
-  last_timeout: null, //Timer object of the next poll
-  instance_number: -1,
+    //Attributes
+    user_overriden_lang: false,
+    last_language_set: null,
+    initialized: false,
+    running: false, //Stopped
+    data: null,
+    last_timeout: null, //Timer object of the next poll
+    instance_number: -1,
   
-  stop: function(){
-    this.log("ad: stop");
-    this.running = false;
-    if( this.last_timeout ) window.clearTimeout( this.last_timeout );
-    this.last_timeout = null;
-  },
+    stop: function(){
+        this.log("ad: stop");
+        this.running = false;
+        if( this.last_timeout ) window.clearTimeout( this.last_timeout );
+        this.last_timeout = null;
+    },
   
-  start: function(){
-    this.log("ad: start");
-    this.running = true;
-    this.observeRecipients();
-  },
+    start: function(){
+        this.log("ad: start");
+        this.running = true;
+        this.observeRecipients();
+    },
   
-  observeRecipients: function(){
-    this.log("ad: observeRecipients");
-    if( !this.running ) return;
-    this.log("ad: observeRecipients - running");
-    this.iter++;
-    try{
-      this.detectUserOverridenLanguage();
-      this.deduceLanguage();
-      //Queue next call
-      if( this.running ){
-          var _this = this;
-          this.last_timeout = setTimeout(function(){_this.observeRecipients();}, this.POLLING_DELAY );
-      }
-    }catch(e){
-      this.changeLabel( e.toString());
-      throw e;
-    }
-  },
+    observeRecipients: function(){
+        this.log("ad: observeRecipients");
+        if( !this.running ) return;
+        this.log("ad: observeRecipients - running");
+        this.iter++;
+        try{
+            this.detectUserOverridenLanguage();
+            this.deduceLanguage();
+            //Queue next call
+            if( this.running ){
+                var _this = this;
+                this.last_timeout = setTimeout(function(){
+                    _this.observeRecipients();
+                }, this.POLLING_DELAY );
+            }
+        }catch(e){
+            this.changeLabel( e.toString());
+            throw e;
+        }
+    },
   
-  detectUserOverridenLanguage: function(){
-    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefService);
-    var sPrefs = prefService.getBranch(null);
-    var current_lang = sPrefs.getComplexValue("spellchecker.dictionary", nsISupportsString).data; 
-    if( this.last_language_set == null ){
-        this.last_language_set = current_lang;
-    }
-    var arr = this.getRecipients();
-    if( arr.length > 0 && current_lang != this.last_language_set ){
-      //The user has set the language for the recipients
-      //We update the assignment of language for those recipients
-      for( var i in arr){
-        this.data.set(arr[i], current_lang);
-      }
-      this.user_overriden_lang = true;
-      this.last_language_set = current_lang;
-      this.changeLabel( "Saved " + current_lang + " as default for " + arr.length + " recipients" );
-    }
-    //When user removes recipients, language detection starts again
-    if(arr.length == 0){
-      this.user_overriden_lang = false;
-    }
-  },
+    detectUserOverridenLanguage: function(){
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+        .getService(Components.interfaces.nsIPrefService);
+        var sPrefs = prefService.getBranch(null);
+        var current_lang = sPrefs.getComplexValue("spellchecker.dictionary",
+            nsISupportsString).data;
+        if( this.last_language_set == null ){
+            this.last_language_set = current_lang;
+        }
+        var arr = this.getRecipients();
+        if( arr.length > 0 && current_lang != this.last_language_set ){
+            //The user has set the language for the recipients
+            //We update the assignment of language for those recipients
+            for( var i in arr){
+                this.data.set(arr[i], current_lang);
+            }
+            this.user_overriden_lang = true;
+            this.last_language_set = current_lang;
+            this.changeLabel( "Saved " + current_lang + " as default for " +
+                arr.length + " recipients" );
+        }
+        //When user removes recipients, language detection starts again
+        if(arr.length == 0){
+            this.user_overriden_lang = false;
+        }
+    },
   
-  deduceLanguage: function(){
-    if(this.user_overriden_lang) return;
-    var recipients = this.getRecipients();
-    if( recipients.length == 0 ) return;
-    this.log("Deducing language for: " + recipients.toSource());
-    var target_lang = null;
-    for( var idx in recipients ){
-      var lang = this.getLangFor( recipients[idx] );
-      if( lang ){ 
-        target_lang = lang;
-        break;
-      }else{
-          this.changeLabel("No lang saved for these recipìents");
-      }
-    }
-    if(target_lang){
-      var worked = false;
-      try{
-        this.setCurrentLang( target_lang );
-        worked = true;
-      }catch( e ){
-        this.changeLabel( "Error: Could not set lang to "+ target_lang+ ". Maybe its not installed any more?" );
-        throw e;
-      }
-      if(worked) this.changeLabel( "Deduced " + target_lang );
-    }
-  },
+    deduceLanguage: function(){
+        if(this.user_overriden_lang) return;
+        var recipients = this.getRecipients();
+        if( recipients.length == 0 ) return;
+        this.log("Deducing language for: " + recipients.toSource());
+        var target_lang = null;
+        for( var idx in recipients ){
+            var lang = this.getLangFor( recipients[idx] );
+            if( lang ){
+                target_lang = lang;
+                break;
+            }else{
+                this.changeLabel("No lang saved for these recipìents");
+            }
+        }
+        if(target_lang){
+            var worked = false;
+            try{
+                this.setCurrentLang( target_lang );
+                worked = true;
+            }catch( e ){
+                this.changeLabel( "Error: Could not set lang to "+ target_lang+
+                    ". Maybe its not installed any more?" );
+                throw e;
+            }
+            if(worked) this.changeLabel( "Deduced " + target_lang );
+        }
+    },
   
-  setCurrentLang: function( target ){
-    var fake_event = { target: {value: target},stopPropagation: function(){} };
-    ChangeLanguage( fake_event );
-    this.last_language_set = target;
-  },
+    setCurrentLang: function( target ){
+        var fake_event = {
+            target: {
+                value: target
+            },
+            stopPropagation: function(){}
+        };
+        ChangeLanguage( fake_event );
+        this.last_language_set = target;
+    },
   
-  getLangFor: function( addr ){
-    return this.data.get(addr);
-  },
+    getLangFor: function( addr ){
+        return this.data.get(addr);
+    },
   
-  getRecipients: function(){
-    var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"].createInstance(Components.interfaces.nsIMsgCompFields);
-    Recipients2CompFields( fields );
-    var nsIMsgRecipientArrayInstance = {length:0};
-    if( fields.to ){
-        nsIMsgRecipientArrayInstance = fields.splitRecipients( fields.to, true, {} );
-    }
-    var arr = [];
-    if(nsIMsgRecipientArrayInstance.length > 0){
-      for(var i=0; i< nsIMsgRecipientArrayInstance.length; i++){
-        arr.push(nsIMsgRecipientArrayInstance[i].toString());
-      }
-    }
-    this.log("recipients found: " + arr.toSource());
-    return arr;
-  },
+    getRecipients: function(){
+        var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
+            .createInstance(Components.interfaces.nsIMsgCompFields);
+        Recipients2CompFields( fields );
+        var nsIMsgRecipientArrayInstance = {
+            length:0
+        };
+        if( fields.to ){
+            nsIMsgRecipientArrayInstance = fields.splitRecipients( fields.to, true, {} );
+        }
+        var arr = [];
+        if(nsIMsgRecipientArrayInstance.length > 0){
+            for(var i=0; i< nsIMsgRecipientArrayInstance.length; i++){
+                arr.push(nsIMsgRecipientArrayInstance[i].toString());
+            }
+        }
+        this.log("recipients found: " + arr.toSource());
+        return arr;
+    },
   
-  setListeners: function(){
-    if( window ){
-        var _this = this;
-        window.addEventListener("compose-window-close", function(){_this.stop()}, true);
-        window.addEventListener('compose-window-reopen', function(){_this.start()}, true);
-        this.log("event seem to be registered");
-    }else{
-        this.changeLabel("Internal error (Init. listeners)");
-        this.log("no window found");
-    }
-  },
+    setListeners: function(){
+        if( window ){
+            var _this = this;
+            window.addEventListener("compose-window-close", function(){
+                _this.stop()
+                }, true);
+            window.addEventListener('compose-window-reopen', function(){
+                _this.start()
+                }, true);
+            this.log("event seem to be registered");
+        }else{
+            this.changeLabel("Internal error (Init. listeners)");
+            this.log("no window found");
+        }
+    },
 
   
-  getLabel: function(){
-      return document.getElementById("automatic-dictionary-panel");
-  },
+    getLabel: function(){
+        return document.getElementById("automatic-dictionary-panel");
+    },
   
-  changeLabel: function( str ){
-    var x = this.getLabel();
-    if(x) 
-      x.label = str;
-    else
-      this.log("no label found");
-  },
+    changeLabel: function( str ){
+        var x = this.getLabel();
+        if(x)
+            x.label = str;
+        else
+            this.log("no label found");
+    },
   
-  log:function( msg ){
-      AutomaticDictionary.dump( msg );
-  }
+    log:function( msg ){
+        AutomaticDictionary.dump( msg );
+    }
 }
 
 var automatic_dictionary_instance = new AutomaticDictionary.Class();
-
