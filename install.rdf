@@ -3,7 +3,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
     <em:type>2</em:type>
-    <em:version>0.1</em:version>
+    <em:version>0.8.0</em:version>
     
     <!-- Target Application this extension can install into, 
          with minimum and maximum supported versions. --> 
