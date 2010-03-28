@@ -3,6 +3,18 @@
     
      * To support various compose windows we share the data hash between instances
        of ad, through the preferences service with SharedHash
+
+Listener to:
+ Event "Onchange of the dictionary button":
+    -> save the language for the current recipients
+ Event "Changed recipients list":
+    -> deduce language for this recipients
+ Event "Change on saved preferences of extension" (When we record a new dedcution of language)
+    -> We could get the preference and apply it to the current recipients to see
+    if the preference for the current recipient has been changed. But maybe it's
+    not expected by the user. SO discarded.
+
+
 */
 var AutomaticDictionary = {};
 /**
@@ -142,6 +154,7 @@ AutomaticDictionary.SharedHash.prototype = {
                 _this.load()
             }, 10 );
         }
+        this.log(this.data.toSource());
     },
     log: function(msg){
         AutomaticDictionary.dump(msg);
@@ -167,8 +180,6 @@ AutomaticDictionary.Class.prototype = {
     POLLING_DELAY: 3000, //Miliseconds
   
     //Attributes
-    user_overriden_lang: false,
-    last_language_set: null,
     initialized: false,
     running: false, //Stopped
     data: null,
@@ -177,6 +188,7 @@ AutomaticDictionary.Class.prototype = {
   
     stop: function(){
         this.log("ad: stop");
+        this.changeLabel("");
         this.running = false;
         if( this.last_timeout ) window.clearTimeout( this.last_timeout );
         this.last_timeout = null;
@@ -194,7 +206,6 @@ AutomaticDictionary.Class.prototype = {
         this.log("ad: observeRecipients - running");
         this.iter++;
         try{
-            this.detectUserOverridenLanguage();
             this.deduceLanguage();
             //Queue next call
             if( this.running ){
@@ -208,38 +219,28 @@ AutomaticDictionary.Class.prototype = {
             throw e;
         }
     },
-  
-    detectUserOverridenLanguage: function(){
-        var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefService);
-        var sPrefs = prefService.getBranch(null);
-        var current_lang = sPrefs.getComplexValue("spellchecker.dictionary",
-            nsISupportsString).data;
-        if( this.last_language_set == null ){
-            this.last_language_set = current_lang;
-        }
+
+    //Called when the user changes the language of the dictionary (event based func)
+    languageChanged: function( event ){
+        this.log("languageChanged by event");
+        var current_lang = event.target.value;
         var arr = this.getRecipients();
-        if( arr.length > 0 && current_lang != this.last_language_set ){
+        if( arr.length > 0 ){
             //The user has set the language for the recipients
             //We update the assignment of language for those recipients
             for( var i in arr){
                 this.data.set(arr[i], current_lang);
             }
-            this.user_overriden_lang = true;
-            this.last_language_set = current_lang;
             this.changeLabel( "Saved " + current_lang + " as default for " +
                 arr.length + " recipients" );
-        }
-        //When user removes recipients, language detection starts again
-        if(arr.length == 0){
-            this.user_overriden_lang = false;
         }
     },
   
     deduceLanguage: function(){
-        if(this.user_overriden_lang) return;
         var recipients = this.getRecipients();
-        if( recipients.length == 0 ) return;
+        if( recipients.length == 0 ){
+            return;
+        }
         this.log("Deducing language for: " + recipients.toSource());
         var target_lang = null;
         for( var idx in recipients ){
@@ -273,7 +274,6 @@ AutomaticDictionary.Class.prototype = {
             stopPropagation: function(){}
         };
         ChangeLanguage( fake_event );
-        this.last_language_set = target;
     },
   
     getLangFor: function( addr ){
@@ -309,6 +309,12 @@ AutomaticDictionary.Class.prototype = {
             window.addEventListener('compose-window-reopen', function(){
                 _this.start()
                 }, true);
+            //Try to observe when the dict changes
+            document.getElementById("languageMenuList").addEventListener("command",
+                function(event){
+                    _this.languageChanged(event);
+                },false);
+
             this.log("event seem to be registered");
         }else{
             this.changeLabel("Internal error (Init. listeners)");
