@@ -33,10 +33,21 @@
   recipient appears in the "TO" recipients, the language will be set to that.
   
 
+
+=== Known issues ===
+
+  * Concurrency issues as the spellchecking service language is shared among
+    all the compose windows. So when you change the lang on one of them, all
+    them change and the AD registers the new lang for all recipients in all
+    windows.
+
 === TODO ===
 
-   * Don't do polling but listening to events
-   * Detect based on text:
+  - Replace observing for listeners: listen to spellcheck changes and to recipients
+    addition.
+  - Limit the number of recipients registered to a max, to avoid having a big
+    hash saved.
+  - Detect based on text:
       In case no previous data is avaliable or there is not a unique language for the
       recipients, the extension can try to guess it based on the misakes that appear
       aplying the most used dictionaries.

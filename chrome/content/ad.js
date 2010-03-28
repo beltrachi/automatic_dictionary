@@ -1,14 +1,3 @@
-/** 
- Known issues:
-   * Concurrency issues as the spellchecking service language is shared among
-     all the compose windows. So when you change the lang on one of them, all
-     them change and the AD registers the new lang for all recipients in all
-     windows.
-
- TODO:
-  - Detect when a recipient has been added in spite of observing
-*/
-
 /**
     Implementation comments:
     
