@@ -45,6 +45,9 @@
 
   - Replace observing for listeners: listen to spellcheck changes and to recipients
     addition.
+        - Observe addressingWidget (recipients)
+        - Observe languageMenuList (language change)
+  - Allow/apply i18n
   - Limit the number of recipients registered to a max, to avoid having a big
     hash saved.
   - Detect based on text:
@@ -52,3 +55,16 @@
       recipients, the extension can try to guess it based on the misakes that appear
       aplying the most used dictionaries.
   
+=== Development plan ===
+ Version 0.8.1
+    -> Replace observing for listeners on languageMenuList
+    -> Replace observing for recipients
+
+ Version 0.8.2
+    -> i18n support
+
+ Version 0.8.3
+    -> Limit number of recipients stored
+
+ Version 0.9.0
+    -> Detect based on text
