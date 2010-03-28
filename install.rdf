@@ -3,10 +3,8 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
     <em:type>2</em:type>
-    <em:version>0.8.0</em:version>
+    <em:version>0.8.0rc</em:version>
     
-    <!-- Target Application this extension can install into, 
-         with minimum and maximum supported versions. --> 
     <em:targetApplication>
       <Description>
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
@@ -15,7 +13,6 @@
       </Description>
     </em:targetApplication>
    
-    <!-- Front End MetaData -->
     <em:name>Automatic dictionary</em:name>
     <em:description>Extension that remembers the language of the email when composing.</em:description>
     <em:creator>Jordi Beltran</em:creator>
