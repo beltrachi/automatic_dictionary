@@ -9,11 +9,7 @@ Listener to:
     -> save the language for the current recipients
  Event "Changed recipients list":
     -> deduce language for this recipients
- Event "Change on saved preferences of extension" (When we record a new dedcution of language)
-    -> We could get the preference and apply it to the current recipients to see
-    if the preference for the current recipient has been changed. But maybe it's
-    not expected by the user. SO discarded.
-
+    I DID'N FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
 
 */
 var AutomaticDictionary = {};
@@ -315,7 +311,7 @@ AutomaticDictionary.Class.prototype = {
                     _this.languageChanged(event);
                 },false);
 
-            this.log("event seem to be registered");
+            this.log("events seem to be registered");
         }else{
             this.changeLabel("Internal error (Init. listeners)");
             this.log("no window found");

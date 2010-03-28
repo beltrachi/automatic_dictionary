@@ -58,7 +58,6 @@
 === Development plan ===
  Version 0.8.1
     -> Replace observing for listeners on languageMenuList
-    -> Replace observing for recipients
 
  Version 0.8.2
     -> i18n support
