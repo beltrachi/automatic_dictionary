@@ -1,2 +1,3 @@
 content     automatic_dictionary    chrome/content/
 overlay   chrome://messenger/content/messengercompose/messengercompose.xul chrome://automatic_dictionary/content/ad.xul
+locale automatic_dictionary en-US chrome/locale/en-US/

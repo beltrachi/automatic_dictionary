@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
 
-<overlay id="sample" 
+<overlay id="automatic_dictionary_overlay" 
 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
+ <stringbundleset id="stringbundleset">
+   <stringbundle id="automaticdictionarystrings" src="chrome://automatic_dictionary/locale/strings.properties"/>
+ </stringbundleset>
+
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
  <statusbar id="status-bar">

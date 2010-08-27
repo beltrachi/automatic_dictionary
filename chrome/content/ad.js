@@ -162,6 +162,7 @@ AutomaticDictionary.Class = function(){
     this.running = true;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefBranch);
+    
     this.iter = 0; //ObserveRecipients execution counter
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
     this.setListeners();
@@ -181,7 +182,8 @@ AutomaticDictionary.Class.prototype = {
     data: null,
     last_timeout: null, //Timer object of the next poll
     instance_number: -1,
-  
+    prefManager: null,
+    
     stop: function(){
         this.log("ad: stop");
         this.changeLabel("");
@@ -227,8 +229,10 @@ AutomaticDictionary.Class.prototype = {
             for( var i in arr){
                 this.data.set(arr[i], current_lang);
             }
-            this.changeLabel( "Saved " + current_lang + " as default for " +
-                arr.length + " recipients" );
+            this.changeLabel( 
+                this.ft( "savedForRecipients",
+                    [ current_lang, arr.length ] )
+                );
         }
     },
   
@@ -245,7 +249,7 @@ AutomaticDictionary.Class.prototype = {
                 target_lang = lang;
                 break;
             }else{
-                this.changeLabel("No lang saved for these recipìents");
+                this.changeLabel(this.t( "noLangForRecipients" ));
             }
         }
         if(target_lang){
@@ -254,11 +258,10 @@ AutomaticDictionary.Class.prototype = {
                 this.setCurrentLang( target_lang );
                 worked = true;
             }catch( e ){
-                this.changeLabel( "Error: Could not set lang to "+ target_lang+
-                    ". Maybe its not installed any more?" );
+                this.changeLabel( this.ft("errorSettingSpellLanguage", [target_lang] ));
                 throw e;
             }
-            if(worked) this.changeLabel( "Deduced " + target_lang );
+            if(worked) this.changeLabel( this.ft("deducedLang", [ target_lang ]))
         }
     },
   
@@ -313,7 +316,7 @@ AutomaticDictionary.Class.prototype = {
 
             this.log("events seem to be registered");
         }else{
-            this.changeLabel("Internal error (Init. listeners)");
+            this.changeLabel(this.t("settingListenersError"));
             this.log("no window found");
         }
     },
@@ -330,7 +333,21 @@ AutomaticDictionary.Class.prototype = {
         else
             this.log("no label found");
     },
-  
+
+    getStrBundle: function(){
+        return document.getElementById("automaticdictionarystrings");
+    },
+
+    //Translation (i18n) helper functions
+    t: function( key ){
+        return this.getStrBundle().getString(key);
+    },
+    
+    ft: function(key, values){
+        return this.getStrBundle().getFormattedString(key, values);
+    },
+
+    //Log function
     log:function( msg ){
         AutomaticDictionary.dump( msg );
     }
