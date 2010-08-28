@@ -13,6 +13,15 @@ Listener to:
 
 */
 var AutomaticDictionary = {};
+
+//DEBUGGING METHOD
+AutomaticDictionary.dump = function(msg){
+    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    dump("AutomaticDictionary: ");
+    dump(msg);
+    dump("\n");
+}
+
 /**
  *   SharedHash is used to share preferences between compose windows in case you
  *   have more than one window open.
@@ -20,11 +29,6 @@ var AutomaticDictionary = {};
  *       * When a set is done, it will be available to all SharedHashes through preferences-service
  *       * To spread the changes we save a version number in another preference field
  */
-AutomaticDictionary.dump = function(msg){
-    dump("AutomaticDictionary: ");
-    dump(msg);
-    dump("\n");
-}
 AutomaticDictionary.SharedHash = function( prefPath ){
     this.prefPath = prefPath;
     this.lockPath = prefPath + ".lock";
@@ -185,6 +189,7 @@ AutomaticDictionary.Class.prototype = {
     prefManager: null,
     
     stop: function(){
+        if( !this.running ) return; //Already stopped
         this.log("ad: stop");
         this.changeLabel("");
         this.running = false;
@@ -193,6 +198,7 @@ AutomaticDictionary.Class.prototype = {
     },
   
     start: function(){
+        if( this.running ) return; //Already started
         this.log("ad: start");
         this.running = true;
         this.observeRecipients();
@@ -308,11 +314,14 @@ AutomaticDictionary.Class.prototype = {
             window.addEventListener('compose-window-reopen', function(){
                 _this.start()
                 }, true);
-            //Try to observe when the dict changes
+            //Observe when the dict changes
             document.getElementById("languageMenuList").addEventListener("command",
                 function(event){
                     _this.languageChanged(event);
                 },false);
+
+            window.addEventListener("blur", function(){ _this.stop(); } , true);
+            window.addEventListener("focus", function(){ _this.start(); }, true );
 
             this.log("events seem to be registered");
         }else{
