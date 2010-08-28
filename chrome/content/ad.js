@@ -14,7 +14,12 @@ Listener to:
 */
 var AutomaticDictionary = {};
 
-//DEBUGGING METHOD
+/* DEBUGGING METHOD
+ *
+ * This method is used all over the code to show debugging messages.
+ *
+ * Uncomment the return to show messages on console
+ */
 AutomaticDictionary.dump = function(msg){
     return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
     dump("AutomaticDictionary: ");
@@ -24,7 +29,7 @@ AutomaticDictionary.dump = function(msg){
 
 /**
  *   SharedHash is used to share preferences between compose windows in case you
- *   have more than one window open.
+ *   have more than one open window open.
  *   Features:
  *       * When a set is done, it will be available to all SharedHashes through preferences-service
  *       * To spread the changes we save a version number in another preference field
