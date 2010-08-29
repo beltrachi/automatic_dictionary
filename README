@@ -27,43 +27,26 @@
   assign to the users, you'll have to change the language to any other, wait the
   extension to register that (the status bar will change), and then set the target
   language.
-  
-  
+    
   Once a language is setted to a user, each time you Compose a message and that
   recipient appears in the "TO" recipients, the language will be set to that.
   
 
+=== Development plan ===
 
-=== Known issues ===
-
-  * Concurrency issues as the spellchecking service language is shared among
-    all the compose windows. So when you change the lang on one of them, all
-    them change and the AD registers the new lang for all recipients in all
-    windows.
-
-=== TODO ===
-
-  - Replace observing for listeners: listen to spellcheck changes and to recipients
-    addition.
-        - Observe addressingWidget (recipients)
-        - Observe languageMenuList (language change)
-  - Allow/apply i18n
-  - Limit the number of recipients registered to a max, to avoid having a big
-    hash saved.
-  - Detect based on text:
+ Version 2.x
+    -> Detect based on text
       In case no previous data is avaliable or there is not a unique language for the
       recipients, the extension can try to guess it based on the misakes that appear
       aplying the most used dictionaries.
-  
-=== Development plan ===
- Version 0.8.1
-    -> Replace observing for listeners on languageMenuList
+    -> Replace observing for listeners on adressingWidget
 
- Version 0.8.2
+ Version 1.1.x
+    -> Limit number of recipients stored
+    -> Assign languages to recipient groups, not only to recipients alone.
+ 
+ Version 1.0.x
+    -> Replace observing for listeners on languageMenuList
     -> i18n support
 
- Version 0.8.3
-    -> Limit number of recipients stored
-
- Version 0.9.0
-    -> Detect based on text
+    
