@@ -21,7 +21,10 @@ var AutomaticDictionary = {};
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    //return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    if( typeof(msg) == "function"){
+        msg = msg();
+    }
     dump("AutomaticDictionary: ");
     dump(msg);
     dump("\n");
@@ -52,10 +55,12 @@ AutomaticDictionary.SharedHash.prototype = {
     lockPath: null,
     data: null,
     version: null,
-
+    maxSize: null, //Max number of keys.
+    
     load: function(){
         this.data = this.readData();
         this.version = this.readVersion();
+        this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
     },
     readVersion: function(){
         return this.prefManager.getCharPref( this.prefPath + ".version" );
@@ -172,6 +177,9 @@ AutomaticDictionary.Class = function(){
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefBranch);
     
+    //Version migrations upgrade check
+    this.migrate();
+    
     this.iter = 0; //ObserveRecipients execution counter
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
     this.setListeners();
@@ -183,6 +191,7 @@ AutomaticDictionary.Class = function(){
 AutomaticDictionary.Class.prototype = {
     //Constants
     ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
+    PREFERENCE_SCOPE: "extensions.automatic_dictionary",
     POLLING_DELAY: 3000, //Miliseconds
   
     //Attributes
@@ -364,6 +373,51 @@ AutomaticDictionary.Class.prototype = {
     //Log function
     log:function( msg ){
         AutomaticDictionary.dump( msg );
+    },
+    
+    /* Migrations section */
+    
+    // Upgrades plugin data to current release version
+    migrate: function(){
+        // Get current migrations applied
+        var pref_key = this.PREFERENCE_SCOPE + ".migrations_applied";
+        
+        var migrations_applied = [];
+        var raw_data = this.prefManager.getCharPref( pref_key );
+        if( raw_data !== "" ){
+            migrations_applied = JSON.parse( raw_data ); 
+        }
+        
+        // Apply all data migrations required
+        
+        //Get ordered migrations (by key size)
+        var available_migrations = [];
+        for( key in this.migrations ){
+            avaliable_migrations.push( key )
+        }
+        
+        //Iterate over migration keys and apply them if needed
+        available_migrations.sort();
+        for( idx in available_migrations ){
+            var migration_key = available_migrations[ idx ];
+            if( migrations_applied.indexOf( migration_key ) < 0 ){
+                //apply migration
+                this.log("applying migration "+ migration_key);
+                this.migrations[ migration_key ]();
+                migrations_applied.push( migration_key );
+                this.log("migration "+ migration_key + "applied successfully");
+            }
+        }
+        
+        this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
+    },
+    
+    //Ordered migrations
+    migrations: {
+        //Key is date
+        "201101010000": function(instance){
+            that.log("running base migration");
+        }
     }
 }
 
