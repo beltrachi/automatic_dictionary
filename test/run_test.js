@@ -8,7 +8,7 @@ load("lib/assertions.js");
 var start = Date.now();
 print('start testing \n');
 
-load("units/linked_list_test.js");
+load("units/sorted_set_test.js");
 
 load("units/lru_hash_test.js");
 

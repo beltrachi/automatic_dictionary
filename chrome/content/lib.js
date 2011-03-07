@@ -4,16 +4,32 @@
 // So the interface is as a hash(set, get, delete), but the creation gives a size parameter that
 // manages this attributes.
 // 
-/**
-    @param int size nil when no limit setted
- */
-
 if(typeof(AutomaticDictionary) === "undefined" ){
     var AutomaticDictionary = {}; 
 }
 
 AutomaticDictionary.Lib = {}
 
+/**
+    Hash with max size and LRU expiration
+    
+    Interface:
+    
+        set( k, v ) => bool
+        get( k, v ) => bool
+        size( )  => int
+        serialize( ) => string 
+        load( string ) => void
+
+LRUHash
+ * Costs: all operations are O(n)
+ * Size of the object is:
+   k = average key size
+   m = average value size
+   n = size of the hash
+
+   Size: k*n + (k+m)*n = (2k+m)*n  => O(n)
+*/
 AutomaticDictionary.Lib.LRUHash = function( hash, options ){
     options = options || {}; 
     this.max_size = options.size || null;
@@ -65,32 +81,60 @@ AutomaticDictionary.Lib.LRUHash.prototype = {
             }
         }
     },
+    // O(1)
     size: function(){
         return this.sorted_keys.length;
+    },    
+    // O(n)
+    serialize: function(){
+        var out = this.hash.toSource();
+        out += ",";
+        out += { "sorted_keys": this.sorted_keys, "size": this.max_size }.toSource();
+        return "new AutomaticDictionary.Lib.LRUHash(" + out + ")";
     }
-
 }
 
 /*
-    Implement the sorted_keys by a linked list and test it!
+
+SortedSet
+
+    As a set, has no repeated values and stores the order in which they were
+    added
+
+    Interface
+        
+        add( v ) => bool
+            The last() will be v since now
+        contains( v ) => bool
+        size() => int
+        remove( v ) => bool
+        toArray() => array
+        first() => element
+        last() => element
+
+    Costs:
+        * All operations are O(logn) or better, except toArray O(n)
 */
-AutomaticDictionary.Lib.LinkedList = function(){
+AutomaticDictionary.Lib.SortedSet = function(){
     var num_nodes = 0;
     var first = null;
     var last = null;
     var nodes = {};
     return {
-        exists: function( elem ){
+        // O(logn)
+        contains: function( elem ){
             return nodes[ elem ] != undefined;
         },
+        // O(1)
         first: function(){
             if( first ){
                 return first.v;
             }
             return null;
         },
+        // O(logn)
         push: function( elem ){
-            if( this.exists( elem ) ){
+            if( this.contains( elem ) ){
                 this.remove(elem);
             }
             var node = {p: null, n:null,v:elem};
@@ -109,9 +153,11 @@ AutomaticDictionary.Lib.LinkedList = function(){
                 last = node;
             }
         },
+        // O(1)
         size: function(){
             return num_nodes;
         },
+        // O(n)
         toArray: function(){
             var curr = first;
             var res = [];
@@ -122,6 +168,7 @@ AutomaticDictionary.Lib.LinkedList = function(){
             return res;
         },
         // @return boolean element already existed
+        // O(logn)
         remove: function(elem){
             var node = nodes[ elem ];
             //unlink
@@ -142,7 +189,7 @@ AutomaticDictionary.Lib.LinkedList = function(){
             }
             delete( nodes[elem] );
             return true;
-        },
+        }
     }
 }
 
@@ -151,7 +198,7 @@ AutomaticDictionary.Lib.LinkedList = function(){
 AutomaticDictionary.Lib.LRUHashV2 = function( hash, options ){
     options = options || {}; 
     this.max_size = options.size || null;
-    this.sorted_keys = AutomaticDictionary.Lib.LinkedList();
+    this.sorted_keys = AutomaticDictionary.Lib.SortedSet();
     var key_base = hash;
     if( options["sorted_keys"] ){
         key_base = options["sorted_keys"];
@@ -176,15 +223,12 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
         //Update keys
         this.sk_update_key( key );
         //Expire key if size reached
-//        logger.debug("Should expire? max="+this.max_size+" size="+this.size());
         if( this.max_size !== null && this.size() > this.max_size ){
             var key_to_expire = this.sorted_keys.first();
             logger.debug("expiring key "+key_to_expire);
             delete(this.hash[key_to_expire]);
             this.sk_remove_key( key_to_expire );
         }
-//        logger.debug("sorted_keys is "+this.sorted_keys.toArray());
-//        logger.debug("sorted_keys SIZE is "+ this.sorted_keys.size());
         this.hash[key] = value;
     },
     // O(n)
@@ -207,11 +251,18 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
     sk_remove_key: function( key ){
         this.sorted_keys.remove( key );
     },
+    // O(1)
     size: function(){
-        if( !this.sorted_keys.foo)
-            this.sorted_keys.foo ="bar"+Math.floor(Math.random()*99999);
-        logger.debug("SIZE sorted keys is " + this.sorted_keys.foo );
         return this.sorted_keys.size();
+    },
+    // O(n)
+    // O(n)
+    serialize: function(){
+        var out = this.hash.toSource();
+        out += ",";
+        out += { "sorted_keys": this.sorted_keys.toArray(), "size": this.max_size }.toSource();
+        return "new AutomaticDictionary.Lib.LRUHash(" + out + ")";
     }
+
 }
 

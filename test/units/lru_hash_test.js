@@ -44,6 +44,12 @@ lru_test_suite = function( constructor ){
     }, bm_options );
     
     assert.equal(500, lru.size());
+    
+    var str = lru.serialize();
+    var lru2 = eval( str );
+    
+    assert.equal(500, lru2.size());
+    assert.equal("v999", lru.get("a999"));
 }
 
 //logger.info("Testing LRUHash");

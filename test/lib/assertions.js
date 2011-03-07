@@ -1,5 +1,4 @@
-load("tools.js");
-
+//Assertion methods to use in your tests
 assert = (function(){
     return {
         counter: 0,

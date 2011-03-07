@@ -30,12 +30,16 @@ AutomaticDictionary.dump = function(msg){
     dump("\n");
 }
 
+
 /**
  *   SharedHash is used to share preferences between compose windows in case you
  *   have more than one open window open.
  *   Features:
  *       * When a set is done, it will be available to all SharedHashes through preferences-service
  *       * To spread the changes we save a version number in another preference field
+ * 
+ *   data stored expires by size in a LRU logic.
+ *  
  */
 AutomaticDictionary.SharedHash = function( prefPath ){
     this.prefPath = prefPath;
@@ -389,8 +393,7 @@ AutomaticDictionary.Class.prototype = {
         }
         
         // Apply all data migrations required
-        
-        //Get ordered migrations (by key size)
+        // Get ordered migrations (by key size)
         var available_migrations = [];
         for( key in this.migrations ){
             avaliable_migrations.push( key )
@@ -403,9 +406,9 @@ AutomaticDictionary.Class.prototype = {
             if( migrations_applied.indexOf( migration_key ) < 0 ){
                 //apply migration
                 this.log("applying migration "+ migration_key);
-                this.migrations[ migration_key ]();
+                this.migrations[ migration_key ](this);
                 migrations_applied.push( migration_key );
-                this.log("migration "+ migration_key + "applied successfully");
+                this.log("migration "+ migration_key + " applied successfully");
             }
         }
         
@@ -417,6 +420,10 @@ AutomaticDictionary.Class.prototype = {
         //Key is date
         "201101010000": function(instance){
             that.log("running base migration");
+        },
+        "201102130000": function(instance){
+            //Adpat data structure to new one
+            
         }
     }
 }
