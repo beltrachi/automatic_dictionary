@@ -1,0 +1,5 @@
+To execute tests for lib:
+
+   rhino lib_test.js 
+
+
