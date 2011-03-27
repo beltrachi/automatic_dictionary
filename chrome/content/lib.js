@@ -11,7 +11,7 @@ if(typeof(AutomaticDictionary) === "undefined" ){
 AutomaticDictionary.Lib = {}
 
 /**
-    Hash with max size and LRU expiration
+    LRUHash: Hash with max size and LRU expiration
     
     Interface:
     

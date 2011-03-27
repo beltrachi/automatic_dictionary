@@ -29,19 +29,15 @@ lru_test_suite = function( constructor ){
     lru = new constructor( {}, { size: 500 } );
     assert.equal(0, lru.size());
     
-    assert.benchmark( 400, function(){
-        for(var i=0; i < 1000; i++){
-           lru.set("a"+i, "v"+i);
-        }
-    }, bm_options );
+    for(var i=0; i < 1000; i++){
+       lru.set("a"+i, "v"+i);
+    }
     
     assert.equal(500, lru.size());
     
-    assert.benchmark( 200, function(){
-        for(var i=0; i < 1000; i++){
-           lru.get("a"+i, "v"+i);
-        }
-    }, bm_options );
+    for(var i=0; i < 1000; i++){
+       lru.get("a"+i, "v"+i);
+    }
     
     assert.equal(500, lru.size());
     

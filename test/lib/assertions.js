@@ -1,17 +1,22 @@
 //Assertion methods to use in your tests
 assert = (function(){
     return {
-        counter: 0,
+        counters: { 
+            assertions: 0,
+            failures: 0
+        },
         equal: function( expected, found ){
-            this.counter++;
+            this.counters.assertions++;
             if( expected != found ){
+                this.counters.failures++;
                 Tools.printStackTrace();
                 throw "Expected: "+ expected + "\nFound: "+found;wd
             }
         },
         strictEqual: function( expected, found ){
-            this.counter++;
+            this.counters.assertions++;
             if( expected !== found ){
+                this.counters.failures++;
                 Tools.printStackTrace();
                 throw "Strict Expected: "+ expected + "\nFound: "+found;
             }
@@ -29,9 +34,10 @@ assert = (function(){
             var start = Date.now();
             func();
             var elapsed = (Date.now() - start);
-            this.counter++;
+            this.counters.assertions++;
             logger.performance("Expected "+ milis + " | Lasted "+elapsed );
             if( elapsed > milis ){
+                this.counters.failures++;
                 var msg = "Benchmark failed: elapsed "+elapsed+" ms (max was "+milis+")"; 
                 if( soft ){
                     logger.error(msg);

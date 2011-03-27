@@ -9,7 +9,7 @@ Listener to:
     -> save the language for the current recipients
  Event "Changed recipients list":
     -> deduce language for this recipients
-    I DID'N FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
+    I DIDNT FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
 
 */
 var AutomaticDictionary = {};
@@ -267,6 +267,9 @@ AutomaticDictionary.Class.prototype = {
         }
         this.log("Deducing language for: " + recipients.toSource());
         var target_lang = null;
+        // It returns the first recipient that has a language.
+        // That is useful but maybe it's not the most convenient way.
+        // TODO: Improof deduce algorithm
         for( var idx in recipients ){
             var lang = this.getLangFor( recipients[idx] );
             if( lang ){
