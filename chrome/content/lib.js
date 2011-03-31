@@ -8,7 +8,16 @@ if(typeof(AutomaticDictionary) === "undefined" ){
     var AutomaticDictionary = {}; 
 }
 
-AutomaticDictionary.Lib = {}
+AutomaticDictionary.Lib = {
+    // Stub to call logger when not defined
+    LoggerStub: {
+        debug: function(){},
+        performance: function(){},
+        info: function(){},
+        warn: function(){},
+        error: function(){}
+    }
+}
 
 /**
     LRUHash: Hash with max size and LRU expiration
@@ -35,6 +44,7 @@ AutomaticDictionary.Lib.LRUHash = function( hash, options ){
     this.max_size = options.size || null;
     this.sorted_keys = options["sorted_keys"] ||[]; // Its an array with the keys ordered. Oldest first!
     this.hash = hash;
+    this.logger = options["logger"];
 }
 AutomaticDictionary.Lib.LRUHash.prototype = {
     max_size: null,
@@ -115,11 +125,13 @@ SortedSet
     Costs:
         * All operations are O(logn) or better, except toArray O(n)
 */
-AutomaticDictionary.Lib.SortedSet = function(){
+AutomaticDictionary.Lib.SortedSet = function( options ){
+    options = options || {};
     var num_nodes = 0;
     var first = null;
     var last = null;
     var nodes = {};
+    var logger = options["logger"] || AutomaticDictionary.Lib.LoggerStub;
     return {
         // O(logn)
         contains: function( elem ){
@@ -209,6 +221,7 @@ AutomaticDictionary.Lib.LRUHashV2 = function( hash, options ){
     }
     
     this.hash = hash;
+    this.logger = options["logger"] || AutomaticDictionary.Lib.LoggerStub;
 }
 
 AutomaticDictionary.Lib.LRUHashV2.prototype = {
@@ -219,13 +232,13 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
     //Defines or updates
     // O(n)
     set: function( key, value ){
-        logger.debug("Set "+key );
+        this.logger.debug("Set "+key );
         //Update keys
         this.sk_update_key( key );
         //Expire key if size reached
         if( this.max_size !== null && this.size() > this.max_size ){
             var key_to_expire = this.sorted_keys.first();
-            logger.debug("expiring key "+key_to_expire);
+            this.logger.debug("expiring key "+key_to_expire);
             delete(this.hash[key_to_expire]);
             this.sk_remove_key( key_to_expire );
         }
@@ -233,17 +246,17 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
     },
     // O(n)
     get: function( key ){
-        logger.debug("Get "+key );
+        this.logger.debug("Get "+key );
         //Update keys order
         if( this.hash[key] !== undefined ){
-            logger.debug("on a get we get "+this.hash[key]);
+            this.logger.debug("on a get we get "+this.hash[key]);
             this.sk_update_key( key );
         }
         return this.hash[key];
     },
     // O(n)
     sk_update_key: function(key){
-        logger.debug("updating usage of "+key);
+        this.logger.debug("updating usage of "+key);
         this.sk_remove_key( key );
         this.sorted_keys.push( key );
     },
