@@ -48,3 +48,13 @@ Tools.output = function(arr) {
   print( arr );
 };
 
+//STUB it as rhino does not include it
+JSON = {
+    stringify: function( obj ){
+        return obj.toSource(); //Hackish?
+    },
+    parse: function( str ){
+        return eval( str );
+    }
+};
+

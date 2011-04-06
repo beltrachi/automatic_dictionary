@@ -46,6 +46,26 @@ lru_test_suite = function( constructor ){
     
     assert.equal(500, lru2.size());
     assert.equal("v999", lru.get("a999"));
+    
+    // The a is the older and c is the newer so the a will be the next to expire
+    lru = new constructor( { a : "1", b : 2, c : 3 }, { size : 3, sorted_keys: ["a","b","c"] });
+    
+    var data_string = lru.toJSON();
+    lru2 = new constructor();
+    
+    lru2.fromJSON( data_string );
+    
+    assert.equal( lru.get("a"), lru2.get("a"));
+    assert.equal( "1", lru2.get("a"));
+    
+    lru2.set("d","4");
+    
+    assert.equal( 3, lru2.size());
+
+    assert.equal( "4", lru2.get("d"));
+    // b is the last on usage.
+    assert.equal( null, lru2.get("b"));
+
 }
 
 //logger.info("Testing LRUHash");

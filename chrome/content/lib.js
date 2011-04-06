@@ -40,17 +40,20 @@ LRUHash
    Size: k*n + (k+m)*n = (2k+m)*n  => O(n)
 */
 AutomaticDictionary.Lib.LRUHash = function( hash, options ){
-    options = options || {}; 
-    this.max_size = options.size || null;
-    this.sorted_keys = options["sorted_keys"] ||[]; // Its an array with the keys ordered. Oldest first!
-    this.hash = hash;
-    this.logger = options["logger"];
+    options = options || {};
+    this.initialize( hash, options );
 }
 AutomaticDictionary.Lib.LRUHash.prototype = {
     max_size: null,
     sorted_keys: [],
     hash: {},
     
+    initialize: function( hash, options ){
+        this.max_size = options.size || null;
+        this.sorted_keys = options["sorted_keys"] ||[]; // Its an array with the keys ordered. Oldest first!
+        this.hash = hash || {};
+        this.logger = options["logger"];
+    },
     //Defines or updates
     // O(n)
     set: function( key, value ){
@@ -96,11 +99,38 @@ AutomaticDictionary.Lib.LRUHash.prototype = {
         return this.sorted_keys.length;
     },    
     // O(n)
+    // Deprecated: we need an eval to recover it and eval is not safe Use toJSON instead
     serialize: function(){
         var out = this.hash.toSource();
         out += ",";
         out += { "sorted_keys": this.sorted_keys, "size": this.max_size }.toSource();
         return "new AutomaticDictionary.Lib.LRUHash(" + out + ")";
+    },
+    /* Retruns a JSON with data to recover the object 
+     *       { 
+     *          hash: ... , 
+     *          options: {
+     *              ...
+     *          } 
+     *       }
+     */
+    toJSON: function(){
+        return JSON.stringify( { 
+            hash: this.hash, 
+            options: { 
+                sorted_keys: this.sorted_keys, 
+                size: this.max_size 
+            } 
+        } );
+    },
+   /*
+    * Load data to an instance
+    */
+    fromJSON: function( data_string ){
+        var json_data = JSON.parse( data_string );
+        if( json_data ){
+            this.initialize( json_data.hash, json_data.options )
+        }
     }
 }
 
@@ -205,23 +235,11 @@ AutomaticDictionary.Lib.SortedSet = function( options ){
     }
 }
 
-//IMPLEMENT second version
+//IMPLEMENT second version using the sorted set
 
 AutomaticDictionary.Lib.LRUHashV2 = function( hash, options ){
-    options = options || {}; 
-    this.max_size = options.size || null;
-    this.sorted_keys = AutomaticDictionary.Lib.SortedSet();
-    var key_base = hash;
-    if( options["sorted_keys"] ){
-        key_base = options["sorted_keys"];
-    }
-    //Iterate over hash
-    for( var idx in key_base ){
-        this.sorted_keys.push( hash[idx] );
-    }
-    
-    this.hash = hash;
-    this.logger = options["logger"] || AutomaticDictionary.Lib.LoggerStub;
+    hash = hash || {};
+    this.initialize( hash, options );
 }
 
 AutomaticDictionary.Lib.LRUHashV2.prototype = {
@@ -229,6 +247,23 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
     sorted_keys: null,
     hash: {},
     
+    //Initializes data with them.
+    initialize: function( hash, options ){
+        options = options || {}; 
+        this.max_size = options.size || null;
+        this.sorted_keys = AutomaticDictionary.Lib.SortedSet();
+        var key_base = hash;
+        if( options["sorted_keys"] ){
+            key_base = options["sorted_keys"];
+        }
+        //Iterate over hash
+        for( var idx in key_base ){
+            this.sorted_keys.push( key_base[idx] );
+        }
+        
+        this.hash = hash;
+        this.logger = options["logger"] || AutomaticDictionary.Lib.LoggerStub;
+    },
     //Defines or updates
     // O(n)
     set: function( key, value ){
@@ -269,12 +304,37 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
         return this.sorted_keys.size();
     },
     // O(n)
-    // O(n)
+    // Deprecated: we need an eval to recover it and eval is not safe Use toJSON instead
     serialize: function(){
         var out = this.hash.toSource();
         out += ",";
         out += { "sorted_keys": this.sorted_keys.toArray(), "size": this.max_size }.toSource();
-        return "new AutomaticDictionary.Lib.LRUHash(" + out + ")";
+        return "new AutomaticDictionary.Lib.LRUHashV2(" + out + ")";
+    },
+    /* Retruns a JSON with data to recover the object 
+     *       { 
+     *          hash: ... , 
+     *           options: {
+     *           } 
+     *       }
+     */
+    toJSON: function(){
+        return JSON.stringify( { 
+            hash: this.hash, 
+            options: { 
+                sorted_keys: this.sorted_keys.toArray(), 
+                size: this.max_size 
+            } 
+        } );
+    },
+    /*
+    * Load data to an instance
+    */
+    fromJSON: function( data_string ){
+        var json_data = JSON.parse( data_string );
+        if( json_data ){
+            this.initialize( json_data.hash, json_data.options )
+        }
     }
 
 }

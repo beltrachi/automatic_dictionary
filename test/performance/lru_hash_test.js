@@ -25,6 +25,7 @@ lru_performace_test_suite = function( constructor ){
     
     assert.equal(500, lru2.size());
     assert.equal("v999", lru.get("a999"));
+    
 }
 
 logger.info("Testing LRUHash");
