@@ -1,3 +1,5 @@
 content     automatic_dictionary    chrome/content/
 overlay   chrome://messenger/content/messengercompose/messengercompose.xul chrome://automatic_dictionary/content/ad.xul
 locale automatic_dictionary en-US chrome/locale/en-US/
+locale automatic_dictionary es-ES chrome/locale/es-ES/
+locale automatic_dictionary ca-ES chrome/locale/ca-ES/
