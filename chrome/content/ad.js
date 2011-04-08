@@ -12,7 +12,9 @@ Listener to:
     I DIDNT FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
 
 */
-var AutomaticDictionary = {};
+if( typeof(AutomaticDictionary)=== "undefined" ){
+    var AutomaticDictionary = {};
+}
 
 /* DEBUGGING METHOD
  *
@@ -21,7 +23,7 @@ var AutomaticDictionary = {};
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    //return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
     if( typeof(msg) == "function"){
         msg = msg();
     }
@@ -29,7 +31,6 @@ AutomaticDictionary.dump = function(msg){
     dump(msg);
     dump("\n");
 }
-
 
 /**
  *   SharedHash is used to share preferences between compose windows in case you
@@ -60,11 +61,13 @@ AutomaticDictionary.SharedHash.prototype = {
     data: null,
     version: null,
     maxSize: null, //Max number of keys.
+    //The builder/constructor of the data strucutre (LRU HASH)
+    dataConstructor: AutomaticDictionary.Lib.LRUHashV2, 
     
     load: function(){
+        this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
         this.data = this.readData();
         this.version = this.readVersion();
-        this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
     },
     readVersion: function(){
         return this.prefManager.getCharPref( this.prefPath + ".version" );
@@ -74,18 +77,24 @@ AutomaticDictionary.SharedHash.prototype = {
     },
     readData:function(){
         var v = this.prefManager.getCharPref( this.prefPath );
+        var hash = new this.dataConstructor();
         if( v ){
             try{
-                return JSON.parse( v );
+                hash.fromJSON( v );
             }catch(e){
-                return {};
+                //Restore in case it gets wrong status
+                this.log("Failed to load data with " + e.toString() );
+                hash = new this.dataConstructor();
             }
-        }else
-            return {};
+        }
+        //Override max_size
+        hash.max_size = this.maxSize;
+        this.log( hash.toJSON() );
+        return hash;
     },
     writeData:function(){
         return this.prefManager.setCharPref(
-            this.prefPath, JSON.stringify( this.data ) );
+            this.prefPath, this.data.toJSON() );
     },
     
     sincronized:function( func, force ){
@@ -149,7 +158,7 @@ AutomaticDictionary.SharedHash.prototype = {
         this.sincronized_with_patience( 
             function(){
                 _this.refresh(); //Avoid to ask for sync again
-                _this.data[key] = value;
+                _this.data.set(key, value);
                 _this.writeVersion( next_version );
                 _this.writeData();
                 _this.log("INFO AutomaticDictionary.SharedHash("+_this.id+") write data sucess");
@@ -158,7 +167,7 @@ AutomaticDictionary.SharedHash.prototype = {
     
     get: function(key){
         this.refresh();
-        return this.data[key];
+        return this.data.get(key);
     },
     //Updates to last version of data
     refresh:function(){
@@ -399,7 +408,7 @@ AutomaticDictionary.Class.prototype = {
         // Get ordered migrations (by key size)
         var available_migrations = [];
         for( key in this.migrations ){
-            avaliable_migrations.push( key )
+            available_migrations.push( key )
         }
         
         //Iterate over migration keys and apply them if needed
@@ -414,19 +423,32 @@ AutomaticDictionary.Class.prototype = {
                 this.log("migration "+ migration_key + " applied successfully");
             }
         }
-        
         this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
     },
     
     //Ordered migrations
     migrations: {
         //Key is date
-        "201101010000": function(instance){
-            that.log("running base migration");
+        "201101010000": function(self){
+            self.log("running base migration");
         },
-        "201102130000": function(instance){
+        "201102130000": function(self){
             //Adpat data structure to new one
-            
+            // Steps: 1. Load old data. 2. Save as new data
+            var prefPath = self.ADDRESS_INFO_PREF;
+            var v = self.prefManager.getCharPref( prefPath );
+            if( v ){
+                try{
+                    v = JSON.parse( v );
+                }catch(e){
+                    self.log("Failed the read of the old preferences. Maybe they were empty.");
+                    return; // Nothing to migrate.
+                }
+            }else{ return; }
+            // Save data as new format!
+            var maxSize = self.prefManager.getIntPref( prefPath + ".maxSize");
+            var lru = new AutomaticDictionary.Lib.LRUHashV2( v, {size: maxSize} );
+            self.prefManager.setCharPref(prefPath, lru.toJSON());
         }
     }
 }

@@ -41,9 +41,11 @@
       aplying the most used dictionaries.
     -> Replace observing for listeners on adressingWidget
 
+ Version 1.2.x
+    -> Assign languages to recipient groups, not only to recipients alone.
+ 
  Version 1.1.x
     -> Limit number of recipients stored
-    -> Assign languages to recipient groups, not only to recipients alone.
  
  Version 1.0.x
     -> Replace observing for listeners on languageMenuList

@@ -50,8 +50,19 @@ AutomaticDictionary.Lib.LRUHash.prototype = {
     
     initialize: function( hash, options ){
         this.max_size = options.size || null;
-        this.sorted_keys = options["sorted_keys"] ||[]; // Its an array with the keys ordered. Oldest first!
         this.hash = hash || {};
+        this.sorted_keys = [];
+        for( k in this.hash ){
+            this.sk_update_key( k );
+        }
+        if( options.sorted_keys ){
+            for( pos in options.sorted_keys ){
+                var key = options.sorted_keys[pos];
+                if( typeof( this.hash[key] ) !== "undefined" ){
+                    this.sk_update_key(key); 
+                }
+            }
+        }
         this.logger = options["logger"];
     },
     //Defines or updates
@@ -236,7 +247,6 @@ AutomaticDictionary.Lib.SortedSet = function( options ){
 }
 
 //IMPLEMENT second version using the sorted set
-
 AutomaticDictionary.Lib.LRUHashV2 = function( hash, options ){
     hash = hash || {};
     this.initialize( hash, options );
@@ -257,7 +267,12 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
             key_base = options["sorted_keys"];
         }
         //Iterate over hash
+        for( var idx in hash ){
+            this.sorted_keys.push( idx );
+        }
+        //Insert the sorted keys to force the order
         for( var idx in key_base ){
+            if( typeof(hash[idx]) !== "undefined" )
             this.sorted_keys.push( key_base[idx] );
         }
         

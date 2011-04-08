@@ -65,7 +65,13 @@ lru_test_suite = function( constructor ){
     assert.equal( "4", lru2.get("d"));
     // b is the last on usage.
     assert.equal( null, lru2.get("b"));
-
+    
+    //Test wrong keys
+    lru = new constructor( { a : "1", b : 2, c : 3 }, { size : 3, sorted_keys: ["a","c","z"] });
+    
+    var arr = lru.sorted_keys;
+    if( arr.toArray ) arr = arr.toArray();
+    assert.equal( ["b", "a", "c"].toSource(), arr.toSource() );
 }
 
 //logger.info("Testing LRUHash");

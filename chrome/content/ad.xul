@@ -7,6 +7,7 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
    <stringbundle id="automaticdictionarystrings" src="chrome://automatic_dictionary/locale/strings.properties"/>
  </stringbundleset>
 
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
  <statusbar id="status-bar">
