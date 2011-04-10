@@ -353,8 +353,6 @@ AutomaticDictionary.Class.prototype = {
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
             .createInstance(Components.interfaces.nsIMsgCompFields);
         Recipients2CompFields( fields );
-        dump(" FTO");
-        dump(fields.to);
         var nsIMsgRecipientArrayInstance = {
             length:0
         };
