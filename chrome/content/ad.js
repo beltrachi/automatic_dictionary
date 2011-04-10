@@ -259,9 +259,20 @@ AutomaticDictionary.Class.prototype = {
         if( arr.length > 0 ){
             //The user has set the language for the recipients
             //We update the assignment of language for those recipients
-            for( var i in arr){
-                this.data.set(arr[i], current_lang);
+            if( arr.length > 1 ){
+                var group = this.stringifyRecipientsGroup( arr );
+                this.data.set( group, current_lang );
+                
+                for( var i in arr){
+                    // Save the lang only if it has no lang setted!
+                    if( !this.data.get( arr[i] ) ){
+                        this.data.set(arr[i], current_lang);
+                    }
+                }
+            }else{
+                this.data.set(arr[0], current_lang);
             }
+            
             this.changeLabel( 
                 this.ft( "savedForRecipients",
                     [ current_lang, arr.length ] )
@@ -269,6 +280,14 @@ AutomaticDictionary.Class.prototype = {
         }
     },
   
+    // Updates the interface with the lang deduced from the recipients
+    /*
+        How we search the lang:
+         1. The recipients in "To" all together.
+                This allows to recover specific language when the recipients
+                are from diferent languages.
+         2. The recipients alone in order of appearence.
+    */
     deduceLanguage: function(){
         var recipients = this.getRecipients();
         if( recipients.length == 0 ){
@@ -276,29 +295,44 @@ AutomaticDictionary.Class.prototype = {
         }
         this.log("Deducing language for: " + recipients.toSource());
         var target_lang = null;
+        //Check if all them have a specific language. We want them ordered to maximize hits
+        //Clone array and sort it
+        var alltogether_key = this.stringifyRecipientsGroup( recipients );
+        var lang = this.getLangFor( alltogether_key );
+        
         // It returns the first recipient that has a language.
         // That is useful but maybe it's not the most convenient way.
-        // TODO: Improof deduce algorithm
-        for( var idx in recipients ){
-            var lang = this.getLangFor( recipients[idx] );
-            if( lang ){
-                target_lang = lang;
-                break;
-            }else{
-                this.changeLabel(this.t( "noLangForRecipients" ));
+        if( !lang ){
+            for( var idx in recipients ){
+                lang = this.getLangFor( recipients[idx] );
+                if( lang ){
+                    break;
+                }
             }
         }
-        if(target_lang){
+        if(lang){
             var worked = false;
             try{
-                this.setCurrentLang( target_lang );
+                this.setCurrentLang( lang );
                 worked = true;
             }catch( e ){
-                this.changeLabel( this.ft("errorSettingSpellLanguage", [target_lang] ));
+                this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
                 throw e;
             }
-            if(worked) this.changeLabel( this.ft("deducedLang", [ target_lang ]))
+            if(worked) this.changeLabel( this.ft("deducedLang", [lang]))
+        }else{
+            this.changeLabel(this.t( "noLangForRecipients" ));
         }
+    },
+    
+    // It returns a string representing the array of recipients not caring about the order
+    stringifyRecipientsGroup: function( arr ){
+        var sorted = [];
+        for( var k in arr ){
+            sorted.push( arr[k] );
+        }
+        sorted.sort();
+        return sorted.toString();
     },
   
     setCurrentLang: function( target ){
@@ -319,10 +353,13 @@ AutomaticDictionary.Class.prototype = {
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
             .createInstance(Components.interfaces.nsIMsgCompFields);
         Recipients2CompFields( fields );
+        dump(" FTO");
+        dump(fields.to);
         var nsIMsgRecipientArrayInstance = {
             length:0
         };
         if( fields.to ){
+            
             nsIMsgRecipientArrayInstance = fields.splitRecipients( fields.to, true, {} );
         }
         var arr = [];
