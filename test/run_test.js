@@ -14,6 +14,8 @@ load("units/sorted_set_test.js");
 
 load("units/lru_hash_test.js");
 
+load("units/ad_test.js");
+
 logger.info("### Performance tests");
 
 load("performance/sorted_set_test.js");

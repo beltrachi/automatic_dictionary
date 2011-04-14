@@ -67,7 +67,12 @@ lru_test_suite = function( constructor ){
     assert.equal( null, lru2.get("b"));
     
     //Test wrong keys
-    lru = new constructor( { a : "1", b : 2, c : 3 }, { size : 3, sorted_keys: ["a","c","z"] });
+    lru = new constructor( { a : "1", b : 2, c : 3 }, 
+    { 
+        size : 3, 
+        sorted_keys: ["a","c","z"],
+        logger: logger
+    });
     
     var arr = lru.sorted_keys;
     if( arr.toArray ) arr = arr.toArray();
@@ -75,9 +80,10 @@ lru_test_suite = function( constructor ){
 }
 
 //logger.info("Testing LRUHash");
-//test_suite( AutomaticDictionary.Lib.LRUHash );
+//test_suite( AutomaticDilctionary.Lib.LRUHash );
 
 logger.info("Testing LRUHash");
 lru_test_suite( AutomaticDictionary.Lib.LRUHash );
 logger.info("Testing LRUHashV2");
 lru_test_suite( AutomaticDictionary.Lib.LRUHashV2 );
+

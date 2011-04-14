@@ -252,41 +252,77 @@ AutomaticDictionary.Class.prototype = {
     },
 
     //Called when the user changes the language of the dictionary (event based func)
+    /*
+        Repensar el comportament, ja que quan assignes dict i tens ccs posats, potser no vols
+        setejera els tos sols sino només en el cas de que tinguis aquells CCs!!
+        
+        Per tant quan assignis als TOs, si també tens CCs, només assignaras als TOs si no tenien valor..
+        
+        si ccs.size > 0
+          only_set_if_no_value = true
+        fi
+        
+        .....
+    */
+    
     languageChanged: function( event ){
         this.log("languageChanged by event");
         var current_lang = event.target.value;
-        var arr = this.getRecipients();
-        if( arr.length > 0 ){
+        var tos = this.getRecipients();
+        var ccs = this.getRecipients("cc");
+        var saved_recipients = 0;
+        if( tos.length > 0 ){
             //The user has set the language for the recipients
             //We update the assignment of language for those recipients
-            if( arr.length > 1 ){
-                var group = this.stringifyRecipientsGroup( arr );
+            if( tos.length > 1 ){
+                var group = this.stringifyRecipientsGroup( tos );
                 this.data.set( group, current_lang );
-                
-                for( var i in arr){
+                saved_recipients += tos.length;
+                for( var i in tos){
                     // Save the lang only if it has no lang setted!
-                    if( !this.data.get( arr[i] ) ){
-                        this.data.set(arr[i], current_lang);
+                    if( !this.data.get( tos[i] ) ){
+                        this.data.set(tos[i], current_lang);
+                        saved_recipients++;
                     }
                 }
             }else{
-                this.data.set(arr[0], current_lang);
+                //Dont save the recipient if 
+                if( this.data.get(tos[0]) == "" && ccs.length == 0 ){
+                    this.data.set(tos[0], current_lang);
+                    saved_recipients++;
+                }
             }
             
+        }
+        // Save a lang for tos and ccs
+        if( ccs.length > 0 ){
+            var key = this.getKeyForToAndCCRecipients(tos, ccs);
+            this.data.set( key, current_lang );
+            saved_recipients += tos.length;
+            saved_recipients += ccs.length;
+        }
+        if( saved_recipients > 0 ){
             this.changeLabel( 
                 this.ft( "savedForRecipients",
-                    [ current_lang, arr.length ] )
+                    [ current_lang, saved_recipients ] )
                 );
         }
     },
-  
+    
+    getKeyForToAndCCRecipients: function(tos, ccs){
+        return this.stringifyRecipientsGroup( tos ) + "[cc]" + this.stringifyRecipientsGroup( ccs );
+    },
+    
     // Updates the interface with the lang deduced from the recipients
     /*
         How we search the lang:
-         1. The recipients in "To" all together.
+         1. TO (all) & CC (all): The recipients in "To" and the ones in "CC". 
+                In cases where you change the language when someone in the CC 
+                does not understand it.
+         2. TO (all): The recipients in "To" all together.
                 This allows to recover specific language when the recipients
                 are from diferent languages.
-         2. The recipients alone in order of appearence.
+         3. TO (one by one): The recipients alone in order of appearence.
     */
     deduceLanguage: function(){
         var recipients = this.getRecipients();
@@ -294,15 +330,24 @@ AutomaticDictionary.Class.prototype = {
             return;
         }
         this.log("Deducing language for: " + recipients.toSource());
-        var target_lang = null;
-        //Check if all them have a specific language. We want them ordered to maximize hits
-        //Clone array and sort it
-        var alltogether_key = this.stringifyRecipientsGroup( recipients );
-        var lang = this.getLangFor( alltogether_key );
+        var lang = null;
+        // TO all and CC all
+        var ccs = this.getRecipients("cc");
+        var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
+        lang = this.getLangFor( toandcc_key );
         
-        // It returns the first recipient that has a language.
-        // That is useful but maybe it's not the most convenient way.
         if( !lang ){
+            // TO all
+            // Check if all them have a specific language. We want them ordered to maximize hits
+            // Clone array and sort it
+            var alltogether_key = this.stringifyRecipientsGroup( recipients );
+            lang = this.getLangFor( alltogether_key );
+        }
+        
+        if( !lang ){
+            // TO one by one
+            // It returns the first recipient that has a language.
+            // That is useful but maybe it's not the most convenient way.
             for( var idx in recipients ){
                 lang = this.getLangFor( recipients[idx] );
                 if( lang ){
@@ -310,6 +355,7 @@ AutomaticDictionary.Class.prototype = {
                 }
             }
         }
+        
         if(lang){
             var worked = false;
             try{
@@ -349,16 +395,17 @@ AutomaticDictionary.Class.prototype = {
         return this.data.get(addr);
     },
   
-    getRecipients: function(){
+    getRecipients: function( recipientType ){
+        recipientType = recipientType || "to";
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
             .createInstance(Components.interfaces.nsIMsgCompFields);
         Recipients2CompFields( fields );
         var nsIMsgRecipientArrayInstance = {
             length:0
         };
-        if( fields.to ){
-            
-            nsIMsgRecipientArrayInstance = fields.splitRecipients( fields.to, true, {} );
+        var fields_content = fields[recipientType]; 
+        if( fields_content ){
+            nsIMsgRecipientArrayInstance = fields.splitRecipients( fields_content, true, {} );
         }
         var arr = [];
         if(nsIMsgRecipientArrayInstance.length > 0){

@@ -259,10 +259,11 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
     
     //Initializes data with them.
     initialize: function( hash, options ){
+        this.logger = (options && options["logger"]) || AutomaticDictionary.Lib.LoggerStub;
         options = options || {}; 
         this.max_size = options.size || null;
         this.sorted_keys = AutomaticDictionary.Lib.SortedSet();
-        var key_base = hash;
+        var key_base = [];
         if( options["sorted_keys"] ){
             key_base = options["sorted_keys"];
         }
@@ -271,13 +272,15 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
             this.sorted_keys.push( idx );
         }
         //Insert the sorted keys to force the order
+        var key = null;
         for( var idx in key_base ){
-            if( typeof(hash[idx]) !== "undefined" )
-            this.sorted_keys.push( key_base[idx] );
+            key = key_base[idx];
+            if( typeof(hash[key]) !== "undefined" ){
+                this.sorted_keys.push( key );
+            }
         }
         
         this.hash = hash;
-        this.logger = options["logger"] || AutomaticDictionary.Lib.LoggerStub;
     },
     //Defines or updates
     // O(n)
