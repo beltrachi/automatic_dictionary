@@ -12,10 +12,24 @@
         <em:maxVersion>3.2a1pre</em:maxVersion>
       </Description>
     </em:targetApplication>
-   
+    
     <em:name>Automatic dictionary</em:name>
     <em:description>Extension that remembers the language of the email when composing.</em:description>
     <em:creator>Jordi Beltran</em:creator>
     <em:homepageURL>http://github.com/beltrachi/automatic_dictionary</em:homepageURL>
+    <em:localized>
+      <Description>
+        <em:locale>es-ES</em:locale>
+        <em:name>Automatic dictionary</em:name>
+        <em:description>Extensión que recuerda el idioma usado en el corrector ortográfico asociandola al destinatario del correo.</em:description>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>ca-ES</em:locale>
+        <em:name>Automatic dictionary</em:name>
+        <em:description>Extensió que recorda l'idioma del corrector ortogràfic associant-lo al destinatari del correu.</em:description>
+      </Description>
+    </em:localized>
   </Description>
 </RDF>
