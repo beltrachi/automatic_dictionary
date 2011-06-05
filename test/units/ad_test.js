@@ -18,13 +18,13 @@
                 "@mozilla.org/preferences-service;1":{
                     getService: function(){             
                         var _get = function(k){
-                            logger.info("asking for "+k);
-                            logger.info("and gets "+Components.savedPrefs[k]);
+                            logger.debug("asking for "+k);
+                            logger.debug("and gets "+Components.savedPrefs[k]);
                             return Components.savedPrefs[k]; 
                         };
                         var _set = function(k,v){
-                            logger.info("seting "+k);
-                            logger.info("value "+v);
+                            logger.debug("seting "+k);
+                            logger.debug("value "+v);
                             Components.savedPrefs[k] = v; 
                         };
                         return {
@@ -80,7 +80,7 @@
     //The load path is from the call
     load("../chrome/content/ad.js")
     
-    AutomaticDictionary.dump = function(msg){logger.info("AD: "+msg)};
+    AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
     assert.equal( true, automatic_dictionary_instance != null );
     
 

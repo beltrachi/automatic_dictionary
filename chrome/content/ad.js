@@ -274,6 +274,12 @@ AutomaticDictionary.Class.prototype = {
         var ccs = this.getRecipients("cc");
         this.log("tos are "+ tos.toSource());
         this.log("ccss are "+ ccs.toSource());
+        var maxRecipients = this.getMaxRecipients();
+        if( tos.length + ccs.length > maxRecipients ){
+            this.log("Discarded to save data. Too much recipients.(maxRecipients is "+maxRecipients+")");
+            this.changeLabel( this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
+            return;
+        }
         var saved_recipients = 0;
         if( tos.length > 0 ){
             this.log("Enter cond 1");
@@ -513,6 +519,10 @@ AutomaticDictionary.Class.prototype = {
         AutomaticDictionary.dump( msg );
     },
     
+    getMaxRecipients: function(){
+        return this.prefManager.getCharPref( this.MAX_RECIPIENTS_KEY );
+    },
+    
     /* Migrations section */
     
     // Upgrades plugin data to current release version
@@ -574,10 +584,10 @@ AutomaticDictionary.Class.prototype = {
         },
         "201106032254": function(self){
             //Add limit of max_recipients
-            var prefPath = self.PREFERENCE_SCOPE;
-            var maxRecipients = self.prefManager.getIntPref( prefPath + ".maxRecipients");
+            var prefPath = self.MAX_RECIPIENTS_KEY;
+            var maxRecipients = self.prefManager.getIntPref( prefPath );
             if( self.isBlank( maxRecipients ) ){
-                self.prefManager.setIntPref( prefPath + ".maxRecipients", 10);
+                self.prefManager.setIntPref( prefPath, 10);
             }
         }
     }
