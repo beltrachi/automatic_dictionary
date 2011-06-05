@@ -1,5 +1,7 @@
 To execute tests for lib:
 
-   rhino lib_test.js 
+   rhino -opt -1 lib_test.js 
+
+"-opt -1" disables all optimization and exception traces show the call stack
 
 

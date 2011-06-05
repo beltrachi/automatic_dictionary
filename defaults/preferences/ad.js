@@ -6,3 +6,5 @@ pref("extensions.automatic_dictionary.addressesInfo.lock", "");
 pref("extensions.automatic_dictionary.addressesInfo.maxSize", 200);
 pref("extensions.automatic_dictionary.migrations_applied", "");
 
+pref("extensions.automatic_dictionary.maxRecipients", 10);
+

@@ -9,15 +9,13 @@ assert = (function(){
             this.counters.assertions++;
             if( expected != found ){
                 this.counters.failures++;
-                Tools.printStackTrace();
-                throw "Expected: "+ expected + "\nFound: "+found;wd
+                throw "Expected: "+ expected + "\nFound: "+found; 
             }
         },
         strictEqual: function( expected, found ){
             this.counters.assertions++;
             if( expected !== found ){
                 this.counters.failures++;
-                Tools.printStackTrace();
                 throw "Strict Expected: "+ expected + "\nFound: "+found;
             }
         },

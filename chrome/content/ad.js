@@ -205,6 +205,8 @@ AutomaticDictionary.Class.prototype = {
     //Constants
     ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",
+    MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
+    
     POLLING_DELAY: 3000, //Miliseconds
   
     //Attributes
@@ -266,15 +268,19 @@ AutomaticDictionary.Class.prototype = {
     */
     
     languageChanged: function( event ){
-        this.log("languageChanged by event");
+        this.log("------------------------------------languageChanged by event");
         var current_lang = event.target.value;
         var tos = this.getRecipients();
         var ccs = this.getRecipients("cc");
+        this.log("tos are "+ tos.toSource());
+        this.log("ccss are "+ ccs.toSource());
         var saved_recipients = 0;
         if( tos.length > 0 ){
+            this.log("Enter cond 1");
             //The user has set the language for the recipients
             //We update the assignment of language for those recipients
             if( tos.length > 1 ){
+                this.log("Enter cond 1.1");
                 var group = this.stringifyRecipientsGroup( tos );
                 this.data.set( group, current_lang );
                 saved_recipients += tos.length;
@@ -286,8 +292,17 @@ AutomaticDictionary.Class.prototype = {
                     }
                 }
             }else{
-                //Dont save the recipient if 
-                if( this.data.get(tos[0]) == "" && ccs.length == 0 ){
+                // There is only a "TO"
+                
+                // We save it if it does not exist.
+                // We overwrite it if it's alone but not if it has CCs
+                this.log("Enter cond 1.2");
+                
+                var curr = this.data.get(tos[0]);
+                this.log("curr is what is next")
+                this.log(curr);
+                if( this.isBlank( curr ) || ccs.length == 0 ){
+                    this.log("Enter cond 1.2.1");
                     this.data.set(tos[0], current_lang);
                     saved_recipients++;
                 }
@@ -296,21 +311,42 @@ AutomaticDictionary.Class.prototype = {
         }
         // Save a lang for tos and ccs
         if( ccs.length > 0 ){
+            this.log("Enter cond 2");
+
             var key = this.getKeyForToAndCCRecipients(tos, ccs);
             this.data.set( key, current_lang );
             saved_recipients += tos.length;
             saved_recipients += ccs.length;
+            // Add recipients alone if they are undefined
+            var curr = null;
+            for( var i = 0; i< ccs.length; i++ ){
+                curr = this.data.get( ccs[i] );
+                if( this.isBlank( curr )){
+                    this.data.set( ccs[i], current_lang );
+                    saved_recipients += 1;
+                }
+            }
+            
         }
         if( saved_recipients > 0 ){
+            this.log("Enter cond 3");
+
+            this.log("saved recipients are: " + saved_recipients.toSource());
             this.changeLabel( 
                 this.ft( "savedForRecipients",
                     [ current_lang, saved_recipients ] )
                 );
         }
+        this.log("------------------------------------languageChanged by event END");
     },
     
     getKeyForToAndCCRecipients: function(tos, ccs){
         return this.stringifyRecipientsGroup( tos ) + "[cc]" + this.stringifyRecipientsGroup( ccs );
+    },
+    
+    // True when the value is something we consider nonData
+    isBlank: function( value ){
+        return ((typeof value) == "undefined" || value === "" ||value === null);
     },
     
     // Updates the interface with the lang deduced from the recipients
@@ -329,14 +365,15 @@ AutomaticDictionary.Class.prototype = {
         if( recipients.length == 0 ){
             return;
         }
-        this.log("Deducing language for: " + recipients.toSource());
         var lang = null;
         // TO all and CC all
         var ccs = this.getRecipients("cc");
         var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
+        this.log("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
         
         if( !lang ){
+            this.log("Check for the TO's together")
             // TO all
             // Check if all them have a specific language. We want them ordered to maximize hits
             // Clone array and sort it
@@ -345,6 +382,7 @@ AutomaticDictionary.Class.prototype = {
         }
         
         if( !lang ){
+            this.log("Check for the TOs one by one");
             // TO one by one
             // It returns the first recipient that has a language.
             // That is useful but maybe it's not the most convenient way.
@@ -355,6 +393,8 @@ AutomaticDictionary.Class.prototype = {
                 }
             }
         }
+        
+        this.log("Language found: "+ lang);
         
         if(lang){
             var worked = false;
@@ -531,6 +571,14 @@ AutomaticDictionary.Class.prototype = {
             var maxSize = self.prefManager.getIntPref( prefPath + ".maxSize");
             var lru = new AutomaticDictionary.Lib.LRUHashV2( v, {size: maxSize} );
             self.prefManager.setCharPref(prefPath, lru.toJSON());
+        },
+        "201106032254": function(self){
+            //Add limit of max_recipients
+            var prefPath = self.PREFERENCE_SCOPE;
+            var maxRecipients = self.prefManager.getIntPref( prefPath + ".maxRecipients");
+            if( self.isBlank( maxRecipients ) ){
+                self.prefManager.setIntPref( prefPath + ".maxRecipients", 10);
+            }
         }
     }
 }
