@@ -589,6 +589,14 @@ AutomaticDictionary.Class.prototype = {
             if( self.isBlank( maxRecipients ) ){
                 self.prefManager.setIntPref( prefPath, 10);
             }
+            
+            //Increment max_size of shared_hash param because now we support saving
+            //The CCs so 200 can be really low. Should be 1000 at least. A mail with
+            // 1 A and 4 CCs generates 6 keys saved. A, A+CCs, CC1, CC2, CC3, CC4
+            var factor = 6; // 6 times the current limit
+            prefPath = self.ADDRESS_INFO_PREF + ".maxSize";
+            var maxSize = self.prefManager.getIntPref( prefPath );
+            self.prefManager.setIntPref( prefPath, maxSize * factor );            
         }
     }
 }
