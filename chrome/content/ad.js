@@ -369,7 +369,7 @@ AutomaticDictionary.Class.prototype = {
     },
     
     getMaxRecipients: function(){
-        return this.prefManager.getCharPref( this.MAX_RECIPIENTS_KEY );
+        return this.prefManager.getIntPref( this.MAX_RECIPIENTS_KEY );
     },
     
     /* Migrations section */
