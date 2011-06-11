@@ -1,4 +1,8 @@
 load("./../chrome/content/lib.js");
+load("./../chrome/content/lib/sorted_set.js");
+load("./../chrome/content/lib/lru_hash.js");
+load("./../chrome/content/lib/lru_hash_v2.js");
+load("./../chrome/content/lib/shared_hash.js");
 load("lib/tools.js");
 
 logger = Tools.Logger("performance");
