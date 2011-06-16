@@ -1,3 +1,4 @@
+<!ENTITY introduction.text "Advanced parameters">
 <!ENTITY maxSize.label "Max stored pairs:">
 <!ENTITY maxSize.info 
 "The maximum number of associations between a recipient or group of recipients 

@@ -1,6 +1,9 @@
 .prefoptions label{
     padding-top:6px;
 }
+.intro{
+    max-width:400px;
+}
 .info{
     max-width:400px;
     color:#666666;

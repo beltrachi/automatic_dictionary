@@ -1,3 +1,5 @@
+<!ENTITY introduction.text "Paràmetres avançats">
+
 <!ENTITY maxSize.label "Màxim d'assignacions a guardar:">
 <!ENTITY maxSize.info
 "El màxim nombre d'associacions entre un destinatari o un grup de destinataris

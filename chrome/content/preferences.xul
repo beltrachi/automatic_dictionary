@@ -8,15 +8,19 @@
      onload="var descriptions = document.getElementsByTagName('description'); for (var i=0; i&lt;descriptions.length; i++) { descriptions[i].style.height=document.defaultView.getComputedStyle(descriptions[i], null).getPropertyValue('height');}"
     >
     <!-- onload to fix prefpanel size https://bugzilla.mozilla.org/show_bug.cgi?id=451997 -->
+    <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
     <prefpane id="main-pane" label="Preferencess">
         <preferences>
             <preference id="maxSize" name="extensions.automatic_dictionary.addressesInfo.maxSize" type="int"/>
             <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
         </preferences>
         <vbox class="prefoptions">
+            <description class="intro">
+                &introduction.text;
+            </description>
             <hbox>
                 <label control="input_maxSize" value="&maxSize.label;"/>
-                <textbox preference="maxSize" id="input_maxSize" maxlength="7" size="7"/>
+                <textbox preference="maxSize" id="input_maxSize" maxlength="7" size="7" onchange="AutomaticDictionary.check_int_range(this,100,99999);"/>
                 <label value="" flex="10"/>
             </hbox>
             <description class="info">
@@ -25,7 +29,7 @@
             </description>
             <hbox>
                 <label control="input_maxRecipients" value="&maxRecipients.label;"/>
-                <textbox preference="maxRecipients" id="input_maxRecipients" maxlength="4" size="5"/>
+                <textbox preference="maxRecipients" id="input_maxRecipients" maxlength="4" size="5" onchange="AutomaticDictionary.check_int_range(this,1,9999);"/>
                 <label value="" flex="10"/>
             </hbox>
             <description class="info">
