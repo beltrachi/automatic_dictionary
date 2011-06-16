@@ -3,7 +3,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
     <em:type>2</em:type>
-    <em:version>1.1.0</em:version>
+    <em:version>1.2.0</em:version>
     <em:optionsURL>chrome://automatic_dictionary/content/preferences.xul?12</em:optionsURL>
     
     <em:targetApplication>
