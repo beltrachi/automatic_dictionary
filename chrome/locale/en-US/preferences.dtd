@@ -1,0 +1,13 @@
+<!ENTITY maxSize.label "Max stored pairs:">
+<!ENTITY maxSize.info 
+"The maximum number of associations between a recipient or group of recipients 
+and a dictionary language. When the storage reaches this max size, the oldest 
+and less used data will be removed, leaving space for new assignments. (aka LRU).">
+<!ENTITY maxSize.recomendation "Recomended value: 1200.">
+
+<!ENTITY maxRecipients.label "Max recipients to process per mail:">
+<!ENTITY maxRecipients.info 
+"When a mail has more than this recipients, we do not save any language for them.
+ (sum TOs and CCs). Useful to avoid processing massive mails.">
+<!ENTITY maxRecipients.recomendation "Recomended value: 10.">
+

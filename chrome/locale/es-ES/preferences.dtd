@@ -1,0 +1,14 @@
+<!ENTITY maxSize.label "Máximas asignaciones a guardar:">
+<!ENTITY maxSize.info
+"El numero máximo de asociaciones entre un destinatario o grupo de destinatarios
+y un idioma de diccionario. Cuando el almacenamiento llega a este máximo, el dato
+mas antiguo o menos usado se elimina para dejar sitio a los datos nuevos. 
+(Conocido como LRU)">
+<!ENTITY maxSize.recomendation "Valor recomendado: 1200.">
+
+<!ENTITY maxRecipients.label "Máximos destinatarios por correo:">
+<!ENTITY maxRecipients.info
+"Cuando un correo supera el máximo de destinatarios (sumando destinatarios directos y 'en copia')
+no se guardara el idioma para aquellos destinatarios. Útil para evitar procesar correos masivos.">
+<!ENTITY maxRecipients.recomendation "Valor recomendado: 10.">
+

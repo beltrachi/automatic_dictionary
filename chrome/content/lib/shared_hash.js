@@ -8,6 +8,12 @@
  *   data stored expires by size in a LRU logic.
  *  
  */
+/* 
+TODO: 
+    Use an observer of the preference to avoid having to load the data over and
+    over again to know if somebody has updated it.
+    We need to install an observer using the nsIPrefBranch2 interface.
+*/
 AutomaticDictionary.SharedHash = function( prefPath ){
     this.prefPath = prefPath;
     this.lockPath = prefPath + ".lock";

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://automatic_dictionary/content/preferences.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://automatic_dictionary/locale/preferences.dtd">
+<prefwindow id="automatic_dictionary-prefs"
+     title="AutomaticDictionary Preferences"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+     onload="var descriptions = document.getElementsByTagName('description'); for (var i=0; i&lt;descriptions.length; i++) { descriptions[i].style.height=document.defaultView.getComputedStyle(descriptions[i], null).getPropertyValue('height');}"
+    >
+    <!-- onload to fix prefpanel size https://bugzilla.mozilla.org/show_bug.cgi?id=451997 -->
+    <prefpane id="main-pane" label="Preferencess">
+        <preferences>
+            <preference id="maxSize" name="extensions.automatic_dictionary.addressesInfo.maxSize" type="int"/>
+            <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
+        </preferences>
+        <vbox class="prefoptions">
+            <hbox>
+                <label control="input_maxSize" value="&maxSize.label;"/>
+                <textbox preference="maxSize" id="input_maxSize" maxlength="7" size="7"/>
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &maxSize.info;
+                &maxSize.recomendation;
+            </description>
+            <hbox>
+                <label control="input_maxRecipients" value="&maxRecipients.label;"/>
+                <textbox preference="maxRecipients" id="input_maxRecipients" maxlength="4" size="5"/>
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &maxRecipients.info;
+                &maxRecipients.recomendation;
+            </description>
+        </vbox>
+    </prefpane>
+</prefwindow>

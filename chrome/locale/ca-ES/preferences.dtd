@@ -1,0 +1,14 @@
+<!ENTITY maxSize.label "Màxim d'assignacions a guardar:">
+<!ENTITY maxSize.info
+"El màxim nombre d'associacions entre un destinatari o un grup de destinataris
+i un idioma de diccionari. Quan l'emmagatzemament arriba al màxim, la dada més 
+antiga o menys usada s'elimina per deixar lloc per les noves dades. 
+(Conegut com LRU).">
+<!ENTITY maxSize.recomendation "Valor recomanat: 1200.">
+
+<!ENTITY maxRecipients.label "Maxims destinataris per correu:">
+<!ENTITY maxRecipients.info
+"Quan un correu supera el màxim de destinataris (sumant destinataris directes i 'en còpia')
+no es guardarà l'idioma per aquells recipients. Útil per evitar processar mails massius.">
+<!ENTITY maxRecipients.recomendation "Valor recomanat: 10.">
+
