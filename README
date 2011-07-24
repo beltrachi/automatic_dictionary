@@ -43,6 +43,7 @@
 
  Version 1.2.x
     -> Assign languages to recipient groups, not only to recipients alone.
+    -> Allow to configure parameters by a preferences window
  
  Version 1.1.x
     -> Limit number of recipients stored
