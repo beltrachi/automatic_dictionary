@@ -28,7 +28,7 @@ lru_performace_test_suite = function( constructor ){
     
 }
 
-logger.info("Testing LRUHash");
-lru_performace_test_suite( AutomaticDictionary.Lib.LRUHash );
+logger.info("Testing LRUHash is disabled as it clearly do not perform well.");
+//lru_performace_test_suite( AutomaticDictionary.Lib.LRUHash );
 logger.info("Testing LRUHashV2");
 lru_performace_test_suite( AutomaticDictionary.Lib.LRUHashV2 );
