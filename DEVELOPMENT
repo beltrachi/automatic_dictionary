@@ -1,0 +1,8 @@
+=== Development related info
+
+To check code changes on your Thunderbird only with thunderbird restart:
+https://developer.mozilla.org/en/Extensions/Thunderbird/Building_a_Thunderbird_extension_7%3A_Installation
+
+To see the debug messages of the plugin you need two things:
+1. Change the AutomaticDictionary.dump code to enable dumps (See ad.js)
+2. Set the thunderbird preferences (in the profile) to allow dumps (look at goole)
