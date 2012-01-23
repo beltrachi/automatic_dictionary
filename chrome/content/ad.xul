@@ -13,8 +13,7 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/shared_hash.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
- <statusbar id="status-bar">
-  <statusbarpanel id="automatic-dictionary-panel" label=""/>
- </statusbar>
+ <hbox insertbefore="status-bar">
+   <notificationbox id="automatic_dictionary_notification" flex="1"/>
+ </hbox>
 </overlay>
-

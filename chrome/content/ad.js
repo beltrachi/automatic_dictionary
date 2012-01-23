@@ -65,6 +65,11 @@ AutomaticDictionary.Class.prototype = {
     last_timeout: null, //Timer object of the next poll
     instance_number: -1,
     prefManager: null,
+    last_toandcc_key: null,
+    name: "AutomaticDictionary",
+    notification_time: 3000,
+    notificationbox_elem_id: "automatic_dictionary_notification",
+    
     
     stop: function(){
         if( !this.running ) return; //Already stopped
@@ -224,6 +229,7 @@ AutomaticDictionary.Class.prototype = {
         // TO all and CC all
         var ccs = this.getRecipients("cc");
         var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
+            
         this.log("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
         
@@ -251,6 +257,11 @@ AutomaticDictionary.Class.prototype = {
         
         this.log("Language found: "+ lang);
         
+        if( this.last_toandcc_key == toandcc_key && this.last_lang == lang){
+            return; //Nothing changed
+        }
+        this.last_lang = lang;
+        this.last_toandcc_key = toandcc_key;
         if(lang){
             var worked = false;
             try{
@@ -327,8 +338,8 @@ AutomaticDictionary.Class.prototype = {
                     _this.languageChanged(event);
                 },false);
 
-            window.addEventListener("blur", function(){ _this.stop(); } , true);
-            window.addEventListener("focus", function(){ _this.start(); }, true );
+            window.addEventListener("blur", function(){_this.stop();} , true);
+            window.addEventListener("focus", function(){_this.start();}, true );
 
             this.log("events seem to be registered");
         }else{
@@ -338,16 +349,22 @@ AutomaticDictionary.Class.prototype = {
     },
 
   
-    getLabel: function(){
-        return document.getElementById("automatic-dictionary-panel");
-    },
-  
     changeLabel: function( str ){
-        var x = this.getLabel();
-        if(x)
-            x.label = str;
-        else
-            this.log("no label found");
+        this.log("Writting to label: " + str);
+        if( str=="" ){  return; }
+        var nb = document.getElementById(this.notificationbox_elem_id);
+        var n = nb.getNotificationWithValue('change-label');
+        str = this.name + ": " + str;  
+        if(n) {
+            n.label = str;
+        } else {
+            var buttons = [];
+            var priority = nb.PRIORITY_INFO_MEDIUM;
+            nb.appendNotification(str, 'change-label', null, priority, buttons);
+        }
+        window.setTimeout( function( ){
+            nb.removeAllNotifications( false );
+        }, this.notification_time);
     },
 
     getStrBundle: function(){

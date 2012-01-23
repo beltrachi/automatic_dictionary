@@ -43,6 +43,7 @@
     
         window = {
             addEventListener: function(){},
+            setTimeout:function(){}
         };
         
         document = {    
@@ -51,6 +52,18 @@
                     getString: function(k){return k;},
                     getFormattedString: function(k,v){return k}
                 };
+                if( id == "automatic_dictionary_notification"){
+                    return {
+                        PRIORITY_INFO_MEDIUM: 1,
+                        getNotificationWithValue:function(){
+                            return {};
+                        },
+                        appendNotification:function(){
+                            
+                        },
+                        removeAllNotifications:function(){}
+                    };
+                }
                 return {addEventListener: function(){} };
             }
         };
@@ -280,6 +293,43 @@
         
     })();
     
-    
+    /*
+            
+         6. We only call to changeLabel when something has changed to not bother
+            the user too much.
+            
+    */
+    (function(){
+        test_setup();
+        var adi = new AutomaticDictionary.Class();
+        
+        //Prepare scenario
+        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
+        // Collect setted languages on the interface
+        var setted_langs = [];
+        var labels = [];
+        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.changeLabel = function(str){ labels.push( str );}
+        
+        adi.deduceLanguage();
+        assert.equal( 1, labels.length);
+        
+        adi.deduceLanguage();
+        assert.equal( 1, labels.length);
+        
+        mock_recipients( adi, {"to":["foo"]} );
+        adi.deduceLanguage();
+        adi.deduceLanguage();
+        
+        assert.equal( 2, labels.length);
+        call_language_changed( adi, "foobar");
+        
+        assert.equal( 3, labels.length);
+        
+        adi.deduceLanguage();
+        //We expect a new label because the plugin detects that there is a lang for
+        //these recipients now
+        assert.equal( 4, labels.length);
+    })();
     
 })();
