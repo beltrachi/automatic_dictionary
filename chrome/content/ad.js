@@ -23,7 +23,7 @@ if( typeof(AutomaticDictionary)=== "undefined" ){
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    //return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
     if( typeof(msg) == "function"){
         msg = msg();
     }
@@ -257,8 +257,18 @@ AutomaticDictionary.Class.prototype = {
         
         this.log("Language found: "+ lang);
         
-        if( this.last_toandcc_key == toandcc_key && this.last_lang == lang){
-            return; //Nothing changed
+        // Rule: when you detect a language and you detected it last time,
+        // Set it again if it's not the current. (Support multi compose windows) 
+        this.log("last_to_and_cc, etc");
+        this.log([this.last_toandcc_key, toandcc_key , 
+                this.last_lang , lang])
+        if( this.last_toandcc_key == toandcc_key && 
+                this.last_lang == lang ){
+            //test that the last lang is the same as the one setted on the dictionary.
+            if( this.getCurrentLang() == lang ){
+                this.log("deduceLanguage detects that nothing changed");
+                return; //Nothing changed
+            }
         }
         this.last_lang = lang;
         this.last_toandcc_key = toandcc_key;
@@ -294,7 +304,14 @@ AutomaticDictionary.Class.prototype = {
             },
             stopPropagation: function(){}
         };
+        //function defined in mailnews/compose/MsgComposeCommands.js
         ChangeLanguage( fake_event );
+    },
+    //Take care as this language is globally set.
+    getCurrentLang: function(){
+        var spellChecker = Components.classes["@mozilla.org/spellchecker/engine;1"]
+            .getService(Components.interfaces.mozISpellCheckingEngine);
+        return spellChecker.dictionary;
     },
   
     getLangFor: function( addr ){
@@ -327,10 +344,10 @@ AutomaticDictionary.Class.prototype = {
         if( window ){
             var _this = this;
             window.addEventListener("compose-window-close", function(){
-                _this.stop()
+                _this.stop();
                 }, true);
             window.addEventListener('compose-window-reopen', function(){
-                _this.start()
+                _this.start();
                 }, true);
             //Observe when the dict changes
             document.getElementById("languageMenuList").addEventListener("command",

@@ -3,8 +3,10 @@
     Components = null;
     window = null;
     document = null;
+    var dictionary_object = {dictionary:undefined}; 
     
     function test_setup(){
+        dictionary_object.dictionary = undefined;
         Components = {
             //Custom key to save data during simulations.
             savedPrefs: {
@@ -34,6 +36,12 @@
                             setIntPref: _set
                         };
                     }
+                },
+                "@mozilla.org/spellchecker/engine;1":{
+                    getService: function(){
+                        return dictionary_object;
+                    }             
+                    
                 }
             },
             interfaces:{
@@ -111,7 +119,10 @@
         mock_recipients( adi, {"to":["foo"],"cc":[]} );
         // Collect setted languages on the interface
         var setted_langs = [];
-        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.setCurrentLang = function(lang){
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
         adi.deduceLanguage();
         
         assert.equal( 0, setted_langs.length);
@@ -141,7 +152,10 @@
         mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
         // Collect setted languages on the interface
         var setted_langs = [];
-        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
         adi.deduceLanguage();
         
         assert.equal( 0, setted_langs.length);
@@ -182,7 +196,10 @@
         mock_recipients( adi, {"to":["catalan"]} );
         // Collect setted languages on the interface
         var setted_langs = [];
-        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
         call_language_changed( adi, "ca");
         mock_recipients( adi, {"to":["spanish"]} );
         call_language_changed( adi, "es");
@@ -229,7 +246,10 @@
         
         // Collect setted languages on the interface
         var setted_langs = [];
-        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
         
         mock_recipients( adi, {"to":["A"],"cc":["B"]} );
         call_language_changed( adi, "new-toAccB-lang");
@@ -275,7 +295,10 @@
 
         // Collect setted languages on the interface
         var setted_langs = [];
-        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
         
         adi.deduceLanguage();
         assert.equal( 1, setted_langs.length);
@@ -308,13 +331,17 @@
         // Collect setted languages on the interface
         var setted_langs = [];
         var labels = [];
-        adi.setCurrentLang = function(lang){ setted_langs.push( lang );}
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
         adi.changeLabel = function(str){ labels.push( str );}
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
         
         adi.deduceLanguage();
+        logger.debug(labels);
         assert.equal( 1, labels.length);
         
         mock_recipients( adi, {"to":["foo"]} );
