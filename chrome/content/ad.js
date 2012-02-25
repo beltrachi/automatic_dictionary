@@ -23,7 +23,7 @@ if( typeof(AutomaticDictionary)=== "undefined" ){
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    //return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
     if( typeof(msg) == "function"){
         msg = msg();
     }
@@ -259,15 +259,14 @@ AutomaticDictionary.Class.prototype = {
         
         // Rule: when you detect a language and you detected it last time,
         // Set it again if it's not the current. (Support multi compose windows) 
-        this.log("last_to_and_cc, etc");
-        this.log([this.last_toandcc_key, toandcc_key , 
-                this.last_lang , lang])
         if( this.last_toandcc_key == toandcc_key && 
                 this.last_lang == lang ){
             //test that the last lang is the same as the one setted on the dictionary.
-            if( this.getCurrentLang() == lang ){
-                this.log("deduceLanguage detects that nothing changed");
-                return; //Nothing changed
+            if( this.isBlank(lang) || this.getCurrentLang() == lang){
+                this.log("deduceLanguage detects that nothing changed or lang is null");
+                return;
+            }else{
+                this.log("Detected changes on langs: "+ [lang, this.getCurrentLang()].toSource());
             }
         }
         this.last_lang = lang;
