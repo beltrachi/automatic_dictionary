@@ -1,30 +1,32 @@
 lru_performace_test_suite = function( constructor ){
     var bm_options = {soft:true}; 
-    var lru = new constructor( {}, { size: 500 } );
+    var size = 500;
+    var amount = 1000;
+    var lru = new constructor( {}, { size: size } );
     
     assert.equal(0, lru.size());
     
     assert.benchmark( 400, function(){
-        for(var i=0; i < 1000; i++){
+        for(var i=0; i < amount; i++){
            lru.set("a"+i, "v"+i);
         }
     }, bm_options );
     
-    assert.equal(500, lru.size());
+    assert.equal(size, lru.size());
     
     assert.benchmark( 500, function(){
-        for(var i=0; i < 1000; i++){
+        for(var i=0; i < amount; i++){
            lru.get("a"+i, "v"+i);
         }
     }, bm_options );
     
-    assert.equal(500, lru.size());
+    assert.equal(size, lru.size());
     
     var str = lru.serialize();
     var lru2 = eval( str );
     
-    assert.equal(500, lru2.size());
-    assert.equal("v999", lru.get("a999"));
+    assert.equal(size, lru2.size());
+    assert.equal("v"+(amount-1), lru.get("a" + (amount-1)));
     
 }
 
