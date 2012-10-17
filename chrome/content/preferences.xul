@@ -13,6 +13,7 @@
         <preferences>
             <preference id="maxSize" name="extensions.automatic_dictionary.addressesInfo.maxSize" type="int"/>
             <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
+            <preference id="allowCollect" name="extensions.automatic_dictionary.allowCollect" type="bool"/>
         </preferences>
         <vbox class="prefoptions">
             <description class="intro">
@@ -35,6 +36,15 @@
             <description class="info">
                 &maxRecipients.info;
                 &maxRecipients.recomendation;
+            </description>
+            <hbox>
+                <label control="input_allowCollect" value="&allowCollect.label;"/>
+                <checkbox preference="allowCollect" id="input_allowCollect" />
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &allowCollect.info;
+                &allowCollect.recomendation;
             </description>
         </vbox>
     </prefpane>

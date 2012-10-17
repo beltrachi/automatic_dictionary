@@ -11,6 +11,7 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/sorted_set.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/lru_hash_v2.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/shared_hash.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/ga.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
  <hbox insertbefore="status-bar">

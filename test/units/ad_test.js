@@ -14,6 +14,7 @@
                 "extensions.automatic_dictionary.addressesInfo.version":"",
                 "extensions.automatic_dictionary.addressesInfo.lock": "",
                 "extensions.automatic_dictionary.addressesInfo.maxSize": 200,
+                "extensions.automatic_dictionary.allowCollect": true,
                 "extensions.automatic_dictionary.migrations_applied": ""
             },
             classes:{
@@ -33,7 +34,9 @@
                             getCharPref: _get,
                             getIntPref: _get,
                             setCharPref: _set,
-                            setIntPref: _set
+                            setIntPref: _set,
+                            getBoolPref: _get,
+                            setBoolPref: _set
                         };
                     }
                 },
@@ -51,7 +54,8 @@
     
         window = {
             addEventListener: function(){},
-            setTimeout:function(){}
+            setTimeout:function(){},
+            location:{host:"host",pathname:"pathname"}
         };
         
         document = {    
@@ -75,6 +79,8 @@
                 return {addEventListener: function(){} };
             }
         };
+        
+        Image = function(){};
     }
     
     // Method to mock the recipients of an automatic_dictonary instance
@@ -357,6 +363,80 @@
         //We expect a new label because the plugin detects that there is a lang for
         //these recipients now
         assert.equal( 4, labels.length);
+    })();
+    
+    /*
+            
+         7. Test collecting statistical data on GA
+            
+    */
+    (function(){
+        test_setup();
+        var adi = new AutomaticDictionary.Class();
+        var ad_actions = [];
+        adi.ga = {
+            track:function(url){
+                ad_actions.push(url);
+            }
+        }
+        
+        //Prepare scenario
+        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
+        // Collect setted languages on the interface
+        var setted_langs = [];
+        var labels = [];
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
+        adi.changeLabel = function(str){ labels.push( str );}
+        
+        adi.deduceLanguage();
+        assert.equal( 1, labels.length);
+        assert.equal( 1, ad_actions.length);
+        assert.equal( "/action/miss", ad_actions[0]);
+        //No change
+        adi.deduceLanguage();
+        logger.debug(labels);
+        assert.equal( 1, labels.length);
+        assert.equal( 1, ad_actions.length);
+        
+        mock_recipients( adi, {"to":["foo"]} );
+        adi.deduceLanguage();
+        adi.deduceLanguage();
+        
+        assert.equal( 2, labels.length);
+        assert.equal( 2, ad_actions.length);
+        assert.equal( "/action/miss", ad_actions[1]);
+
+        call_language_changed( adi, "foobar");
+        
+        assert.equal( 3, labels.length);
+        assert.equal( 3, ad_actions.length);
+        assert.equal( "/action/saved/foobar", ad_actions[2]);
+        
+        adi.deduceLanguage();
+        //We expect a new label because the plugin detects that there is a lang for
+        //these recipients now
+        assert.equal( 4, labels.length);
+        assert.equal( 4, ad_actions.length);
+        assert.equal( "/action/hit/foobar", ad_actions[3]);
+        
+        ///////   Disable tracking
+        
+        Components.savedPrefs[adi.ALLOW_COLLECT_KEY] = false;
+        
+        mock_recipients( adi, {"to":["unknown"]} );
+        adi.deduceLanguage();
+        
+        //No new tracking
+        assert.equal( 4, ad_actions.length);
+        
+        call_language_changed( adi, "unknownlang");
+        
+        //No new tracking
+        assert.equal( 4, ad_actions.length);
+        
     })();
     
 })();

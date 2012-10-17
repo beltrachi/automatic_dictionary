@@ -151,6 +151,10 @@ AutomaticDictionary.SharedHash.prototype = {
         }
         this.log(this.data.toSource());
     },
+    size: function(){
+        this.refresh();
+        return this.data.size();
+    },
     log: function(msg){
         AutomaticDictionary.dump(msg);
     }

@@ -14,3 +14,10 @@ mas antiguo o menos usado se elimina para dejar sitio a los datos nuevos.
 no se guardara el idioma para aquellos destinatarios. Útil para evitar procesar correos masivos.">
 <!ENTITY maxRecipients.recomendation "Valor recomendado: 10.">
 
+<!ENTITY allowCollect.label "Permitir recoger datos estadísticos:">
+<!ENTITY allowCollect.info 
+"Recogemos datos anonimos en una cuenta de Google Analytics para saber como se usa
+el plugin y para decidir mejor que conviene para siguientes versiones. 
+Nunca guardaremos ni direcciones de correo ni contenidos. Solo el idioma que se
+utiliza y que acciones se realizan.">
+<!ENTITY allowCollect.recomendation "">

@@ -46,6 +46,15 @@ AutomaticDictionary.Class = function(){
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
     this.setListeners();
     this.initialized = true;
+    
+    this.storage = this.getSimpleStorage(this.prefManager,this.pref_prefix);
+    this.ga = new AutomaticDictionary.Lib.GoogleAnalytics({
+        domain: this.ga_domain,
+        code: this.UA_CODE,
+        storage: this.storage
+    });
+    this.collect("init/?size="+this.data.size());
+    
     this.start();
     return this;
 }
@@ -55,8 +64,13 @@ AutomaticDictionary.Class.prototype = {
     ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",
     MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
+    ALLOW_COLLECT_KEY:"extensions.automatic_dictionary.allowCollect",
     
     POLLING_DELAY: 3000, //Miliseconds
+    
+    UA_CODE: "UA-35579454-1",
+    pref_prefix: "automatic_dictionary.",
+    ga_domain: "automatic_dictionary",
   
     //Attributes
     initialized: false,
@@ -65,6 +79,7 @@ AutomaticDictionary.Class.prototype = {
     last_timeout: null, //Timer object of the next poll
     instance_number: -1,
     prefManager: null,
+    ga: null,
     last_toandcc_key: null,
     name: "AutomaticDictionary",
     notification_time: 3000,
@@ -85,6 +100,26 @@ AutomaticDictionary.Class.prototype = {
         this.log("ad: start");
         this.running = true;
         this.observeRecipients();
+    },
+    
+    //Returns a simple key value store for any type of data.
+    getSimpleStorage: function(pm, prefix){
+        return {
+            set: function(key, value){
+                pm.setCharPref( prefix + key, JSON.stringify(value) );
+            },
+            get: function(key){
+                var data=null;
+                //When data is not initialized, it raises an error.
+                try{ 
+                    data = pm.getCharPref( prefix + key );
+                    if( data != ""){
+                        data = JSON.parse(data);
+                    }
+                }catch(e){}
+                return data;
+            }
+        };
     },
   
     observeRecipients: function(){
@@ -197,6 +232,7 @@ AutomaticDictionary.Class.prototype = {
                     [ current_lang, saved_recipients ] )
                 );
         }
+        this.collect("saved/"+ current_lang );
         this.log("------------------------------------languageChanged by event END");
     },
     
@@ -260,7 +296,7 @@ AutomaticDictionary.Class.prototype = {
         // Rule: when you detect a language and you detected it last time,
         // Set it again if it's not the current. (Support multi compose windows) 
         if( this.last_toandcc_key == toandcc_key && 
-                this.last_lang == lang ){
+            this.last_lang == lang ){
             //test that the last lang is the same as the one setted on the dictionary.
             if( this.isBlank(lang) || this.getCurrentLang() == lang){
                 this.log("deduceLanguage detects that nothing changed or lang is null");
@@ -272,17 +308,17 @@ AutomaticDictionary.Class.prototype = {
         this.last_lang = lang;
         this.last_toandcc_key = toandcc_key;
         if(lang){
-            var worked = false;
             try{
                 this.setCurrentLang( lang );
-                worked = true;
+                this.changeLabel( this.ft("deducedLang", [lang]))
+                this.collect("hit/"+lang);
             }catch( e ){
                 this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
                 throw e;
             }
-            if(worked) this.changeLabel( this.ft("deducedLang", [lang]))
         }else{
             this.changeLabel(this.t( "noLangForRecipients" ));
+            this.collect("miss");
         }
     },
     
@@ -309,7 +345,7 @@ AutomaticDictionary.Class.prototype = {
     //Take care as this language is globally set.
     getCurrentLang: function(){
         var spellChecker = Components.classes["@mozilla.org/spellchecker/engine;1"]
-            .getService(Components.interfaces.mozISpellCheckingEngine);
+        .getService(Components.interfaces.mozISpellCheckingEngine);
         return spellChecker.dictionary;
     },
   
@@ -320,7 +356,7 @@ AutomaticDictionary.Class.prototype = {
     getRecipients: function( recipientType ){
         recipientType = recipientType || "to";
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
-            .createInstance(Components.interfaces.nsIMsgCompFields);
+        .createInstance(Components.interfaces.nsIMsgCompFields);
         Recipients2CompFields( fields );
         var nsIMsgRecipientArrayInstance = {
             length:0
@@ -344,18 +380,22 @@ AutomaticDictionary.Class.prototype = {
             var _this = this;
             window.addEventListener("compose-window-close", function(){
                 _this.stop();
-                }, true);
+            }, true);
             window.addEventListener('compose-window-reopen', function(){
                 _this.start();
-                }, true);
+            }, true);
             //Observe when the dict changes
             document.getElementById("languageMenuList").addEventListener("command",
                 function(event){
                     _this.languageChanged(event);
                 },false);
 
-            window.addEventListener("blur", function(){_this.stop();} , true);
-            window.addEventListener("focus", function(){_this.start();}, true );
+            window.addEventListener("blur", function(){
+                _this.stop();
+            } , true);
+            window.addEventListener("focus", function(){
+                _this.start();
+            }, true );
 
             this.log("events seem to be registered");
         }else{
@@ -367,7 +407,9 @@ AutomaticDictionary.Class.prototype = {
   
     changeLabel: function( str ){
         this.log("Writting to label: " + str);
-        if( str=="" ){  return; }
+        if( str=="" ){
+            return;
+        }
         var nb = document.getElementById(this.notificationbox_elem_id);
         var n = nb.getNotificationWithValue('change-label');
         str = this.name + ": " + str;  
@@ -405,6 +447,19 @@ AutomaticDictionary.Class.prototype = {
         return this.prefManager.getIntPref( this.MAX_RECIPIENTS_KEY );
     },
     
+    allowCollect: function(){
+        return this.prefManager.getBoolPref(this.ALLOW_COLLECT_KEY);
+    },
+    
+    collect: function(action){
+        if( this.allowCollect() ){
+            this.log("collect for action "+action);
+            this.ga.track("/action/"+action);
+        }else{
+            this.log("DISABLED track for action "+action);            
+        }
+    },
+    
     /* Migrations section */
     
     // Upgrades plugin data to current release version
@@ -421,13 +476,13 @@ AutomaticDictionary.Class.prototype = {
         // Apply all data migrations required
         // Get ordered migrations (by key size)
         var available_migrations = [];
-        for( key in this.migrations ){
+        for( var key in this.migrations ){
             available_migrations.push( key )
         }
         
         //Iterate over migration keys and apply them if needed
         available_migrations.sort();
-        for( idx in available_migrations ){
+        for( var idx in available_migrations ){
             var migration_key = available_migrations[ idx ];
             if( migrations_applied.indexOf( migration_key ) < 0 ){
                 //apply migration
@@ -458,10 +513,14 @@ AutomaticDictionary.Class.prototype = {
                     self.log("Failed the read of the old preferences. Maybe they were empty.");
                     return; // Nothing to migrate.
                 }
-            }else{ return; }
+            }else{
+                return;
+            }
             // Save data as new format!
             var maxSize = self.prefManager.getIntPref( prefPath + ".maxSize");
-            var lru = new AutomaticDictionary.Lib.LRUHashV2( v, {size: maxSize} );
+            var lru = new AutomaticDictionary.Lib.LRUHashV2( v, {
+                size: maxSize
+            } );
             self.prefManager.setCharPref(prefPath, lru.toJSON());
         },
         "201106032254": function(self){
@@ -479,6 +538,10 @@ AutomaticDictionary.Class.prototype = {
             prefPath = self.ADDRESS_INFO_PREF + ".maxSize";
             var maxSize = self.prefManager.getIntPref( prefPath );
             self.prefManager.setIntPref( prefPath, maxSize * factor );            
+        },
+        "201210142159": function(self){
+            //Add limit of max_recipients
+            self.prefManager.setBoolPref( self.ALLOW_COLLECT_KEY, true);
         }
     }
 }

@@ -82,8 +82,8 @@ lru_test_suite = function( constructor ){
 //logger.info("Testing LRUHash");
 //test_suite( AutomaticDilctionary.Lib.LRUHash );
 
-logger.info("Testing LRUHash");
-lru_test_suite( AutomaticDictionary.Lib.LRUHash );
+logger.info("Disabled LRUHash test as it's slow and we only use V2");
+//lru_test_suite( AutomaticDictionary.Lib.LRUHash );
 logger.info("Testing LRUHashV2");
 lru_test_suite( AutomaticDictionary.Lib.LRUHashV2 );
 

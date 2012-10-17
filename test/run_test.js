@@ -3,6 +3,7 @@ load("./../chrome/content/lib/sorted_set.js");
 load("./../chrome/content/lib/lru_hash.js");
 load("./../chrome/content/lib/lru_hash_v2.js");
 load("./../chrome/content/lib/shared_hash.js");
+load("./../chrome/content/lib/ga.js");
 load("lib/tools.js");
 
 logger = Tools.Logger("performance");
@@ -17,6 +18,8 @@ logger.info("### Unit tests");
 load("units/sorted_set_test.js");
 
 load("units/lru_hash_test.js");
+
+load("units/ga_test.js");
 
 load("units/ad_test.js");
 

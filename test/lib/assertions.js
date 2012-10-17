@@ -5,11 +5,11 @@ assert = (function(){
             assertions: 0,
             failures: 0
         },
-        equal: function( expected, found ){
+        equal: function( expected, found, msg){
             this.counters.assertions++;
             if( expected != found ){
                 this.counters.failures++;
-                throw "Expected: "+ expected + "\nFound: "+found; 
+                throw (msg || ("Expected: "+ expected + "\nFound: "+found)); 
             }
         },
         strictEqual: function( expected, found ){
@@ -18,6 +18,16 @@ assert = (function(){
                 this.counters.failures++;
                 throw "Strict Expected: "+ expected + "\nFound: "+found;
             }
+        },
+        //"true" is a reserved word so...
+        isTrue: function( found, msg ){
+            this.equal(true, found, msg || "Is not true");
+        },
+        contains: function(needle, histack, msg){
+            this.isTrue(
+                (histack.indexOf(needle)!== -1),
+                msg || ('String "' + histack+'" does not contain ' + needle) 
+            );
         },
         // @param options can be the message string
         benchmark: function( milis, func, options ){
