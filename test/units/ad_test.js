@@ -55,7 +55,8 @@
         window = {
             addEventListener: function(){},
             setTimeout:function(){},
-            location:{host:"host",pathname:"pathname"}
+            location:{host:"host",pathname:"pathname"},
+            navigator:{language:"en_us"}
         };
         
         document = {    

@@ -62,7 +62,9 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
         win = window.location,
         img = new Image(),
         urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=1.3&utmn='
-        +utmn+'&utmsr=-&utmsc=-&utmul=-&utmje=0&utmfl=-&utmdt=-&utmhn='
+        +utmn+'&utmsr=-&utmsc=-&'
+        + 'utmul=' + window.navigator.language
+        +'&utmje=0&utmfl=-&utmdt=-&utmhn='
         +domain+'&utmr='+win+'&utmp='
         +url+'&utmac='
         +code+'&utmcc=__utma%3D'

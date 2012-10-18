@@ -24,7 +24,8 @@ var ga = AutomaticDictionary.Lib.GoogleAnalytics(
     }
 );
 window = {
-    location: {host:"host",pathname:"pathname"}
+    location: {host:"host",pathname:"pathname"},
+    navigator: {language:"en_us"}
 }
 
 AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
@@ -50,7 +51,8 @@ assert.contains( "http://www.google-analytics.com/__utm.gif",
 assert.contains( data.visitor_id, created_images[0].src);    
 assert.contains( data.first_visit, created_images[0].src);    
 assert.contains( data.last_session, created_images[0].src);    
-assert.contains( data.session_number, created_images[0].src);    
+assert.contains( data.session_number, created_images[0].src);
+assert.contains( "en_us",created_images[0].src);
 assert.contains( "actionurl", created_images[0].src);    
 
 ga.track("foobar");
