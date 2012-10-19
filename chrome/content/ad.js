@@ -53,7 +53,13 @@ AutomaticDictionary.Class = function(){
         code: this.UA_CODE,
         storage: this.storage
     });
-    this.collect("init/?size="+this.data.size());
+    this.collect("init",
+        {customVars:[
+                {name:"size",value:this.data.size()},
+                {name:"maxRecipients",value:this.getMaxRecipients()},
+                {name:"maxSize", value:this.data.maxSize}
+            ]
+        });
     
     this.start();
     return this;
@@ -450,11 +456,11 @@ AutomaticDictionary.Class.prototype = {
     allowCollect: function(){
         return this.prefManager.getBoolPref(this.ALLOW_COLLECT_KEY);
     },
-    
-    collect: function(action){
+    // options are forwarded to ga.track function
+    collect: function(action, options){
         if( this.allowCollect() ){
             this.log("collect for action "+action);
-            this.ga.track("/action/"+action);
+            this.ga.track("/action/"+action, options);
         }else{
             this.log("DISABLED track for action "+action);            
         }

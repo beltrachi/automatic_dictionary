@@ -53,7 +53,28 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
     last_session = storage.get("last_session") || current_session;
     storage.set("last_session", current_session);
     
-    function track(url){
+    //options.customVars can be an array as order matters
+    function track(url, options){
+    
+        var extras = {};
+        if( options && options.customVars ){
+            //We supose basic settings like that this settigs are visitor 
+            //settings and not from this action.
+            var first=[], last = [];
+            
+            for(var i = 0; i < options.customVars.length; i++ ){
+                options.customVars[i].name;
+                first.push(options.customVars[i].name);
+                last.push(options.customVars[i].value);
+            }
+            
+            extras["utme"] = "8("+first.join("*")+")9("+last.join("*")+")11(1)"
+        }
+        
+        var extras_querystring = "";
+        for(var key in extras){
+            extras_querystring += ""+key+"="+extras[key]+"&";
+        }
     
         var i=1000000000,
         utmn=rand(i,9999999999), //random request number
@@ -61,8 +82,9 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
         today=current_session,
         win = window.location,
         img = new Image(),
-        urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=1.3&utmn='
+        urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=5.1.7&utmn='
         +utmn+'&utmsr=-&utmsc=-&'
+        + extras_querystring
         + 'utmul=' + window.navigator.language
         +'&utmje=0&utmfl=-&utmdt=-&utmhn='
         +domain+'&utmr='+win+'&utmp='

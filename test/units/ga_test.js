@@ -17,18 +17,25 @@ Image = function(){
 }
 
 var ga = AutomaticDictionary.Lib.GoogleAnalytics(
-    {
-        storage: storage,
-        code: "UA",
-        domain: "domain"
-    }
+{
+    storage: storage,
+    code: "UA",
+    domain: "domain"
+}
 );
 window = {
-    location: {host:"host",pathname:"pathname"},
-    navigator: {language:"en_us"}
+    location: {
+        host:"host",
+        pathname:"pathname"
+    },
+    navigator: {
+        language:"en_us"
+    }
 }
 
-AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
+AutomaticDictionary.dump = function(msg){
+    logger.debug("AD: "+msg)
+    };
 
 // Check initialization
 assert.equal(0, created_images.length);
@@ -71,14 +78,39 @@ var last_session = data.last_session;
 //Restart session. Check what has to happen
 
 var ga2 = AutomaticDictionary.Lib.GoogleAnalytics(
-    {
-        storage: storage,
-        code: "UA",
-        domain: "domain"
-    }
+{
+    storage: storage,
+    code: "UA",
+    domain: "domain"
+}
 );
 
 assert.equal(first_visitor_id, data.visitor_id);
 //Last session changed
 assert.isTrue(last_session != data.last_session);
 assert.equal(2, data.session_number);
+
+//Check custom Vars support
+ga2.track("foo",{
+    customVars:
+    [ 
+    {
+        name:"aurum", 
+        value:"lauren"
+    }, 
+
+    {
+        name:"key2", 
+        value:"lorem"
+    }
+    ]
+});
+assert.equal(3, created_images.length);
+
+var img = created_images[2];
+
+assert.contains("utme=", img.src);
+assert.contains("lauren", img.src);
+assert.contains("aurum", img.src);
+assert.contains("lorem", img.src);
+assert.contains("key2", img.src);
