@@ -174,17 +174,20 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTable.prototype = {
         logger.debug("Freq table BEFORE REMOVE IS "+this.printOrder());
         var node = this.nodes[value], old_next, old_prev;
         if( node ){
-            var old_next = node.next;
-            var old_prev = node.prev;
+            old_next = node.next;
+            old_prev = node.prev;
+            logger.debug("olds are "+old_prev + " --- "+ old_next);
             node.dec();
             if( node.count == 0){
                 //Remove node
                 if( this.first == node){
+                    logger.debug("detected removing node so first is next "+ node.toString());
                     this.first = node.next;
                 }
                 if( this.last == node ){
                     this.last = node.prev;
                 }
+                logger.debug("REMOVING --- EMPTY NODE "+node.key);
                 node.remove();
                 delete(this.nodes[value]);
             }else{
@@ -222,15 +225,13 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode = function(key, count){
 AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
     //Increases counter and moves upward if necessary.
     inc: function(){
-        var p = this.prev, aux, _this = this;
+        var p, aux, _this = this;
         this.count ++;
         //Find the upper lower
-        while( p && p.count < this.count){
-            if( p.prev)
-                p = p.prev;
-            else
-                break;
-        }
+        p = this.walk("prev",function(n){
+            return (n == _this || n.count < _this.count);
+        });
+
         logger.debug("inc gets node "+ p);
         if( p && p.count < this.count){
             //We moved!
@@ -241,17 +242,13 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
     },
     // decrement by one and move downwards if needed
     dec: function(){
-        var p = this.next, aux;
+        var p, aux, _this = this;
         this.count--;
         //Walk down and find lowerz
-        while( p && p.count > this.count){
-            if( p.next)
-                p = p.next;
-            else
-                break;
-        }
-        logger.debug("dec gets node "+ p);
-        if( p && p.count <= this.count){
+        p = this.walk("next",function(n){
+            return (n == _this || n.count > _this.count );
+        });
+        if( p && p != this && p.count <= this.count){
             //We moved!
             //Remove node from current and insert in p.next
             this.remove();
@@ -266,6 +263,7 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
     },
     //The node is setted before this (this.prev is node)
     insertBefore:function(node){
+        if( this == node ) throw "Called insertBefore unanism"
         var aux = this.prev;
         this.prev = node;
         node.next = this;
@@ -275,6 +273,7 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
     },
     //The node is setted after this (this.next is node)
     insertAfter:function(node){
+        if( this == node ) throw "Called insertAfter unanism"
         var aux = this.next;
         this.next = node;
         node.prev = this;
