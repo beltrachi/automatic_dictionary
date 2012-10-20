@@ -26,9 +26,16 @@ assert.equal("A", obj.get(""));
 //unset values
 obj.remove("abc.com", "A");
 assert.equal("A", obj.get("com"));
-obj.remove("abc.com", "B");
+obj.remove("abc.com", "A");
 assert.equal("X", obj.get("com"));
 
 obj.remove("a.foo.com","a");
 assert.equal(null, obj.get("a.foo.com"));
+
+//Remove unexsitent item
+obj.remove("a.foo.com","a");
+
+obj.remove("b.foo.com","b");
+obj.remove("c.foo.com","c");
+
 
