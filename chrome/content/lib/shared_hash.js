@@ -155,6 +155,9 @@ AutomaticDictionary.SharedHash.prototype = {
         this.refresh();
         return this.data.size();
     },
+    keys: function(){
+        return this.data.keys();
+    },
     log: function(msg){
         AutomaticDictionary.dump(msg);
     }

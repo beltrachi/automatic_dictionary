@@ -71,6 +71,7 @@ AutomaticDictionary.Class.prototype = {
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",
     MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
     ALLOW_COLLECT_KEY:"extensions.automatic_dictionary.allowCollect",
+    ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
     
     POLLING_DELAY: 3000, //Miliseconds
     
@@ -189,6 +190,7 @@ AutomaticDictionary.Class.prototype = {
                     // Save the lang only if it has no lang setted!
                     if( !this.data.get( tos[i] ) ){
                         this.data.set(tos[i], current_lang);
+                        this.save_heuristic(tos[0], current_lang);
                         saved_recipients++;
                     }
                 }
@@ -205,6 +207,7 @@ AutomaticDictionary.Class.prototype = {
                 if( this.isBlank( curr ) || ccs.length == 0 ){
                     this.log("Enter cond 1.2.1");
                     this.data.set(tos[0], current_lang);
+                    this.save_heuristic(tos[0], current_lang);
                     saved_recipients++;
                 }
             }
@@ -224,6 +227,7 @@ AutomaticDictionary.Class.prototype = {
                 curr = this.data.get( ccs[i] );
                 if( this.isBlank( curr )){
                     this.data.set( ccs[i], current_lang );
+                    this.save_heuristic(ccs[i], current_lang);
                     saved_recipients += 1;
                 }
             }
@@ -251,6 +255,10 @@ AutomaticDictionary.Class.prototype = {
         return ((typeof value) == "undefined" || value === "" ||value === null);
     },
     
+    save_heuristic: function(recipient, lang){
+        
+    },
+    
     // Updates the interface with the lang deduced from the recipients
     /*
         How we search the lang:
@@ -271,7 +279,10 @@ AutomaticDictionary.Class.prototype = {
         // TO all and CC all
         var ccs = this.getRecipients("cc");
         var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
-            
+        var ga_customVars = [
+                {name:"to",value:recipients.length},
+                {name:"cc",value:ccs.length}
+        ];
         this.log("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
         
@@ -311,20 +322,43 @@ AutomaticDictionary.Class.prototype = {
                 this.log("Detected changes on langs: "+ [lang, this.getCurrentLang()].toSource());
             }
         }
+        
+        if(!lang && this.allowHeuristic()){
+            lang = this.heuristic_guess(recipients);
+        }
+        
         this.last_lang = lang;
         this.last_toandcc_key = toandcc_key;
         if(lang){
             try{
                 this.setCurrentLang( lang );
                 this.changeLabel( this.ft("deducedLang", [lang]))
-                this.collect("hit/"+lang);
+                this.collect("hit/"+lang, {customVars: ga_customVars});
             }catch( e ){
                 this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
                 throw e;
             }
         }else{
             this.changeLabel(this.t( "noLangForRecipients" ));
-            this.collect("miss");
+            this.collect("miss", {customVars: ga_customVars});
+        }
+    },
+    
+    //Tries to guess by other recipients domains
+    heuristic_guess: function(recipients){
+        for(var i=0; i < recipients.length; i++){
+            var recipient = recipients[i], parts, rightside;
+            parts = recipient.split("@");
+            rightside = parts[parts.length-1];
+            var list = this.data.keys();
+            for(var j=0; j<list.size; j++){
+                var item = list[j];
+                //Only the keys that are a single mail
+                if(item.split("@").length == 2){
+                    
+                }
+            }
+            parts = rightside.split(".");
         }
     },
     
@@ -453,6 +487,10 @@ AutomaticDictionary.Class.prototype = {
         return this.prefManager.getIntPref( this.MAX_RECIPIENTS_KEY );
     },
     
+    allowHeuristic: function(){
+        return this.prefManager.getBoolPref(this.ALLOW_HEURISTIC);
+    },
+    
     allowCollect: function(){
         return this.prefManager.getBoolPref(this.ALLOW_COLLECT_KEY);
     },
@@ -548,6 +586,10 @@ AutomaticDictionary.Class.prototype = {
         "201210142159": function(self){
             //Add limit of max_recipients
             self.prefManager.setBoolPref( self.ALLOW_COLLECT_KEY, true);
+        },
+        "201210192306": function(self){
+            //Add limit of max_recipients
+            self.prefManager.setBoolPref( self.ALLOW_HEURISTIC, true);
         }
     }
 }

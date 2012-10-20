@@ -15,6 +15,7 @@
                 "extensions.automatic_dictionary.addressesInfo.lock": "",
                 "extensions.automatic_dictionary.addressesInfo.maxSize": 200,
                 "extensions.automatic_dictionary.allowCollect": true,
+                "extensions.automatic_dictionary.allowHeuristic": true,
                 "extensions.automatic_dictionary.migrations_applied": ""
             },
             classes:{
@@ -374,10 +375,10 @@
     (function(){
         test_setup();
         var adi = new AutomaticDictionary.Class();
-        var ad_actions = [];
+        var ga_actions = [];
         adi.ga = {
             track:function(url){
-                ad_actions.push(url);
+                ga_actions.push(url);
             }
         }
         
@@ -394,34 +395,34 @@
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
-        assert.equal( 1, ad_actions.length);
-        assert.equal( "/action/miss", ad_actions[0]);
+        assert.equal( 1, ga_actions.length);
+        assert.equal( "/action/miss", ga_actions[0]);
         //No change
         adi.deduceLanguage();
         logger.debug(labels);
         assert.equal( 1, labels.length);
-        assert.equal( 1, ad_actions.length);
+        assert.equal( 1, ga_actions.length);
         
         mock_recipients( adi, {"to":["foo"]} );
         adi.deduceLanguage();
         adi.deduceLanguage();
         
         assert.equal( 2, labels.length);
-        assert.equal( 2, ad_actions.length);
-        assert.equal( "/action/miss", ad_actions[1]);
+        assert.equal( 2, ga_actions.length);
+        assert.equal( "/action/miss", ga_actions[1]);
 
         call_language_changed( adi, "foobar");
         
         assert.equal( 3, labels.length);
-        assert.equal( 3, ad_actions.length);
-        assert.equal( "/action/saved/foobar", ad_actions[2]);
+        assert.equal( 3, ga_actions.length);
+        assert.equal( "/action/saved/foobar", ga_actions[2]);
         
         adi.deduceLanguage();
         //We expect a new label because the plugin detects that there is a lang for
         //these recipients now
         assert.equal( 4, labels.length);
-        assert.equal( 4, ad_actions.length);
-        assert.equal( "/action/hit/foobar", ad_actions[3]);
+        assert.equal( 4, ga_actions.length);
+        assert.equal( "/action/hit/foobar", ga_actions[3]);
         
         ///////   Disable tracking
         
@@ -431,13 +432,83 @@
         adi.deduceLanguage();
         
         //No new tracking
-        assert.equal( 4, ad_actions.length);
+        assert.equal( 4, ga_actions.length);
         
         call_language_changed( adi, "unknownlang");
         
         //No new tracking
-        assert.equal( 4, ad_actions.length);
+        assert.equal( 4, ga_actions.length);
         
     })();
-    
+
+    /*
+            
+         8. Test using heuristics
+            
+    */
+    (function(){
+        test_setup();
+        var adi = new AutomaticDictionary.Class();
+        
+        Components.savedPrefs[adi.ALLOW_HEURISTIC] = true;
+        
+        //Prepare scenario - mocking
+        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
+        // Collect setted languages on the interface
+        var setted_langs = [];
+        var labels = [];
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
+        adi.changeLabel = function(str){ labels.push( str );}
+        var ga_actions = [];
+        adi.ga = {
+            track:function(url){
+                ga_actions.push(url);
+            }
+        }
+        
+        
+        adi.deduceLanguage();
+        assert.equal( 1, labels.length);
+        assert.equal( 1, ga_actions.length);
+        assert.equal( "/action/miss", ga_actions[0]);
+        //No change
+        adi.deduceLanguage();
+        logger.debug(labels);
+        assert.equal( 1, labels.length);
+        assert.equal( 1, ga_actions.length);
+        
+        mock_recipients( adi, {"to":["foo@bar.dom"]} );
+        adi.deduceLanguage();
+        adi.deduceLanguage();
+        
+        assert.equal( 2, labels.length);
+        assert.equal( 2, ga_actions.length);
+        assert.equal( "/action/miss", ga_actions[1]);
+
+        call_language_changed( adi, "foobar");
+        
+        assert.equal( 3, labels.length);
+        assert.equal( 3, ga_actions.length);
+        assert.equal( "/action/saved/foobar", ga_actions[2]);
+        
+        adi.deduceLanguage();
+        //We expect a new label because the plugin detects that there is a lang for
+        //these recipients now
+        assert.equal( 4, labels.length);
+        assert.equal( 4, ga_actions.length);
+        assert.equal( "/action/hit/foobar", ga_actions[3]);
+        
+        mock_recipients( adi, {"to":["abc@bar.dom"]} );
+
+        adi.deduceLanguage();
+        
+        assert.equal( 5, labels.length);
+        assert.equal( 5, ga_actions.length);
+        assert.equal( "/action/guessed/foobar", ga_actions[1]);
+        assert.equal("foobar", setted_langs[1]);
+        
+    })();
 })();

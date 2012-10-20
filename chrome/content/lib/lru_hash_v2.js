@@ -62,6 +62,9 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
         }
         return this.hash[key];
     },
+    keys: function(){
+        return this.sorted_keys.toArray();
+    },
     // O(n)
     sk_update_key: function(key){
         this.logger.debug("updating usage of "+key);
