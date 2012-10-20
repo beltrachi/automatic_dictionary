@@ -20,4 +20,15 @@ obj.add("abc.com","A");
 obj.add("abc.com","A");
 assert.equal("A", obj.get("com"));
 
-obj.remove
+assert.equal(null, obj.get("undefined-domain"));
+assert.equal("A", obj.get(""));
+
+//unset values
+obj.remove("abc.com", "A");
+assert.equal("A", obj.get("com"));
+obj.remove("abc.com", "B");
+assert.equal("X", obj.get("com"));
+
+obj.remove("a.foo.com","a");
+assert.equal(null, obj.get("a.foo.com"));
+
