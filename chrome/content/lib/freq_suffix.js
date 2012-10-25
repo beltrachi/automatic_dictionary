@@ -43,12 +43,12 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
     },
     
     add: function(string, value){
-        logger.debug(">>>>>>>>>> FreqSuffix add "+ string + " value: "+value);
+        //logger.info(">>>>>>>>>> FreqSuffix add "+ string + " value: "+value);
         var parts = this.slice(string);
         this.root.add(parts, value);
     },
     remove: function(string, value){
-        logger.debug(">>>>>>>>>> FreqSuffix remove "+ string + " value: "+value);
+        //logger.debug(">>>>>>>>>> FreqSuffix remove "+ string + " value: "+value);
         var parts = this.slice(string);
         this.root.remove(parts, value);
     },
@@ -60,9 +60,10 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         return str.split(this.split_char).reverse();
     }
 };
-
+var fss = [];
 AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
-    logger.debug("creating TreeNode with "+ key);
+    //logger.debug("creating TreeNode with "+ key);
+    fss.push(this);
     this.key = key;
     this.values = new AutomaticDictionary.Lib.FreqSuffix.FreqTable();
     this.nodes = {};
@@ -71,23 +72,23 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
 AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     // list is an array of prefix parts already splitted
     add: function(list, value){
-        logger.debug("TN add " + value + " at "+ list.toSource());
+        //logger.debug("TN add " + value + " at "+ list.toSource());
         this.navigateThrough(list, function(node){
-            logger.debug("TN adding value "+ value + " to "+ node.key);
+            ////logger.debug("TN adding value "+ value + " to "+ node.key);
             node.values.add(value);
         });
     },
     remove: function(list, value){
-        logger.debug("TN remove " + value + " at "+ list.toSource());
+        //logger.debug("TN remove " + value + " at "+ list.toSource());
         this.navigateThrough(list, function(node){
-            logger.debug("TN remove value "+ value + " from "+ node.key);
+            //logger.debug("TN remove value "+ value + " from "+ node.key);
             node.values.remove(value);
         });
     },
     get: function(list){
         var result;
         this.navigateTo(list, function(node){
-            logger.debug("found node on GET "+ node.toString());
+            //logger.debug("found node on GET "+ node.toString());
             result = node.values.getFirst();
         });
         return result;
@@ -95,13 +96,15 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     //Runs func on each node. Force create by default
     // Returns null when reaches a dead end (cannot walk to the leaf)
     navigateThrough: function(list, func, forceCreate){
-        logger.debug("TN navthrough "+ list.toSource());
-        var node, forced = (forceCreate !== false);
+        //logger.debug("TN navthrough "+ list.toSource());
+        var node, 
+            forced = (forceCreate !== false),
+            item = list[0];
         if(list.length > 0 ){
-            node = this.nodes[list[0]];
+            node = this.nodes[item];
             if( !node && forced ){
-                node = new this.node_type(list[0]);
-                this.nodes[list[0]] = node;
+                node = new this.node_type(item);
+                this.nodes[item] = node;
             }
             if( node ){
                 list.shift();
@@ -114,23 +117,23 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
         func(this);
     },
     navigateTo: function( list, func){
-        logger.debug("TN navto "+ list.toSource());
+        //logger.debug("TN navto "+ list.toSource());
         //We know we reach leaf first so save it
-        var leaf;
+        var leaf, reached = false;
         this.navigateThrough(list, function(node){
-            if( node === null ){
-                //No node there so we return null
-                leaf = null;
+            if(!reached){
+                reached = true;
+                leaf = node;
             }
-            if( !leaf && leaf !== null && node ) leaf = node;
         }, false);
-        logger.debug("TN end of navto gives "+ leaf);
+        //logger.debug("TN end of navto gives "+ leaf);
         //Notice we do not call func unless node found.
         if(leaf) func(leaf);
     }
 };
-
+var fts = [];
 AutomaticDictionary.Lib.FreqSuffix.FreqTable = function(){
+    fts.push(this);
     //Nodes by key
     this.nodes = {};
     this.first = null; //Bigger counters / more freq
@@ -140,7 +143,7 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTable = function(){
 
 AutomaticDictionary.Lib.FreqSuffix.FreqTable.prototype = {
     add:function(value){
-        logger.debug("Freq table BEFORE ADD IS "+this.printOrder());
+        //logger.debug("Freq table BEFORE ADD IS "+this.printOrder());
         var node = this.nodes[value];
         if( !node ){
             //new node. Create and append bottom
@@ -153,41 +156,41 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTable.prototype = {
             this.last = node;
         }
         //increase node by one
-        logger.debug("Increasing node "+node.key);
+        //logger.debug("Increasing node "+node.key);
         node.inc();
         if( !node.prev ){
-            logger.debug("Node gets first!");
+            //logger.debug("Node gets first!");
             this.first = node;
         }
         if( !node.next ){
-            logger.debug("Node gets last!");
+            //logger.debug("Node gets last!");
             this.last = node;
         }
-        logger.debug("Node added is "+ node.toString());
-        logger.debug("Freq table first is "+this.printOrder());
+        //logger.debug("Node added is "+ node.toString());
+        //logger.debug("Freq table first is "+this.printOrder());
     },
     getFirst: function(){
         if( this.first )
             return this.first.key;
     },
     remove: function(value){
-        logger.debug("Freq table BEFORE REMOVE IS "+this.printOrder());
+        //logger.debug("Freq table BEFORE REMOVE IS "+this.printOrder());
         var node = this.nodes[value], old_next, old_prev;
         if( node ){
             old_next = node.next;
             old_prev = node.prev;
-            logger.debug("olds are "+old_prev + " --- "+ old_next);
+            //logger.debug("olds are "+old_prev + " --- "+ old_next);
             node.dec();
             if( node.count == 0){
                 //Remove node
                 if( this.first == node){
-                    logger.debug("detected removing node so first is next "+ node.toString());
+                    //logger.debug("detected removing node so first is next "+ node.toString());
                     this.first = node.next;
                 }
                 if( this.last == node ){
                     this.last = node.prev;
                 }
-                logger.debug("REMOVING --- EMPTY NODE "+node.key);
+                //logger.debug("REMOVING --- EMPTY NODE "+node.key);
                 node.remove();
                 delete(this.nodes[value]);
             }else{
@@ -201,8 +204,8 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTable.prototype = {
                 }
             }
         }
-        logger.debug("Node removed is "+ node);
-        logger.debug("Freq table first is "+this.printOrder());
+        //logger.debug("Node removed is "+ node);
+        //logger.debug("Freq table first is "+this.printOrder());
     },
     printOrder: function(){
         var out = "", p = this.first;
@@ -211,11 +214,19 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTable.prototype = {
             p = p.next;
         }
         return out;
+    },
+    size: function(){
+        var c = 0;
+        for (var k in this.nodes) {
+            c++;
+        }
+        return c;
     }
 };
-
+ftns = [];
 //This is a priority queue
 AutomaticDictionary.Lib.FreqSuffix.FreqTableNode = function(key, count){
+    ftns.push(this);
     this.count = count || 0;
     this.prev = null;
     this.next = null;
@@ -229,10 +240,10 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
         this.count ++;
         //Find the upper lower
         p = this.walk("prev",function(n){
-            return (n == _this || n.count < _this.count);
+            return (n.count < _this.count || n == _this);
         });
 
-        logger.debug("inc gets node "+ p);
+        //logger.debug("inc gets node "+ p);
         if( p && p.count < this.count){
             //We moved!
             //Remove node from current and insert in p.next
@@ -246,7 +257,7 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
         this.count--;
         //Walk down and find lowerz
         p = this.walk("next",function(n){
-            return (n == _this || n.count > _this.count );
+            return ( n.count > _this.count || n == _this );
         });
         if( p && p != this && p.count <= this.count){
             //We moved!
@@ -256,10 +267,14 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
         }
     },
     remove:function(){
-        if( this.next ) this.next.prev = this.prev;
-        if( this.prev ) this.prev.next = this.next;
-        this.prev = null;
-        this.next = null;
+        if( this.next ){
+            this.next.prev = this.prev;
+            this.next = null;
+        }
+        if( this.prev ){
+            this.prev.next = this.next;
+            this.prev = null;
+        }        
     },
     //The node is setted before this (this.prev is node)
     insertBefore:function(node){

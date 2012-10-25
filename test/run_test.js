@@ -6,6 +6,8 @@ load("./../chrome/content/lib/shared_hash.js");
 load("./../chrome/content/lib/freq_suffix.js");
 load("./../chrome/content/lib/ga.js");
 load("lib/tools.js");
+load("lib/json/json2.js");
+load("lib/profiler.js");
 
 logger = Tools.Logger("performance");
 
