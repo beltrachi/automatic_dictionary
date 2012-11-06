@@ -21,7 +21,25 @@ if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
  *  => "Y"
  *  
  *  
+ *  === Implementation
  *  
+ *  It's implemented with a tree that on each node it stores the accumulated
+ *  frequencies of each language.
+ *  
+ *  As we want the most frequent language, it keeps the languages sorted in
+ *  descendant order so we get the first.
+ *  
+ *  FreqSuffix (is a tree)
+ *      - root (TreeNode)
+ *          - nodes (child nodes)
+ *          - values (FreqTable is a double linked list mixed with a hash)
+ *              - nodes
+ *              - first
+ *              - last
+ *  
+ *  Drawbacks:
+ *      Building the structure is too slow. 1k inserts lasts 1 sec on tests
+ *      
  **/
 
 
@@ -34,12 +52,17 @@ AutomaticDictionary.Lib.FreqSuffix = function( hash, options ){
 AutomaticDictionary.Lib.FreqSuffix.prototype = {
     max_size: null,
     split_char: ".",
-    
+    values: {},
     
     initialize: function(hash, options){
         this.options = options;
         this.root = new this.node_class("");
         this.root.nodes[""] = this.root;
+        if(hash){
+            for(var k in hash){
+                this.add(k, hash[k]);
+            }
+        }
     },
     
     add: function(string, value){
@@ -74,7 +97,7 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     add: function(list, value){
         //logger.debug("TN add " + value + " at "+ list.toSource());
         this.navigateThrough(list, function(node){
-            ////logger.debug("TN adding value "+ value + " to "+ node.key);
+            //logger.debug("TN adding value "+ value + " to "+ node.key);
             node.values.add(value);
         });
     },

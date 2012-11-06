@@ -36,7 +36,7 @@ logger.info("### Performance tests");
 
 //load("performance/lru_hash_test.js");
 
-load("performance/freq_suffix_test.js");
+//load("performance/freq_suffix_test.js");
 
 
 print("Tests elapsed "+(Date.now() - start) + " ms. "+assert.counters.assertions + " assertions, "+ assert.counters.failures + " failures");
