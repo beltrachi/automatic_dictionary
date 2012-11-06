@@ -43,10 +43,10 @@ if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
  **/
 
 
-AutomaticDictionary.Lib.FreqSuffix = function( hash, options ){
-    hash = hash || {};
+AutomaticDictionary.Lib.FreqSuffix = function( values, options ){
+    values = values || [];
     this.node_class = AutomaticDictionary.Lib.FreqSuffix.TreeNode;
-    this.initialize( hash, options );
+    this.initialize( values, options );
 }
 
 AutomaticDictionary.Lib.FreqSuffix.prototype = {
@@ -54,13 +54,15 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
     split_char: ".",
     values: {},
     
-    initialize: function(hash, options){
+    initialize: function(values, options){
         this.options = options;
         this.root = new this.node_class("");
         this.root.nodes[""] = this.root;
-        if(hash){
-            for(var k in hash){
-                this.add(k, hash[k]);
+        var tmp;
+        if(values){
+            for(var i = 0; i < values.length;i++){
+                tmp = values[i];
+                this.add(tmp[0], tmp[1]);
             }
         }
     },

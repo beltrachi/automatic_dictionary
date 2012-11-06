@@ -40,21 +40,14 @@ obj.remove("c.foo.com","c");
 
 
 //Builder
-var obj2 = new AutomaticDictionary.Lib.FreqSuffix({
-    "a1.com":"en",
-    "a2.com":"en",
-    "a3.it":"it"
-})
+var obj2 = new AutomaticDictionary.Lib.FreqSuffix([
+    ["a1.com","en"],
+    ["a2.com","en"],
+    ["a3.it","it"]
+])
 
 assert.equal("it",obj2.get("a3.it"));
 assert.equal("it",obj2.get("it"));
 assert.equal("en",obj2.get("com"));
 
-
-////Serialize tests
-//
-//var str = obj.toJSON();
-//
-//var obj2 = new AutomaticDictionary.Lib.FreqSuffix({})
-//obj2.fromJSON(str);
 
