@@ -1,4 +1,5 @@
-var obj = new AutomaticDictionary.Lib.FreqSuffix({})
+
+var obj = new AutomaticDictionary.Lib.FreqSuffix({});
 obj.add("foo.com","X");
 obj.add("abc.com","X");
 obj.add("xyz.com","Y");
@@ -44,10 +45,53 @@ var obj2 = new AutomaticDictionary.Lib.FreqSuffix([
     ["a1.com","en"],
     ["a2.com","en"],
     ["a3.it","it"]
-])
+    ]);
 
 assert.equal("it",obj2.get("a3.it"));
 assert.equal("it",obj2.get("it"));
 assert.equal("en",obj2.get("com"));
+
+//Test assignmentCounter structure
+var as = new AutomaticDictionary.Lib.FreqSuffix.PairCounter();
+
+as.add("a","b");
+as.add("a","b");
+as.add("xx","y");
+
+assert.equal(2,as.getFreq("a","b"));
+assert.equal(1,as.getFreq("xx","y"));
+assert.equal(0,as.getFreq("xx","b"));
+
+var as2 = new AutomaticDictionary.Lib.FreqSuffix.PairCounter(
+    as.pairsWithCounter());
+
+assert.equal(2,as.getFreq("a","b"));
+assert.equal(1,as.getFreq("xx","y"));
+assert.equal(0,as.getFreq("xx","b"));
+
+as.remove("a","b");
+
+assert.equal(1,as.getFreq("a","b"));
+assert.equal(1,as.getFreq("xx","y"));
+assert.equal(0,as.getFreq("xx","b"));
+
+
+
+////Serialize tests
+//var str = obj2.toJSON();
+//
+////reset obj2
+//var obj2 = new AutomaticDictionary.Lib.FreqSuffix();
+//
+//obj3.fromJSON(str);
+//
+//assert.equal("it",obj2.get("a3.it"));
+//assert.equal("it",obj2.get("it"));
+//assert.equal("en",obj2.get("com"));
+//
+//obj2.set("foo.bar","foobar");
+//assert.equal("foobar", obj2.get("foo.bar"));
+//assert.equal("foobar", obj2.get("bar"));
+
 
 

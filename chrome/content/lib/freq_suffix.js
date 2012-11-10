@@ -40,6 +40,17 @@ if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
  *  Drawbacks:
  *      Building the structure is too slow. 1k inserts lasts 1 sec on tests
  *      
+ *      
+ *  === Store and load structure
+ *  
+ *  To save and retrieve this structure, we cannot extract it from the frequency
+ *  tables, so we hace to store it aside.
+ *  So we need a structure to store the adds in an array or something.
+ *  
+ *  With this data we'll be able to reconstruct the structure.
+ *  
+ *  it's a key => value times counter. To achieve that we can use a hack and
+ *  serialize the hash as a string, and store an integer.    
  **/
 
 
@@ -83,6 +94,9 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
     },
     slice: function(str){
         return str.split(this.split_char).reverse();
+    },
+    toJSON: function(){
+        return JSON.stringify(this.root.values(""));
     }
 };
 var fss = [];
@@ -154,6 +168,16 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
         //logger.debug("TN end of navto gives "+ leaf);
         //Notice we do not call func unless node found.
         if(leaf) func(leaf);
+    },
+    //Returns the values stored here.
+    values:function(prefix){
+        //TODO
+        //SEMBLA QUE NO PUC SABER QUINS VALORS S'HAN AFEGIT A PARTIR DEL QUE TINC
+        //Ja que si que podria extreure les fulles, epro si tinc
+        // add("a.b", "v1")
+        // add("b","v1"), no aquest ultim no va a les fulles, sino a un node intermig.
+        // Caldrà guardar-ho enuna estructura auxiliar.
+        return [];
     }
 };
 var fts = [];
@@ -349,3 +373,55 @@ AutomaticDictionary.Lib.FreqSuffix.FreqTableNode.prototype = {
         return p;
     }
 }
+
+// An pair counter is a counter that takes into account how many times a 
+// key has been related to a value. It's targeted to be O(1) on insert and update
+// but O(n) on create.
+// 
+// @param assignments an array with [key,value,counter] or null
+AutomaticDictionary.Lib.FreqSuffix.PairCounter = function(assignments){
+    this.data = {};
+    assignments = assignments || [];
+    var aux, i;
+    for(i=0; i < assignments.length; i++){
+        aux = assignments[i];
+        this.set(aux[0],aux[1],aux[2]);
+    }
+};
+AutomaticDictionary.Lib.FreqSuffix.PairCounter.prototype = {
+    data:{},
+    add:function(key, value){
+        var k = this.stringifyPair(key,value);
+        this.data[k] = (this.data[k]||0)+1;
+    },
+    //To force the value of the freq.
+    set: function(key,value,freq){
+        var k = this.stringifyPair(key,value);
+        this.data[k] = freq;
+    },
+    getFreq: function(key,value){
+        var k = this.stringifyPair(key,value);
+        return this.data[k] || 0;
+    },
+    remove:function(key, value){
+        var k = this.stringifyPair(key,value);
+        this.data[k] = ((this.data[k]||0))-1;
+    },
+    stringifyPair:function(a,b){
+        return JSON.stringify([a,b]);
+    },
+    parsePair:function(s){
+        return JSON.parse(s);
+    },
+    //Returns the array [k,v,counter] for each key-value pair
+    pairsWithCounter:function(){
+        var f, pair, out = [];
+        
+        for(var i in this.data){
+            pair = this.parsePair(i);
+            f = this.data[i];
+            out.push(pair.push(f));
+        }
+    }
+};
+
