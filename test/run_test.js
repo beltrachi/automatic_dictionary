@@ -3,6 +3,7 @@ load("./../chrome/content/lib/sorted_set.js");
 load("./../chrome/content/lib/lru_hash.js");
 load("./../chrome/content/lib/lru_hash_v2.js");
 load("./../chrome/content/lib/shared_hash.js");
+load("./../chrome/content/lib/pair_counter.js");
 load("./../chrome/content/lib/freq_suffix.js");
 load("./../chrome/content/lib/ga.js");
 load("lib/tools.js");
@@ -24,6 +25,8 @@ load("units/sorted_set_test.js");
 
 logger = Tools.Logger("debug");
 load("units/freq_suffix_test.js");
+
+load("units/pair_counter_test.js");
 logger = Tools.Logger("performance");
 
 //load("units/ga_test.js");
