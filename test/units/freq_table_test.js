@@ -9,12 +9,10 @@ ft.add("b");
 assert.equal("a",ft.getFirst());
 ft.add("b");
 ft.add("b");
-logger.info(ft.printOrder());
 assert.equal("b",ft.getFirst());
 
 ft.remove("b");
 ft.remove("b");
-logger.info(ft.printOrder());
 assert.equal("a",ft.getFirst());
 
 ft.remove("b");

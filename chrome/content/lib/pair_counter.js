@@ -1,3 +1,4 @@
+if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
 // An pair counter is a counter that takes into account how many times a 
 // key has been related to a value. It's targeted to be O(1) on insert and update
 // but O(n) on create.

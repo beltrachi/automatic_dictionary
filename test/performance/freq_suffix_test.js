@@ -26,17 +26,7 @@ assert.benchmark( 400, function(){
         obj.add(k, "v"+(i%5));
     }
 }, bm_options );
-for(var g=0; g< fts.length;g++){
-    logger.info("fts is "+fts[g].size());
-}
 logger.info("profiler gives: " + Profiler.print_stats() );
-
-logger.info("freq table node size is "+fts.length);
-logger.info("ftns len "+ ftns.length);
-
-logger.info("tree nodes len "+ fss.length);
-
-//assert.equal("v1", obj.get("b1.c1"));
 
 //Read
 assert.benchmark( 500, function(){

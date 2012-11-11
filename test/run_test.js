@@ -22,7 +22,7 @@ logger.info("### Unit tests");
 
 load("units/sorted_set_test.js");
 
-//load("units/lru_hash_test.js");
+load("units/lru_hash_test.js");
 
 logger = Tools.Logger("debug");
 load("units/pair_counter_test.js");
@@ -32,17 +32,21 @@ load("units/freq_table_test.js");
 load("units/freq_suffix_test.js");
 logger = Tools.Logger("performance");
 
-//load("units/ga_test.js");
+load("units/ga_test.js");
 
-//load("units/ad_test.js");
+load("units/ad_test.js");
 
 logger.info("### Performance tests");
 
-//load("performance/sorted_set_test.js");
+load("performance/sorted_set_test.js");
 
-//load("performance/lru_hash_test.js");
+load("performance/lru_hash_test.js");
 
-//load("performance/freq_suffix_test.js");
+load("performance/freq_table_test.js");
+
+load("performance/pair_counter_test.js");
+
+load("performance/freq_suffix_test.js");
 
 
 print("Tests elapsed "+(Date.now() - start) + " ms. "+assert.counters.assertions + " assertions, "+ assert.counters.failures + " failures");

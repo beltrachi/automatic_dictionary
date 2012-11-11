@@ -507,7 +507,7 @@
         
         assert.equal( 5, labels.length);
         assert.equal( 5, ga_actions.length);
-        assert.equal( "/action/guessed/foobar", ga_actions[1]);
+        assert.equal( "/action/guessed/foobar", ga_actions[4]);
         assert.equal("foobar", setted_langs[1]);
         
     })();

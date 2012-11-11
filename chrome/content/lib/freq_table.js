@@ -1,6 +1,4 @@
-var fts = [];
 AutomaticDictionary.Lib.FreqTable = function(){
-    fts.push(this);
     //Nodes by key
     this.nodes = {};
     this.first = null; //Bigger counters / more freq
@@ -92,10 +90,8 @@ AutomaticDictionary.Lib.FreqTable.prototype = {
         return c;
     }
 };
-ftns = [];
 //This is a priority queue
 AutomaticDictionary.Lib.FreqTableNode = function(key, count){
-    ftns.push(this);
     this.count = count || 0;
     this.prev = null;
     this.next = null;

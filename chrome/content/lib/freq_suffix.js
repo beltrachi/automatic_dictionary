@@ -1,4 +1,6 @@
 if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
+if( !AutomaticDictionary.Lib.PairCounter ) throw "AutomaticDictionary.Lib.PairCounter required";
+if( !AutomaticDictionary.Lib.FreqTable ) throw "AutomaticDictionary.Lib.FreqTable required";
 /*
  *  A FreqSuffix is a structure that can store a mapping of
  *  string => value
@@ -43,8 +45,8 @@ if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
  *      
  *  === Store and load structure
  *  
- *  To save and retrieve this structure, we cannot extract it from the frequency
- *  tables, so we hace to store it aside.
+ *  To save and retrieve this structure, we cannot extract it easily from the 
+ *  frequency tables, so we hace to store it aside.
  *  So we need a structure to store the adds in an array or something.
  *  
  *  With this data we'll be able to reconstruct the structure.
@@ -102,7 +104,6 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         return JSON.stringify(this.pair_counter.pairsWithCounter());
     },
     fromJSON: function(pairs_with_counter){
-        logger.info(pairs_with_counter);
         pairs_with_counter = JSON.parse(pairs_with_counter);
         this.initialize();
         var i, j, value;
@@ -114,11 +115,9 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         }
     }
 };
-var fss = [];
 AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
     //logger.debug("creating TreeNode with "+ key);
-    fss.push(this);
-    this.key = key;
+    this.key = key; 
     this.values = new AutomaticDictionary.Lib.FreqTable();
     this.nodes = {};
     this.node_type = AutomaticDictionary.Lib.FreqSuffix.TreeNode;
@@ -183,15 +182,5 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
         //logger.debug("TN end of navto gives "+ leaf);
         //Notice we do not call func unless node found.
         if(leaf) func(leaf);
-    },
-    //Returns the values stored here.
-    values:function(prefix){
-        //TODO
-        //SEMBLA QUE NO PUC SABER QUINS VALORS S'HAN AFEGIT A PARTIR DEL QUE TINC
-        //Ja que si que podria extreure les fulles, epro si tinc
-        // add("a.b", "v1")
-        // add("b","v1"), no aquest ultim no va a les fulles, sino a un node intermig.
-        // Caldrà guardar-ho enuna estructura auxiliar.
-        return [];
     }
 };
