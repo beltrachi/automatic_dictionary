@@ -63,12 +63,13 @@ AutomaticDictionary.Lib.FreqSuffix = function( values, options ){
 AutomaticDictionary.Lib.FreqSuffix.prototype = {
     max_size: null,
     split_char: ".",
-    values: {},
+    pair_counter: null,
     
     initialize: function(values, options){
         this.options = options;
         this.root = new this.node_class("");
         this.root.nodes[""] = this.root;
+        this.pair_counter = new AutomaticDictionary.Lib.FreqSuffix.PairCounter();
         var tmp;
         if(values){
             for(var i = 0; i < values.length;i++){
@@ -82,11 +83,13 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         //logger.info(">>>>>>>>>> FreqSuffix add "+ string + " value: "+value);
         var parts = this.slice(string);
         this.root.add(parts, value);
+        this.pair_counter.add(string,value);
     },
     remove: function(string, value){
         //logger.debug(">>>>>>>>>> FreqSuffix remove "+ string + " value: "+value);
         var parts = this.slice(string);
         this.root.remove(parts, value);
+        this.pair_counter.remove(string,value);
     },
     get: function(string){
         var parts = this.slice(string);
@@ -96,7 +99,19 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         return str.split(this.split_char).reverse();
     },
     toJSON: function(){
-        return JSON.stringify(this.root.values(""));
+        return JSON.stringify(this.pair_counter.pairsWithCounter());
+    },
+    fromJSON: function(pairs_with_counter){
+        logger.info(pairs_with_counter);
+        pairs_with_counter = JSON.parse(pairs_with_counter);
+        this.initialize();
+        var i, j, value;
+        for(i=0; i < pairs_with_counter.length;i++){
+            value = pairs_with_counter[i];
+            for(j=0;j<value[2];j++){
+                this.add(value[0],value[1]);
+            }
+        }
     }
 };
 var fss = [];
@@ -420,8 +435,10 @@ AutomaticDictionary.Lib.FreqSuffix.PairCounter.prototype = {
         for(var i in this.data){
             pair = this.parsePair(i);
             f = this.data[i];
-            out.push(pair.push(f));
+            pair.push(f);
+            out.push(pair);
         }
+        return out;
     }
 };
 

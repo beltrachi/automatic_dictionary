@@ -77,21 +77,18 @@ assert.equal(0,as.getFreq("xx","b"));
 
 
 
-////Serialize tests
-//var str = obj2.toJSON();
-//
-////reset obj2
-//var obj2 = new AutomaticDictionary.Lib.FreqSuffix();
-//
-//obj3.fromJSON(str);
-//
-//assert.equal("it",obj2.get("a3.it"));
-//assert.equal("it",obj2.get("it"));
-//assert.equal("en",obj2.get("com"));
-//
-//obj2.set("foo.bar","foobar");
-//assert.equal("foobar", obj2.get("foo.bar"));
-//assert.equal("foobar", obj2.get("bar"));
+//Serialize tests
+var str = obj2.toJSON();
+//reset obj2
+var obj2 = new AutomaticDictionary.Lib.FreqSuffix();
 
+obj2.fromJSON(str);
 
+assert.equal("it",obj2.get("a3.it"));
+assert.equal("it",obj2.get("it"));
+assert.equal("en",obj2.get("com"));
+
+obj2.add("foo.bar","foobar");
+assert.equal("foobar", obj2.get("foo.bar"));
+assert.equal("foobar", obj2.get("bar"));
 
