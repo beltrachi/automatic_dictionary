@@ -53,6 +53,8 @@ AutomaticDictionary.Class = function(){
         code: this.UA_CODE,
         storage: this.storage
     });
+    this.freq_suffix = new AutomaticDictionary.Lib.FreqSuffix();
+    this.freq_suffix.fromJSON(this.storage.get(this.FREQ_TABLE_KEY));
     this.collect("init",
         {customVars:[
                 {name:"size",value:this.data.size()},
@@ -73,10 +75,17 @@ AutomaticDictionary.Class.prototype = {
     ALLOW_COLLECT_KEY:"extensions.automatic_dictionary.allowCollect",
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
     
+    METHODS:{
+        REMEMBER:"remember",
+        GUESS:"guess"
+    },
+    
+    FREQ_TABLE_KEY:"freqTableData",
+    
     POLLING_DELAY: 3000, //Miliseconds
     
     UA_CODE: "UA-35579454-1",
-    pref_prefix: "automatic_dictionary.",
+    pref_prefix: "extensions.automatic_dictionary.",
     ga_domain: "automatic_dictionary",
   
     //Attributes
@@ -256,7 +265,10 @@ AutomaticDictionary.Class.prototype = {
     },
     
     save_heuristic: function(recipient, lang){
-        
+        this.log("saving heuristic for "+ recipient + " to "+ lang);
+        var parts = recipient.split("@");
+        if( parts[1] )
+            this.freq_suffix.add(parts[1], lang);
     },
     
     // Updates the interface with the lang deduced from the recipients
@@ -275,7 +287,7 @@ AutomaticDictionary.Class.prototype = {
         if( recipients.length == 0 ){
             return;
         }
-        var lang = null;
+        var lang = null, method = this.METHODS.REMEMBER;
         // TO all and CC all
         var ccs = this.getRecipients("cc");
         var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
@@ -325,6 +337,8 @@ AutomaticDictionary.Class.prototype = {
         
         if(!lang && this.allowHeuristic()){
             lang = this.heuristic_guess(recipients);
+            if(lang)
+                method = this.METHODS.GUESS;
         }
         
         this.last_lang = lang;
@@ -332,8 +346,8 @@ AutomaticDictionary.Class.prototype = {
         if(lang){
             try{
                 this.setCurrentLang( lang );
-                this.changeLabel( this.ft("deducedLang", [lang]))
-                this.collect("hit/"+lang, {customVars: ga_customVars});
+                this.changeLabel( this.ft("deducedLang."+method, [lang]))
+                this.collect(method+"/"+lang, {customVars: ga_customVars});
             }catch( e ){
                 this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
                 throw e;
@@ -346,20 +360,17 @@ AutomaticDictionary.Class.prototype = {
     
     //Tries to guess by other recipients domains
     heuristic_guess: function(recipients){
+        var recipient, parts, rightside,lang;
         for(var i=0; i < recipients.length; i++){
-            var recipient = recipients[i], parts, rightside;
+            recipient = recipients[i];
             parts = recipient.split("@");
             rightside = parts[parts.length-1];
-            var list = this.data.keys();
-            for(var j=0; j<list.size; j++){
-                var item = list[j];
-                //Only the keys that are a single mail
-                if(item.split("@").length == 2){
-                    
-                }
+            lang = this.freq_suffix.get(rightside);
+            if( lang ){
+                return lang;
             }
-            parts = rightside.split(".");
         }
+        return null;
     },
     
     // It returns a string representing the array of recipients not caring about the order
@@ -590,6 +601,11 @@ AutomaticDictionary.Class.prototype = {
         "201210192306": function(self){
             //Add limit of max_recipients
             self.prefManager.setBoolPref( self.ALLOW_HEURISTIC, true);
+        },
+        "201211112134": function(self){
+            //Add freq table base data
+            //TODO init based on SharedHash data.
+            //self.prefManager.setCharPref( self.pref_prefix + self.FREQ_TABLE_KEY, "[]");
         }
     }
 }

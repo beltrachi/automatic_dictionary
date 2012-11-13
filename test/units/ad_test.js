@@ -16,7 +16,8 @@
                 "extensions.automatic_dictionary.addressesInfo.maxSize": 200,
                 "extensions.automatic_dictionary.allowCollect": true,
                 "extensions.automatic_dictionary.allowHeuristic": true,
-                "extensions.automatic_dictionary.migrations_applied": ""
+                "extensions.automatic_dictionary.migrations_applied": "",
+                "extensions.automatic_dictionary.freqTableData": "\"[]\""
             },
             classes:{
                 "@mozilla.org/preferences-service;1":{
@@ -122,6 +123,9 @@
     (function(){
         test_setup();
         var adi = new AutomaticDictionary.Class();
+        
+        //Test internal methods
+        assert.equal("aa,ab,bb",adi.stringifyRecipientsGroup(["aa","bb","ab"]));
         
         //Prepare scenario
         mock_recipients( adi, {"to":["foo"],"cc":[]} );
@@ -422,7 +426,7 @@
         //these recipients now
         assert.equal( 4, labels.length);
         assert.equal( 4, ga_actions.length);
-        assert.equal( "/action/hit/foobar", ga_actions[3]);
+        assert.equal( "/action/remember/foobar", ga_actions[3]);
         
         ///////   Disable tracking
         
@@ -499,7 +503,7 @@
         //these recipients now
         assert.equal( 4, labels.length);
         assert.equal( 4, ga_actions.length);
-        assert.equal( "/action/hit/foobar", ga_actions[3]);
+        assert.equal( "/action/remember/foobar", ga_actions[3]);
         
         mock_recipients( adi, {"to":["abc@bar.dom"]} );
 
@@ -507,7 +511,7 @@
         
         assert.equal( 5, labels.length);
         assert.equal( 5, ga_actions.length);
-        assert.equal( "/action/guessed/foobar", ga_actions[4]);
+        assert.equal( "/action/guess/foobar", ga_actions[4]);
         assert.equal("foobar", setted_langs[1]);
         
     })();

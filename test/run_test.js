@@ -24,17 +24,17 @@ load("units/sorted_set_test.js");
 
 load("units/lru_hash_test.js");
 
-logger = Tools.Logger("debug");
 load("units/pair_counter_test.js");
 
 load("units/freq_table_test.js");
 
 load("units/freq_suffix_test.js");
-logger = Tools.Logger("performance");
 
 load("units/ga_test.js");
 
+logger = Tools.Logger("debug");
 load("units/ad_test.js");
+logger = Tools.Logger("performance");
 
 logger.info("### Performance tests");
 
