@@ -29,6 +29,9 @@ assert = (function(){
                 msg || ('String "' + histack+'" does not contain ' + needle) 
             );
         },
+        equalJSON: function( expected, found, msg){
+            this.equal(JSON.stringify(expected),JSON.stringify(found),msg);
+        },
         // @param options can be the message string
         benchmark: function( milis, func, options ){
             var msg = null;
