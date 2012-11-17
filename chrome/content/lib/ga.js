@@ -11,6 +11,7 @@ if( !AutomaticDictionary ) AutomaticDictionary = {
  *      domain: the domain expected to be the visits.
  *      
  **/
+//TODO: extract this code as a standalone code.
 AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
     
     var domain = config.domain, 

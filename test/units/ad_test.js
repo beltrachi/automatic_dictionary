@@ -533,4 +533,6 @@ test_setup();
             adi.freq_suffix.pairs());
         assert.contains("bar.dom", Components.savedPrefs["extensions.automatic_dictionary.freqTableData"]);
     })();
+    
+    //TODO: when a key expires on the LRU hash, expire it on the freq_suffix/heuristic
 })();
