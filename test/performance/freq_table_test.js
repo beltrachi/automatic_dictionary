@@ -14,7 +14,7 @@ assert.benchmark( 200, function(){
     }
 }, bm_options );
 
-assert.benchmark( 200, function(){
+assert.benchmark( 300, function(){
     var k;
     for(var i=0; i < amount; i++){
         //10 diferent first items and 11 second items 
