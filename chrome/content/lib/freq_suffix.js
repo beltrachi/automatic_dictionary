@@ -113,6 +113,10 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
                 this.add(value[0],value[1]);
             }
         }
+    },
+    //Return an array of arrays with [key,value,counter]
+    pairs:function(){
+        return this.pair_counter.pairsWithCounter();
     }
 };
 AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
