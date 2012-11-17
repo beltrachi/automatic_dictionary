@@ -526,7 +526,11 @@ test_setup();
         assert.equal( 5, ga_actions.length);
         assert.equal( "/action/guess/foobar", ga_actions[4]);
         assert.equal("foobar", setted_langs[1]);
-        
-    //TODO: test that heuristic structure is saved after saving a language.
+ 
+        //Test it's saved
+        assert.equalJSON(
+            [["mydom","foobar",1],["bar.dom","foobar",1]],
+            adi.freq_suffix.pairs());
+        assert.contains("bar.dom", Components.savedPrefs["extensions.automatic_dictionary.freqTableData"]);
     })();
 })();
