@@ -14,6 +14,7 @@ TODO:
     over again to know if somebody has updated it.
     We need to install an observer using the nsIPrefBranch2 interface.
 */
+//TODO: separate sync block from hash access to reuse it.
 AutomaticDictionary.SharedHash = function( prefPath ){
     this.prefPath = prefPath;
     this.lockPath = prefPath + ".lock";
@@ -156,6 +157,7 @@ AutomaticDictionary.SharedHash.prototype = {
         return this.data.size();
     },
     keys: function(){
+        this.refresh();
         return this.data.keys();
     },
     log: function(msg){
