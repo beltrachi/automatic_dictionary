@@ -23,13 +23,11 @@
                 "@mozilla.org/preferences-service;1":{
                     getService: function(){             
                         var _get = function(k){
-                            logger.debug("asking for "+k);
-                            logger.debug("and gets "+Components.savedPrefs[k]);
+                            logger.debug("asking for "+k + " and gets "+Components.savedPrefs[k]);
                             return Components.savedPrefs[k]; 
                         };
                         var _set = function(k,v){
-                            logger.debug("seting "+k);
-                            logger.debug("value "+v);
+                            logger.debug("seting "+k+" the value "+v);
                             Components.savedPrefs[k] = v; 
                         };
                         return {
@@ -80,33 +78,33 @@
                     };
                 }
                 return {addEventListener: function(){} };
-            }
-        };
+        }
+    };
         
-        Image = function(){};
-    }
+    Image = function(){};
+}
     
-    // Method to mock the recipients of an automatic_dictonary instance
-    var mock_recipients = function(inst, params){
-        inst.getRecipients = function( type ){
-            if( type && type === "cc"){
-                return params[type] || [];
-            }else{
-                return params["to"] || [];
-            }
-        };
-    }
+// Method to mock the recipients of an automatic_dictonary instance
+var mock_recipients = function(inst, params){
+    inst.getRecipients = function( type ){
+        if( type && type === "cc"){
+            return params[type] || [];
+        }else{
+            return params["to"] || [];
+        }
+    };
+}
     
-    //Method to call deduce language with a lang
-    var call_language_changed = function( adi, lang ){
-        var evt = {
+//Method to call deduce language with a lang
+var call_language_changed = function( adi, lang ){
+    var evt = {
             target:{ value: lang }
         }
-        adi.languageChanged( evt );
-    }
+    adi.languageChanged( evt );
+}
     
     
-    test_setup();
+test_setup();
     //The load path is from the call
     load("../chrome/content/ad.js")
     
@@ -280,9 +278,9 @@
         adi.deduceLanguage();
         assert.equal( 3, setted_langs.length);
         assert.equal( "toB-lang", setted_langs[2]);
-        
+
     })();
-    
+
     /*
          
          5. Limit the max CCs or TOs management to a number to avoid loading
@@ -370,7 +368,7 @@
         //these recipients now
         assert.equal( 4, labels.length);
     })();
-    
+
     /*
             
          7. Test collecting statistical data on GA
@@ -442,7 +440,7 @@
         
         //No new tracking
         assert.equal( 4, ga_actions.length);
-        
+
     })();
 
     /*
@@ -452,12 +450,25 @@
     */
     (function(){
         test_setup();
+        
+        //Test migration. We store
+        Components.savedPrefs["extensions.automatic_dictionary.addressesInfo"]= 
+            "{\"hash\":{\"oldfoo@mydom\":\"foobar\",\"foo[cc]foo2\":\"foobar2\"}," + 
+            "\"options\":{\"sorted_keys\":[\"oldfoo@mydom\",\"foo[cc]foo2\"],\"size\":1200}}";
+        Components.savedPrefs["extensions.automatic_dictionary.migrations_applied"]= "[\"201102130000\"]";
+        Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.version"]="1234";
+        
         var adi = new AutomaticDictionary.Class();
+        
+        assert.equalJSON([["mydom","foobar",1]], adi.freq_suffix.pairs());
         
         Components.savedPrefs[adi.ALLOW_HEURISTIC] = true;
         
         //Prepare scenario - mocking
-        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
+        mock_recipients( adi, {
+            "to":["foo"],
+            "cc":["bar"]
+            } );
         // Collect setted languages on the interface
         var setted_langs = [];
         var labels = [];
@@ -465,7 +476,9 @@
             dictionary_object.dictionary = lang;
             setted_langs.push( lang );
         }
-        adi.changeLabel = function(str){ labels.push( str );}
+        adi.changeLabel = function(str){
+            labels.push( str );
+        }
         var ga_actions = [];
         adi.ga = {
             track:function(url){
@@ -514,5 +527,6 @@
         assert.equal( "/action/guess/foobar", ga_actions[4]);
         assert.equal("foobar", setted_langs[1]);
         
+    //TODO: test that heuristic structure is saved after saving a language.
     })();
 })();

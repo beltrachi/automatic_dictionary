@@ -53,6 +53,7 @@ AutomaticDictionary.Class = function(){
         code: this.UA_CODE,
         storage: this.storage
     });
+    //Heuristic init
     this.freq_suffix = new AutomaticDictionary.Lib.FreqSuffix();
     this.freq_suffix.fromJSON(this.storage.get(this.FREQ_TABLE_KEY));
     this.collect("init",
@@ -267,8 +268,12 @@ AutomaticDictionary.Class.prototype = {
     save_heuristic: function(recipient, lang){
         this.log("saving heuristic for "+ recipient + " to "+ lang);
         var parts = recipient.split("@");
-        if( parts[1] )
+        if( parts[1] ){
             this.freq_suffix.add(parts[1], lang);
+            //Store
+            this.storage.set(this.FREQ_TABLE_KEY,this.freq_suffix.toJSON());
+            this.log("FREQ TABLE SAVED IS:"+this.freq_suffix.toJSON());
+        }
     },
     
     // Updates the interface with the lang deduced from the recipients
@@ -604,8 +609,27 @@ AutomaticDictionary.Class.prototype = {
         },
         "201211112134": function(self){
             //Add freq table base data
-            //TODO init based on SharedHash data.
-            //self.prefManager.setCharPref( self.pref_prefix + self.FREQ_TABLE_KEY, "[]");
+            //Tricky trick to overwrite the start method and trigger the freq
+            //update when it's first time called
+            var start = self.start, runned = false;
+            self.start = function(){
+                var keys = self.data.keys(), key, lang;
+                self.log("migrating to generate freq_suffix with "+JSON.stringify(keys));
+                for(var i=0;i< keys.length;i++){
+                    key = keys[i];
+                    //Only use single items, exclude grouped ones
+                    //Coma is used to separate values
+                    if(key.indexOf(",") === -1 && key.indexOf("[cc]") === -1){
+                        lang = self.data.get(key);
+                        if(lang){
+                            self.save_heuristic(key,lang);
+                        }
+                    }
+                }
+                //Undo the trick and call start.
+                self.start = start;
+                start.apply(self);
+            }
         }
     }
 }
