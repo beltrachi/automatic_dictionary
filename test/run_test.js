@@ -1,5 +1,7 @@
 load("./../chrome/content/lib.js");
 load("./../chrome/content/lib/sorted_set.js");
+load("./../chrome/content/lib/persistent_object.js");
+load("./../chrome/content/lib/locked_object.js");
 load("./../chrome/content/lib/lru_hash.js");
 load("./../chrome/content/lib/lru_hash_v2.js");
 load("./../chrome/content/lib/shared_hash.js");
@@ -23,6 +25,10 @@ logger.info("### Unit tests");
 load("units/sorted_set_test.js");
 
 load("units/lru_hash_test.js");
+
+load("units/persistent_object_test.js");
+
+load("units/locked_object_test.js");
 
 load("units/pair_counter_test.js");
 

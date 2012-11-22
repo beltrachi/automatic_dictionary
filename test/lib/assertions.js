@@ -23,6 +23,9 @@ assert = (function(){
         isTrue: function( found, msg ){
             this.equal(true, found, msg || "Is not true");
         },
+        isUndefined: function( val, msg ){
+            this.equal("undefined", (typeof val), msg || "Is not undefined");
+        },
         contains: function(needle, histack, msg){
             this.isTrue(
                 (histack.indexOf(needle)!== -1),
