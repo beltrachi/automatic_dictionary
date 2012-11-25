@@ -82,4 +82,12 @@ var p2 = new AutomaticDictionary.Lib.PersistentObject(
         
 assert.equal(1, p2.get("A"));
 
-//TODO: test reload();
+//Test reload()
+
+p.set("B",2);
+
+assert.isUndefined(p2.get("B"));
+
+p2.reload();
+
+assert.equal(2, p2.get("B"));
