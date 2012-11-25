@@ -164,6 +164,10 @@ AutomaticDictionary.Class.prototype = {
             },
             persistent_wrapper
         );
+        var _this = this;
+        this.data.expiration_callback = function(pair){
+            _this.remove_heuristic(pair[0],pair[1]);
+        }
     },
   
     observeRecipients: function(){
@@ -227,7 +231,7 @@ AutomaticDictionary.Class.prototype = {
                     // Save the lang only if it has no lang setted!
                     if( !this.data.get( tos[i] ) ){
                         this.data.set(tos[i], current_lang);
-                        this.save_heuristic(tos[0], current_lang);
+                        this.save_heuristic(tos[i], current_lang);
                         saved_recipients++;
                     }
                 }
@@ -297,6 +301,14 @@ AutomaticDictionary.Class.prototype = {
         var parts = recipient.split("@");
         if( parts[1] ){
             this.freq_suffix.add(parts[1], lang);
+        }
+    },
+    
+    remove_heuristic: function(recipient, lang){
+        this.log("removing heuristic for "+ recipient + " to "+ lang);
+        var parts = recipient.split("@");
+        if( parts[1] ){
+            this.freq_suffix.remove(parts[1], lang);
         }
     },
     

@@ -37,6 +37,7 @@ AutomaticDictionary.SharedHash.prototype = {
     maxSize: null, //Max number of keys.
     //The builder/constructor of the data strucutre (LRU HASH)
     dataConstructor: AutomaticDictionary.Lib.LRUHashV2, 
+    expiration_callback: null,
     
     load: function(){
         this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
@@ -61,9 +62,9 @@ AutomaticDictionary.SharedHash.prototype = {
                 hash = new this.dataConstructor();
             }
         }
+        hash.expiration_callback = this.expiration_callback;
         //Override max_size
         hash.max_size = this.maxSize;
-        this.log( hash.toJSON() );
         return hash;
     },
     writeData:function(){

@@ -454,16 +454,16 @@ test_setup();
         //Test migration. We store
         Components.savedPrefs["extensions.automatic_dictionary.addressesInfo"]= 
             "{\"hash\":{\"oldfoo@mydom\":\"foobar\",\"foo[cc]foo2\":\"foobar2\"}," + 
-            "\"options\":{\"sorted_keys\":[\"oldfoo@mydom\",\"foo[cc]foo2\"],\"size\":1200}}";
-        Components.savedPrefs["extensions.automatic_dictionary.migrations_applied"]= "[\"201102130000\"]";
+            "\"options\":{\"sorted_keys\":[\"oldfoo@mydom\",\"foo[cc]foo2\"],\"size\":5}}";
+        Components.savedPrefs["extensions.automatic_dictionary.migrations_applied"]= "[\"201102130000\",\"201106032254\"]";
         Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.version"]="1234";
-        
+        Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.maxSize"]=5;
         var adi = new AutomaticDictionary.Class();
         
         assert.equalJSON([["mydom","foobar",1]], adi.freq_suffix.pairs());
         
         Components.savedPrefs[adi.ALLOW_HEURISTIC] = true;
-        
+
         //Prepare scenario - mocking
         mock_recipients( adi, {
             "to":["foo"],
@@ -532,7 +532,22 @@ test_setup();
             [["mydom","foobar",1],["bar.dom","foobar",1]],
             adi.freq_suffix.pairs());
         assert.contains("bar.dom", Components.savedPrefs["extensions.automatic_dictionary.freqTableData"]);
+        
+        //Check that the expired key is removed form the freq_suffix too
+        mock_recipients( adi, {
+            "to":["abc2@bar2.dom","abc2@bar3.dom","abc2@bar4.dom","abc2@bar5.dom"]} );
+        call_language_changed( adi, "foobar-x");
+
+        //Max size is 5 but there is a key of all TOs composed which is the fifth position
+        assert.equalJSON(
+            [
+                ["bar2.dom","foobar-x",1],["bar3.dom","foobar-x",1],
+                ["bar4.dom","foobar-x",1],["bar5.dom","foobar-x",1]
+            ],
+            adi.freq_suffix.pairs()
+        );
+        
+        
     })();
     
-    //TODO: when a key expires on the LRU hash, expire it on the freq_suffix/heuristic
 })();
