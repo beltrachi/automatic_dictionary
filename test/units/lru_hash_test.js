@@ -53,6 +53,11 @@ lru_test_suite = function( constructor ){
     var data_string = lru.toJSON();
     lru2 = new constructor();
     
+    var expired_pairs = [];
+    lru2.expiration_callback = function(pair){
+        expired_pairs.push(pair);
+    };
+
     lru2.fromJSON( data_string );
     
     assert.equal( lru.get("a"), lru2.get("a"));
@@ -65,6 +70,8 @@ lru_test_suite = function( constructor ){
     assert.equal( "4", lru2.get("d"));
     // b is the last on usage.
     assert.equal( null, lru2.get("b"));
+    assert.equalJSON(["b",2],expired_pairs[0]);
+    assert.equal(1,expired_pairs.length);
     
     //Test wrong keys
     lru = new constructor( { a : "1", b : 2, c : 3 }, 

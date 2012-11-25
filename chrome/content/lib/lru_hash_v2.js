@@ -11,6 +11,7 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
     max_size: null,
     sorted_keys: null,
     hash: {},
+    expiration_callback: null,
     
     //Initializes data with them.
     initialize: function( hash, options ){
@@ -43,14 +44,19 @@ AutomaticDictionary.Lib.LRUHashV2.prototype = {
         this.logger.debug("Set "+key );
         //Update keys
         this.sk_update_key( key );
+        this.hash[key] = value;
         //Expire key if size reached
         if( this.max_size !== null && this.size() > this.max_size ){
-            var key_to_expire = this.sorted_keys.first();
+            var key_to_expire = this.sorted_keys.first(),
+                value_to_expire = this.hash[key_to_expire];
+            
             this.logger.debug("expiring key "+key_to_expire);
             delete(this.hash[key_to_expire]);
             this.sk_remove_key( key_to_expire );
+            if(this.expiration_callback){
+                this.expiration_callback([key_to_expire,value_to_expire]);
+            }
         }
-        this.hash[key] = value;
     },
     // O(n)
     get: function( key ){
