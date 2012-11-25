@@ -6,7 +6,9 @@
  *       * To spread the changes we save a version number in another preference field
  * 
  *   data stored expires by size in a LRU logic.
- *  
+ * 
+ *  Note: Persistency and Locking has been extracted to separate wrappers:
+ *      LockedObject and PersistentObject 
  */
 /* 
 TODO: 
@@ -14,7 +16,6 @@ TODO:
     over again to know if somebody has updated it.
     We need to install an observer using the nsIPrefBranch2 interface.
 */
-//TODO: separate sync block from hash access to reuse it.
 AutomaticDictionary.SharedHash = function( prefPath ){
     this.prefPath = prefPath;
     this.lockPath = prefPath + ".lock";

@@ -149,7 +149,7 @@ AutomaticDictionary.Lib.LockedObject = function(storeKey,storage,options,instanc
         })(tmp);
     }
     
-    //TODO: Wrap lock methods in sync and 
+    //proxy methods with lock 
     for(var i=0;i<params.options.locking.length; i++){
         tmp = params.options.locking[i];
         if(ifce[tmp]) throw ("overriding non_locking method "+tmp);
