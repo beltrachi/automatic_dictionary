@@ -54,15 +54,15 @@ AutomaticDictionary.Class = function(){
         storage: this.storage
     });
     //Heuristic init
-    this.freq_suffix = new AutomaticDictionary.Lib.FreqSuffix();
-    this.freq_suffix.fromJSON(this.storage.get(this.FREQ_TABLE_KEY));
+    this.initFreqSuffix();
+    
     this.collect("init",
         {customVars:[
                 {name:"size",value:this.data.size()},
                 {name:"maxRecipients",value:this.getMaxRecipients()},
                 {name:"maxSize", value:this.data.maxSize}
-            ]
-        });
+        ]
+    });
     
     this.start();
     return this;
@@ -137,6 +137,33 @@ AutomaticDictionary.Class.prototype = {
                 return data;
             }
         };
+    },
+    
+    initFreqSuffix: function(){
+        //Build the object that will manage the storage and locking for the object
+        var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
+            this.FREQ_TABLE_KEY,
+            this.storage,
+            {
+                read:["get","pairs"],
+                write:["add","remove"],
+                serializer: "toJSON",
+                loader:"fromJSON"
+            },
+            function(){
+                return new AutomaticDictionary.Lib.FreqSuffix();
+            }
+        );
+        this.freq_suffix = new AutomaticDictionary.Lib.LockedObject(
+            this.FREQ_TABLE_KEY,
+            this.storage,
+            {
+                non_locking:["get","pairs"],
+                locking:["add","remove"],
+                reload: "reload"
+            },
+            persistent_wrapper
+        );
     },
   
     observeRecipients: function(){
@@ -270,9 +297,6 @@ AutomaticDictionary.Class.prototype = {
         var parts = recipient.split("@");
         if( parts[1] ){
             this.freq_suffix.add(parts[1], lang);
-            //Store
-            this.storage.set(this.FREQ_TABLE_KEY,this.freq_suffix.toJSON());
-            this.log("FREQ TABLE SAVED IS:"+this.freq_suffix.toJSON());
         }
     },
     
