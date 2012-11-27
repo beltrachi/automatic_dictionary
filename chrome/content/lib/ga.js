@@ -122,8 +122,8 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
             //FIXME: escape params value
             queryString+= i+"="+encodeURIComponent(params[i])+"&";
         }
-        
-        img.src = target + queryString;
+        AutomaticDictionary.dump("GA URL is "+target+"?"+queryString);
+        img.src = target +"?"+ queryString;
     }
     //options.customVars can be an array as order matters
     function visit(url, options){
