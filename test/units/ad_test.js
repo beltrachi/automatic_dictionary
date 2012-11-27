@@ -379,7 +379,7 @@ test_setup();
         var adi = new AutomaticDictionary.Class();
         var ga_actions = [];
         adi.ga = {
-            track:function(url){
+            visit:function(url){
                 ga_actions.push(url);
             }
         }
@@ -481,7 +481,7 @@ test_setup();
         }
         var ga_actions = [];
         adi.ga = {
-            track:function(url){
+            visit:function(url){
                 ga_actions.push(url);
             }
         }

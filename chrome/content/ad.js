@@ -550,7 +550,7 @@ AutomaticDictionary.Class.prototype = {
     collect: function(action, options){
         if( this.allowCollect() ){
             this.log("collect for action "+action);
-            this.ga.track("/action/"+action, options);
+            this.ga.visit("/action/"+action, options);
         }else{
             this.log("DISABLED track for action "+action);            
         }

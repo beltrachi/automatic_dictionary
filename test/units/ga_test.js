@@ -39,7 +39,7 @@ AutomaticDictionary.dump = function(msg){
 
 // Check initialization
 assert.equal(0, created_images.length);
-assert.equal(true, !!ga.track); //check it has track method
+assert.equal(true, !!ga.visit); //check it has track method
 logger.debug(data.toSource());
 
 assert.equal("1", data.session_number);
@@ -50,10 +50,10 @@ var first_visitor_id = data.visitor_id;
 assert.equal(true, !!data.first_visit);
 assert.equal(true, !!data.last_session);
 
-ga.track("actionurl");
+ga.visit("actionurl");
 
 assert.equal(1,created_images.length);
-assert.contains( "http://www.google-analytics.com/__utm.gif",
+assert.contains( "https://ssl.google-analytics.com/__utm.gif",
     created_images[0].src);
 assert.contains( data.visitor_id, created_images[0].src);    
 assert.contains( data.first_visit, created_images[0].src);    
@@ -62,10 +62,10 @@ assert.contains( data.session_number, created_images[0].src);
 assert.contains( "en_us",created_images[0].src);
 assert.contains( "actionurl", created_images[0].src);    
 
-ga.track("foobar");
+ga.visit("foobar");
 
 assert.equal(2,created_images.length);
-assert.contains( "http://www.google-analytics.com/__utm.gif",
+assert.contains( "https://ssl.google-analytics.com/__utm.gif",
     created_images[1].src);
 assert.contains( data.visitor_id, created_images[1].src);    
 assert.contains( data.first_visit, created_images[1].src);    
@@ -91,7 +91,7 @@ assert.isTrue(last_session != data.last_session);
 assert.equal(2, data.session_number);
 
 //Check custom Vars support
-ga2.track("foo",{
+ga2.visit("foo",{
     customVars:
     [ 
     {

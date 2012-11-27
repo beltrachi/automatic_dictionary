@@ -17,6 +17,7 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
     var domain = config.domain, 
         code = config.code,
         storage = config.storage,
+        target = config.url || "https://ssl.google-analytics.com/__utm.gif",
         domain_hash,
         visitor_id,
         first_visit,
@@ -54,62 +55,117 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
     last_session = storage.get("last_session") || current_session;
     storage.set("last_session", current_session);
     
-    //options.customVars can be an array as order matters
-    function track(url, options){
-    
-        var extras = {};
+    function doRequest(visit_url,params,options){
+        options = options || {};
+        var img = new Image(),
+            defaults, i, 
+            queryString ="",
+            win = options.window || window.location,
+            cookie = options.cookie || visitor_id;
+        
+        defaults={
+            utmn: rand(1000000000,9999999999), //random request number
+            cookie:visitor_id,
+            today:current_session,
+            win:win,
+            utmwv:"5.1.7",
+            utmsr:"-",
+            utmsc:"-",
+            utmul: window.navigator.language,
+            utmje:0,
+            utmfl:"-",
+            utmdt:"-",
+            utmhn:domain,
+            utmr:win,
+            utmp:visit_url,
+            utmac:code,
+            utmcc:'__utma='
+                +domain_hash+'.'
+                +visitor_id+'.'
+                +first_visit+'.'
+                +last_session+'.'
+                +current_session+'.'
+                +session_number+';+__utmb='
+                +cookie+';+__utmc='
+                +cookie+';+__utmz='
+                +cookie+'.'+current_session
+                +'.2.2.utmccn=(referral)|utmcsr=' + win.host + '|utmcct=' 
+                + win.pathname + '|utmcmd=referral;+__utmv='
+            +cookie+'.-;'
+            };
+        
+        //Proces options.customVars
         if( options && options.customVars ){
             //We supose basic settings like that this settigs are visitor 
             //settings and not from this action.
-            var first=[], last = [];
+            var eight=[], nine = [];
             
-            for(var i = 0; i < options.customVars.length; i++ ){
-                options.customVars[i].name;
-                first.push(options.customVars[i].name);
-                last.push(options.customVars[i].value);
+            for(i = 0; i < options.customVars.length; i++ ){
+                eight.push(options.customVars[i].name);
+                nine.push(options.customVars[i].value);
             }
             
-            extras["utme"] = "8("+first.join("*")+")9("+last.join("*")+")11(1)"
+            params["utme"] = (params["utme"]||"") + 
+                "8("+eight.join("*")+")"+
+                "9("+nine.join("*")+")"+
+                "11(1)";
         }
         
-        var extras_querystring = "";
-        for(var key in extras){
-            extras_querystring += ""+key+"="+extras[key]+"&";
+        //Set default values
+        for(i in defaults){
+            if((typeof params[i]) == "undefined"){
+                params[i] = defaults[i];
+            }
         }
+        
+        for(i in params){
+            //FIXME: escape params value
+            queryString+= i+"="+encodeURIComponent(params[i])+"&";
+        }
+        
+        img.src = target + queryString;
+    }
+    //options.customVars can be an array as order matters
+    function visit(url, options){
+        doRequest(url,{},options);
+    }
     
-        var i=1000000000,
-        utmn=rand(i,9999999999), //random request number
-        cookie = visitor_id,
-        today=current_session,
-        win = window.location,
-        img = new Image(),
-        urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=5.1.7&utmn='
-        +utmn+'&utmsr=-&utmsc=-&'
-        + extras_querystring
-        + 'utmul=' + window.navigator.language
-        +'&utmje=0&utmfl=-&utmdt=-&utmhn='
-        +domain+'&utmr='+win+'&utmp='
-        +url+'&utmac='
-        +code+'&utmcc=__utma%3D'
-        +domain_hash+'.'
-        +visitor_id+'.'
-        +first_visit+'.'
-        +last_session+'.'
-        +current_session+'.'
-        +session_number+'%3B%2B__utmb%3D'
-        +cookie+'%3B%2B__utmc%3D'
-        +cookie+'%3B%2B__utmz%3D'
-        +cookie+'.'+today
-        +'.2.2.utmccn%3D(referral)%7Cutmcsr%3D' + win.host + '%7Cutmcct%3D' 
-        + win.pathname + '%7Cutmcmd%3Dreferral%3B%2B__utmv%3D'
-        +cookie+'.-%3B';
-
-        AutomaticDictionary.dump("GA (" + cookie + ") -> "+urchinUrl);
-        // trigger the tracking
-        img.src = urchinUrl;
+    /*
+     * @event_data is a hash with:
+     *      "cat": string category like "Image"
+     *      "action": string action like "click"
+     *      "label": (optional) String labels the action. Recommend using something to 
+     *          describe the location or situation where event ocurred.
+     *      "value": (optional) integer when the action has a numeric "impact" or "meaning"
+     *      "non_interaction": (optional) boolean meaning that this is not an interaction
+     *          and so the visit could still be considered a bounce.
+     *
+     **/
+    function event(url,event_data,options){
+        var glue = "*",
+            val = event_data.cat + glue + event_data.action,
+            params = {
+                utmt:"event"
+            };
+        
+        if(event_data.label){
+            val += glue + event_data.label;
+        }
+        params["utme"]="5("+val+")";
+        
+        if(event_data.value){
+            params["utme"] +="("+event_data.value+")";
+        }
+        
+        if(event_data.non_interaction){
+            params["utmni"]="1";
+        }
+        
+        doRequest(url,params, options);
     }
     
     return {
-        track:track
+        visit:visit,
+        event:event
     };
 });
