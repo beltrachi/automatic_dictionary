@@ -80,8 +80,10 @@
                 return {addEventListener: function(){} };
         }
     };
-        
-    Image = function(){};
+    built_images = [];
+    Image = function(){
+        built_images.push(this);
+    };
 }
     
 // Method to mock the recipients of an automatic_dictonary instance
@@ -377,10 +379,18 @@ test_setup();
     (function(){
         test_setup();
         var adi = new AutomaticDictionary.Class();
-        var ga_actions = [];
+        
+        //When building the ad instance, it registers the visit on compose
+        assert.equal(1,built_images.length);
+        assert.contains("compose", built_images[0].src);
+        
+        var ga_actions = [], ga_events = [];
         adi.ga = {
             visit:function(url){
                 ga_actions.push(url);
+            },
+            event:function(url,event_data){
+                ga_events.push([url,event_data]);
             }
         }
         
@@ -397,34 +407,34 @@ test_setup();
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
-        assert.equal( 1, ga_actions.length);
-        assert.equal( "/action/miss", ga_actions[0]);
+        assert.equal( 1, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[0]);
         //No change
         adi.deduceLanguage();
         logger.debug(labels);
         assert.equal( 1, labels.length);
-        assert.equal( 1, ga_actions.length);
+        assert.equal( 1, ga_events.length);
         
         mock_recipients( adi, {"to":["foo"]} );
         adi.deduceLanguage();
         adi.deduceLanguage();
         
         assert.equal( 2, labels.length);
-        assert.equal( 2, ga_actions.length);
-        assert.equal( "/action/miss", ga_actions[1]);
+        assert.equal( 2, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[1]);
 
         call_language_changed( adi, "foobar");
         
         assert.equal( 3, labels.length);
-        assert.equal( 3, ga_actions.length);
-        assert.equal( "/action/saved/foobar", ga_actions[2]);
+        assert.equal( 3, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"saved",label:"foobar"}], ga_events[2]);
         
         adi.deduceLanguage();
         //We expect a new label because the plugin detects that there is a lang for
         //these recipients now
         assert.equal( 4, labels.length);
-        assert.equal( 4, ga_actions.length);
-        assert.equal( "/action/remember/foobar", ga_actions[3]);
+        assert.equal( 4, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"remember",label:"foobar"}], ga_events[3]);
         
         ///////   Disable tracking
         
@@ -434,12 +444,12 @@ test_setup();
         adi.deduceLanguage();
         
         //No new tracking
-        assert.equal( 4, ga_actions.length);
+        assert.equal( 4, ga_events.length);
         
         call_language_changed( adi, "unknownlang");
         
         //No new tracking
-        assert.equal( 4, ga_actions.length);
+        assert.equal( 4, ga_events.length);
 
     })();
 
@@ -479,52 +489,57 @@ test_setup();
         adi.changeLabel = function(str){
             labels.push( str );
         }
-        var ga_actions = [];
+
+        var ga_actions = [], ga_events = [];
         adi.ga = {
             visit:function(url){
                 ga_actions.push(url);
+            },
+            event:function(url,event_data){
+                ga_events.push([url,event_data]);
             }
         }
         
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
-        assert.equal( 1, ga_actions.length);
-        assert.equal( "/action/miss", ga_actions[0]);
+        assert.equal( 1, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[0]);
+
         //No change
         adi.deduceLanguage();
         logger.debug(labels);
         assert.equal( 1, labels.length);
-        assert.equal( 1, ga_actions.length);
+        assert.equal( 1, ga_events.length);
         
         mock_recipients( adi, {"to":["foo@bar.dom"]} );
         adi.deduceLanguage();
         adi.deduceLanguage();
         
         assert.equal( 2, labels.length);
-        assert.equal( 2, ga_actions.length);
-        assert.equal( "/action/miss", ga_actions[1]);
+        assert.equal( 2, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[1]);
 
         call_language_changed( adi, "foobar");
         
         assert.equal( 3, labels.length);
-        assert.equal( 3, ga_actions.length);
-        assert.equal( "/action/saved/foobar", ga_actions[2]);
-        
+        assert.equal( 3, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"saved",label:"foobar"}], ga_events[2]);
+
         adi.deduceLanguage();
         //We expect a new label because the plugin detects that there is a lang for
         //these recipients now
         assert.equal( 4, labels.length);
-        assert.equal( 4, ga_actions.length);
-        assert.equal( "/action/remember/foobar", ga_actions[3]);
+        assert.equal( 4, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"remember",label:"foobar"}], ga_events[3]);
         
         mock_recipients( adi, {"to":["abc@bar.dom"]} );
 
         adi.deduceLanguage();
         
         assert.equal( 5, labels.length);
-        assert.equal( 5, ga_actions.length);
-        assert.equal( "/action/guess/foobar", ga_actions[4]);
+        assert.equal( 5, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"guess",label:"foobar"}], ga_events[4]);
         assert.equal("foobar", setted_langs[1]);
  
         //Test it's saved

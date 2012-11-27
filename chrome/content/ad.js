@@ -56,7 +56,7 @@ AutomaticDictionary.Class = function(){
     //Heuristic init
     this.initFreqSuffix();
     
-    this.collect("init",
+    this.collect("compose",
         {customVars:[
                 {name:"size",value:this.data.size()},
                 {name:"maxRecipients",value:this.getMaxRecipients()},
@@ -283,7 +283,7 @@ AutomaticDictionary.Class.prototype = {
                     [ current_lang, saved_recipients ] )
                 );
         }
-        this.collect("saved/"+ current_lang );
+        this.collect_event("language","saved", {label: current_lang});
         this.log("------------------------------------languageChanged by event END");
     },
     
@@ -388,14 +388,14 @@ AutomaticDictionary.Class.prototype = {
             try{
                 this.setCurrentLang( lang );
                 this.changeLabel( this.ft("deducedLang."+method, [lang]))
-                this.collect(method+"/"+lang, {customVars: ga_customVars});
+                this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
             }catch( e ){
                 this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
                 throw e;
             }
         }else{
             this.changeLabel(this.t( "noLangForRecipients" ));
-            this.collect("miss", {customVars: ga_customVars});
+            this.collect_event("language","miss",{}, {customVars: ga_customVars});
         }
     },
     
@@ -546,11 +546,27 @@ AutomaticDictionary.Class.prototype = {
     allowCollect: function(){
         return this.prefManager.getBoolPref(this.ALLOW_COLLECT_KEY);
     },
-    // options are forwarded to ga.track function
-    collect: function(action, options){
+    // options are forwarded to ga.visit function
+    collect: function(visit, options){
+        this.last_visit = visit;
         if( this.allowCollect() ){
-            this.log("collect for action "+action);
-            this.ga.visit("/action/"+action, options);
+            this.log("collect for visit "+visit);
+            this.ga.visit(visit, options);
+        }else{
+            this.log("DISABLED track for visit "+visit);            
+        }
+    },
+    collect_event: function(category, action, e_opts, options){
+        if( this.allowCollect() ){
+            e_opts = e_opts || {};
+            this.log("collect for event "+action+" on "+category);
+            this.ga.event(this.last_visit, {
+                cat:category,
+                action:action,
+                label: e_opts.label,
+                value: e_opts.value,
+                non_interaction: e_opts.non_interaction
+            }, options);
         }else{
             this.log("DISABLED track for action "+action);            
         }
