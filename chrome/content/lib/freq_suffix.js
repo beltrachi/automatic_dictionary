@@ -55,7 +55,6 @@ if( !AutomaticDictionary.Lib.FreqTable ) throw "AutomaticDictionary.Lib.FreqTabl
  *  serialize the hash as a string, and store an integer.    
  **/
 
-//TODO: make it multi-window/mutli-instance secure by locking like shared_hash
 AutomaticDictionary.Lib.FreqSuffix = function( values, options ){
     values = values || [];
     this.node_class = AutomaticDictionary.Lib.FreqSuffix.TreeNode;
