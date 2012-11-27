@@ -11,6 +11,11 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/sorted_set.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/lru_hash_v2.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/shared_hash.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/persistent_object.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/locked_object.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/pair_counter.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/freq_table.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/freq_suffix.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/ga.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
