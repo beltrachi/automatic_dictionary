@@ -381,7 +381,7 @@ test_setup();
         var adi = new AutomaticDictionary.Class();
         
         //When building the ad instance, it registers the visit on compose
-        assert.equal(1,built_images.length);
+        assert.equal(2,built_images.length);
         assert.contains("compose", built_images[0].src);
         
         var ga_actions = [], ga_events = [];
@@ -608,9 +608,4 @@ test_setup();
         
     })();
     
-    //TODO: test how much time it lasts to generate the items and save and load
-    //  the data structures in a GA collect
-    
-    //TODO: send info about how long it lasts to serialize and un serialize the
-    //  data.
 })();

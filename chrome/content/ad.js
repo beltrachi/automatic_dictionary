@@ -34,6 +34,7 @@ AutomaticDictionary.dump = function(msg){
 
 
 AutomaticDictionary.Class = function(){
+    var start = (new Date()).getTime();
     this.log("ad: init");
     this.running = true;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
@@ -60,7 +61,8 @@ AutomaticDictionary.Class = function(){
         {customVars:[
                 {name:"size",value:this.data.size()},
                 {name:"maxRecipients",value:this.getMaxRecipients()},
-                {name:"maxSize", value:this.data.maxSize}
+                {name:"maxSize", value:this.data.maxSize},
+                {name:"delta",value:((new Date()).getTime() - start)}
         ]
     });
     
@@ -675,7 +677,8 @@ AutomaticDictionary.Class.prototype = {
             //update when it's first time called
             var start = self.start, runned = false;
             self.start = function(){
-                var keys = self.data.keys(), key, lang;
+                var start_at = (new Date()).getTime(),
+                    keys = self.data.keys(), key, lang;
                 self.log("migrating to generate freq_suffix with "+JSON.stringify(keys));
                 for(var i=0;i< keys.length;i++){
                     key = keys[i];
@@ -688,6 +691,9 @@ AutomaticDictionary.Class.prototype = {
                         }
                     }
                 }
+                self.collect_event("process","build_from_hash",
+                    {value:((new Date()).getTime() - start_at)}
+                );
                 //Undo the trick and call start.
                 self.start = start;
                 start.apply(self);
