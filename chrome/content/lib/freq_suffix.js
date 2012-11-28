@@ -93,8 +93,16 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         this.pair_counter.remove(string,value);
     },
     get: function(string){
-        var parts = this.slice(string);
-        return this.root.get(parts);
+        var parts = this.slice(string), res = null;
+        while( parts.length > 0 ){
+            res = this.root.get(parts.slice(0)); //slice trick to clone the array
+            if(false && res){
+                return res;
+            }else{
+                parts.pop();
+            }
+        }
+        return res;
     },
     slice: function(str){
         return str.split(this.split_char).reverse();
