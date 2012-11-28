@@ -565,4 +565,13 @@ test_setup();
         
     })();
     
+    //TODO: check when we set an unknown recipient and a known CC recipient. It should 
+    //  set/guess the lang setted for the other. The same when settting 2 TOs and one is
+    //  known and the other not. It should use the known one.
+    
+    //TODO: test how much time it lasts to generate the items and save and load
+    //  the data structures in a GA collect
+    
+    //TODO: send info about how long it lasts to serialize and un serialize the
+    //  data.
 })();
