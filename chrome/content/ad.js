@@ -374,6 +374,12 @@ AutomaticDictionary.Class.prototype = {
         }
         
         this.log("Language found: "+ lang);
+                
+        if(!lang && this.allowHeuristic()){
+            lang = this.heuristic_guess(recipients);
+            if(lang)
+                method = this.METHODS.GUESS;
+        }
         
         // Rule: when you detect a language and you detected it last time,
         // Set it again if it's not the current. (Support multi compose windows) 
@@ -387,12 +393,7 @@ AutomaticDictionary.Class.prototype = {
                 this.log("Detected changes on langs: "+ [lang, this.getCurrentLang()].toSource());
             }
         }
-        
-        if(!lang && this.allowHeuristic()){
-            lang = this.heuristic_guess(recipients);
-            if(lang)
-                method = this.METHODS.GUESS;
-        }
+
         
         this.last_lang = lang;
         this.last_toandcc_key = toandcc_key;
