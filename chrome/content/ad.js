@@ -515,6 +515,9 @@ AutomaticDictionary.Class.prototype = {
         if( str=="" ){
             return;
         }
+        if(this.label_timeout){
+            window.clearTimeout(this.label_timeout);
+        }
         var nb = document.getElementById(this.notificationbox_elem_id);
         var n = nb.getNotificationWithValue('change-label');
         str = this.name + ": " + str;  
@@ -525,7 +528,7 @@ AutomaticDictionary.Class.prototype = {
             var priority = nb.PRIORITY_INFO_MEDIUM;
             nb.appendNotification(str, 'change-label', null, priority, buttons);
         }
-        window.setTimeout( function( ){
+        this.label_timeout = window.setTimeout( function( ){
             nb.removeAllNotifications( false );
         }, this.notification_time);
     },
