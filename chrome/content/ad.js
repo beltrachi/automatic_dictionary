@@ -61,10 +61,10 @@ AutomaticDictionary.Class = function(){
         {customVars:[
                 {name:"size",value:this.data.size()},
                 {name:"maxRecipients",value:this.getMaxRecipients()},
-                {name:"maxSize", value:this.data.maxSize},
-                {name:"delta",value:((new Date()).getTime() - start)}
+                {name:"maxSize", value:this.data.maxSize}
         ]
     });
+    this.collect_event("data","built", {value:((new Date()).getTime() - start) });
     
     this.start();
     return this;

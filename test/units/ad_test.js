@@ -381,7 +381,7 @@ test_setup();
         var adi = new AutomaticDictionary.Class();
         
         //When building the ad instance, it registers the visit on compose
-        assert.equal(2,built_images.length);
+        assert.equal(3,built_images.length);
         assert.contains("compose", built_images[0].src);
         
         var ga_actions = [], ga_events = [];
