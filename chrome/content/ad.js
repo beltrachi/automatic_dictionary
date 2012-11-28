@@ -279,7 +279,7 @@ AutomaticDictionary.Class.prototype = {
         if( saved_recipients > 0 ){
             this.log("Enter cond 3");
 
-            this.log("saved recipients are: " + saved_recipients.toSource());
+            this.log("saved recipients are: " + saved_recipients);
             this.changeLabel( 
                 this.ft( "savedForRecipients",
                     [ current_lang, saved_recipients ] )

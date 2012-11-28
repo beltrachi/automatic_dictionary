@@ -4,6 +4,7 @@
     window = null;
     document = null;
     var dictionary_object = {dictionary:undefined}; 
+    dump = function(){};
     
     function test_setup(){
         dictionary_object.dictionary = undefined;
