@@ -328,7 +328,7 @@ AutomaticDictionary.Class.prototype = {
         if( recipients.length == 0 ){
             return;
         }
-        var lang = null, method = this.METHODS.REMEMBER;
+        var lang = null, method = this.METHODS.REMEMBER, i;
         // TO all and CC all
         var ccs = this.getRecipients("cc");
         var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
@@ -355,6 +355,16 @@ AutomaticDictionary.Class.prototype = {
             // That is useful but maybe it's not the most convenient way.
             for( var idx in recipients ){
                 lang = this.getLangFor( recipients[idx] );
+                if( lang ){
+                    break;
+                }
+            }
+        }
+        
+        if( !lang ){
+            this.log("Check for the ccs one by one");
+            for(i in ccs){
+                lang = this.getLangFor( ccs[i] );
                 if( lang ){
                     break;
                 }

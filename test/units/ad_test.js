@@ -565,9 +565,48 @@ test_setup();
         
     })();
     
-    //TODO: check when we set an unknown recipient and a known CC recipient. It should 
-    //  set/guess the lang setted for the other. The same when settting 2 TOs and one is
-    //  known and the other not. It should use the known one.
+    
+    /*
+         
+         9. Check when we set an unknown recipient and a known CC recipient. It should 
+            set/guess the lang setted for the other. The same when settting 2 TOs and one is
+            known and the other not. It should use the known one.
+    
+    */
+    
+    (function(){
+        test_setup();
+        var adi = new AutomaticDictionary.Class();
+        
+        //Prepare scenario        
+        mock_recipients( adi, {"to":["a@a.com"]} );
+        call_language_changed( adi, "lang-a");
+        
+        //Scenario ready
+        
+        // Collect setted languages on the interface
+        var setted_langs = [];
+        adi.setCurrentLang = function(lang){ 
+            dictionary_object.dictionary = lang;
+            setted_langs.push( lang );
+        }
+        
+        mock_recipients( adi, {"to":["a@a.com","b@b.com"]} );
+        //Language is setted
+        adi.deduceLanguage();
+        assert.equal( 1, setted_langs.length);
+        assert.equal( "lang-a", setted_langs[0]);
+        
+        // When we have a cc recipient with known data, we can deduce it
+        mock_recipients( adi, {
+            "to":["c@c.com"],
+            "cc":["a@a.com"]
+        } );
+        adi.deduceLanguage();
+        assert.equal( 2, setted_langs.length);
+        assert.equal( "lang-a", setted_langs[1]);
+        
+    })();
     
     //TODO: test how much time it lasts to generate the items and save and load
     //  the data structures in a GA collect
