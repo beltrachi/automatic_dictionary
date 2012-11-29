@@ -563,6 +563,14 @@ test_setup();
             adi.freq_suffix.pairs()
         );
         
+        //Test its saved on storage
+        var adi2 = new AutomaticDictionary.Class();
+        assert.equalJSON([
+                ["bar2.dom","foobar-x",1],
+                ["bar3.dom","foobar-x",1],
+                ["bar4.dom","foobar-x",1],
+                ["bar5.dom","foobar-x",1]
+            ], adi2.freq_suffix.pairs());
         
     })();
     
