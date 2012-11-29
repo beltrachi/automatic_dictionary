@@ -6,6 +6,7 @@ obj.add("xyz.com","Y");
 
 assert.equal("Y", obj.get("xyz.com"));
 assert.equal("X", obj.get("com") );
+assert.equal("X", obj.get("undefined.com",true) );
 
 obj.add("a.foo.com","a");
 obj.add("b.foo.com","b");
@@ -20,6 +21,7 @@ obj.add("foo.com","A");
 obj.add("abc.com","A");
 obj.add("abc.com","A");
 assert.equal("A", obj.get("com"));
+assert.equal("A", obj.get("undef.com",true));
 
 assert.equal(null, obj.get("undefined-domain"));
 assert.equal("A", obj.get(""));

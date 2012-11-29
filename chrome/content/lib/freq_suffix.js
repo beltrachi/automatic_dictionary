@@ -92,11 +92,13 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         this.root.remove(parts, value);
         this.pair_counter.remove(string,value);
     },
-    get: function(string){
+    // @param deep: (optional) search by suffix when true. 
+    get: function(string, deep){
+        deep = (deep === true); //False by default.
         var parts = this.slice(string), res = null;
         while( parts.length > 0 ){
             res = this.root.get(parts.slice(0)); //slice trick to clone the array
-            if(false && res){
+            if(res || !deep){ //When not deep, return first result.
                 return res;
             }else{
                 parts.pop();
