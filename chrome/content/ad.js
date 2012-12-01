@@ -250,6 +250,9 @@ AutomaticDictionary.Class.prototype = {
                 if( this.isBlank( curr ) || ccs.length == 0 ){
                     this.log("Enter cond 1.2.1");
                     this.data.set(tos[0], current_lang);
+                    if( !this.isBlank(curr) ){
+                        this.remove_heuristic(tos[0], curr);
+                    }
                     this.save_heuristic(tos[0], current_lang);
                     saved_recipients++;
                 }

@@ -563,13 +563,27 @@ test_setup();
             adi.freq_suffix.pairs()
         );
         
+        //When we change preference, unregiser from freq_suffix the old pref
+        // and set the new one. In this case we change the abc2@bar2.com preference
+        mock_recipients( adi, {"to":["abc2@bar2.dom"]} );
+        call_language_changed( adi, "foobar-changed");
+        
+        adi.deduceLanguage();
+        
+        assert.equalJSON([
+                ["bar3.dom","foobar-x",1],
+                ["bar4.dom","foobar-x",1],
+                ["bar5.dom","foobar-x",1],
+                ["bar2.dom","foobar-changed",1],
+            ], adi.freq_suffix.pairs());
+        
         //Test its saved on storage
         var adi2 = new AutomaticDictionary.Class();
         assert.equalJSON([
-                ["bar2.dom","foobar-x",1],
                 ["bar3.dom","foobar-x",1],
                 ["bar4.dom","foobar-x",1],
-                ["bar5.dom","foobar-x",1]
+                ["bar5.dom","foobar-x",1],
+                ["bar2.dom","foobar-changed",1],
             ], adi2.freq_suffix.pairs());
         
     })();
