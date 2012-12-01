@@ -422,7 +422,7 @@ AutomaticDictionary.Class.prototype = {
             recipient = recipients[i];
             parts = recipient.split("@");
             rightside = parts[parts.length-1];
-            lang = this.freq_suffix.get(rightside);
+            lang = this.freq_suffix.get(rightside,true);
             if( lang ){
                 return lang;
             }
