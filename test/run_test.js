@@ -52,5 +52,7 @@ load("performance/pair_counter_test.js");
 
 load("performance/freq_suffix_test.js");
 
+load("performance/ad_test.js");
+
 
 print("Tests elapsed "+(Date.now() - start) + " ms. "+assert.counters.assertions + " assertions, "+ assert.counters.failures + " failures");
