@@ -1,0 +1,14 @@
+=== 1.3.0
+
+* Added heuristics to guess language based on the domain of the recipients.
+
+* Added GoogleAnalytics support to track the activity of the plugin. All anonymous data.
+
+* Improoved the responsive of the plugin by looking for languages for recipients 
+only when the focus is changed on the compose window. It can be disabled by 
+preferences.
+
+* Fix when message hides too fast.
+
+* Implement language detection when the known recipient is set on the CC's group.
+
