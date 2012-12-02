@@ -257,6 +257,7 @@ AutomaticDictionary.Class.prototype = {
             
         }
         if( saved_recipients > 0 ){
+            this.last_lang = current_lang;
             this.log("Enter cond 3");
 
             this.log("saved recipients are: " + saved_recipients);
