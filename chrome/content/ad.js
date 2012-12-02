@@ -110,15 +110,12 @@ AutomaticDictionary.Class.prototype = {
         this.log("ad: stop");
         this.changeLabel("");
         this.running = false;
-        if( this.last_timeout ) window.clearTimeout( this.last_timeout );
-        this.last_timeout = null;
     },
   
     start: function(){
         if( this.running ) return; //Already started
         this.log("ad: start");
         this.running = true;
-        this.observeRecipients();
     },
     
     //Returns a simple key value store for any type of data.
@@ -169,26 +166,6 @@ AutomaticDictionary.Class.prototype = {
         var _this = this;
         this.data.expiration_callback = function(pair){
             _this.remove_heuristic(pair[0],pair[1]);
-        }
-    },
-  
-    observeRecipients: function(){
-        this.log("ad: observeRecipients");
-        if( !this.running ) return;
-        this.log("ad: observeRecipients - running");
-        this.iter++;
-        try{
-            this.deduceLanguage();
-            //Queue next call
-            if( this.running ){
-                var _this = this;
-                this.last_timeout = setTimeout(function(){
-                    _this.observeRecipients();
-                }, this.POLLING_DELAY );
-            }
-        }catch(e){
-            this.changeLabel( e.toString());
-            throw e;
         }
     },
 
@@ -502,7 +479,7 @@ AutomaticDictionary.Class.prototype = {
                 _this.stop();
             } , true);
             window.addEventListener("focus", function(){
-                _this.start();
+                _this.deduceLanguage();
             }, true );
 
             this.log("events seem to be registered");
