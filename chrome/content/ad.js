@@ -406,17 +406,19 @@ AutomaticDictionary.Class.prototype = {
     
     //Tries to guess by other recipients domains
     heuristic_guess: function(recipients){
-        var recipient, parts, rightside,lang;
+        var recipient, parts, rightside, lang,
+            freq_table = new AutomaticDictionary.Lib.FreqTable();
+
         for(var i=0; i < recipients.length; i++){
             recipient = recipients[i];
             parts = recipient.split("@");
             rightside = parts[parts.length-1];
             lang = this.freq_suffix.get(rightside,true);
             if( lang ){
-                return lang;
+                freq_table.add(lang);
             }
         }
-        return null;
+        return freq_table.getFirst();
     },
     
     // It returns a string representing the array of recipients not caring about the order

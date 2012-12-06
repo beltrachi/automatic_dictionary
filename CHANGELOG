@@ -12,3 +12,4 @@ preferences.
 
 * Implement language detection when the known recipient is set on the CC's group.
 
+* When doing heuristics with a group of recipients, use the more frequent lang.

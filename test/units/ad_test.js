@@ -478,6 +478,21 @@
                 ["bar2.dom","foobar-changed",1],
             ], adi2.freq_suffix.pairs());
         
+        //Test that on various recipients it ponderates the language.
+        mock_recipients( adi, {"to":["abc2@bar2.dom2"]} );
+        call_language_changed( adi, "dom2lang");
+        
+        mock_recipients( adi, {
+            "to":[
+                "abc3@bar2.dom",
+                "abc2@bar3.dom2",
+                "abc2@bar4.dom2",
+                "abc2@bar5.dom2"
+            ]} );
+        
+        adi.deduceLanguage();
+        assert.equal("dom2lang", setted_langs[setted_langs.length -1]);
+        
     })();
     
     

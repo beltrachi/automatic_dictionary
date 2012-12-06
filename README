@@ -41,3 +41,8 @@
       In case no previous data is avaliable or there is not a unique language for the
       recipients, the extension can try to guess it based on the misakes that appear
       aplying the most used dictionaries.    
+
+=== Contributors ===
+
+beltrachi
+Marcos Diez
