@@ -9,16 +9,16 @@ To improve on next versions. I ,the developer, need to see how people are using 
 plugin and be able to detect when the plugin fails and see why.
 
 **I will not provide personal information to anyone. Privacy is a must for me and 
-I provide the same to the others.**
+I want the same to the others.**
 
-## What? ##
+## Which data? ##
 
-We are collecting anonymous data like:
+We are collecting anonymous data and events like:
 * When you configure a language for a group of recipients.
 * When the plugin fails to detect a language.
 * When the plugin gets the language right.
 * When the plugin guesses the language based on heuristics.
-* How many assignments mail-language have you saved.
+* How many mail-language assignments  have you saved.
 * Your plugin settings (max size, etc).
 * How much it lasts to do the operations like loading configuration or preparing data for heuristics.
 * GoogleAnalytics traditional data like operating system, language of the operating system, country, etc.
@@ -36,4 +36,5 @@ _If anyone wants to check, look on the ad.js where it says "collect"._
 
 
 Best regards,
+
 The AutomaticDictionarySwitcher Developer
