@@ -34,7 +34,7 @@ AutomaticDictionary.dump = function(msg){
 
 
 AutomaticDictionary.Class = function(){
-    var start = (new Date()).getTime();
+    var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
     this.running = true;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
@@ -67,6 +67,17 @@ AutomaticDictionary.Class = function(){
     this.collect_event("data","built", {value:((new Date()).getTime() - start) });
     
     this.start();
+    
+    //Show warning when loaded
+    try{
+        window.addEventListener("load", function load(event){
+            window.removeEventListener("load", load, false); //remove listener, no longer needed
+            _this.showCollectWarning();  
+        },false);
+    }catch(e){
+        this.log(e);
+    }
+
     return this;
 }
 
@@ -103,7 +114,7 @@ AutomaticDictionary.Class.prototype = {
     name: "AutomaticDictionary",
     notification_time: 3000,
     notificationbox_elem_id: "automatic_dictionary_notification",
-    
+    logo_url: "chrome://automatic_dictionary/content/logo.png",
     
     stop: function(){
         if( !this.running ) return; //Already stopped
@@ -507,11 +518,55 @@ AutomaticDictionary.Class.prototype = {
         } else {
             var buttons = [];
             var priority = nb.PRIORITY_INFO_MEDIUM;
-            nb.appendNotification(str, 'change-label', null, priority, buttons);
+            n = nb.appendNotification(str, 'change-label', this.logo_url, priority, buttons);
         }
         this.label_timeout = window.setTimeout( function( ){
-            nb.removeAllNotifications( false );
+            nb.removeNotification( n );
         }, this.notification_time);
+    },
+    
+    //To show messages to the user
+    showMessage:function( str, options ){
+        options = options || {};
+        var notification_value = "show-message";
+        //FIXME: DRY this code with changeLabel
+        var nb = document.getElementById(this.notificationbox_elem_id);
+        var n = nb.getNotificationWithValue(notification_value);
+        if(n) {
+            n.label = str;
+        } else {
+            var buttons = options.buttons || [];
+            var priority = nb.PRIORITY_INFO_HIGH;
+            n = nb.appendNotification(str, notification_value, this.logo_url, priority, buttons);
+        }
+    },
+    
+    showCollectWarning:function(){
+        var _this = this;
+        if(!this.storage.get("hasClosedCollectMessage") && !this.shown_collect_message){
+            this.showMessage(this.t("WeAreCollectingData"),{buttons:[
+                {
+                    callback:function(){
+                        _this.storage.set("hasClosedCollectMessage",true);
+                    },
+                    label: this.t("IMOKWithIt"),
+                    accessKey: ""
+                },
+                {
+                    callback:function(){
+                        var url='https://github.com/beltrachi/automatic_dictionary/blob/master/COLLECTED_DATA.md';
+                        var messenger = Components.classes["@mozilla.org/messenger;1"].createInstance();
+                        messenger = messenger.QueryInterface(Components.interfaces.nsIMessenger);
+                        messenger.launchExternalURL(url);
+                    },
+                    label: this.t("MoreInfo"),
+                    accessKey: ""
+                }
+                
+            ]
+            });
+            this.shown_collect_message = true;
+        }
     },
 
     getStrBundle: function(){
@@ -683,7 +738,7 @@ AutomaticDictionary.Class.prototype = {
                 self.start = start;
                 start.apply(self);
             }
-        }
+        }   
     }
 }
 
