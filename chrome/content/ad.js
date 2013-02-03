@@ -33,13 +33,22 @@ AutomaticDictionary.dump = function(msg){
 }
 
 
-AutomaticDictionary.Class = function(){
+AutomaticDictionary.Class = function(options){
+    options = options || {};
     var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
     this.running = true;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefBranch);
-    
+    this.compose_window = options.compose_window || 
+        new AutomaticDictionary.ComposeWindow(
+        {
+            "ad": this,
+            name: this.name,
+            logo_url: this.logo_url,
+            notification_time: this.notification_time
+        }
+    );
     //Version migrations upgrade check
     this.migrate();
     
@@ -113,7 +122,7 @@ AutomaticDictionary.Class.prototype = {
     last_toandcc_key: null,
     name: "AutomaticDictionary",
     notification_time: 3000,
-    notificationbox_elem_id: "automatic_dictionary_notification",
+    
     logo_url: "chrome://automatic_dictionary/content/logo.png",
     
     stop: function(){
@@ -453,94 +462,21 @@ AutomaticDictionary.Class.prototype = {
     },
   
     getRecipients: function( recipientType ){
-        recipientType = recipientType || "to";
-        var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
-        .createInstance(Components.interfaces.nsIMsgCompFields);
-        Recipients2CompFields( fields );
-        var nsIMsgRecipientArrayInstance = {
-            length:0
-        };
-        var fields_content = fields[recipientType]; 
-        if( fields_content ){
-            nsIMsgRecipientArrayInstance = fields.splitRecipients( fields_content, true, {} );
-        }
-        var arr = [];
-        if(nsIMsgRecipientArrayInstance.length > 0){
-            for(var i=0; i< nsIMsgRecipientArrayInstance.length; i++){
-                arr.push(nsIMsgRecipientArrayInstance[i].toString());
-            }
-        }
-        this.log("recipients found: " + arr.toSource());
-        return arr;
+        return this.compose_window.recipients(recipientType);
     },
   
     setListeners: function(){
-        if( window ){
-            var _this = this;
-            window.addEventListener("compose-window-close", function(){
-                _this.stop();
-            }, true);
-            window.addEventListener('compose-window-reopen', function(){
-                _this.start();
-            }, true);
-            //Observe when the dict changes
-            document.getElementById("languageMenuList").addEventListener("command",
-                function(event){
-                    _this.languageChanged(event);
-                },false);
-
-            window.addEventListener("blur", function(){
-                _this.stop();
-            } , true);
-            window.addEventListener("focus", function(){
-                _this.deduceLanguage();
-            }, true );
-
-            this.log("events seem to be registered");
-        }else{
-            this.changeLabel(this.t("settingListenersError"));
-            this.log("no window found");
-        }
+        return this.compose_window.setListeners();
     },
 
   
     changeLabel: function( str ){
-        this.log("Writting to label: " + str);
-        if( str=="" ){
-            return;
-        }
-        if(this.label_timeout){
-            window.clearTimeout(this.label_timeout);
-        }
-        var nb = document.getElementById(this.notificationbox_elem_id);
-        var n = nb.getNotificationWithValue('change-label');
-        str = this.name + ": " + str;  
-        if(n) {
-            n.label = str;
-        } else {
-            var buttons = [];
-            var priority = nb.PRIORITY_INFO_MEDIUM;
-            n = nb.appendNotification(str, 'change-label', this.logo_url, priority, buttons);
-        }
-        this.label_timeout = window.setTimeout( function( ){
-            nb.removeNotification( n );
-        }, this.notification_time);
+        return this.compose_window.changeLabel( str );
     },
     
     //To show messages to the user
     showMessage:function( str, options ){
-        options = options || {};
-        var notification_value = "show-message";
-        //FIXME: DRY this code with changeLabel
-        var nb = document.getElementById(this.notificationbox_elem_id);
-        var n = nb.getNotificationWithValue(notification_value);
-        if(n) {
-            n.label = str;
-        } else {
-            var buttons = options.buttons || [];
-            var priority = nb.PRIORITY_INFO_HIGH;
-            n = nb.appendNotification(str, notification_value, this.logo_url, priority, buttons);
-        }
+        return this.compose_window.show_message(str, options);
     },
     
     showCollectWarning:function(){

@@ -17,6 +17,7 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/freq_table.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/freq_suffix.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/lib/ga.js"/>
+ <script language="JavaScript" src="chrome://automatic_dictionary/content/ad/compose_window.js"/>
  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
 
  <hbox insertbefore="status-bar">

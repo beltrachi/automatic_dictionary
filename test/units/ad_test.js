@@ -1,6 +1,7 @@
 (function(){
     load("helpers/ad_test_helper.js");
     //The load path is from the call
+    load("../chrome/content/ad/compose_window.js");
     load("../chrome/content/ad.js");
     
     AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
