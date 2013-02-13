@@ -1,7 +1,6 @@
-//TODO: create an object tant gives access to the data required from compose window
 /*
- * The main purpose of that is to allow to work on other windows besides compose, like
- * conversations.
+ * The main purpose of this is to allow to work on other windows besides compose, like
+ * conversations compose extension.
  * 
  * 
  * Interface of any compose_window implementation:
@@ -37,11 +36,17 @@ AutomaticDictionary.ComposeWindow = (function( params ){
     this.params = params;
 });
 
+AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
+    //We can manage the messengercompose window.
+    return window.document.location == "chrome://messenger/content/messengercompose/messengercompose.xul";
+};
+
 AutomaticDictionary.ComposeWindow.prototype = {
     
     notificationbox_elem_id: "automatic_dictionary_notification",
     
     setListeners:function(){
+        var window = this.ad.window;
         if( window ){
             var _this = this;
             window.addEventListener("compose-window-close", function(){
@@ -51,7 +56,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
                 _this.ad.start();
             }, true);
             //Observe when the dict changes
-            document.getElementById("languageMenuList").addEventListener("command",
+            window.document.getElementById("languageMenuList").addEventListener("command",
                 function(event){
                     _this.ad.languageChanged(event);
                 },false);
@@ -60,7 +65,12 @@ AutomaticDictionary.ComposeWindow.prototype = {
                 _this.ad.stop();
             } , true);
             window.addEventListener("focus", function(){
+                _this.ad.start();
+                try{
                 _this.ad.deduceLanguage();
+                }catch(e){
+                    this.log(e.toString());
+                }
             }, true );
 
             this.log("events seem to be registered");
@@ -79,7 +89,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
         recipientType = recipientType || "to";
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
         .createInstance(Components.interfaces.nsIMsgCompFields);
-        Recipients2CompFields( fields );
+        this.ad.window.Recipients2CompFields( fields );
         var nsIMsgRecipientArrayInstance = {
             length:0
         };
@@ -102,7 +112,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
         options = options || {};
         var notification_value = "show-message";
         //FIXME: DRY this code with changeLabel
-        var nb = document.getElementById(this.notificationbox_elem_id);
+        var nb = this.ad.window.document.getElementById(this.notificationbox_elem_id);
         var n = nb.getNotificationWithValue(notification_value);
         if(n) {
             n.label = str;
@@ -114,6 +124,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
     },
     
     changeLabel: function( str ){
+        var window = this.ad.window;
         this.log("Writting to label: " + str);
         if( str=="" ){
             return;
@@ -121,7 +132,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
         if(this.label_timeout){
             window.clearTimeout(this.label_timeout);
         }
-        var nb = document.getElementById(this.notificationbox_elem_id);
+        var nb = window.document.getElementById(this.notificationbox_elem_id);
         var n = nb.getNotificationWithValue('change-label');
         str = this.params.name + ": " + str;  
         if(n) {
@@ -137,3 +148,6 @@ AutomaticDictionary.ComposeWindow.prototype = {
     }
     
 };
+
+//Register compose window
+AutomaticDictionary.window_managers.push(AutomaticDictionary.ComposeWindow);

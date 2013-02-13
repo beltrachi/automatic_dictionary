@@ -57,10 +57,11 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
     
     function doRequest(visit_url,params,options){
         options = options || {};
-        var img = new Image(),
+        options.window = options.window || window;
+        var img = new options.window.Image(),
             defaults, i, 
             queryString ="",
-            win = options.window || window.location,
+            win = options.window.location,
             cookie = options.cookie || visitor_id;
         
         defaults={
@@ -71,7 +72,7 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
             utmwv:"5.1.7",
             utmsr:"-",
             utmsc:"-",
-            utmul: window.navigator.language,
+            utmul: options.window.navigator.language,
             utmje:0,
             utmfl:"-",
             utmdt:"-",

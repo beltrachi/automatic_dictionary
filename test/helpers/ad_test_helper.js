@@ -47,6 +47,19 @@ function test_setup(){
                     return dictionary_object;
                 }             
                     
+            },
+            "@mozilla.org/moz/jssubscript-loader;1":{
+                getService: function(){
+                    return {
+                        loadSubScript: function(url){
+                            //  Loads scripts translating resource to path
+                            //  It's not the same as loadSubscript but works for tests
+                            // "resource://automatic_dictionary/chrome/content/lib.js"
+                            url = url.toString().replace("resource://automatic_dictionary/","./../");
+                            load(url);
+                        }
+                    }
+                }
             }
         },
         interfaces:{
@@ -91,12 +104,14 @@ function test_setup(){
             return {
                 addEventListener: function(){}
             };
-    }
-};
-built_images = [];
-Image = function(){
-    built_images.push(this);
-};
+        }
+    };
+    window.document = document;
+
+    built_images = [];
+    window.Image = function(){
+        built_images.push(this);
+    };
 }
     
 // Method to mock the recipients of an automatic_dictonary instance

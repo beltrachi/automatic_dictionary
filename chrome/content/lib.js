@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["AutomaticDictionary"];
+
 if(typeof(AutomaticDictionary) === "undefined" ){
     var AutomaticDictionary = {}; 
 }

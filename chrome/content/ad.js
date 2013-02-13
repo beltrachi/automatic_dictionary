@@ -12,9 +12,43 @@ Listener to:
     I DIDNT FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
 
 */
-if( typeof(AutomaticDictionary)=== "undefined" ){
-    var AutomaticDictionary = {};
+var EXPORTED_SYMBOLS = ['AutomaticDictionary'];
+
+var Ci = Components.interfaces;
+var Cc = Components.classes;
+var Cu = Components.utils;
+var Cr = Components.results;
+
+var AutomaticDictionary = {
+    //Window managers are objects that attach to the windows that have the compose
+    //window to compose mails
+    window_managers: []
+};
+
+var global = this;
+
+var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                       .getService(Components.interfaces.mozIJSSubScriptLoader); 
+var resources = [
+    ["resource://automatic_dictionary/chrome/content/lib.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/sorted_set.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/lru_hash_v2.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/shared_hash.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/persistent_object.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/locked_object.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/pair_counter.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/freq_table.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/freq_suffix.js"],
+    ["resource://automatic_dictionary/chrome/content/lib/ga.js"],
+    ["resource://automatic_dictionary/chrome/content/ad/compose_window.js"],
+    
+];
+
+for( var idx in resources){
+    var url = resources[idx];
+    loader.loadSubScript(url);
 }
+
 
 /* DEBUGGING METHOD
  *
@@ -23,7 +57,7 @@ if( typeof(AutomaticDictionary)=== "undefined" ){
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    //return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
     if( typeof(msg) == "function"){
         msg = msg();
     }
@@ -31,17 +65,47 @@ AutomaticDictionary.dump = function(msg){
     dump(msg);
     dump("\n");
 }
-
-
+AutomaticDictionary.initWindow = function(window, loaded){
+    var idx, cw;
+    loaded = (loaded === true); //bool cast. loaded default is false
+    AutomaticDictionary.dump("Called initWindow");
+    
+    //TODO: WAIT TILL PAGE LOADED!
+    AutomaticDictionary.dump("loaded is "+ loaded);
+    AutomaticDictionary.dump("window.document.readyState is "+ window.document.readyState );
+    if(!loaded && window.document.readyState != "complete"){
+        //Attach onload
+        window.addEventListener("load", function(){
+            AutomaticDictionary.initWindow( window, true);
+        });
+    }else{
+        for(idx in AutomaticDictionary.window_managers){
+            cw = AutomaticDictionary.window_managers[idx];
+            if( cw.canManageWindow(window)){
+                
+                try{
+                    var ad = new AutomaticDictionary.Class({
+                        compose_window_builder: cw,
+                        window: window
+                    });
+                }catch(e){ 
+                    AutomaticDictionary.dump("CREATION FAILED");
+                    AutomaticDictionary.dump(e.toString());
+                }
+                return ad; //stop loop
+            }
+        }    
+    }
+}
 AutomaticDictionary.Class = function(options){
     options = options || {};
     var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
     this.running = true;
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-    .getService(Components.interfaces.nsIPrefBranch);
-    this.compose_window = options.compose_window || 
-        new AutomaticDictionary.ComposeWindow(
+      .getService(Components.interfaces.nsIPrefBranch);
+    var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
+    this.compose_window = new (cw_builder)(
         {
             "ad": this,
             name: this.name,
@@ -49,6 +113,13 @@ AutomaticDictionary.Class = function(options){
             notification_time: this.notification_time
         }
     );
+    options.window = options.window || window;
+        
+    if(!window)
+        window = options.window; //Dirty trick!
+    
+    this.window = options.window;
+    
     //Version migrations upgrade check
     this.migrate();
     
@@ -86,7 +157,6 @@ AutomaticDictionary.Class = function(options){
     }catch(e){
         this.log(e);
     }
-
     return this;
 }
 
@@ -448,7 +518,7 @@ AutomaticDictionary.Class.prototype = {
             stopPropagation: function(){}
         };
         //function defined in mailnews/compose/MsgComposeCommands.js
-        ChangeLanguage( fake_event );
+        this.window.ChangeLanguage( fake_event );
     },
     //Take care as this language is globally set.
     getCurrentLang: function(){
@@ -508,7 +578,7 @@ AutomaticDictionary.Class.prototype = {
     },
 
     getStrBundle: function(){
-        return document.getElementById("automaticdictionarystrings");
+        return this.window.document.getElementById("automaticdictionarystrings");
     },
 
     //Translation (i18n) helper functions
@@ -679,5 +749,3 @@ AutomaticDictionary.Class.prototype = {
         }   
     }
 }
-
-var automatic_dictionary_instance = new AutomaticDictionary.Class();

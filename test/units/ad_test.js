@@ -1,11 +1,10 @@
 (function(){
     load("helpers/ad_test_helper.js");
     //The load path is from the call
-    load("../chrome/content/ad/compose_window.js");
     load("../chrome/content/ad.js");
     
+    
     AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
-    assert.equal( true, automatic_dictionary_instance != null );
     
 
     /**
@@ -16,7 +15,7 @@
     
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = new AutomaticDictionary.Class( {window:window} );
         
         //Test internal methods
         assert.equal("aa,ab,bb",adi.stringifyRecipientsGroup(["aa","bb","ab"]));

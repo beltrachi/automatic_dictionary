@@ -10,7 +10,17 @@ var storage = {
     }
 }
 created_images = [];
-Image = function(){
+var window = {
+    location: {
+        host:"host",
+        pathname:"pathname"
+    },
+    navigator: {
+        language:"en_us"
+    }
+};
+
+window.Image = function(){
     var item = {};
     created_images.push(item);
     return item;
@@ -23,15 +33,6 @@ var ga = AutomaticDictionary.Lib.GoogleAnalytics(
     domain: "domain"
 }
 );
-window = {
-    location: {
-        host:"host",
-        pathname:"pathname"
-    },
-    navigator: {
-        language:"en_us"
-    }
-}
 
 AutomaticDictionary.dump = function(msg){
     logger.debug("AD: "+msg)
