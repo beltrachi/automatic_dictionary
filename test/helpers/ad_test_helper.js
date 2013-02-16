@@ -52,10 +52,16 @@ function test_setup(){
                 getService: function(){
                     return {
                         loadSubScript: function(url){
-                            //  Loads scripts translating resource to path
-                            //  It's not the same as loadSubscript but works for tests
-                            // "resource://automatic_dictionary/chrome/content/lib.js"
-                            url = url.toString().replace("resource://automatic_dictionary/","./../");
+                            url = url.toString();
+                            if( url.indexOf("chrome://global/content/") === 0 ){
+                                // We stub gecko libs
+                                url = url.replace("chrome://global/content/","./stubs/");
+                            }else{
+                                //  Loads scripts translating resource to path
+                                //  It's not the same as loadSubscript but works for tests
+                                // "resource://automatic_dictionary/chrome/content/lib.js"
+                                url = url.replace("resource://automatic_dictionary/","./../");
+                            }
                             load(url);
                         }
                     }
@@ -134,6 +140,10 @@ var call_language_changed = function( adi, lang ){
     }
     adi.languageChanged( evt );
 }
-    
+
+function ad_instance(){
+    return new AutomaticDictionary.Class( {window:window} );
+}
+
     
 test_setup();

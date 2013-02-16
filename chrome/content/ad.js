@@ -30,6 +30,7 @@ var global = this;
 var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                        .getService(Components.interfaces.mozIJSSubScriptLoader); 
 var resources = [
+    ["chrome://global/content/inlineSpellCheckUI.js"],
     ["resource://automatic_dictionary/chrome/content/lib.js"],
     ["resource://automatic_dictionary/chrome/content/lib/sorted_set.js"],
     ["resource://automatic_dictionary/chrome/content/lib/lru_hash_v2.js"],
@@ -113,11 +114,7 @@ AutomaticDictionary.Class = function(options){
             notification_time: this.notification_time
         }
     );
-    options.window = options.window || window;
         
-    if(!window)
-        window = options.window; //Dirty trick!
-    
     this.window = options.window;
     
     //Version migrations upgrade check
@@ -132,7 +129,8 @@ AutomaticDictionary.Class = function(options){
     this.ga = new AutomaticDictionary.Lib.GoogleAnalytics({
         domain: this.ga_domain,
         code: this.UA_CODE,
-        storage: this.storage
+        storage: this.storage,
+        window: this.window
     });
     //Heuristic init
     this.initFreqSuffix();
@@ -150,8 +148,8 @@ AutomaticDictionary.Class = function(options){
     
     //Show warning when loaded
     try{
-        window.addEventListener("load", function load(event){
-            window.removeEventListener("load", load, false); //remove listener, no longer needed
+        this.window.addEventListener("load", function load(event){
+            _this.window.removeEventListener("load", load, false); //remove listener, no longer needed
             _this.showCollectWarning();  
         },false);
     }catch(e){
@@ -474,6 +472,7 @@ AutomaticDictionary.Class.prototype = {
                 this.changeLabel( this.ft("deducedLang."+method, [lang]))
                 this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
             }catch( e ){
+                this.log(e.toString());
                 this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
                 throw e;
             }
@@ -517,8 +516,11 @@ AutomaticDictionary.Class.prototype = {
             },
             stopPropagation: function(){}
         };
-        //function defined in mailnews/compose/MsgComposeCommands.js
-        this.window.ChangeLanguage( fake_event );
+        if( this.window.ChangeLanguage ){
+            this.window.ChangeLanguage( fake_event );
+        }else{
+            this.changeLabel( this.t("errorNoWayToChangeLanguage") );
+        }
     },
     //Take care as this language is globally set.
     getCurrentLang: function(){
@@ -631,7 +633,7 @@ AutomaticDictionary.Class.prototype = {
             this.log("DISABLED track for action "+action);            
         }
     },
-    
+
     /* Migrations section */
     
     // Upgrades plugin data to current release version

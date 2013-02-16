@@ -30,7 +30,8 @@ var ga = AutomaticDictionary.Lib.GoogleAnalytics(
 {
     storage: storage,
     code: "UA",
-    domain: "domain"
+    domain: "domain",
+    window: window
 }
 );
 
@@ -82,7 +83,8 @@ var ga2 = AutomaticDictionary.Lib.GoogleAnalytics(
 {
     storage: storage,
     code: "UA",
-    domain: "domain"
+    domain: "domain",
+    window:window
 }
 );
 

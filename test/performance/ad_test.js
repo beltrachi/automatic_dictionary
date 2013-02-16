@@ -15,7 +15,7 @@
     
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario
         // Collect setted languages on the interface

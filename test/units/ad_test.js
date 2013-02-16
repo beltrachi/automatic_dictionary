@@ -5,7 +5,6 @@
     
     
     AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
-    
 
     /**
         Cases:
@@ -15,7 +14,7 @@
     
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class( {window:window} );
+        var adi = ad_instance();
         
         //Test internal methods
         assert.equal("aa,ab,bb",adi.stringifyRecipientsGroup(["aa","bb","ab"]));
@@ -51,7 +50,7 @@
     */
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario
         mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
@@ -94,7 +93,7 @@
     */
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario
         
@@ -137,7 +136,7 @@
     
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario        
         mock_recipients( adi, {"to":["A"]} );
@@ -186,7 +185,7 @@
     
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario
         var current_limit = 10;
@@ -229,7 +228,7 @@
     */
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario
         mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
@@ -271,7 +270,7 @@
     */
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //When building the ad instance, it registers the visit on compose
         assert.equal(3,built_images.length);
@@ -361,7 +360,7 @@
         Components.savedPrefs["extensions.automatic_dictionary.migrations_applied"]= "[\"201102130000\",\"201106032254\"]";
         Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.version"]="1234";
         Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.maxSize"]=5;
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         assert.equalJSON([["mydom","foobar",1]], adi.freq_suffix.pairs());
         
@@ -470,7 +469,7 @@
             ], adi.freq_suffix.pairs());
         
         //Test its saved on storage
-        var adi2 = new AutomaticDictionary.Class();
+        var adi2 = ad_instance();
         assert.equalJSON([
                 ["bar3.dom","foobar-x",1],
                 ["bar4.dom","foobar-x",1],
@@ -506,7 +505,7 @@
     
     (function(){
         test_setup();
-        var adi = new AutomaticDictionary.Class();
+        var adi = ad_instance();
         
         //Prepare scenario        
         mock_recipients( adi, {"to":["a@a.com"]} );

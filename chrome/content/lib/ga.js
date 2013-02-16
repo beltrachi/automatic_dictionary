@@ -57,7 +57,7 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
     
     function doRequest(visit_url,params,options){
         options = options || {};
-        options.window = options.window || window;
+        options.window = options.window || config.window;
         var img = new options.window.Image(),
             defaults, i, 
             queryString ="",
