@@ -10,6 +10,7 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link rel="stylesheet" type="text/css" href="stylesheets/custom.css" />
     <title>Automatic dictionary by beltrachi</title>
   </head>
 
@@ -18,14 +19,45 @@
       <div class="inner">
 
         <header>
-          <h1>Automatic dictionary</h1>
+          <h1>
+              Automatic dictionary 
+              <img src="https://addons.cdn.mozilla.net/img/uploads/addon_icons/116/116388-64.png?modified=1354834870"/>
+          </h1>
           <h2>A Thunderbird extension to autodetect spellchecking based on the recipients of the composing mail</h2>
         </header>
 
+        <section id="reviews">
+            <h2>User reviews</h2>
+            <blockquote>
+                I was waiting years for this! Awesome.
+            </blockquote>
+            <blockquote>
+                <strong>Great Idea! Try it!</strong>
+                    Great if you switch between languages from recipient 
+                        to recipient. Remembers the friends/colleagues you write
+                        in English and those you answer in Spanish or German and
+                        so on. Installed without problems. Could be extended 
+                        with shortcuts for switching the dictionary for new 
+                        recipients.
+            </blockquote>
+            <blockquote>
+                    ...  the addon works just perfect. Thank you for this helpful addon :-)
+            </blockquote>
+            <p>
+                <a href="https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switching/?src=github"
+                   onClick="_gaq.push(['_trackEvent', 'Landing', 'SeeMoreRev']);"
+                   >See more reviews</a>
+            </p>
+        </section>
         <section id="downloads" class="clearfix">
-          <a href="https://github.com/beltrachi/automatic_dictionary/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/beltrachi/automatic_dictionary/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/beltrachi/automatic_dictionary" id="view-on-github" class="button"><span>View on GitHub</span></a>
+          <a href="https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switching/?src=github" 
+             id="install-it" class="button"
+             onClick="_gaq.push(['_trackEvent', 'Landing', 'TryItNow']);"
+             ><span>Try it now!</span></a>
+          <a href="https://github.com/beltrachi/automatic_dictionary"
+             id="view-on-github" class="button"
+             onClick="_gaq.push(['_trackEvent', 'Landing', 'ViewSource']);"
+             ><span>View source</span></a>
         </section>
 
         <hr>
@@ -47,6 +79,16 @@
 <p>It can guess the language based on the domain of the recipients of the mail.</p>
 
 <h2>Usage</h2>
+
+            <ul class="screenshots">
+                <li>
+                    <img src="images/screenshot-1.png"/>
+                </li>
+                <li>
+                    <img src="images/screenshot-2.png"/>
+                </li>
+            </ul>
+
 
 <p>To associate a language to a recipient:</p>
 
@@ -73,6 +115,9 @@ recipient appears in the "TO" recipients, the language will be set to that.</p>
 </li>
 </ul><h2>Development plan</h2>
 
+<p>Version 1.x
+    -&gt; Support for Conversions addon    </p>
+
 <p>Version 2.x
     -&gt; Detect based on text
       In case no previous data is avaliable or there is not a unique language for the
@@ -81,8 +126,10 @@ recipient appears in the "TO" recipients, the language will be set to that.</p>
 
 <h2>Contributors</h2>
 
-<p>beltrachi
-Marcos Diez</p>
+<ul>
+    <li>beltrachi</li> 
+    <li>Marcos Diez</li> 
+</ul>
         </section>
 
         <footer>
