@@ -58,3 +58,12 @@ a.button {
 a.button span {
     padding-right:14px;
 }
+
+section.social{
+    padding-bottom:1em;
+}
+
+section.languages{
+    float:right;
+    display:inline;
+}
