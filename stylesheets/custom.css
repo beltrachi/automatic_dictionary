@@ -4,7 +4,7 @@ h1 img{
 }
 
 #install-it span {
-  background: transparent url(../images/thunderbird.png) 12px 50% no-repeat;
+    background: transparent url(../images/thunderbird.png) 12px 50% no-repeat;
 }
 
 .screenshots li{
@@ -22,22 +22,39 @@ h1 img{
 }
 
 blockquote {
-	padding-top: 20px;
-	overflow: hidden; /* clearfix alternative */
-	font-size: 18px;
-	line-height: 150%;
-/*	color: #454545;*/
+    padding-top: 20px;
+    overflow: hidden; /* clearfix alternative */
+    font-size: 18px;
+    line-height: 150%;
+    /*	color: #454545;*/
 }
 blockquote:before {
-	display: block;
-	float: left;
-	margin: 10px 15px 0 0;
-	font-size: 100px; /* let's make it a big quote! */
-	content: open-quote; /* here we define our :before as a smart quote. It could be any content, even the HTML entity alternative to this opening quote, that is “ */
-	color: #bababa;
-	text-shadow: 0 1px 1px #909090;
+    display: block;
+    float: left;
+    margin: 10px 15px 0 0;
+    font-size: 100px; /* let's make it a big quote! */
+    content: open-quote; /* here we define our :before as a smart quote. It could be any content, even the HTML entity alternative to this opening quote, that is “ */
+    color: #bababa;
+    text-shadow: 0 1px 1px #909090;
 }
 blockquote:after {
-	content: none;
-	/* could be content:close-quote; but lets keep it clean*/
+    content: none;
+    /* could be content:close-quote; but lets keep it clean*/
+}
+
+/* Buttons setup */
+#install-it{
+    box-shadow: 0 0 20px #3276b2;
+}
+
+#view-on-github{
+    float:right;
+}
+
+a.button {
+    width: auto;
+}
+
+a.button span {
+    padding-right:14px;
 }
