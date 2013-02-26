@@ -60,7 +60,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
                 function(event){
                     _this.ad.languageChanged(event);
                 },false);
-
+               
             window.addEventListener("blur", function(){
                 _this.ad.stop();
             } , true);
@@ -88,7 +88,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
     recipients:function( recipientType ){
         recipientType = recipientType || "to";
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
-        .createInstance(Components.interfaces.nsIMsgCompFields);
+            .createInstance(Components.interfaces.nsIMsgCompFields);
         this.ad.window.Recipients2CompFields( fields );
         var nsIMsgRecipientArrayInstance = {
             length:0

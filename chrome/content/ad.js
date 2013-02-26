@@ -19,30 +19,28 @@ var Cc = Components.classes;
 var Cu = Components.utils;
 var Cr = Components.results;
 
-var AutomaticDictionary = {
-    //Window managers are objects that attach to the windows that have the compose
-    //window to compose mails
-    window_managers: []
-};
+var AutomaticDictionary = this.AutomaticDictionary || {};
+//Window managers are objects that attach to the windows that have the compose
+//window to compose mails
+AutomaticDictionary.window_managers = [];
 
 var global = this;
-
 var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                        .getService(Components.interfaces.mozIJSSubScriptLoader); 
 var resources = [
-    ["chrome://global/content/inlineSpellCheckUI.js"],
-    ["resource://automatic_dictionary/chrome/content/lib.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/sorted_set.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/lru_hash_v2.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/shared_hash.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/persistent_object.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/locked_object.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/pair_counter.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/freq_table.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/freq_suffix.js"],
-    ["resource://automatic_dictionary/chrome/content/lib/ga.js"],
-    ["resource://automatic_dictionary/chrome/content/ad/compose_window.js"],
-    
+    "chrome://global/content/inlineSpellCheckUI.js",
+    "resource://automatic_dictionary/chrome/content/lib.js",
+    "resource://automatic_dictionary/chrome/content/lib/sorted_set.js",
+    "resource://automatic_dictionary/chrome/content/lib/lru_hash_v2.js",
+    "resource://automatic_dictionary/chrome/content/lib/shared_hash.js",
+    "resource://automatic_dictionary/chrome/content/lib/persistent_object.js",
+    "resource://automatic_dictionary/chrome/content/lib/locked_object.js",
+    "resource://automatic_dictionary/chrome/content/lib/pair_counter.js",
+    "resource://automatic_dictionary/chrome/content/lib/freq_table.js",
+    "resource://automatic_dictionary/chrome/content/lib/freq_suffix.js",
+    "resource://automatic_dictionary/chrome/content/lib/ga.js",
+    "resource://automatic_dictionary/chrome/content/ad/compose_window.js",
+    "resource://automatic_dictionary/chrome/content/ad/conversations_compose_window.js",    
 ];
 
 for( var idx in resources){
@@ -50,6 +48,7 @@ for( var idx in resources){
     loader.loadSubScript(url);
 }
 
+Cu.import("resource:///modules/StringBundle.js");
 
 /* DEBUGGING METHOD
  *
@@ -62,44 +61,58 @@ AutomaticDictionary.dump = function(msg){
     if( typeof(msg) == "function"){
         msg = msg();
     }
-    dump("AutomaticDictionary: ");
+    dump((new Date()).toString()+"| AutomaticDictionary: ");
     dump(msg);
     dump("\n");
 }
+
+AutomaticDictionary.logException = function( e ){
+    AutomaticDictionary.dump( e.toString() );
+    AutomaticDictionary.dump( e.stack.toString() );
+};
+
 AutomaticDictionary.initWindow = function(window, loaded){
     var idx, cw;
     loaded = (loaded === true); //bool cast. loaded default is false
     AutomaticDictionary.dump("Called initWindow");
     
-    //TODO: WAIT TILL PAGE LOADED!
-    AutomaticDictionary.dump("loaded is "+ loaded);
-    AutomaticDictionary.dump("window.document.readyState is "+ window.document.readyState );
     if(!loaded && window.document.readyState != "complete"){
         //Attach onload
         window.addEventListener("load", function(){
             AutomaticDictionary.initWindow( window, true);
         });
     }else{
-        for(idx in AutomaticDictionary.window_managers){
-            cw = AutomaticDictionary.window_managers[idx];
-            if( cw.canManageWindow(window)){
-                
-                try{
+        if(window.document.location.toString() == "chrome://messenger/content/messenger.xul"){
+            AutomaticDictionary.dump("Main window detected");
+            AutomaticDictionary.main_window = window;
+        }
+        
+        try{
+            for(idx in AutomaticDictionary.window_managers){
+                cw = AutomaticDictionary.window_managers[idx];
+                if( cw.canManageWindow(window)){
                     var ad = new AutomaticDictionary.Class({
                         compose_window_builder: cw,
                         window: window
                     });
-                }catch(e){ 
-                    AutomaticDictionary.dump("CREATION FAILED");
-                    AutomaticDictionary.dump(e.toString());
+                    return ad; //stop loop
                 }
-                return ad; //stop loop
-            }
-        }    
+            }    
+        }catch(e){ 
+            AutomaticDictionary.dump("CREATION FAILED");
+            AutomaticDictionary.logException(e);
+        }
     }
+};
+AutomaticDictionary.conversations_windows = [];
+//Triggered when a conversations is deteccted
+AutomaticDictionary.conversationsDetected = function(){
+    AutomaticDictionary.ConversationsComposeWindow.fetchWindowAndInit(AutomaticDictionary.main_window);
 }
+
 AutomaticDictionary.Class = function(options){
     options = options || {};
+    this.window = options.window;
     var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
     this.running = true;
@@ -114,8 +127,6 @@ AutomaticDictionary.Class = function(options){
             notification_time: this.notification_time
         }
     );
-        
-    this.window = options.window;
     
     //Version migrations upgrade check
     this.migrate();
@@ -142,7 +153,7 @@ AutomaticDictionary.Class = function(options){
                 {name:"maxSize", value:this.data.maxSize}
         ]
     });
-    this.collect_event("data","built", {value:((new Date()).getTime() - start) });
+    this.collect_event("data","built", {value:((new Date()).getTime() - start)});
     
     this.start();
     
@@ -271,9 +282,9 @@ AutomaticDictionary.Class.prototype = {
         .....
     */
     
-    languageChanged: function( event ){
+    languageChanged: function(){
         this.log("------------------------------------languageChanged by event");
-        var current_lang = event.target.value;
+        var current_lang = this.getCurrentLang();
         var tos = this.getRecipients();
         var ccs = this.getRecipients("cc");
         this.log("tos are "+ tos.toSource());
@@ -446,20 +457,23 @@ AutomaticDictionary.Class.prototype = {
                 
         if(!lang && this.allowHeuristic()){
             lang = this.heuristic_guess(recipients);
-            if(lang)
+            if(lang){
                 method = this.METHODS.GUESS;
+                this.log("Heuristic says: "+ lang);            
+            }
         }
         
         // Rule: when you detect a language and you detected it last time,
         // Set it again if it's not the current. (Support multi compose windows) 
-        if( this.last_toandcc_key == toandcc_key && 
-            this.last_lang == lang ){
+        var nothing_changed = this.last_toandcc_key == toandcc_key && 
+            this.last_lang == lang;
+        if( nothing_changed ){
             //test that the last lang is the same as the one setted on the dictionary.
             if( this.isBlank(lang) || this.getCurrentLang() == lang){
                 this.log("deduceLanguage detects that nothing changed or lang is null");
                 return;
             }else{
-                this.log("Detected changes on langs: "+ [lang, this.getCurrentLang()].toSource());
+                this.log("Detected changes on langs (from-to): "+ [this.getCurrentLang(), lang].toSource());
             }
         }
 
@@ -469,8 +483,10 @@ AutomaticDictionary.Class.prototype = {
         if(lang){
             try{
                 this.setCurrentLang( lang );
-                this.changeLabel( this.ft("deducedLang."+method, [lang]))
-                this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
+                if( !nothing_changed ){
+                    this.changeLabel( this.ft("deducedLang."+method, [lang]))
+                    this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
+                }
             }catch( e ){
                 this.log(e.toString());
                 this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
@@ -516,7 +532,9 @@ AutomaticDictionary.Class.prototype = {
             },
             stopPropagation: function(){}
         };
-        if( this.window.ChangeLanguage ){
+        if( this.compose_window.changeLanguage ){
+            this.compose_window.changeLanguage( fake_event );
+        }else if( this.window.ChangeLanguage ){
             this.window.ChangeLanguage( fake_event );
         }else{
             this.changeLabel( this.t("errorNoWayToChangeLanguage") );
@@ -526,7 +544,7 @@ AutomaticDictionary.Class.prototype = {
     getCurrentLang: function(){
         var spellChecker = Components.classes["@mozilla.org/spellchecker/engine;1"]
         .getService(Components.interfaces.mozISpellCheckingEngine);
-        return spellChecker.dictionary;
+        return spellChecker.dictionary.toString();
     },
   
     getLangFor: function( addr ){
@@ -580,7 +598,10 @@ AutomaticDictionary.Class.prototype = {
     },
 
     getStrBundle: function(){
-        return this.window.document.getElementById("automaticdictionarystrings");
+        if(!this.string_bundle){
+            this.string_bundle = new StringBundle("chrome://automatic_dictionary/locale/strings.properties");
+        }
+        return this.string_bundle;
     },
 
     //Translation (i18n) helper functions

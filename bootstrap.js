@@ -1,10 +1,11 @@
+//TODO: prepare the shutdown and unregister all listeners
 
 "use strict";
 
-const Ci = Components.interfaces;
-const Cc = Components.classes;
-const Cu = Components.utils;
-const Cr = Components.results;
+var Ci = Components.interfaces;
+var Cc = Components.classes;
+var Cu = Components.utils;
+var Cr = Components.results;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
@@ -32,43 +33,37 @@ let ResourceRegister = {
     }
 };
 
-//Cu.import("resource://automatic_dictionary/content/ad.js", global);
-
-dump("ad is ");
-dump(global.AutomaticDictionary);
-
 function startup(aData, aReason) {
     ResourceRegister.init(aData.installPath, "automatic_dictionary");
      
-    dump("Startup for AD");
-
-    //    Log = setupLogging("Conversations.MonkeyPatch");
-
     try {
-        // Import all required plugins. If you create a new plugin, install it here.
-        //        Cu.import("resource://conversations/modules/plugins/glodaAttrProviders.js");
-        //        Cu.import("resource://conversations/modules/plugins/embeds.js");
 
-        // Patch all existing windows
-        dump("Startup for AD 1");
+        global.AutomaticDictionary = {};
+        
+        Cu.import("resource://automatic_dictionary/chrome/content/ad.js", global);
+        
+        Services.obs.addObserver({
+            observe: function(aMsgFolder, aTopic, aData) {  
+                try{
+                    //window.gDBView.addColumnHandler("betweenCol", columnHandler);
+                    global.AutomaticDictionary.conversationsDetected();
+                }catch(e){
+                    dump(e);
+                }
+            }
+        }, "Conversations", false);
+        
         for each (let w in fixIterator(Services.wm.getEnumerator(null))){
-            AutomaticDictionary.dump("For each window...");
-            //Cu.import("resource://automatic_dictionary/content/ad.js");
             global.AutomaticDictionary.initWindow(w);
         }
 
-        dump("Startup for AD 2");
         // All future windows
         Services.ww.registerNotification({
             observe: function (aSubject, aTopic, aData) {
-                var ctx = function(){};
                 try{
-                    dump("Observe window? "+aSubject +":"+ aTopic + "\n");
                     if (aTopic == "domwindowopened") {
-                        dump("Detected event window opened!!!\n")
                         aSubject.QueryInterface(Ci.nsIDOMWindow);
-                        Cu.import("resource://automatic_dictionary/chrome/content/ad.js", ctx);
-                        ctx.AutomaticDictionary.initWindow(aSubject.window);
+                        global.AutomaticDictionary.initWindow(aSubject.window);
                     }
                 }catch(e){
                     dump("Failed registerNotification \n");
@@ -76,19 +71,11 @@ function startup(aData, aReason) {
                 }
             }
         });
-        dump("Startup for AD 3");
 
-        // Assistant.
-        //        if (Prefs.getInt("conversations.version") < conversationsCurrentVersion)
-        //            Services.ww.openWindow(
-        //        null,
-        //        "chrome://conversations/content/assistant/assistant.xhtml",
-        //        "",
-        //        "chrome,width=800,height=500", {});
     } catch (e) {
         dump("fail");
-        AutomaticDictionary.dump(e);
-        dumpCallStack(e);
+        dump(e);
+        dump(e.stack.toString());
     }
 }
 
@@ -99,8 +86,6 @@ function shutdown(data, reason) {
 
     ResourceRegister.uninit("automatic_dictionary");
     AutomaticDictionary.dump("shutdown");
-    //    for each (let w in fixIterator(Services.wm.getEnumerator("mail:3pane")))
-    //      w.Conversations.monkeyPatch.undo(reason);
 }
 
 function install(data, reason) {

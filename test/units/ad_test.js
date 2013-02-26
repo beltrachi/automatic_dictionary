@@ -37,6 +37,12 @@
         
         adi.deduceLanguage();
         
+        assert.equal( 0, setted_langs.length);
+        
+        //Somewhere the lang is changed but you go back here and
+        dictionary_object.dictionary = "other";
+        adi.deduceLanguage();
+        
         assert.equal( 1, setted_langs.length);
         assert.equal( "foolang", setted_langs[0]);
         
@@ -65,8 +71,10 @@
         assert.equal( 0, setted_langs.length);
         assert.equal( "", Components.savedPrefs[adi.ADDRESS_INFO_PREF] );
         
-        //Change the lang!
+        //Change the lang and it gets stored
         call_language_changed( adi, "foolang");
+        
+        dictionary_object.dictionary = "other";
         
         adi.deduceLanguage();
         
@@ -258,9 +266,17 @@
         assert.equal( 3, labels.length);
         
         adi.deduceLanguage();
-        //We expect a new label because the plugin detects that there is a lang for
-        //these recipients now
-        assert.equal( 4, labels.length);
+        //We do not expect a new label because is the same lang as we were using
+        assert.equal( 3, labels.length);
+        
+        //If it has changed it will update the lang but not notifying anybody
+        //as this is what he has setted before. This happens when more than one
+        //ad instance is open
+        dictionary_object.dictionary = "other";
+        adi.deduceLanguage();
+        assert.equal( 3, labels.length);
+        assert.equal( "foobar", dictionary_object.dictionary);
+        
     })();
 
     /*
@@ -320,13 +336,12 @@
         assert.equal( 3, labels.length);
         assert.equal( 3, ga_events.length);
         assert.equalJSON( ["compose",{cat:"language",action:"saved",label:"foobar"}], ga_events[2]);
-        
+
+        dictionary_object.dictionary = "other";
         adi.deduceLanguage();
-        //We expect a new label because the plugin detects that there is a lang for
-        //these recipients now
-        assert.equal( 4, labels.length);
-        assert.equal( 4, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"remember",label:"foobar"}], ga_events[3]);
+        //We do not expect any new label as it has just saved it. DOnt be so noisy
+        assert.equal( 3, labels.length);
+        assert.equal( 3, ga_events.length);
         
         ///////   Disable tracking
         
@@ -336,12 +351,12 @@
         adi.deduceLanguage();
         
         //No new tracking
-        assert.equal( 4, ga_events.length);
+        assert.equal( 3, ga_events.length);
         
         call_language_changed( adi, "unknownlang");
         
         //No new tracking
-        assert.equal( 4, ga_events.length);
+        assert.equal( 3, ga_events.length);
 
     })();
 
@@ -419,20 +434,17 @@
         assert.equalJSON( ["compose",{cat:"language",action:"saved",label:"foobar"}], ga_events[2]);
 
         adi.deduceLanguage();
-        //We expect a new label because the plugin detects that there is a lang for
-        //these recipients now
-        assert.equal( 4, labels.length);
-        assert.equal( 4, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"remember",label:"foobar"}], ga_events[3]);
+        assert.equal( 3, labels.length);
+        assert.equal( 3, ga_events.length);
         
         mock_recipients( adi, {"to":["abc@bar.dom"]} );
 
         adi.deduceLanguage();
         
-        assert.equal( 5, labels.length);
-        assert.equal( 5, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"guess",label:"foobar"}], ga_events[4]);
-        assert.equal("foobar", setted_langs[1]);
+        assert.equal( 4, labels.length);
+        assert.equal( 4, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"language",action:"guess",label:"foobar"}], ga_events[3]);
+        assert.equal("foobar", setted_langs[0]);
  
         //Test it's saved
         assert.equalJSON(

@@ -3,12 +3,22 @@ Components = null;
 window = null;
 document = null;
 var dictionary_object = {
-    dictionary:undefined
+    dictionary:"en"
 }; 
 dump = function(){};
+StringBundle = function(){
+    return {
+        getString:function(){
+            return "string-stub";
+        },
+        getFormattedString:function(){
+            return "string-stub";
+        }
+    }
+};
     
 function test_setup(){
-    dictionary_object.dictionary = undefined;
+    dictionary_object.dictionary = "en";
     Components = {
         //Custom key to save data during simulations.
         savedPrefs: {
@@ -70,6 +80,11 @@ function test_setup(){
         },
         interfaces:{
             nsIPrefBranch: ""
+        },
+        utils:{
+            "import":function(){
+                
+            }
         }
     };
     
@@ -138,6 +153,7 @@ var call_language_changed = function( adi, lang ){
             value: lang
         }
     }
+    dictionary_object.dictionary=lang;
     adi.languageChanged( evt );
 }
 
