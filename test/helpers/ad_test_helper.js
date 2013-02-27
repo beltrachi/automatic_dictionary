@@ -97,7 +97,8 @@ function test_setup(){
         },
         navigator:{
             language:"en_us"
-        }
+        },
+        document: document
     };
         
     document = {    
@@ -119,15 +120,33 @@ function test_setup(){
                     appendNotification:function(){
                             
                     },
-                    removeAllNotifications:function(){}
+                    removeAllNotifications:function(){},
+                    parentNode:{
+                        insertBefore:function(){}
+                    }
                 };
+            }
+            if(id=="status-bar"){
+                return {
+                    parentNode:{
+                        insertBefore:function(){
+                            
+                        }
+                    }
+                }
             }
             return {
                 addEventListener: function(){}
             };
+        },
+        createElement: function(name){
+            return{
+                appendChild:function(item){
+                    
+                }
+            };
         }
     };
-    window.document = document;
 
     built_images = [];
     window.Image = function(){

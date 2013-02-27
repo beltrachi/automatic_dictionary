@@ -12,14 +12,23 @@ Listener to:
     I DIDNT FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
 
 */
-var EXPORTED_SYMBOLS = ['AutomaticDictionary'];
+var EXPORTED_SYMBOLS = ['AutomaticDictionary', "BOOTSTRAP_REASONS"];
 
 var Ci = Components.interfaces;
 var Cc = Components.classes;
 var Cu = Components.utils;
 var Cr = Components.results;
 
+
 var AutomaticDictionary = this.AutomaticDictionary || {};
+
+//Helper function to copy prototypes
+AutomaticDictionary.extend =   function (destination,source) {
+    for (var property in source)
+        destination[property] = source[property];
+    return destination;
+}
+
 //Window managers are objects that attach to the windows that have the compose
 //window to compose mails
 AutomaticDictionary.window_managers = [];
@@ -68,19 +77,23 @@ AutomaticDictionary.dump = function(msg){
 
 AutomaticDictionary.logException = function( e ){
     AutomaticDictionary.dump( e.toString() );
-    AutomaticDictionary.dump( e.stack.toString() );
+    if(e.stack){
+        AutomaticDictionary.dump( e.stack.toString() );
+    }
 };
 
 AutomaticDictionary.initWindow = function(window, loaded){
-    var idx, cw;
+    var idx, cw, load_listener;
     loaded = (loaded === true); //bool cast. loaded default is false
     AutomaticDictionary.dump("Called initWindow");
     
     if(!loaded && window.document.readyState != "complete"){
         //Attach onload
-        window.addEventListener("load", function(){
+        load_listener = function(){
+            window.removeEventListener("load", load_listener );
             AutomaticDictionary.initWindow( window, true);
-        });
+        };
+        window.addEventListener("load", load_listener );
     }else{
         if(window.document.location.toString() == "chrome://messenger/content/messenger.xul"){
             AutomaticDictionary.dump("Main window detected");
@@ -108,16 +121,38 @@ AutomaticDictionary.conversations_windows = [];
 //Triggered when a conversations is deteccted
 AutomaticDictionary.conversationsDetected = function(){
     AutomaticDictionary.ConversationsComposeWindow.fetchWindowAndInit(AutomaticDictionary.main_window);
-}
+};
+
+//Shuts down all instances
+AutomaticDictionary.shutdown = function(){
+    AutomaticDictionary.dump("Shutdown class call");
+    var list = AutomaticDictionary.instances;
+    for(var x=0; x<list.length; x++){
+        try{
+            list[x].shutdown();
+        }catch(e){
+            AutomaticDictionary.logException(e);
+        }
+    }
+    AutomaticDictionary.instances = [];
+};
+    
+//To unload observers
+AutomaticDictionary.instances = [];
 
 AutomaticDictionary.Class = function(options){
+    //TODO: destroy instances when windows closed, dont keep all in mem!
+    AutomaticDictionary.instances.push(this); //Possible memmory leak!
     options = options || {};
     this.window = options.window;
     var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
     this.running = true;
-    this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-      .getService(Components.interfaces.nsIPrefBranch);
+    this.prefManager = this.getPrefManagerWrapper();
+    
+    //Version migrations upgrade check
+    this.migrate();
+    
     var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
     this.compose_window = new (cw_builder)(
         {
@@ -127,9 +162,6 @@ AutomaticDictionary.Class = function(options){
             notification_time: this.notification_time
         }
     );
-    
-    //Version migrations upgrade check
-    this.migrate();
     
     this.iter = 0; //ObserveRecipients execution counter
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
@@ -204,6 +236,37 @@ AutomaticDictionary.Class.prototype = {
     
     logo_url: "chrome://automatic_dictionary/content/logo.png",
     
+    defaults: (function(prefix){
+        var list = {
+            "addressesInfo": "",
+            "addressesInfo.version": "",
+            "addressesInfo.lock": "",
+            "addressesInfo.maxSize": 200,
+            "migrations_applied": "",
+            
+            "maxRecipients": 10,
+            "allowCollect": true,
+            "hasClosedCollectMessage": "false",
+            
+            "allowHeuristic": true,
+            "freqTableData": "",
+            "freqTableData.version": "",
+            "freqTableData.lock": "",
+            
+            "first_visit": "",
+            "last_session": "",
+            "session_number": "",
+            "visitor_id": ""
+        };
+        var out = {};
+        //Add prefix
+        for(var k in list){
+            out[prefix+k]=list[k];
+        }
+        return out;
+    })("extensions.automatic_dictionary."),
+        
+    
     stop: function(){
         if( !this.running ) return; //Already stopped
         this.log("ad: stop");
@@ -216,7 +279,60 @@ AutomaticDictionary.Class.prototype = {
         this.log("ad: start");
         this.running = true;
     },
-    
+    //TODO: move this to another file
+    getPrefManagerWrapper:function(){
+        var pm = Components.classes["@mozilla.org/preferences-service;1"]
+            .getService(Components.interfaces.nsIPrefBranch);
+        var defaults = this.defaults;
+        
+        var orDefault = function(k,func){
+            try{
+                return func();
+            }catch(e){
+                return defaults[k];
+            }
+        };
+        var getType = function(val){
+            var map = {
+                "boolean":"Bool",
+                "number":"Int",
+                "string":"Char"
+            };
+            return map[(typeof val)];
+        }
+        
+        return {
+            instance: pm,
+            //Direct and unsecure
+            set:function(key,val){
+                pm["set"+getType(val)+"Pref"](key,val);
+            },
+            //We give value to discover type
+            get:function(key,val){
+                pm["get"+getType(val)+"Pref"](key,val);
+            },
+            //getters with fallback to defaults
+            getCharPref:function(k){
+                return orDefault(k, function(){return pm.getCharPref(k)});
+            },
+            getIntPref:function(k){
+                return orDefault(k, function(){return pm.getIntPref(k)});
+            },
+            getBoolPref:function(k){
+                return orDefault(k, function(){return pm.getBoolPref(k)});
+            },
+            
+            setCharPref: function(k,v){
+                return pm.setCharPref(k,v);
+            },
+            setIntPref: function(k,v){
+                return pm.setIntPref(k,v)
+            },
+            setBoolPref: function(k,v){
+                return pm.setBoolPref(k,v);
+            }
+        }
+    },
     //Returns a simple key value store for any type of data.
     getSimpleStorage: function(pm, prefix){
         return {
@@ -654,6 +770,11 @@ AutomaticDictionary.Class.prototype = {
             this.log("DISABLED track for action "+action);            
         }
     },
+    
+    shutdown:function(){
+        AutomaticDictionary.dump("Shutdown instance call");
+        this.compose_window.shutdown();
+    },
 
     /* Migrations section */
     
@@ -769,6 +890,17 @@ AutomaticDictionary.Class.prototype = {
                 self.start = start;
                 start.apply(self);
             }
-        }   
+        },
+        "201302272039": function(self){
+            //set all default values
+            for(var k in self.defaults){
+                try{
+                    self.prefManager.get(k,self.defaults[k]);
+                }catch(e){
+                    self.prefManager.set(k,self.defaults[k]);
+                }
+            }
+        }
+
     }
 }

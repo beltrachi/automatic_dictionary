@@ -38,28 +38,32 @@ AutomaticDictionary.ConversationsComposeWindow.canManageWindow = function(window
     return "chrome://conversations/content/stub.xhtml" == window.document.location.toString();
 };
 
-AutomaticDictionary.ConversationsComposeWindow.prototype = {
-    
-    notificationbox_elem_id: "automatic_dictionary_notification",
-    
+//Inherits instance methods from ComposeWindow
+AutomaticDictionary.extend(
+    AutomaticDictionary.ConversationsComposeWindow.prototype,
+    AutomaticDictionary.ComposeWindow.prototype
+    );
+//We extend with extra functionality
+AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.prototype, 
+{    
     setListeners:function(){
         var window = this.ad.window;
         if( window && !window.automatic_dictionary_initialized ){
             var _this = this;
-            window.addEventListener("compose-window-close", function(){
+            this.setListener(window,"compose-window-close", function(){
                 _this.ad.stop();
             }, true);
-            window.addEventListener('compose-window-reopen', function(){
+            this.setListener(window,'compose-window-reopen', function(){
                 _this.ad.start();
             }, true);
-            window.addEventListener("blur", function(evt){
+            this.setListener(window,"blur", function(evt){
                 if( evt.target.tagName == "textarea"){
                     _this.log("blur on textarea detected");
                     _this.last_textarea_detected = evt.target;
                     _this.ad.stop();
                 }
             } , true);
-            window.addEventListener("focus", function(evt){
+            this.setListener(window,"focus", function(evt){
                 if( evt.target.tagName == "textarea" && !evt.automatic_dictionary_managed){
                     _this.ad.start();
                     _this.log("focus on textarea detected");
@@ -80,7 +84,7 @@ AutomaticDictionary.ConversationsComposeWindow.prototype = {
             // the inputs be updated.
             var inputs = ["to","cc","bcc"];
             for(var x = 0; x<inputs.length; x++){
-                window.document.getElementById(inputs[x]).addEventListener(
+                this.setListener( window.document.getElementById(inputs[x]),
                     "change",
                     function(){
                         _this.log("CHANGE ON INPUT");
@@ -93,7 +97,7 @@ AutomaticDictionary.ConversationsComposeWindow.prototype = {
                 );
             }
 
-            AutomaticDictionary.main_window.addEventListener("command", function(evt){
+            this.setListener(AutomaticDictionary.main_window,"command", function(evt){
                 _this.log("Main window - Commmand event triggered with "+evt.target);
                 
                 if( evt.target.parentNode.id == "mailContext-spell-dictionaries-menu"){
@@ -103,9 +107,16 @@ AutomaticDictionary.ConversationsComposeWindow.prototype = {
                     },500); //Hardcoded. Enough? Otherways the lang is still not changed
                 }
             }, true);
+            
+            this.prepareWindow(AutomaticDictionary.main_window);
+            
             this.log("events seem to be registered");
+
+            window.automatic_dictionary_initialized = true;
+            this.shutdown_chain.push(function(){
+               window.automatic_dictionary_initialized = false;
+            });
         }
-        window.automatic_dictionary_initialized = true;
     },
     
     //Log function
@@ -200,7 +211,7 @@ AutomaticDictionary.ConversationsComposeWindow.prototype = {
             AutomaticDictionary.logException(e);
         }
     }    
-};
+});
 
 //Register compose window
 AutomaticDictionary.window_managers.push(AutomaticDictionary.ConversationsComposeWindow);

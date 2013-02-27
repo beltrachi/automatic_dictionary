@@ -34,6 +34,7 @@
 AutomaticDictionary.ComposeWindow = (function( params ){
     this.ad = params.ad;
     this.params = params;
+    this.shutdown_chain = [];
 });
 
 AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
@@ -45,26 +46,28 @@ AutomaticDictionary.ComposeWindow.prototype = {
     
     notificationbox_elem_id: "automatic_dictionary_notification",
     
+    shutdown_chain: [],
+    
     setListeners:function(){
         var window = this.ad.window;
         if( window ){
             var _this = this;
-            window.addEventListener("compose-window-close", function(){
+            this.setListener(window,"compose-window-close", function(){
                 _this.ad.stop();
             }, true);
-            window.addEventListener('compose-window-reopen', function(){
+            this.setListener( window, 'compose-window-reopen', function(){
                 _this.ad.start();
             }, true);
             //Observe when the dict changes
-            window.document.getElementById("languageMenuList").addEventListener("command",
+            this.setListener( window.document.getElementById("languageMenuList"),"command",
                 function(event){
                     _this.ad.languageChanged(event);
                 },false);
                
-            window.addEventListener("blur", function(){
+            this.setListener( window, "blur", function(){
                 _this.ad.stop();
             } , true);
-            window.addEventListener("focus", function(){
+            this.setListener( window, "focus", function(){
                 _this.ad.start();
                 try{
                 _this.ad.deduceLanguage();
@@ -72,12 +75,38 @@ AutomaticDictionary.ComposeWindow.prototype = {
                     this.log(e.toString());
                 }
             }, true );
-
+            
+            this.prepareWindow(window);
+            
             this.log("events seem to be registered");
         }else{
             this.ad.changeLabel(this.ad.t("settingListenersError"));
             this.log("no window found");
-        }  
+        }
+    },
+    
+    //Registers and queues unregistering
+    setListener: function(target, on, func, useCapture){
+        target.addEventListener(on, func, useCapture);
+        this.shutdown_chain.push(function(){
+           target.removeEventListener(on, func, useCapture); 
+        });
+    },
+    
+    prepareWindow:function(window){
+        var document = window.document;
+        //Add window items
+        var hbox=document.createElement("hbox");       
+        var nb = document.createElement("notificationbox");
+        nb.id = this.notificationbox_elem_id;
+        nb.flex="1";
+        hbox.appendChild(nb);
+        var target = document.getElementById("status-bar");
+        target.parentNode.insertBefore(hbox, target);
+        
+        this.shutdown_chain.push(function(){
+            hbox.parentNode.removeChild(hbox);
+        });
     },
     
     //Log function
@@ -145,6 +174,18 @@ AutomaticDictionary.ComposeWindow.prototype = {
         this.label_timeout = window.setTimeout( function( ){
             nb.removeNotification( n );
         }, this.params.notification_time);
+    },
+    
+    shutdown:function(){
+        this.log("Shutdown...");
+        for(var x=0; x< this.shutdown_chain.length;x++){
+            try{
+                this.log("Shutdown chain "+ x + "/"+this.shutdown_chain.length);
+                this.shutdown_chain[x]();
+            }catch(e){
+                AutomaticDictionary.logException(e);
+            }
+        }
     }
     
 };

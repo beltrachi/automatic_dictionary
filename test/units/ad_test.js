@@ -375,10 +375,11 @@
         Components.savedPrefs["extensions.automatic_dictionary.migrations_applied"]= "[\"201102130000\",\"201106032254\"]";
         Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.version"]="1234";
         Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.maxSize"]=5;
+
         var adi = ad_instance();
         
         assert.equalJSON([["mydom","foobar",1]], adi.freq_suffix.pairs());
-        
+
         Components.savedPrefs[adi.ALLOW_HEURISTIC] = true;
 
         //Prepare scenario - mocking
