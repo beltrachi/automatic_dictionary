@@ -54,7 +54,7 @@ function startup(aData, aReason) {
         global.AutomaticDictionary = {};
         
         
-        Cu.import("resource://automatic_dictionary/chrome/content/ad.js", global);
+        Cu.import("chrome://automatic_dictionary/content/ad.js", global);
         
         global.AutomaticDictionary.shutdown_chain = [];
         var shutdown_chain = global.AutomaticDictionary.shutdown_chain;

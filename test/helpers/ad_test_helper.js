@@ -70,7 +70,7 @@ function test_setup(){
                                 //  Loads scripts translating resource to path
                                 //  It's not the same as loadSubscript but works for tests
                                 // "resource://automatic_dictionary/chrome/content/lib.js"
-                                url = url.replace("resource://automatic_dictionary/","./../");
+                                url = url.replace("chrome://automatic_dictionary/","./../chrome/");
                             }
                             load(url);
                         }

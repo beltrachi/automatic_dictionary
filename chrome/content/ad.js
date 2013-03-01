@@ -38,18 +38,18 @@ var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                        .getService(Components.interfaces.mozIJSSubScriptLoader); 
 var resources = [
     "chrome://global/content/inlineSpellCheckUI.js",
-    "resource://automatic_dictionary/chrome/content/lib.js",
-    "resource://automatic_dictionary/chrome/content/lib/sorted_set.js",
-    "resource://automatic_dictionary/chrome/content/lib/lru_hash_v2.js",
-    "resource://automatic_dictionary/chrome/content/lib/shared_hash.js",
-    "resource://automatic_dictionary/chrome/content/lib/persistent_object.js",
-    "resource://automatic_dictionary/chrome/content/lib/locked_object.js",
-    "resource://automatic_dictionary/chrome/content/lib/pair_counter.js",
-    "resource://automatic_dictionary/chrome/content/lib/freq_table.js",
-    "resource://automatic_dictionary/chrome/content/lib/freq_suffix.js",
-    "resource://automatic_dictionary/chrome/content/lib/ga.js",
-    "resource://automatic_dictionary/chrome/content/ad/compose_window.js",
-    "resource://automatic_dictionary/chrome/content/ad/conversations_compose_window.js",    
+    "chrome://automatic_dictionary/content/lib.js",
+    "chrome://automatic_dictionary/content/lib/sorted_set.js",
+    "chrome://automatic_dictionary/content/lib/lru_hash_v2.js",
+    "chrome://automatic_dictionary/content/lib/shared_hash.js",
+    "chrome://automatic_dictionary/content/lib/persistent_object.js",
+    "chrome://automatic_dictionary/content/lib/locked_object.js",
+    "chrome://automatic_dictionary/content/lib/pair_counter.js",
+    "chrome://automatic_dictionary/content/lib/freq_table.js",
+    "chrome://automatic_dictionary/content/lib/freq_suffix.js",
+    "chrome://automatic_dictionary/content/lib/ga.js",
+    "chrome://automatic_dictionary/content/ad/compose_window.js",
+    "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",    
 ];
 
 for( var idx in resources){
