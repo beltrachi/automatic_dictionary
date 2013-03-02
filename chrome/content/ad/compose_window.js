@@ -46,6 +46,8 @@ AutomaticDictionary.ComposeWindow.prototype = {
     
     notificationbox_elem_id: "automatic_dictionary_notification",
     
+    name: "ComposeWindow",
+    
     shutdown_chain: [],
     
     setListeners:function(){
@@ -115,7 +117,7 @@ AutomaticDictionary.ComposeWindow.prototype = {
     
     //Log function
     log:function( msg ){
-        AutomaticDictionary.dump( "ComposeWindow:: "+ msg );
+        AutomaticDictionary.dump( this.name + ":: "+ msg );
     },
     
     recipients:function( recipientType ){

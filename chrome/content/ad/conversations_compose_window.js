@@ -46,6 +46,8 @@ AutomaticDictionary.extend(
 //We extend with extra functionality
 AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.prototype, 
 {    
+    name: "ConversationsComposeWindow",
+    
     setListeners:function(){
         var window = this.ad.window;
         if( window && !window.automatic_dictionary_initialized ){
@@ -128,11 +130,6 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
                window.automatic_dictionary_initialized = false;
             });
         }
-    },
-    
-    //Log function
-    log:function( msg ){
-        AutomaticDictionary.dump( "ConversationsComposeWindow:: "+ msg );
     },
     
     recipients:function( recipientType ){
