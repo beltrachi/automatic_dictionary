@@ -18,6 +18,7 @@ We are collecting anonymous data and events like:
 * When the plugin fails to detect a language.
 * When the plugin gets the language right.
 * When the plugin guesses the language based on heuristics.
+* When you send an email.
 * How many mail-language assignments  have you saved.
 * Your plugin settings (max size, etc).
 * How much it lasts to do the operations like loading configuration or preparing data for heuristics.

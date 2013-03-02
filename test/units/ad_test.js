@@ -342,6 +342,12 @@
         //We do not expect any new label as it has just saved it. DOnt be so noisy
         assert.equal( 3, labels.length);
         assert.equal( 3, ga_events.length);
+
+        //Register when sent
+        adi.notifyMailSent();
+        assert.equal( 4, ga_events.length);
+        assert.equalJSON( ["compose",{cat:"mail",action:"sent"}], ga_events[3]);
+        
         
         ///////   Disable tracking
         
@@ -351,12 +357,12 @@
         adi.deduceLanguage();
         
         //No new tracking
-        assert.equal( 3, ga_events.length);
+        assert.equal( 4, ga_events.length);
         
         call_language_changed( adi, "unknownlang");
         
         //No new tracking
-        assert.equal( 3, ga_events.length);
+        assert.equal( 4, ga_events.length);
 
     })();
 

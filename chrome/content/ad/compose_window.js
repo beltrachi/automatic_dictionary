@@ -76,6 +76,10 @@ AutomaticDictionary.ComposeWindow.prototype = {
                 }
             }, true );
             
+            this.setListener(window, "compose-send-message", function(evt){
+                _this.ad.notifyMailSent();
+            }, true );
+            
             this.prepareWindow(window);
             
             this.log("events seem to be registered");

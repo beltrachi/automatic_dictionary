@@ -775,9 +775,16 @@ AutomaticDictionary.Class.prototype = {
         AutomaticDictionary.dump("Shutdown instance call");
         this.compose_window.shutdown();
     },
+    
+    //TODO: migrate to observable/observer pattern
+    notifyMailSent:function(){
+        this.log("Mail sent event");
+        this.collect_event("mail","sent");
+    },
 
     /* Migrations section */
     
+    //TODO: move migrations thing apart.
     // Upgrades plugin data to current release version
     migrate: function(){
         // Get current migrations applied
