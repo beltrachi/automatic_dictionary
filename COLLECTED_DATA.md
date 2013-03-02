@@ -22,6 +22,7 @@ We are collecting anonymous data and events like:
 * How many mail-language assignments  have you saved.
 * Your plugin settings (max size, etc).
 * How much it lasts to do the operations like loading configuration or preparing data for heuristics.
+* When you are using this plugin with Conversations.
 * GoogleAnalytics traditional data like operating system, language of the operating system, country, etc.
 
 We DO NOT collect:

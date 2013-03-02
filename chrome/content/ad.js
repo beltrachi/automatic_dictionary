@@ -182,7 +182,8 @@ AutomaticDictionary.Class = function(options){
         {customVars:[
                 {name:"size",value:this.data.size()},
                 {name:"maxRecipients",value:this.getMaxRecipients()},
-                {name:"maxSize", value:this.data.maxSize}
+                {name:"maxSize", value:this.data.maxSize},
+                {name:"cw",value:this.compose_window.name}
         ]
     });
     this.collect_event("data","built", {value:((new Date()).getTime() - start)});
