@@ -47,6 +47,7 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/pair_counter.js",
     "chrome://automatic_dictionary/content/lib/freq_table.js",
     "chrome://automatic_dictionary/content/lib/freq_suffix.js",
+    "chrome://automatic_dictionary/content/lib/shutdownable.js",
     "chrome://automatic_dictionary/content/lib/ga.js",
     "chrome://automatic_dictionary/content/ad/compose_window.js",
     "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",    

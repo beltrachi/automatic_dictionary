@@ -42,37 +42,48 @@ AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
     return window.document.location == "chrome://messenger/content/messengercompose/messengercompose.xul";
 };
 
-AutomaticDictionary.ComposeWindow.prototype = {
+AutomaticDictionary.extend( 
+    AutomaticDictionary.ComposeWindow.prototype,
+    AutomaticDictionary.Lib.Shutdownable);
+    
+AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     
     notificationbox_elem_id: "automatic_dictionary_notification",
     
     name: "ComposeWindow",
     
-    shutdown_chain: [],
-    
     setListeners:function(){
         var window = this.ad.window;
-        if( window ){
+        if( window && !window.automatic_dictionary_initialized ){
             var _this = this;
-            this.setListener(window,"compose-window-close", function(){
+            
+            this.setListener( window, 'unload', function(){
+                _this.log("window unload");
                 _this.ad.stop();
-            }, true);
+                _this.ad.shutdown();
+            });
+           
             this.setListener( window, 'compose-window-reopen', function(){
+                _this.log("compose window reopen");
                 _this.ad.start();
-            }, true);
+            }, false);
             //Observe when the dict changes
             this.setListener( window.document.getElementById("languageMenuList"),"command",
                 function(event){
                     _this.ad.languageChanged(event);
                 },false);
                
-            this.setListener( window, "blur", function(){
-                _this.ad.stop();
-            } , true);
+            this.setListener( window, "blur", function(evt){
+                if(evt.target == window){
+                    _this.log("compose window blur");
+                    _this.ad.stop();
+                }            
+            } , false);
             this.setListener( window, "focus", function(){
+                _this.log("compose window focus");
                 _this.ad.start();
                 try{
-                _this.ad.deduceLanguage();
+                    _this.ad.deduceLanguage();
                 }catch(e){
                     this.log(e.toString());
                 }
@@ -80,25 +91,20 @@ AutomaticDictionary.ComposeWindow.prototype = {
             
             this.setListener(window, "compose-send-message", function(evt){
                 _this.ad.notifyMailSent();
-            }, true );
+            }, false );
             
             this.prepareWindow(window);
             
+            window.automatic_dictionary_initialized = true;
+            this.shutdown_chain.push(function(){
+                window.automatic_dictionary_initialized = false;
+            });
             this.log("events seem to be registered");
         }else{
-            this.ad.changeLabel(this.ad.t("settingListenersError"));
-            this.log("no window found");
+            this.log("no window found or already initialized");
         }
     },
-    
-    //Registers and queues unregistering
-    setListener: function(target, on, func, useCapture){
-        target.addEventListener(on, func, useCapture);
-        this.shutdown_chain.push(function(){
-           target.removeEventListener(on, func, useCapture); 
-        });
-    },
-    
+        
     prepareWindow:function(window){
         var document = window.document;
         //Add window items
@@ -180,21 +186,9 @@ AutomaticDictionary.ComposeWindow.prototype = {
         this.label_timeout = window.setTimeout( function( ){
             nb.removeNotification( n );
         }, this.params.notification_time);
-    },
-    
-    shutdown:function(){
-        this.log("Shutdown...");
-        for(var x=0; x< this.shutdown_chain.length;x++){
-            try{
-                this.log("Shutdown chain "+ x + "/"+this.shutdown_chain.length);
-                this.shutdown_chain[x]();
-            }catch(e){
-                AutomaticDictionary.logException(e);
-            }
-        }
     }
     
-};
+});
 
 //Register compose window
 AutomaticDictionary.window_managers.push(AutomaticDictionary.ComposeWindow);
