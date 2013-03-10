@@ -18,7 +18,7 @@
     <em:name>Automatic dictionary</em:name>
     <em:description>Extension that remembers the language of the email when composing.</em:description>
     <em:creator>Jordi Beltran</em:creator>
-    <em:homepageURL>http://github.com/beltrachi/automatic_dictionary</em:homepageURL>
+    <em:homepageURL>http://beltrachi.github.com/automatic_dictionary/</em:homepageURL>
     <em:localized>
       <Description>
         <em:locale>es-ES</em:locale>
