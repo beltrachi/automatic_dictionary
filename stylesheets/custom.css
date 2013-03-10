@@ -67,3 +67,15 @@ section.languages{
     float:right;
     display:inline;
 }
+
+.languages a{
+    padding-left:1px solid black;
+    display:block;
+    float:left;
+    padding:0px 5px;
+    border-left:1px solid gray;
+}
+.languages a:first-child{
+    border:none;
+}
+
