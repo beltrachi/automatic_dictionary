@@ -20,3 +20,10 @@ store private data like email addresses or mail contents. Only languages used an
 actions performed.">
 <!ENTITY allowCollect.recomendation "">
 
+
+<!ENTITY allowPromotions.label "Allow to suggest you ways to promote this plugin:">
+<!ENTITY allowPromotions.info 
+"We'll try to suggest you ways to help us promote this plugin, like sharing with your
+mates or writing a review, or some suggestion to improve it.">
+<!ENTITY allowPromotions.recomendation "">
+

@@ -19,4 +19,3 @@ AutomaticDictionary.check_int_range = function( field , min, max, defv ){
     
     return false;
 };
-

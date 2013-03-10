@@ -22,8 +22,13 @@ var Cr = Components.results;
 
 var AutomaticDictionary = this.AutomaticDictionary || {};
 
+AutomaticDictionary.Plugins = {};
+
+AutomaticDictionary.enabled_plugins = [];
+
 //Helper function to copy prototypes
 AutomaticDictionary.extend =   function (destination,source) {
+    if( source == {} || !source ) AutomaticDictionary.dump("Warn: extension with empty source.");
     for (var property in source)
         destination[property] = source[property];
     return destination;
@@ -49,8 +54,13 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/freq_suffix.js",
     "chrome://automatic_dictionary/content/lib/shutdownable.js",
     "chrome://automatic_dictionary/content/lib/ga.js",
+    "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
+
     "chrome://automatic_dictionary/content/ad/compose_window.js",
     "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",    
+
+    "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",    
+    "chrome://automatic_dictionary/content/ad/plugins/promotions.js",    
 ];
 
 for( var idx in resources){
@@ -148,6 +158,9 @@ AutomaticDictionary.Class = function(options){
     this.window = options.window;
     var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
+    
+    this.initPlugins();
+    
     this.running = true;
     this.prefManager = this.getPrefManagerWrapper();
     
@@ -190,16 +203,26 @@ AutomaticDictionary.Class = function(options){
     this.collect_event("data","built", {value:((new Date()).getTime() - start)});
     
     this.start();
-    
+
     //Show warning when loaded
     try{
-        this.window.addEventListener("load", function load(event){
-            _this.window.removeEventListener("load", load, false); //remove listener, no longer needed
-            _this.showCollectWarning();  
-        },false);
+        var onwindowload = function (event){
+            _this.window.removeEventListener("load", onwindowload, false); //remove listener, no longer needed
+            _this.showCollectWarning();
+            _this.dispatchEvent({type:"window-load"});
+        };
+        this.window.addEventListener("load", onwindowload ,false);
+        this.log(this.window.document.readyState);
+        //In case window is already loaded
+        if(this.window.document.readyState == "complete"){
+            onwindowload();
+        }
     }catch(e){
         this.log(e);
     }
+    
+    //Useful hook for plugins and so on
+    this.dispatchEvent({type:"load"});
     return this;
 }
 
@@ -258,7 +281,18 @@ AutomaticDictionary.Class.prototype = {
             "first_visit": "",
             "last_session": "",
             "session_number": "",
-            "visitor_id": ""
+            "visitor_id": "",
+
+            "allowPromotions": true,
+
+            //Events collected from 
+            //we set them as strings as we'll use SimpleStorage
+            "stats.data.built": 0,
+            "stats.language.saved": 0,
+            "stats.language.guessed": 0,
+            "stats.language.miss":0,
+            "stats.mail.sent":0,
+            "stats.process.build_from_hash":0
         };
         var out = {};
         //Add prefix
@@ -286,32 +320,39 @@ AutomaticDictionary.Class.prototype = {
         var pm = Components.classes["@mozilla.org/preferences-service;1"]
             .getService(Components.interfaces.nsIPrefBranch);
         var defaults = this.defaults;
-        
+        var _this = this;
         var orDefault = function(k,func){
             try{
                 return func();
             }catch(e){
+                _this.log("Returning default for "+k);
                 return defaults[k];
             }
         };
-        var getType = function(val){
+        var getType = function(val,key){
+            if((typeof val)== "undefined"){
+                //Set type to default type
+                val = defaults[key];
+            }
             var map = {
                 "boolean":"Bool",
                 "number":"Int",
                 "string":"Char"
             };
-            return map[(typeof val)];
+            var res = map[(typeof val)] || "Char"; //Char by default
+            _this.log("getType for "+key+" is "+res );
+            return res;
         }
         
-        return {
+        var ifce = {
             instance: pm,
             //Direct and unsecure
             set:function(key,val){
-                pm["set"+getType(val)+"Pref"](key,val);
+                pm["set"+getType(val,key)+"Pref"](key,val);
             },
             //We give value to discover type
             get:function(key,val){
-                pm["get"+getType(val)+"Pref"](key,val);
+                return pm["get"+getType(val,key)+"Pref"](key,val);
             },
             //getters with fallback to defaults
             getCharPref:function(k){
@@ -332,14 +373,26 @@ AutomaticDictionary.Class.prototype = {
             },
             setBoolPref: function(k,v){
                 return pm.setBoolPref(k,v);
+            },
+            inc: function(key, delta){
+                AutomaticDictionary.dump("increasing "+key);
+                delta = delta || 1;
+                var v = ifce.getIntPref(key);
+                v = (1 * (v||0)) + delta;
+                var res = pm.setIntPref(key,v);
+                AutomaticDictionary.dump("up to "+ v);
+                return res;
             }
-        }
+        };
+        return ifce;
     },
     //Returns a simple key value store for any type of data.
+    //TODO: Migrate prefManager storage to Storage or File
     getSimpleStorage: function(pm, prefix){
-        return {
+        var _this = this;
+        var ifce = {
             set: function(key, value){
-                pm.setCharPref( prefix + key, JSON.stringify(value) );
+                return pm.setCharPref( prefix + key, JSON.stringify(value) );
             },
             get: function(key){
                 var data=null;
@@ -351,8 +404,16 @@ AutomaticDictionary.Class.prototype = {
                     }
                 }catch(e){}
                 return data;
+            },
+            inc: function(key, delta){
+                _this.log("increasing "+key);
+                delta = delta || 1;
+                var res = ifce.set(key,(1 * ifce.get(key)) + (delta));
+                _this.log("up to "+ ifce.get(key));
+                return res;
             }
         };
+        return ifce;
     },
     
     initFreqSuffix: function(){
@@ -684,7 +745,7 @@ AutomaticDictionary.Class.prototype = {
     
     //To show messages to the user
     showMessage:function( str, options ){
-        return this.compose_window.show_message(str, options);
+        return this.compose_window.showMessage(str, options);
     },
     
     showCollectWarning:function(){
@@ -758,6 +819,9 @@ AutomaticDictionary.Class.prototype = {
         }
     },
     collect_event: function(category, action, e_opts, options){
+        //Update internal stats
+        this.prefManager.inc(this.pref_prefix + "stats." + category+"."+action);
+        
         if( this.allowCollect() ){
             e_opts = e_opts || {};
             this.log("collect for event "+action+" on "+category);
@@ -771,10 +835,24 @@ AutomaticDictionary.Class.prototype = {
         }else{
             this.log("DISABLED track for action "+action);            
         }
+        
+        this.dispatchEvent({type:category, data:{action: action}});
+    },
+    
+    counterFor:function(key){
+        var alias = {
+            "usages":"data.built"
+        }
+        if( alias[key]) 
+            key = alias[key];
+        var ret = this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
+        this.log("CunterFor "+key+ " is "+ret);
+        return ret;
     },
     
     shutdown:function(){
         AutomaticDictionary.dump("Shutdown instance call");
+        this.dispatchEvent({type:"shutdown"});
         this.compose_window.shutdown();
     },
     
@@ -782,6 +860,43 @@ AutomaticDictionary.Class.prototype = {
     notifyMailSent:function(){
         this.log("Mail sent event");
         this.collect_event("mail","sent");
+    },
+    
+    //It sets default values in case they are not setted
+    setDefaults:function(){
+        //set all default values
+        for(var k in this.defaults){
+            try{
+                this.log("Value for "+k+ " is ");
+                this.log(this.prefManager.get(k,this.defaults[k]));
+            }catch(e){
+                this.log("setting default for "+k);
+                this.prefManager.set(k,this.defaults[k]);
+            }
+        }        
+    },
+    
+    initPlugins: function(){
+        var list = AutomaticDictionary.enabled_plugins;
+        for(var x=0; x< list.length; x++){
+            var plugin = list[x];
+            try{
+                plugin.init(this);
+            }catch(e){
+                this.log("Plugin init error");
+                AutomaticDictionary.logException(e);
+            }
+        }
+        this.dispatchEvent({type:"plugins-initialized"});
+    },
+    
+    //Wrappers to set preferences without managing prefixes
+    getPref:function(key){
+        return this.prefManager.get(this.pref_prefix + key);
+    },
+    
+    setPref:function(key, value){
+        return this.prefManager.set(this.pref_prefix + key, value);
     },
 
     /* Migrations section */
@@ -901,15 +1016,15 @@ AutomaticDictionary.Class.prototype = {
             }
         },
         "201302272039": function(self){
-            //set all default values
-            for(var k in self.defaults){
-                try{
-                    self.prefManager.get(k,self.defaults[k]);
-                }catch(e){
-                    self.prefManager.set(k,self.defaults[k]);
-                }
-            }
+            //Migrated to restartless
+            self.setDefaults();
+        },
+        "201303021735": function(self){
+            //Added internal stats
+            self.setDefaults();
         }
 
     }
-}
+};
+
+AutomaticDictionary.extend( AutomaticDictionary.Class.prototype, AutomaticDictionary.EventDispatcher);

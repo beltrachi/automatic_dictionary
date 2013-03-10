@@ -9,11 +9,21 @@
     >
     <!-- onload to fix prefpanel size https://bugzilla.mozilla.org/show_bug.cgi?id=451997 -->
     <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
+    <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
+    <script language="JavaScript">
+        //Bootup and shutdown to migrate data when required.
+        var ad = new AutomaticDictionary.Class({
+                        window: window
+                    });
+        ad.shutdown();
+    </script>
+
     <prefpane id="main-pane" label="Preferencess">
         <preferences>
             <preference id="maxSize" name="extensions.automatic_dictionary.addressesInfo.maxSize" type="int"/>
             <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
             <preference id="allowCollect" name="extensions.automatic_dictionary.allowCollect" type="bool"/>
+            <preference id="allowPromotions" name="extensions.automatic_dictionary.allowPromotions" type="bool"/>
         </preferences>
         <vbox class="prefoptions">
             <description class="intro">
@@ -45,6 +55,16 @@
             <description class="info">
                 &allowCollect.info;
                 &allowCollect.recomendation;
+            </description>
+            <!-- Remember to set the promotion id upper in this file at <preferences> -->
+            <hbox>
+                <label control="input_allowPromotions" value="&allowPromotions.label;"/>
+                <checkbox preference="allowPromotions" id="input_allowPromotions" />
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &allowPromotions.info;
+                &allowPromotions.recomendation;
             </description>
         </vbox>
     </prefpane>
