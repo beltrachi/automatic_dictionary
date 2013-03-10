@@ -25,6 +25,9 @@ Cu.import("resource:///modules/iteratorUtils.jsm");
 let global = this;
 let Log;
 
+var log = dump;
+log = function(){}; //Comment to allow logging on bootstrap
+
 // from wjohnston (cleary for Fennec)
 let ResourceRegister = {
     init: function(aFile, aName) {
@@ -45,7 +48,7 @@ let ResourceRegister = {
 };
 
 function startup(aData, aReason) {
-        dump("\nSTARTUP CALLED\n");
+        log("\nSTARTUP CALLED\n");
 
     ResourceRegister.init(aData.installPath, "automatic_dictionary");
      
@@ -65,7 +68,7 @@ function startup(aData, aReason) {
                     //window.gDBView.addColumnHandler("betweenCol", columnHandler);
                     global.AutomaticDictionary.conversationsDetected();
                 }catch(e){
-                    dump(e);
+                    log(e);
                 }
             }
         };
@@ -88,8 +91,8 @@ function startup(aData, aReason) {
                         global.AutomaticDictionary.initWindow(aSubject.window);
                     }
                 }catch(e){
-                    dump("Failed registerNotification \n");
-                    dump(e.toString());
+                    log("Failed registerNotification \n");
+                    log(e.toString());
                 }
             }
         };
@@ -101,14 +104,14 @@ function startup(aData, aReason) {
         
 
     } catch (e) {
-        dump("fail");
-        dump(e);
-        dump(e.stack.toString());
+        log("fail");
+        log(e);
+        log(e.stack.toString());
     }
 }
 
 function shutdown(data, reason) {
-    dump("\nCALLED SHUTDOWN\n");
+    log("\nCALLED SHUTDOWN\n");
     try{
         // No need to do extra work here
         if (reason == BOOTSTRAP_REASONS.APP_SHUTDOWN){
@@ -127,9 +130,9 @@ function shutdown(data, reason) {
         global.AutomaticDictionary.shutdown();
 
         ResourceRegister.uninit("automatic_dictionary");
-        global.AutomaticDictionary.dump("shutdown");
+        global.AutomaticDictionary.log("shutdown");
     }catch(e){
-        dump("EXCEPTION ON SH "+e.toString());
+        log("EXCEPTION ON SH "+e.toString());
     }
 }
 

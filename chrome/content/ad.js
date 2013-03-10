@@ -77,7 +77,7 @@ Cu.import("resource:///modules/StringBundle.js");
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    //return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
+    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
     if( typeof(msg) == "function"){
         msg = msg();
     }
