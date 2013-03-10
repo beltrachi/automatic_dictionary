@@ -59,7 +59,7 @@ var resources = [
     "chrome://automatic_dictionary/content/ad/compose_window.js",
     "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",    
 
-    "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",    
+    "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",  
     "chrome://automatic_dictionary/content/ad/plugins/promotions.js",    
 ];
 
@@ -227,6 +227,8 @@ AutomaticDictionary.Class = function(options){
 }
 
 AutomaticDictionary.Class.prototype = {
+    
+    id: "automatic_dictionary_extension@jordi_beltran.net",
     //Constants
     ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",

@@ -16,27 +16,24 @@ AutomaticDictionary.extend(
     AutomaticDictionary.Plugins.Promotions.prototype,
     AutomaticDictionary.Plugins.PluginBase.prototype);
 
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
+
 //TODO: move code to plugin_base
 AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
 {    
-    show_up_every: 2,
-    min_usages: 2,
+    show_up_every: 30,
+    min_usages: 30,
     
     allow_promotions_pref_key: "allowPromotions",
     
     message_distributions:{
-        shareMessage: 90,
-        reviewMessage: 10
+        shareMessage: 50,
+        reviewMessage: 50
     //localizeMessage: 10
     },
     
     //When the locale starts with es- use the spanish version.
     shareUrls:{
-        "es-": 'http://beltrachi.github.com/automatic_dictionary/index-es.html',
-        "*": "http://beltrachi.github.com/automatic_dictionary/"
-    },
-    
-    reviewUrls:{
         "es-": 'http://beltrachi.github.com/automatic_dictionary/index-es.html',
         "*": "http://beltrachi.github.com/automatic_dictionary/"
     },
@@ -52,6 +49,8 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         this.setListener( this.ad, "shutdown", function(evt){
             _this.shutdown();
         });
+        
+        this.getAddon();
     },
     
     log:function(msg){
@@ -113,20 +112,21 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
 
         // We walk from the
         var point = rnd * total, it;
+        this.log("Point is "+point+" from a total of "+total);
         for( var x=options.length-1; x>= 0; x--){
             it = options[x];
-            if(it.weight > point){
+            if(it.weight < point){
                 return it.name;
             }
         }
-        return options[options.length-1].name;
+        return options[0].name;
     },
     //Delegate to AD
     showMessage:function(){
         return this.ad.showMessage.apply(this.ad, arguments);
     },
     
-    launchExernalUrl:function(url){
+    launchExternalUrl:function(url){
         var messenger = Components.classes["@mozilla.org/messenger;1"].createInstance();
         messenger = messenger.QueryInterface(Components.interfaces.nsIMessenger);
         messenger.launchExternalURL(url);     
@@ -137,9 +137,13 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         var buttons = [
         {
             callback:function(){
-                _this.ad.collect_event("promotion","share");
-                var url=_this.localizeUrl(_this.shareUrls);
-                _this.launchExternalUrl(url);
+                try{
+                    _this.ad.collect_event("promotion","share");
+                    var url=_this.localizeUrl(_this.shareUrls);
+                    _this.launchExternalUrl(url);
+                }catch(e){
+                    AutomaticDictionary.logException(e);
+                }
             },
             label: this.t("PromotionsShareButton"),
             accessKey: ""
@@ -156,9 +160,12 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         var buttons = [
         {
             callback:function(){
-                _this.ad.collect_event("promotion","review");
-                var url=_this.localizeUrl(_this.reviewUrls);
-                _this.launchExternalUrl(url);
+                try{
+                    _this.ad.collect_event("promotion","review");
+                    _this.openInternalUrl( _this.addon.reviewURL );
+                }catch(e){
+                    AutomaticDictionary.logException(e);
+                }
             },
             label: this.t("PromotionsReviewButton"),
             accessKey: ""
@@ -172,6 +179,7 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
     
     defaultButtons:function(){
         var _this = this;
+        
         return [
         {
             callback:function(){
@@ -218,6 +226,37 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
     t: function(k){
         this.log("get label for "+k);
         return this.ad.t(k);
+    },
+    
+    openInternalUrl: function(url){
+        var tabmail = this.ad.window.document.getElementById("tabmail");
+        if (!tabmail) {
+            // Try opening new tabs in an existing 3pane window
+            var mail3PaneWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+            .getService(Components.interfaces.nsIWindowMediator)
+            .getMostRecentWindow("mail:3pane");
+            if (mail3PaneWindow) {
+                tabmail = mail3PaneWindow.document.getElementById("tabmail");
+                mail3PaneWindow.focus();
+            }
+        }
+        
+        if (tabmail)
+            tabmail.openTab("contentTab", {contentPage: url});
+        else{
+            this.ad.window.openDialog("chrome://messenger/content/", "_blank",
+                "chrome,dialog=no,all", null,
+                { tabType: "contentTab",
+                    tabParams: {contentPage: url} 
+                });
+        }
+    },
+    
+    getAddon:function(){
+        var _this = this;
+        AddonManager.getAddonByID(this.ad.id, function(addon){
+            _this.addon = addon;
+        });
     }
 });
 
