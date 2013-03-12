@@ -21,3 +21,10 @@ el plugin y para decidir mejor que conviene para siguientes versiones.
 Nunca guardaremos ni direcciones de correo ni contenidos. Solo el idioma que se
 utiliza y que acciones se realizan.">
 <!ENTITY allowCollect.recomendation "">
+
+<!ENTITY allowPromotions.label "Permitir sugerir maneras de promocionar este plugin:">
+<!ENTITY allowPromotions.info
+"Intentaremos sugerirte maneras de ayudarnos a promover este plugin, como compartir con tus
+compañeros o escribiendo una valoración.">
+<!ENTITY allowPromotions.recomendation "">
+

@@ -21,3 +21,10 @@ plugin i poder decidir millor què és més convenient en properes versions. Mai
 guardem ni direccions de correu ni coninguts. Només l'idioma que s'utilitza i
 quines accions es realitzen.">
 <!ENTITY allowCollect.recomendation "">
+
+<!ENTITY allowPromotions.label "Permetre suggerir maneres de promocionar aquest plugin:">
+<!ENTITY allowPromotions.info
+"Intentarem suggerir-te maneres d'ajudar-nos a promocionar aquest plugin, com 
+compartint-lo amb els companys o escribint-ne una valoració.">
+<!ENTITY allowPromotions.recomendation "">
+
