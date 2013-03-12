@@ -1,3 +1,13 @@
+=== 1.4.0
+
+* Restartless 
+
+* Added support for Conversations plugin #5
+
+* Added promotions to suggest user to share the plugin with it's mates or write a review
+
+* Collect event when user finally sends mail, to see if the plugin is being useful
+
 === 1.3.0
 
 * Added heuristics to guess language based on the domain of the recipients.
