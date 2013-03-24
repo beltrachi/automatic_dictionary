@@ -13,7 +13,8 @@
     <script language="JavaScript">
         //Bootup and shutdown to migrate data when required.
         var ad = new AutomaticDictionary.Class({
-                        window: window
+                        window: window,
+                        compose_window_builder: AutomaticDictionary.ComposeWindowStub
                     });
         ad.shutdown();
     </script>

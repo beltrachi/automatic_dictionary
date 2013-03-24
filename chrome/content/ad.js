@@ -57,6 +57,7 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
 
     "chrome://automatic_dictionary/content/ad/compose_window.js",
+    "chrome://automatic_dictionary/content/ad/compose_window_stub.js",
     "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",    
 
     "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",  
