@@ -1,3 +1,7 @@
+=== 1.4.1
+
+* Fix preferences window error shown in error console
+
 === 1.4.0
 
 * Restartless 
