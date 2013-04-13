@@ -89,6 +89,16 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 }
             }, true );
             
+            this.setListener(window,"command", function(evt){
+                _this.log("Window - Commmand event triggered with "+evt.target);
+                if( evt.target.parentNode.id == "spellCheckDictionariesMenu"){
+                    _this.log("clicked on context dict menu");
+                    window.setTimeout(function(){
+                        _this.ad.languageChanged();
+                    },500); //Hardcoded. Enough? Otherways the lang is still not changed
+                }
+            }, true);
+            
             this.setListener(window, "compose-send-message", function(evt){
                 _this.ad.notifyMailSent();
             }, false );
