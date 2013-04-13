@@ -10,7 +10,7 @@
   The extension will keep a record of the language previously selected for the
   recipients of the mail and switch it.
 
-  It can guess the language based on the domain of the recipients of the mail.
+  It can also guess the language based on the domain of the recipients of the mail.
   
   
 === Usage ===
@@ -31,7 +31,7 @@
   language.
     
   Once a language is set to a user, each time you Compose a message and that
-  recipient appears in the "TO" recipients, the language will be set to that.
+  recipient appears in the "TO" or "CC" recipients, the language will be set to that.
   
 
 === Development plan ===
