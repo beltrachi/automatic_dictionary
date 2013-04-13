@@ -234,7 +234,7 @@ AutomaticDictionary.Class.prototype = {
     ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",
     MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
-    ALLOW_COLLECT_KEY:"extensions.automatic_dictionary.allowCollect",
+    ALLOW_COLLECT_KEY:"allowCollect",
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
     
     METHODS:{
@@ -764,6 +764,15 @@ AutomaticDictionary.Class.prototype = {
                 },
                 {
                     callback:function(){
+                        _this.storage.set("hasClosedCollectMessage",true);
+                        _this.prefManager.setBoolPref(
+                            _this.pref_prefix + _this.ALLOW_COLLECT_KEY, false);
+                    },
+                    label: this.t("DontDoIt"),
+                    accessKey: ""
+                },
+                {
+                    callback:function(){
                         var url='https://github.com/beltrachi/automatic_dictionary/blob/master/COLLECTED_DATA.md';
                         var messenger = Components.classes["@mozilla.org/messenger;1"].createInstance();
                         messenger = messenger.QueryInterface(Components.interfaces.nsIMessenger);
@@ -809,7 +818,7 @@ AutomaticDictionary.Class.prototype = {
     },
     
     allowCollect: function(){
-        return this.prefManager.getBoolPref(this.ALLOW_COLLECT_KEY);
+        return this.prefManager.getBoolPref(this.pref_prefix + this.ALLOW_COLLECT_KEY);
     },
     // options are forwarded to ga.visit function
     collect: function(visit, options){
@@ -984,7 +993,7 @@ AutomaticDictionary.Class.prototype = {
         },
         "201210142159": function(self){
             //Allow collect data by default
-            self.prefManager.setBoolPref( self.ALLOW_COLLECT_KEY, true);
+            self.prefManager.setBoolPref( self.pref_prefix + self.ALLOW_COLLECT_KEY, true);
         },
         "201210192306": function(self){
             //Add limit of max_recipients

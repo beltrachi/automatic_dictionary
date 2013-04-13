@@ -351,7 +351,7 @@
         
         ///////   Disable tracking
         
-        Components.savedPrefs[adi.ALLOW_COLLECT_KEY] = false;
+        Components.savedPrefs[adi.pref_prefix + adi.ALLOW_COLLECT_KEY] = false;
         
         mock_recipients( adi, {"to":["unknown"]} );
         adi.deduceLanguage();

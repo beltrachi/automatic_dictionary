@@ -2,6 +2,8 @@
 
 * Detect language change from context menu on compose window.
 
+* Allow to say No when asking to collect anonymous data.
+
 === 1.4.1
 
 * Fix preferences window error shown in error console
