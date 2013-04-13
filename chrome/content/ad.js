@@ -983,7 +983,7 @@ AutomaticDictionary.Class.prototype = {
             self.prefManager.setIntPref( prefPath, maxSize * factor );            
         },
         "201210142159": function(self){
-            //Add limit of max_recipients
+            //Allow collect data by default
             self.prefManager.setBoolPref( self.ALLOW_COLLECT_KEY, true);
         },
         "201210192306": function(self){
