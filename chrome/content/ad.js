@@ -260,7 +260,7 @@ AutomaticDictionary.Class.prototype = {
     ga: null,
     last_toandcc_key: null,
     name: "AutomaticDictionary",
-    notification_time: 3000,
+    notification_time: 4000,
     
     logo_url: "chrome://automatic_dictionary/content/logo.png",
     
