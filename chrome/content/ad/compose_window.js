@@ -85,7 +85,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 try{
                     _this.ad.deduceLanguage();
                 }catch(e){
-                    this.log(e.toString());
+                    AutomaticDictionary.logException(e);
                 }
             }, true );
             
