@@ -660,8 +660,6 @@ AutomaticDictionary.Class.prototype = {
         }
 
         
-        this.last_lang = lang;
-        this.last_toandcc_key = toandcc_key;
         if(lang){
             try{
                 this.setCurrentLang( lang );
@@ -670,14 +668,24 @@ AutomaticDictionary.Class.prototype = {
                     this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
                 }
             }catch( e ){
-                this.log(e.toString());
-                this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
-                throw e;
+                AutomaticDictionary.logException(e);
+                this.log("Exception V12 TEXT IS :"+ e.toString());
+                if( e.toString().indexOf(".mInlineSpellChecker is null") !== -1 ){
+                    // The interface may not be ready. Leave it a retry.
+                    this.log("Recovering from known exception raised.");
+                    return;
+                }else{
+                    this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
+                    this.collect_event("error","deduceLanguage", {label:e.toString()}, {customVars: ga_customVars});
+                    throw e;
+                }
             }
         }else{
             this.changeLabel(this.t( "noLangForRecipients" ));
             this.collect_event("language","miss",{}, {customVars: ga_customVars});
         }
+        this.last_lang = lang;
+        this.last_toandcc_key = toandcc_key;
     },
     
     //Tries to guess by other recipients domains
