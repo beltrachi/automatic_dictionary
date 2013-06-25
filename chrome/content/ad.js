@@ -673,6 +673,11 @@ AutomaticDictionary.Class.prototype = {
                 if( e.toString().indexOf(".mInlineSpellChecker is null") !== -1 ){
                     // The interface may not be ready. Leave it a retry.
                     this.log("Recovering from known exception raised.");
+                    var _this = this;
+                    this.window.setTimeout(function(){
+                        _this.log("Relaunching deduceLanguage");
+                        _this.deduceLanguage();
+                    }, 200);
                     return;
                 }else{
                     this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
