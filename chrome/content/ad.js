@@ -262,6 +262,11 @@ AutomaticDictionary.Class.prototype = {
     name: "AutomaticDictionary",
     notification_time: 4000,
     
+    deduce_language_retries_counter: 0,
+    deduce_language_retry_delay: 200,
+    //Retries till ifce gets ready
+    max_deduce_language_retries: 10,
+    
     logo_url: "chrome://automatic_dictionary/content/logo.png",
     
     defaults: (function(prefix){
@@ -669,15 +674,17 @@ AutomaticDictionary.Class.prototype = {
                 }
             }catch( e ){
                 AutomaticDictionary.logException(e);
-                this.log("Exception V12 TEXT IS :"+ e.toString());
-                if( e.toString().indexOf(".mInlineSpellChecker is null") !== -1 ){
+                this.log("Exception message on deduceLanguage is: "+ e.toString());
+                if( this.deduce_language_retries_counter < this.max_deduce_language_retries ){
                     // The interface may not be ready. Leave it a retry.
-                    this.log("Recovering from known exception raised.");
+                    this.deduce_language_retries_counter++
+                    this.log("Recovering from exception on deduceLanguage " + 
+                        "(retry: " +this.deduce_language_retries_counter + " )");
                     var _this = this;
                     this.window.setTimeout(function(){
                         _this.log("Relaunching deduceLanguage");
                         _this.deduceLanguage();
-                    }, 200);
+                    }, this.deduce_language_retry_delay);
                     return;
                 }else{
                     this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
@@ -685,6 +692,7 @@ AutomaticDictionary.Class.prototype = {
                     throw e;
                 }
             }
+            this.deduce_language_retries_counter = 0;
         }else{
             this.changeLabel(this.t( "noLangForRecipients" ));
             this.collect_event("language","miss",{}, {customVars: ga_customVars});
