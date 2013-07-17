@@ -4,7 +4,7 @@
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
     <em:type>2</em:type>
     <em:bootstrap>true</em:bootstrap>
-    <em:version>1.5.2</em:version>
+    <em:version>1.5.3</em:version>
     <em:optionsURL>chrome://automatic_dictionary/content/preferences.xul?12</em:optionsURL>
     
     <em:targetApplication>
