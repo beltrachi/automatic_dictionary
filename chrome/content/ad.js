@@ -597,7 +597,16 @@ AutomaticDictionary.Class.prototype = {
                 are from diferent languages.
          3. TO (one by one): The recipients alone in order of appearence.
     */
-    deduceLanguage: function(){
+    deduceLanguage: function( opt ){
+        if( !this.isSpellCheckerEnabled() ) return;
+        
+        if(!opt) opt = {};
+        if( !opt.is_retry && this.deduce_language_retry ){
+            this.log("Cancelled a deduceLanguage call as there is a retry waiting...");
+            // There is a retry queued. Stay quiet and wait for it.
+            return;
+        }
+        
         var recipients = this.getRecipients();
         if( !this.running || recipients.length == 0 ){
             return;
@@ -684,12 +693,13 @@ AutomaticDictionary.Class.prototype = {
                     // The interface may not be ready. Leave it a retry.
                     this.deduce_language_retries_counter++
                     this.log("Recovering from exception on deduceLanguage " + 
-                        "(retry: " +this.deduce_language_retries_counter + " )");
+                        "(retry: " +this.deduce_language_retries_counter + " with delay "+
+                        this.deduce_language_retry_delay+" )");
                     var _this = this;
                     this.deduce_language_retry = this.window.setTimeout(function(){
                         _this.log("Relaunching deduceLanguage");
                         _this.deduce_language_retry = null;
-                        _this.deduceLanguage();
+                        _this.deduceLanguage({is_retry:true});
                     }, this.deduce_language_retry_delay);
                     return;
                 }else{
@@ -754,6 +764,11 @@ AutomaticDictionary.Class.prototype = {
         var spellChecker = Components.classes["@mozilla.org/spellchecker/engine;1"]
         .getService(Components.interfaces.mozISpellCheckingEngine);
         return spellChecker.dictionary.toString();
+    },
+    
+    isSpellCheckerEnabled:function(){
+        var is = this.window.gSpellChecker.canSpellCheck && this.window.gSpellChecker.enabled;
+        return is;
     },
   
     getLangFor: function( addr ){

@@ -98,7 +98,11 @@ function test_setup(){
         navigator:{
             language:"en_us"
         },
-        document: document
+        document: document,
+        gSpellChecker: {
+            canSpellCheck: true,
+            enabled: true
+        }
     };
         
     document = {    

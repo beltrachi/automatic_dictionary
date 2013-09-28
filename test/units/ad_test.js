@@ -49,9 +49,30 @@
         //Set stopped.
         adi.stop();
         //Deduce language is aborted despite we change dict
-        dictionary_object.dictionary = "other2";
+        dictionary_object.dictionary = "other";
         adi.deduceLanguage();
         assert.equal( 1, setted_langs.length);
+        
+        //When spellcheck disabled or stopped, do nothing
+        adi.start();
+        window.gSpellChecker.enabled = false;
+        dictionary_object.dictionary = "other";
+        adi.deduceLanguage();
+        assert.equal( 1, setted_langs.length);
+        window.gSpellChecker.enabled = true;
+        window.gSpellChecker.canSpellCheck= false;
+        
+        dictionary_object.dictionary = "other";
+        adi.deduceLanguage();
+        assert.equal( 1, setted_langs.length);
+        
+        //Enable again and everything ok.
+        window.gSpellChecker.canSpellCheck= true;
+        dictionary_object.dictionary = "other";
+        adi.deduceLanguage();
+        assert.equal( 2, setted_langs.length);
+        assert.equal( "foolang", setted_langs[setted_langs.length -1]);
+        
         
     })();
             

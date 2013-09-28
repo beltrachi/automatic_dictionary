@@ -89,15 +89,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 }
             }, true );
             
-            this.setListener(window,"command", function(evt){
-                _this.log("Window - Commmand event triggered with "+evt.target);
-                if( evt.target.parentNode.id == "spellCheckDictionariesMenu"){
-                    _this.log("clicked on context dict menu");
-                    window.setTimeout(function(){
-                        _this.ad.languageChanged();
-                    },500); //Hardcoded. Enough? Otherways the lang is still not changed
-                }
-            }, true);
+            this.listenToSpellCheckingCommands(window);
             
             this.setListener(window, "compose-send-message", function(evt){
                 _this.ad.notifyMailSent();
@@ -113,6 +105,28 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         }else{
             this.log("no window found or already initialized");
         }
+    },
+    
+    listenToSpellCheckingCommands: function(window){
+        var _this = this;
+        this.setListener(window,"command", function(evt){
+            _this.log("Window - Commmand event triggered with "+evt.target);
+            if( evt.target.parentNode.id == "spellCheckDictionariesMenu"){
+                _this.log("clicked on context dict menu");
+                window.setTimeout(function(){
+                    _this.ad.languageChanged();
+                },500); //Hardcoded. Enough? Otherways the lang is still not changed
+            }
+            //TODO: research on being notified by spellchecker and not sniff events around
+            if( evt.target.id == "spellCheckEnable" || 
+                evt.target.id == "menu_inlineSpellCheck"){
+                _this.log("spellCheckEnable");
+                window.setTimeout( function(){
+                    _this.ad.deduceLanguage();
+                }, 500);
+            }
+            _this.log("evt.target.id is "+ evt.target.id);
+        }, true);  
     },
         
     prepareWindow:function(window){

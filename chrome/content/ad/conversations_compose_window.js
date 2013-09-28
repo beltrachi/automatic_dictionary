@@ -110,16 +110,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
                 );
             }
 
-            this.setListener(AutomaticDictionary.main_window,"command", function(evt){
-                _this.log("Main window - Commmand event triggered with "+evt.target);
-                
-                if( evt.target.parentNode.id == "mailContext-spell-dictionaries-menu"){
-                    _this.log("clicked on context dict menu");
-                    window.setTimeout(function(){
-                        _this.ad.languageChanged();
-                    },500); //Hardcoded. Enough? Otherways the lang is still not changed
-                }
-            }, true);
+            this.listenToSpellCheckingCommands(window);
             
             this.prepareWindow(AutomaticDictionary.main_window);
             
