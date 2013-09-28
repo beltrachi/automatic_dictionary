@@ -46,6 +46,13 @@
         assert.equal( 1, setted_langs.length);
         assert.equal( "foolang", setted_langs[0]);
         
+        //Set stopped.
+        adi.stop();
+        //Deduce language is aborted despite we change dict
+        dictionary_object.dictionary = "other2";
+        adi.deduceLanguage();
+        assert.equal( 1, setted_langs.length);
+        
     })();
             
     /*

@@ -264,6 +264,7 @@ AutomaticDictionary.Class.prototype = {
     
     deduce_language_retries_counter: 0,
     deduce_language_retry_delay: 200,
+    deduce_language_retry: null,
     //Retries till ifce gets ready
     max_deduce_language_retries: 10,
     
@@ -543,6 +544,10 @@ AutomaticDictionary.Class.prototype = {
             
         }
         if( saved_recipients > 0 ){
+            if(this.deduce_language_retry){
+                this.deduce_language_retry.stop();
+                this.deduce_language_retry = null;
+            }
             this.last_lang = current_lang;
             this.log("Enter cond 3");
 
@@ -594,7 +599,7 @@ AutomaticDictionary.Class.prototype = {
     */
     deduceLanguage: function(){
         var recipients = this.getRecipients();
-        if( recipients.length == 0 ){
+        if( !this.running || recipients.length == 0 ){
             return;
         }
         var lang = null, method = this.METHODS.REMEMBER, i;
@@ -681,8 +686,9 @@ AutomaticDictionary.Class.prototype = {
                     this.log("Recovering from exception on deduceLanguage " + 
                         "(retry: " +this.deduce_language_retries_counter + " )");
                     var _this = this;
-                    this.window.setTimeout(function(){
+                    this.deduce_language_retry = this.window.setTimeout(function(){
                         _this.log("Relaunching deduceLanguage");
+                        _this.deduce_language_retry = null;
                         _this.deduceLanguage();
                     }, this.deduce_language_retry_delay);
                     return;
