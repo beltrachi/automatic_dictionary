@@ -1,3 +1,9 @@
+=== 1.5.4
+
+* Fixing concurrent events when ifce not ready or slow
+
+* Fix message when spellchecking is disabled
+
 === 1.5.0
 
 * Detect language change from context menu on compose window.
