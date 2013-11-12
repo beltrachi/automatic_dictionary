@@ -108,7 +108,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     },
     
     listenToSpellCheckingCommands: function(window){
-        var _this = this;
+        var _this = this, func;
         this.setListener(window,"command", function(evt){
             _this.log("Window - Commmand event triggered with "+evt.target);
             if( evt.target.parentNode.id == "spellCheckDictionariesMenu"){
@@ -126,7 +126,14 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 }, 500);
             }
             _this.log("evt.target.id is "+ evt.target.id);
-        }, true);  
+        }, true);
+        func = function(subject, topic, data){
+            _this.ad.languageChanged();
+        };
+        this.ad.prefManager.instance.addObserver("spellchecker.dictionary", func, false);
+        this.shutdown_chain.push(function(){
+            this.ad.prefManager.instance.removeObserver("spellchecker.dictionary", func);
+        });
     },
         
     prepareWindow:function(window){

@@ -35,14 +35,21 @@ function test_setup(){
             "@mozilla.org/preferences-service;1":{
                 getService: function(){             
                     var _get = function(k){
-                        logger.debug("asking for "+k + " and gets "+Components.savedPrefs[k]);
-                        return Components.savedPrefs[k]; 
+                        var v = Components.savedPrefs[k];
+                        if(k == "spellchecker.dictionary"){
+                            v = dictionary_object.dictionary;
+                        }
+
+                        logger.debug("asking for "+k + " and gets "+v);
+                        return v; 
                     };
                     var _set = function(k,v){
                         logger.debug("seting "+k+" the value "+v);
                         Components.savedPrefs[k] = v; 
                     };
                     return {
+                        addObserver: function(){},
+                        removeObserver: function(){},
                         getCharPref: _get,
                         getIntPref: _get,
                         setCharPref: _set,

@@ -761,9 +761,7 @@ AutomaticDictionary.Class.prototype = {
     },
     //Take care as this language is globally set.
     getCurrentLang: function(){
-        var spellChecker = Components.classes["@mozilla.org/spellchecker/engine;1"]
-        .getService(Components.interfaces.mozISpellCheckingEngine);
-        return spellChecker.dictionary.toString();
+        return this.prefManager.getCharPref("spellchecker.dictionary");
     },
     
     isSpellCheckerEnabled:function(){
