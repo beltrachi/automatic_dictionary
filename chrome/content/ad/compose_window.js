@@ -72,14 +72,15 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 function(event){
                     _this.ad.languageChanged(event);
                 },false);
-               
-            this.setListener( window, "blur", function(evt){
+            //deactivate is the old window blur event 
+            this.setListener( window, "deactivate", function(evt){
                 if(evt.target == window){
                     _this.log("compose window blur");
                     _this.ad.stop();
                 }            
             } , false);
-            this.setListener( window, "focus", function(){
+            //activate is the old window focus event
+            this.setListener( window, "activate", function(){
                 _this.log("compose window focus");
                 _this.ad.start();
                 try{
@@ -87,7 +88,16 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 }catch(e){
                     AutomaticDictionary.logException(e);
                 }
-            }, true );
+            }, false );
+            this.setListener( window, "focus", function(){
+                _this.ad.start();
+                _this.ad.deduceLanguage();
+            }, false);
+            //Blur on input items. Do not confuse with window blur as windows
+            //do not fire blur events anymore. They fire deactivate events.
+            this.setListener( window, "blur", function(){
+                _this.ad.deduceLanguage();
+            }, false);
             
             this.listenToSpellCheckingCommands(window);
             
@@ -132,7 +142,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         };
         this.ad.prefManager.instance.addObserver("spellchecker.dictionary", func, false);
         this.shutdown_chain.push(function(){
-            this.ad.prefManager.instance.removeObserver("spellchecker.dictionary", func);
+            _this.ad.prefManager.instance.removeObserver("spellchecker.dictionary", func);
         });
     },
         

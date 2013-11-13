@@ -472,6 +472,7 @@ AutomaticDictionary.Class.prototype = {
     
     languageChanged: function(){
         this.log("------------------------------------languageChanged by event");
+        if( !this.running ) return;
         var current_lang = this.getCurrentLang();
         var tos = this.getRecipients();
         var ccs = this.getRecipients("cc");
@@ -751,6 +752,9 @@ AutomaticDictionary.Class.prototype = {
             },
             stopPropagation: function(){}
         };
+        this.last_lang = target;
+        //Temporary disable language change detection that we trigger ourself
+        this.running = false;
         if( this.compose_window.changeLanguage ){
             this.compose_window.changeLanguage( fake_event );
         }else if( this.window.ChangeLanguage ){
@@ -758,6 +762,7 @@ AutomaticDictionary.Class.prototype = {
         }else{
             this.changeLabel( this.t("errorNoWayToChangeLanguage") );
         }
+        this.running = true;
     },
     //Take care as this language is globally set.
     getCurrentLang: function(){
