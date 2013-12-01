@@ -18,6 +18,8 @@
         
         //Test internal methods
         assert.equal("aa,ab,bb",adi.stringifyRecipientsGroup(["aa","bb","ab"]));
+
+        assert.contains('.', AutomaticDictionary.version);
         
         //Prepare scenario
         mock_recipients( adi, {"to":["foo"],"cc":[]} );

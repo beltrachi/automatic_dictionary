@@ -7,6 +7,6 @@ CHROME_PROVIDERS="chrome/content chrome/locale"  # which chrome providers we hav
 CLEAN_UP=1          # delete the jar / "files" when done?       (1/0)
 ROOT_FILES="README bootstrap.js"        # put these files in root of xpi (space separated list of leaf filenames)
 ROOT_DIRS="defaults"         # ...and these directories       (space separated list)
-BEFORE_BUILD=      # run this before building       (bash command)
+BEFORE_BUILD="./update_version.sh"      # run this before building       (bash command)
 AFTER_BUILD=       # ...and this after the build    (bash command)
 

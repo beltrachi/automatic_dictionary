@@ -43,6 +43,7 @@ var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                        .getService(Components.interfaces.mozIJSSubScriptLoader); 
 var resources = [
     "chrome://global/content/inlineSpellCheckUI.js",
+    "chrome://automatic_dictionary/content/version.js",
     "chrome://automatic_dictionary/content/lib.js",
     "chrome://automatic_dictionary/content/lib/sorted_set.js",
     "chrome://automatic_dictionary/content/lib/lru_hash_v2.js",
