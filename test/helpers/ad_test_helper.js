@@ -28,6 +28,7 @@ function test_setup(){
             "extensions.automatic_dictionary.addressesInfo.maxSize": 200,
             "extensions.automatic_dictionary.allowCollect": true,
             "extensions.automatic_dictionary.allowHeuristic": true,
+            "extensions.automatic_dictionary.notificationLevel": "info",
             "extensions.automatic_dictionary.migrations_applied": "",
             "extensions.automatic_dictionary.freqTableData": "\"[]\""
         },

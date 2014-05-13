@@ -15,7 +15,8 @@
     (function(){
         test_setup();
         var adi = ad_instance();
-        
+        var labels = [];
+        adi.changeLabel = function(level, str){ labels.push( str );}
         //Test internal methods
         assert.equal("aa,ab,bb",adi.stringifyRecipientsGroup(["aa","bb","ab"]));
 
@@ -74,8 +75,18 @@
         adi.deduceLanguage();
         assert.equal( 2, setted_langs.length);
         assert.equal( "foolang", setted_langs[setted_langs.length -1]);
+        assert.equal( 2, labels.length);
         
-        
+        //test notificationLevel error
+        adi.prefManager.set(adi.NOTIFICATION_LEVEL,"error");
+        dictionary_object.dictionary = "other";
+        adi.deduceLanguage();
+
+        assert.equal( 2, labels.length);
+        assert.equal( 3, setted_langs.length);
+        assert.equal( "foolang", setted_langs[setted_langs.length -1]);
+        //Restore
+        adi.prefManager.set(adi.NOTIFICATION_LEVEL,"info");
     })();
             
     /*
@@ -277,7 +288,7 @@
             dictionary_object.dictionary = lang;
             setted_langs.push( lang );
         }
-        adi.changeLabel = function(str){ labels.push( str );}
+        adi.changeLabel = function(level, str){ labels.push( str );}
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
@@ -341,7 +352,7 @@
             dictionary_object.dictionary = lang;
             setted_langs.push( lang );
         }
-        adi.changeLabel = function(str){ labels.push( str );}
+        adi.changeLabel = function(level, str){ labels.push( str );}
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
@@ -430,7 +441,7 @@
             dictionary_object.dictionary = lang;
             setted_langs.push( lang );
         }
-        adi.changeLabel = function(str){
+        adi.changeLabel = function(level, str){
             labels.push( str );
         }
 

@@ -237,6 +237,7 @@ AutomaticDictionary.Class.prototype = {
     MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
     ALLOW_COLLECT_KEY:"allowCollect",
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
+    NOTIFICATION_LEVEL:"extensions.automatic_dictionary.notificationLevel",
     
     METHODS:{
         REMEMBER:"remember",
@@ -294,8 +295,9 @@ AutomaticDictionary.Class.prototype = {
             "visitor_id": "",
 
             "allowPromotions": true,
+            "notificationLevel": 'info', // or "warn" or "error"
 
-            //Events collected from 
+            //Events collected from
             //we set them as strings as we'll use SimpleStorage
             "stats.data.built": 0,
             "stats.language.saved": 0,
@@ -316,7 +318,6 @@ AutomaticDictionary.Class.prototype = {
     stop: function(){
         if( !this.running ) return; //Already stopped
         this.log("ad: stop");
-        this.changeLabel("");
         this.running = false;
     },
   
@@ -482,7 +483,7 @@ AutomaticDictionary.Class.prototype = {
         var maxRecipients = this.getMaxRecipients();
         if( tos.length + ccs.length > maxRecipients ){
             this.log("Discarded to save data. Too much recipients.(maxRecipients is "+maxRecipients+")");
-            this.changeLabel( this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
+            this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
             return;
         }
         var saved_recipients = 0;
@@ -554,7 +555,7 @@ AutomaticDictionary.Class.prototype = {
             this.log("Enter cond 3");
 
             this.log("saved recipients are: " + saved_recipients);
-            this.changeLabel( 
+            this.changeLabel("info",
                 this.ft( "savedForRecipients",
                     [ current_lang, saved_recipients ] )
                 );
@@ -685,7 +686,7 @@ AutomaticDictionary.Class.prototype = {
             try{
                 this.setCurrentLang( lang );
                 if( !nothing_changed ){
-                    this.changeLabel( this.ft("deducedLang."+method, [lang]))
+                    this.changeLabel("info", this.ft("deducedLang."+method, [lang]))
                     this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
                 }
             }catch( e ){
@@ -705,14 +706,14 @@ AutomaticDictionary.Class.prototype = {
                     }, this.deduce_language_retry_delay);
                     return;
                 }else{
-                    this.changeLabel( this.ft("errorSettingSpellLanguage", [lang] ));
+                    this.changeLabel("error", this.ft("errorSettingSpellLanguage", [lang] ));
                     this.collect_event("error","deduceLanguage", {label:e.toString()}, {customVars: ga_customVars});
                     throw e;
                 }
             }
             this.deduce_language_retries_counter = 0;
         }else{
-            this.changeLabel(this.t( "noLangForRecipients" ));
+            this.changeLabel("info", this.t( "noLangForRecipients" ));
             this.collect_event("language","miss",{}, {customVars: ga_customVars});
         }
         this.last_lang = lang;
@@ -761,7 +762,7 @@ AutomaticDictionary.Class.prototype = {
         }else if( this.window.ChangeLanguage ){
             this.window.ChangeLanguage( fake_event );
         }else{
-            this.changeLabel( this.t("errorNoWayToChangeLanguage") );
+            this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
         }
         this.running = true;
     },
@@ -787,9 +788,12 @@ AutomaticDictionary.Class.prototype = {
         return this.compose_window.setListeners();
     },
 
-  
-    changeLabel: function( str ){
-        return this.compose_window.changeLabel( str );
+    changeLabel: function(level, str){
+        var arr = ["info","warn","error"];
+        // level is equal or higher than configured level
+        if( arr.indexOf(level) >= arr.indexOf(this.notificationLevel()) ){
+            return this.compose_window.changeLabel( str );
+        }
     },
     
     //To show messages to the user
@@ -865,6 +869,9 @@ AutomaticDictionary.Class.prototype = {
     
     allowCollect: function(){
         return this.prefManager.getBoolPref(this.pref_prefix + this.ALLOW_COLLECT_KEY);
+    },
+    notificationLevel: function(){
+        return this.prefManager.get(this.NOTIFICATION_LEVEL);
     },
     // options are forwarded to ga.visit function
     collect: function(visit, options){
@@ -1079,6 +1086,10 @@ AutomaticDictionary.Class.prototype = {
         },
         "201303021735": function(self){
             //Added internal stats
+            self.setDefaults();
+        },
+        "201405132246": function(self){
+            //Added notificationLevel
             self.setDefaults();
         }
 
