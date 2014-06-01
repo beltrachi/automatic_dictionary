@@ -27,3 +27,12 @@ actions performed.">
 mates or writing a review, or some suggestion to improve it.">
 <!ENTITY allowPromotions.recomendation "">
 
+<!ENTITY notificationLevel.label "Notification level:">
+<!ENTITY notificationLevel.description
+"The level you want the plugin to show notifications. &quot;Info&quot; will tell you everything it does, like change dictionary or detect new languages (default). &quot;Error&quot; will only show you when something goes wrong.">
+<!ENTITY notificationLevel.recommendation "Set it to &quot;Warning&quot; if you don't want to be bothered too much.">
+
+<!ENTITY notificationLevel.info "Info">
+<!ENTITY notificationLevel.warn "Warning">
+<!ENTITY notificationLevel.error "Error">
+

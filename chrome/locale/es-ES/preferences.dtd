@@ -28,3 +28,11 @@ utiliza y que acciones se realizan.">
 compañeros o escribiendo una valoración.">
 <!ENTITY allowPromotions.recomendation "">
 
+<!ENTITY notificationLevel.label "Nivel de notificaciones:">
+<!ENTITY notificationLevel.description
+"El nivel de las notificaciones que se te mostraran. &quote;Información&quote; te informará de todo lo que haga, como cambiar el diccionario o deducir un idioma (valor por defecto). &quote;Error&quote; te informará solo cuando algo haya ido mal.">
+<!ENTITY notificationLevel.recommendation "Ponlo en &quote;Advertencia&quote; si no quieres que te moleste mucho y solo te avise de cosas importantes.">
+<!ENTITY notificationLevel.info "Información">
+<!ENTITY notificationLevel.warn "Advertencia">
+<!ENTITY notificationLevel.error "Error">
+

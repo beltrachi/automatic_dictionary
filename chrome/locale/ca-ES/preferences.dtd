@@ -28,3 +28,10 @@ quines accions es realitzen.">
 compartint-lo amb els companys o escribint-ne una valoració.">
 <!ENTITY allowPromotions.recomendation "">
 
+<!ENTITY notificationLevel.label "Nivell de notificació:">
+<!ENTITY notificationLevel.description
+"El nivell de les notificacións que vols veure. &quote;Informació&quote; (valor per defecte) t'informarà de tot el que faci, com canviar de diccionari o deduïr un idioma. &quote;Error&quote; t'informarà només quan alguna cosa vagi malament.">
+<!ENTITY notificationLevel.recommendation "Selecciona &quote;Advertència&quote; si no vols que se't molesti molt i només t'avisi de les coses importants.">
+<!ENTITY notificationLevel.info "Informació">
+<!ENTITY notificationLevel.warn "Advertència">
+<!ENTITY notificationLevel.error "Error">

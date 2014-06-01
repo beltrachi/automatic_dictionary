@@ -8,7 +8,6 @@
      onload="var descriptions = document.getElementsByTagName('description'); for (var i=0; i&lt;descriptions.length; i++) { descriptions[i].style.height=document.defaultView.getComputedStyle(descriptions[i], null).getPropertyValue('height');}"
     >
     <!-- onload to fix prefpanel size https://bugzilla.mozilla.org/show_bug.cgi?id=451997 -->
-    <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
     <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
     <script language="JavaScript">
         //Bootup and shutdown to migrate data when required.
@@ -18,6 +17,7 @@
                     });
         ad.shutdown();
     </script>
+    <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
 
     <prefpane id="main-pane" label="Preferencess">
         <preferences>
@@ -25,6 +25,7 @@
             <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
             <preference id="allowCollect" name="extensions.automatic_dictionary.allowCollect" type="bool"/>
             <preference id="allowPromotions" name="extensions.automatic_dictionary.allowPromotions" type="bool"/>
+            <preference id="notificationLevel" name="extensions.automatic_dictionary.notificationLevel" type="string"/>
         </preferences>
         <vbox class="prefoptions">
             <description class="intro">
@@ -66,6 +67,25 @@
             <description class="info">
                 &allowPromotions.info;
                 &allowPromotions.recomendation;
+            </description>
+
+            <hbox>
+                <label control="input_notificationLevel" value="&notificationLevel.label;"/>
+                <!-- List example (this example would be stored as an integer) -->
+                <setting pref="extensions.automatic_dictionary.notificationLevel" type="menulist" title="">
+                  <menulist preference="notificationLevel">
+                    <menupopup>
+                      <menuitem value="info" label="&notificationLevel.info;"/>
+                      <menuitem value="warn" label="&notificationLevel.warn;"/>
+                      <menuitem value="error" label="&notificationLevel.error;"/>
+                    </menupopup>
+                  </menulist>
+                </setting>
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &notificationLevel.description;
+                &notificationLevel.recommendation;
             </description>
         </vbox>
     </prefpane>
