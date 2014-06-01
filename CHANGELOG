@@ -1,3 +1,7 @@
+=== 1.6.0
+
+* Add option to disable popups [resolves #10]
+
 === 1.5.5
 
 * Compatible with dictionary_switcher addon
