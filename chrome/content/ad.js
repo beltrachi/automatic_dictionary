@@ -757,14 +757,22 @@ AutomaticDictionary.Class.prototype = {
         this.last_lang = target;
         //Temporary disable language change detection that we trigger ourself
         this.running = false;
-        if( this.compose_window.changeLanguage ){
-            this.compose_window.changeLanguage( fake_event );
-        }else if( this.window.ChangeLanguage ){
-            this.window.ChangeLanguage( fake_event );
-        }else{
-            this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
+        try{
+            if( this.compose_window.changeLanguage ){
+                this.compose_window.changeLanguage( fake_event );
+            }else if( this.window.ChangeLanguage ){
+                this.window.ChangeLanguage( fake_event );
+            }else{
+                this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
+            }
+        }catch(e){
+            this.log("Exception received on setCurrentLang");
+            this.log(e);
+            this.log("Updating default dictionary instead as maybe spellcecher is not ready.");
+            this.prefManager.setCharPref("spellchecker.dictionary",target);
+        }finally{
+            this.running = true;
         }
-        this.running = true;
     },
     //Take care as this language is globally set.
     getCurrentLang: function(){
