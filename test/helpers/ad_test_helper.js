@@ -5,7 +5,9 @@ document = null;
 var dictionary_object = {
     dictionary:"en"
 }; 
-dump = function(){};
+dump = function(msg){
+    print(msg);
+};
 StringBundle = function(){
     return {
         getString:function(){
@@ -63,8 +65,7 @@ function test_setup(){
             "@mozilla.org/spellchecker/engine;1":{
                 getService: function(){
                     return dictionary_object;
-                }             
-                    
+                }
             },
             "@mozilla.org/moz/jssubscript-loader;1":{
                 getService: function(){
@@ -84,15 +85,18 @@ function test_setup(){
                         }
                     }
                 }
+            },
+            "@mozilla.org/steel/application;1":{
+                getService: function(){
+                    return { log: print };
+                }
             }
         },
         interfaces:{
             nsIPrefBranch: ""
         },
         utils:{
-            "import":function(){
-                
-            }
+            "import": function(){}
         }
     };
     
@@ -159,6 +163,10 @@ function test_setup(){
             };
         }
     };
+
+    AddonManager = {
+        getAddonByID: function(){}
+    }
 
     built_images = [];
     window.Image = function(){

@@ -27,8 +27,8 @@ AutomaticDictionary.Plugins = {};
 AutomaticDictionary.enabled_plugins = [];
 
 //Helper function to copy prototypes
-AutomaticDictionary.extend =   function (destination,source) {
-    if( source == {} || !source ) AutomaticDictionary.dump("Warn: extension with empty source.");
+AutomaticDictionary.extend = function (destination,source) {
+    if( source == {} || !source ) AutomaticDictionary.logger.warn("Extension with empty source.");
     for (var property in source)
         destination[property] = source[property];
     return destination;
@@ -54,6 +54,7 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/freq_table.js",
     "chrome://automatic_dictionary/content/lib/freq_suffix.js",
     "chrome://automatic_dictionary/content/lib/shutdownable.js",
+    "chrome://automatic_dictionary/content/lib/logger.js",
     "chrome://automatic_dictionary/content/lib/ga.js",
     "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
 
@@ -79,27 +80,33 @@ Cu.import("resource:///modules/StringBundle.js");
  * Uncomment the return to show messages on console
  */
 AutomaticDictionary.dump = function(msg){
-    return; // DISABLED DUMP! COMMENT TO SHOW MESSAGES!
-    if( typeof(msg) == "function"){
-        msg = msg();
+    if( AutomaticDictionary.logger ){
+        AutomaticDictionary.logger.debug(msg);
     }
-    dump((new Date()).toString()+"| AutomaticDictionary: ");
-    dump(msg);
-    dump("\n");
 }
+var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
+AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('info', function(msg){steelApp.log(msg)});
+AutomaticDictionary.logger.addFilter(
+    AutomaticDictionary.Lib.LoggerObfuscator(/([^\s]*@)([\w]+)/,
+        (function(){
+            var seq = 0;
+            return function(match){
+                return "email-"+(seq++)+"@domain";
+            }
+        })()));
 
 AutomaticDictionary.logException = function( e ){
-    AutomaticDictionary.dump( e.toString() );
+    AutomaticDictionary.logger.error( e.toString() );
     if(e.stack){
-        AutomaticDictionary.dump( e.stack.toString() );
+        AutomaticDictionary.logger.error( e.stack.toString() );
     }
 };
 
 AutomaticDictionary.initWindow = function(window, loaded){
     var idx, cw, load_listener;
     loaded = (loaded === true); //bool cast. loaded default is false
-    AutomaticDictionary.dump("Called initWindow");
-    
+    this.logger.debug("Called initWindow");
+
     if(!loaded && window.document.readyState != "complete"){
         //Attach onload
         load_listener = function(){
@@ -109,10 +116,10 @@ AutomaticDictionary.initWindow = function(window, loaded){
         window.addEventListener("load", load_listener );
     }else{
         if(window.document.location.toString() == "chrome://messenger/content/messenger.xul"){
-            AutomaticDictionary.dump("Main window detected");
+            this.logger.debug("Main window detected");
             AutomaticDictionary.main_window = window;
         }
-        
+
         try{
             for(idx in AutomaticDictionary.window_managers){
                 cw = AutomaticDictionary.window_managers[idx];
@@ -123,9 +130,9 @@ AutomaticDictionary.initWindow = function(window, loaded){
                     });
                     return ad; //stop loop
                 }
-            }    
-        }catch(e){ 
-            AutomaticDictionary.dump("CREATION FAILED");
+            }
+        }catch(e){
+            this.logger.error("CREATION FAILED");
             AutomaticDictionary.logException(e);
         }
     }
@@ -138,18 +145,18 @@ AutomaticDictionary.conversationsDetected = function(){
 
 //Shuts down all instances
 AutomaticDictionary.shutdown = function(){
-    AutomaticDictionary.dump("Shutdown class call");
+    this.logger.debug("Shutdown class call");
     var list = AutomaticDictionary.instances;
     for(var x=0; x<list.length; x++){
         try{
             list[x].shutdown();
         }catch(e){
-            AutomaticDictionary.logException(e);
+            this.logException(e);
         }
     }
     AutomaticDictionary.instances = [];
 };
-    
+
 //To unload observers
 AutomaticDictionary.instances = [];
 
@@ -160,15 +167,15 @@ AutomaticDictionary.Class = function(options){
     this.window = options.window;
     var start = (new Date()).getTime(), _this = this;
     this.log("ad: init");
-    
+
     this.initPlugins();
-    
+
     this.running = true;
     this.prefManager = this.getPrefManagerWrapper();
-    
+
     //Version migrations upgrade check
     this.migrate();
-    
+
     var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
     this.compose_window = new (cw_builder)(
         {
@@ -178,7 +185,7 @@ AutomaticDictionary.Class = function(options){
             notification_time: this.notification_time
         }
     );
-    
+
     this.iter = 0; //ObserveRecipients execution counter
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
     this.setListeners();
@@ -271,6 +278,8 @@ AutomaticDictionary.Class.prototype = {
     max_deduce_language_retries: 10,
     
     logo_url: "chrome://automatic_dictionary/content/logo.png",
+
+    logger: AutomaticDictionary.logger,
     
     defaults: (function(prefix){
         var list = {
@@ -386,12 +395,12 @@ AutomaticDictionary.Class.prototype = {
                 return pm.setBoolPref(k,v);
             },
             inc: function(key, delta){
-                AutomaticDictionary.dump("increasing "+key);
+                AutomaticDictionary.logger.debug("increasing "+key);
                 delta = delta || 1;
                 var v = ifce.getIntPref(key);
                 v = (1 * (v||0)) + delta;
                 var res = pm.setIntPref(key,v);
-                AutomaticDictionary.dump("up to "+ v);
+                AutomaticDictionary.logger.debug("up to "+ v);
                 return res;
             }
         };
@@ -864,7 +873,7 @@ AutomaticDictionary.Class.prototype = {
 
     //Log function
     log:function( msg ){
-        AutomaticDictionary.dump( msg );
+        this.logger.debug( msg );
     },
     
     getMaxRecipients: function(){
@@ -924,7 +933,7 @@ AutomaticDictionary.Class.prototype = {
     },
     
     shutdown:function(){
-        AutomaticDictionary.dump("Shutdown instance call");
+        this.logger.debug("Shutdown instance call");
         this.dispatchEvent({type:"shutdown"});
         this.compose_window.shutdown();
     },

@@ -9,11 +9,12 @@ load("./../chrome/content/lib/pair_counter.js");
 load("./../chrome/content/lib/freq_table.js");
 load("./../chrome/content/lib/freq_suffix.js");
 load("./../chrome/content/lib/ga.js");
+load("./../chrome/content/lib/logger.js");
 load("lib/tools.js");
 load("lib/json/json2.js");
 load("lib/profiler.js");
 
-logger = Tools.Logger("performance");
+logger = AutomaticDictionary.Lib.Logger("performance");
 
 load("lib/assertions.js");
 
