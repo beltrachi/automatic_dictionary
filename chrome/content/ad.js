@@ -187,7 +187,7 @@ AutomaticDictionary.Class = function(options){
     );
 
     this.iter = 0; //ObserveRecipients execution counter
-    this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF );
+    this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF, {logger: this.logger} );
     this.setListeners();
     this.initialized = true;
     
@@ -228,7 +228,7 @@ AutomaticDictionary.Class = function(options){
     }catch(e){
         AutomaticDictionary.logException(e);
     }
-    
+
     //Useful hook for plugins and so on
     this.dispatchEvent({type:"load"});
     return this;

@@ -52,11 +52,13 @@ assert = (function(){
             logger.performance("Expected "+ milis + " | Lasted "+elapsed );
             if( elapsed > milis ){
                 this.counters.failures++;
-                var msg = "Benchmark failed: elapsed "+elapsed+" ms (max was "+milis+")"; 
+                var msg = "Benchmark failed: elapsed "+elapsed+" ms (max was "+milis+")";
+                if (func.name){
+                    msg = func.name + ": " + msg
+                }
                 if( soft ){
                     logger.error(msg);
                 }else{
-                    Tools.printStackTrace();
                     throw msg;
                 }
             }

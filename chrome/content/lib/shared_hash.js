@@ -16,13 +16,15 @@ TODO:
     over again to know if somebody has updated it.
     We need to install an observer using the nsIPrefBranch2 interface.
 */
-AutomaticDictionary.SharedHash = function( prefPath ){
+AutomaticDictionary.SharedHash = function( prefPath, options ){
+    options = options || {};
     this.prefPath = prefPath;
     this.lockPath = prefPath + ".lock";
     this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
         .getService(Components.interfaces.nsIPrefBranch);
     //Taking into account that we will not init two SharedHashes at the same time
     this.id = (new Date()).getTime().toString() + Math.floor(Math.random()*1000000);
+    this.logger = options.logger || new AutomaticDictionary.Lib.NullLogger();
 
     return this;
 }
@@ -38,6 +40,7 @@ AutomaticDictionary.SharedHash.prototype = {
     //The builder/constructor of the data strucutre (LRU HASH)
     dataConstructor: AutomaticDictionary.Lib.LRUHashV2, 
     expiration_callback: null,
+    logger: null,
     
     load: function(){
         this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
@@ -58,7 +61,7 @@ AutomaticDictionary.SharedHash.prototype = {
                 hash.fromJSON( v );
             }catch(e){
                 //Restore in case it gets wrong status
-                this.log("Failed to load data with " + e.toString() );
+                this.logger.error("Failed to load data with " + e.toString() );
                 hash = new this.dataConstructor();
             }
         }
@@ -73,41 +76,41 @@ AutomaticDictionary.SharedHash.prototype = {
     },
     
     sincronized:function( func, force ){
-        if( force ) this.log("WARN AutomaticDictionary.SharedHash#sincronized with force");
+        if( force ) this.logger.warn("AutomaticDictionary.SharedHash#sincronized with force");
         try{
-            this.log("lock is " + JSON.stringify(
+            this.logger.debug("lock is " + JSON.stringify(
                 this.prefManager.getCharPref( this.lockPath )));
             var nestedSync = this.gotLock();
             if( force || nestedSync ||
                     this.prefManager.getCharPref( this.lockPath ).length == 0  ){
                 this.prefManager.setCharPref( this.lockPath, this.id );
-                this.log("2 - lock is " +
+                this.logger.debug("2 - lock is " +
                     JSON.stringify(this.prefManager.getCharPref( this.lockPath )));
                 if( force || this.gotLock() ){
-                    this.log("executing on sync");
+                    this.logger.debug("executing on sync");
                     func();
                     if( !nestedSync ){
                         this.prefManager.setCharPref( this.lockPath, "" ); //Release lock
-                        this.log("lock released is " +
+                        this.logger.debug("lock released is " +
                             this.prefManager.getCharPref( this.lockPath ));
                     }else{
-                        this.log("nested lock not released");
+                        this.logger.debug("nested lock not released");
                     }
                     return true;
                 }else{
-                    this.log("lock is not its own: " +
+                    this.logger.debug("lock is not its own: " +
                         this.prefManager.getCharPref( this.lockPath ) + " != " + this.id);
                 }
             }else{
-                this.log("no force neither is empty");
+                this.logger.debug("no force neither is empty");
             }
         }catch(e){
-            this.log("ERROR Sincronized failed: " + e.message);
-            this.log("INFO Releasing the lock");
+            this.logger.error("Sincronized failed: " + e.message);
+            this.logger.info("Releasing the lock");
             this.prefManager.setCharPref( this.lockPath, "" ); //Release the lock
             throw e;
         }
-        this.log("syncronized is false");
+        this.logger.debug("syncronized is false");
         return false;
     },
     
@@ -121,9 +124,9 @@ AutomaticDictionary.SharedHash.prototype = {
     sincronized_with_patience:function( func, times ){
         for(var t=0; t<times; t++){
             if(this.sincronized(func, t == (times-1))) return true;
-            this.log("DEBUG AD.SharedHash#sincronized_with_patience it:"+t);
+            this.logger.debug("SharedHash#sincronized_with_patience it:"+t);
         }
-        this.log("UNREACHABLE CODE REACHED. Internal error. Logs and debugging can be required.");
+        this.logger.error("UNREACHABLE CODE REACHED. Internal error. Logs and debugging can be required.");
         return false; //It should not reach here never!
     },
     
@@ -136,10 +139,10 @@ AutomaticDictionary.SharedHash.prototype = {
                 _this.data.set(key, value);
                 _this.writeVersion( next_version );
                 _this.writeData();
-                _this.log("INFO AutomaticDictionary.SharedHash("+_this.id+") write data sucess");
+                _this.logger.info("AutomaticDictionary.SharedHash("+_this.id+") write data sucess");
             }, 10 );
     },
-    
+
     get: function(key){
         this.refresh();
         return this.data.get(key);
@@ -148,7 +151,7 @@ AutomaticDictionary.SharedHash.prototype = {
     refresh:function(){
         if( this.version != this.readVersion() ){
             var _this = this;
-            this.sincronized_with_patience(function(){ 
+            this.sincronized_with_patience(function(){
                 _this.load()
             }, 10 );
         }
@@ -160,8 +163,5 @@ AutomaticDictionary.SharedHash.prototype = {
     keys: function(){
         this.refresh();
         return this.data.keys();
-    },
-    log: function(msg){
-        AutomaticDictionary.logger.debug(msg);
     }
 }

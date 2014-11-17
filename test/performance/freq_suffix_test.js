@@ -14,7 +14,7 @@ var obj = new AutomaticDictionary.Lib.FreqSuffix({})
 
 //Realistic write!
 // A distribution of very variable a, not so on b and less on c.
-assert.benchmark( 700, function(){
+assert.benchmark( 700, function freq_suffix_test_write(){
     var k;
     for(var i=0; i < amount; i++){
         k = "b"+ (i%11) + ".c"+(i%10);
@@ -24,7 +24,7 @@ assert.benchmark( 700, function(){
 }, bm_options );
 
 //Read
-assert.benchmark( 500, function(){
+assert.benchmark( 500, function freq_suffix_test_read(){
     var k;
     for(var i=0; i < amount; i++){
         k = "b"+ (i%100) + ".c"+(i%10);

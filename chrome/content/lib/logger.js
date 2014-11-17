@@ -83,3 +83,15 @@ AutomaticDictionary.Lib.LoggerObfuscator = function(regexp, replace_fn){
         return msg.replace(regexp , fn);
     };
 }
+
+AutomaticDictionary.Lib.NullLogger = function(){
+    var null_fn = function(){};
+    return {
+        log: null_fn,
+        debug: null_fn,
+        performance: null_fn,
+        info: null_fn,
+        warn: null_fn,
+        error: null_fn
+    };
+}
