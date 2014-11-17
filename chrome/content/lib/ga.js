@@ -18,13 +18,14 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
         code = config.code,
         storage = config.storage,
         target = config.url || "https://ssl.google-analytics.com/__utm.gif",
+        logger = config.logger,
         domain_hash,
         visitor_id,
         first_visit,
         last_session,
         current_session,
         session_number;
-        
+
     // Generate an int based on the string. A simple hash.
     function hash( string ){
         var out=1;
@@ -123,7 +124,7 @@ AutomaticDictionary.Lib.GoogleAnalytics = (function(config){
             //FIXME: escape params value
             queryString+= i+"="+encodeURIComponent(params[i])+"&";
         }
-        AutomaticDictionary.dump("GA URL is "+target+"?"+queryString);
+        if(logger) logger.debug("GA URL is "+target+"?"+queryString);
         img.src = target +"?"+ queryString;
     }
     //options.customVars can be an array as order matters

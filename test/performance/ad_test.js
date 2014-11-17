@@ -7,8 +7,6 @@
     
     load("../chrome/content/ad.js");
     
-    AutomaticDictionary.dump = function(msg){logger.debug("AD: "+msg)};
-    
     /**
         Performance on high data stored
     */

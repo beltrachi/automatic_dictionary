@@ -30,7 +30,7 @@ AutomaticDictionary.ConversationsComposeWindow.fetchWindowAndInit = function(win
     if( mm.contentWindow ){
         AutomaticDictionary.initWindow( mm.contentWindow );
     }else{
-        AutomaticDictionary.dump("Not found content window in multimessage");
+        AutomaticDictionary.logger.warn("Not found content window in multimessage");
     }
 }
 

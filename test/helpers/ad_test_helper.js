@@ -4,9 +4,9 @@ window = null;
 document = null;
 var dictionary_object = {
     dictionary:"en"
-}; 
+};
 dump = function(msg){
-    print(msg);
+    logger.debug(msg);
 };
 StringBundle = function(){
     return {

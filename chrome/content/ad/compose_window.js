@@ -169,7 +169,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
 
     //Log function
     log:function( msg ){
-        AutomaticDictionary.dump( this.name + ":: "+ msg );
+        this.ad.logger.debug( this.name + ":: "+ msg );
     },
 
     recipients:function( recipientType ){

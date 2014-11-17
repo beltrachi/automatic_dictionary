@@ -31,13 +31,10 @@ var ga = AutomaticDictionary.Lib.GoogleAnalytics(
     storage: storage,
     code: "UA",
     domain: "domain",
-    window: window
+    window: window,
+    logger: logger
 }
 );
-
-AutomaticDictionary.dump = function(msg){
-    logger.debug("AD: "+msg)
-    };
 
 // Check initialization
 assert.equal(0, created_images.length);

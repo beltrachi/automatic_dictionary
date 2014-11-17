@@ -27,12 +27,12 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindowStub.prototype, {
     setListeners:function(){
         // Nothing to be done
     },
-        
+
     //Log function
     log:function( msg ){
-        AutomaticDictionary.dump( this.name + ":: "+ msg );
+        this.ad.logger.debug( this.name + ":: "+ msg );
     },
-    
+
     recipients:function( recipientType ){
         return [];
     },

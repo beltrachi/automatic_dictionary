@@ -162,6 +162,6 @@ AutomaticDictionary.SharedHash.prototype = {
         return this.data.keys();
     },
     log: function(msg){
-        AutomaticDictionary.dump(msg);
+        AutomaticDictionary.logger.debug(msg);
     }
 }

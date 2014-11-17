@@ -85,7 +85,7 @@ AutomaticDictionary.dump = function(msg){
     }
 }
 var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
-AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('info', function(msg){steelApp.log(msg)});
+AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){steelApp.log(msg)});
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s]*@)([\w]+)/,
         (function(){
@@ -166,7 +166,7 @@ AutomaticDictionary.Class = function(options){
     options = options || {};
     this.window = options.window;
     var start = (new Date()).getTime(), _this = this;
-    this.log("ad: init");
+    this.logger.debug("ad: init");
 
     this.initPlugins();
 
@@ -221,13 +221,12 @@ AutomaticDictionary.Class = function(options){
             _this.dispatchEvent({type:"window-load"});
         };
         this.window.addEventListener("load", onwindowload ,false);
-        this.log(this.window.document.readyState);
         //In case window is already loaded
         if(this.window.document.readyState == "complete"){
             onwindowload();
         }
     }catch(e){
-        this.log(e);
+        AutomaticDictionary.logException(e);
     }
     
     //Useful hook for plugins and so on
@@ -326,13 +325,13 @@ AutomaticDictionary.Class.prototype = {
     
     stop: function(){
         if( !this.running ) return; //Already stopped
-        this.log("ad: stop");
+        this.logger.debug("ad: stop");
         this.running = false;
     },
   
     start: function(){
         if( this.running ) return; //Already started
-        this.log("ad: start");
+        this.logger.debug("ad: start");
         this.running = true;
     },
     //TODO: move this to another file
@@ -345,7 +344,7 @@ AutomaticDictionary.Class.prototype = {
             try{
                 return func();
             }catch(e){
-                _this.log("Returning default for "+k);
+                _this.logger.debug("Returning default for "+k);
                 return defaults[k];
             }
         };
@@ -360,7 +359,7 @@ AutomaticDictionary.Class.prototype = {
                 "string":"Char"
             };
             var res = map[(typeof val)] || "Char"; //Char by default
-            _this.log("getType for "+key+" is "+res );
+            _this.logger.debug("getType for "+key+" is "+res );
             return res;
         }
         
@@ -426,10 +425,10 @@ AutomaticDictionary.Class.prototype = {
                 return data;
             },
             inc: function(key, delta){
-                _this.log("increasing "+key);
+                _this.logger.debug("increasing "+key);
                 delta = delta || 1;
                 var res = ifce.set(key,(1 * ifce.get(key)) + (delta));
-                _this.log("up to "+ ifce.get(key));
+                _this.logger.debug("up to "+ ifce.get(key));
                 return res;
             }
         };
@@ -482,26 +481,26 @@ AutomaticDictionary.Class.prototype = {
     */
     
     languageChanged: function(){
-        this.log("------------------------------------languageChanged by event");
         if( !this.running ) return;
+        this.logger.debug("languageChanged call");
         var current_lang = this.getCurrentLang();
         var tos = this.getRecipients();
         var ccs = this.getRecipients("cc");
-        this.log("tos are "+ tos.toSource());
-        this.log("ccss are "+ ccs.toSource());
+        this.logger.debug("tos are "+ tos.toSource());
+        this.logger.debug("ccss are "+ ccs.toSource());
         var maxRecipients = this.getMaxRecipients();
         if( tos.length + ccs.length > maxRecipients ){
-            this.log("Discarded to save data. Too much recipients.(maxRecipients is "+maxRecipients+")");
+            this.logger.warn("Discarded to save data. Too much recipients.(maxRecipients is "+maxRecipients+")");
             this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
             return;
         }
         var saved_recipients = 0;
         if( tos.length > 0 ){
-            this.log("Enter cond 1");
+            this.logger.debug("Enter cond 1");
             //The user has set the language for the recipients
             //We update the assignment of language for those recipients
             if( tos.length > 1 ){
-                this.log("Enter cond 1.1");
+                this.logger.debug("Enter cond 1.1");
                 var group = this.stringifyRecipientsGroup( tos );
                 this.data.set( group, current_lang );
                 saved_recipients += tos.length;
@@ -518,13 +517,13 @@ AutomaticDictionary.Class.prototype = {
                 
                 // We save it if it does not exist.
                 // We overwrite it if it's alone but not if it has CCs
-                this.log("Enter cond 1.2");
+                this.logger.debug("Enter cond 1.2");
                 
                 var curr = this.data.get(tos[0]);
-                this.log("curr is what is next")
-                this.log(curr);
+                this.logger.debug("curr is what is next")
+                this.logger.debug(curr);
                 if( this.isBlank( curr ) || ccs.length == 0 ){
-                    this.log("Enter cond 1.2.1");
+                    this.logger.debug("Enter cond 1.2.1");
                     this.data.set(tos[0], current_lang);
                     if( !this.isBlank(curr) ){
                         this.remove_heuristic(tos[0], curr);
@@ -537,7 +536,7 @@ AutomaticDictionary.Class.prototype = {
         }
         // Save a lang for tos and ccs
         if( ccs.length > 0 ){
-            this.log("Enter cond 2");
+            this.logger.debug("Enter cond 2");
 
             var key = this.getKeyForToAndCCRecipients(tos, ccs);
             this.data.set( key, current_lang );
@@ -561,18 +560,17 @@ AutomaticDictionary.Class.prototype = {
                 this.deduce_language_retry = null;
             }
             this.last_lang = current_lang;
-            this.log("Enter cond 3");
+            this.logger.debug("Enter cond 3");
 
-            this.log("saved recipients are: " + saved_recipients);
+            this.logger.debug("saved recipients are: " + saved_recipients);
             this.changeLabel("info",
                 this.ft( "savedForRecipients",
                     [ current_lang, saved_recipients ] )
                 );
         }
         this.collect_event("language","saved", {label: current_lang});
-        this.log("------------------------------------languageChanged by event END");
     },
-    
+
     getKeyForToAndCCRecipients: function(tos, ccs){
         return this.stringifyRecipientsGroup( tos ) + "[cc]" + this.stringifyRecipientsGroup( ccs );
     },
@@ -583,7 +581,7 @@ AutomaticDictionary.Class.prototype = {
     },
     
     save_heuristic: function(recipient, lang){
-        this.log("saving heuristic for "+ recipient + " to "+ lang);
+        this.logger.debug("saving heuristic for "+ recipient + " to "+ lang);
         var parts = recipient.split("@");
         if( parts[1] ){
             this.freq_suffix.add(parts[1], lang);
@@ -591,7 +589,7 @@ AutomaticDictionary.Class.prototype = {
     },
     
     remove_heuristic: function(recipient, lang){
-        this.log("removing heuristic for "+ recipient + " to "+ lang);
+        this.logger.debug("removing heuristic for "+ recipient + " to "+ lang);
         var parts = recipient.split("@");
         if( parts[1] ){
             this.freq_suffix.remove(parts[1], lang);
@@ -614,7 +612,7 @@ AutomaticDictionary.Class.prototype = {
         
         if(!opt) opt = {};
         if( !opt.is_retry && this.deduce_language_retry ){
-            this.log("Cancelled a deduceLanguage call as there is a retry waiting...");
+            this.logger.info("Cancelled a deduceLanguage call as there is a retry waiting...");
             // There is a retry queued. Stay quiet and wait for it.
             return;
         }
@@ -631,11 +629,11 @@ AutomaticDictionary.Class.prototype = {
                 {name:"to",value:recipients.length},
                 {name:"cc",value:ccs.length}
         ];
-        this.log("Deducing language for: " + toandcc_key);
+        this.logger.debug("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
         
         if( !lang ){
-            this.log("Check for the TO's together")
+            this.logger.debug("Check for the TO's together")
             // TO all
             // Check if all them have a specific language. We want them ordered to maximize hits
             // Clone array and sort it
@@ -644,7 +642,7 @@ AutomaticDictionary.Class.prototype = {
         }
         
         if( !lang ){
-            this.log("Check for the TOs one by one");
+            this.logger.debug("Check for the TOs one by one");
             // TO one by one
             // It returns the first recipient that has a language.
             // That is useful but maybe it's not the most convenient way.
@@ -657,7 +655,7 @@ AutomaticDictionary.Class.prototype = {
         }
         
         if( !lang ){
-            this.log("Check for the ccs one by one");
+            this.logger.debug("Check for the ccs one by one");
             for(i in ccs){
                 lang = this.getLangFor( ccs[i] );
                 if( lang ){
@@ -666,13 +664,13 @@ AutomaticDictionary.Class.prototype = {
             }
         }
         
-        this.log("Language found: "+ lang);
+        this.logger.debug("Language found: "+ lang);
                 
         if(!lang && this.allowHeuristic()){
             lang = this.heuristic_guess(recipients);
             if(lang){
                 method = this.METHODS.GUESS;
-                this.log("Heuristic says: "+ lang);            
+                this.logger.debug("Heuristic says: "+ lang);            
             }
         }
         
@@ -683,10 +681,10 @@ AutomaticDictionary.Class.prototype = {
         if( nothing_changed ){
             //test that the last lang is the same as the one setted on the dictionary.
             if( this.isBlank(lang) || this.getCurrentLang() == lang){
-                this.log("deduceLanguage detects that nothing changed or lang is null");
+                this.logger.debug("deduceLanguage detects that nothing changed or lang is null");
                 return;
             }else{
-                this.log("Detected changes on langs (from-to): "+ [this.getCurrentLang(), lang].toSource());
+                this.logger.debug("Detected changes on langs (from-to): "+ [this.getCurrentLang(), lang].toSource());
             }
         }
 
@@ -700,16 +698,16 @@ AutomaticDictionary.Class.prototype = {
                 }
             }catch( e ){
                 AutomaticDictionary.logException(e);
-                this.log("Exception message on deduceLanguage is: "+ e.toString());
+                this.logger.error("Exception message on deduceLanguage is: "+ e.toString());
                 if( this.deduce_language_retries_counter < this.max_deduce_language_retries ){
                     // The interface may not be ready. Leave it a retry.
                     this.deduce_language_retries_counter++
-                    this.log("Recovering from exception on deduceLanguage " + 
+                    this.logger.info("Recovering from exception on deduceLanguage " + 
                         "(retry: " +this.deduce_language_retries_counter + " with delay "+
                         this.deduce_language_retry_delay+" )");
                     var _this = this;
                     this.deduce_language_retry = this.window.setTimeout(function(){
-                        _this.log("Relaunching deduceLanguage");
+                        _this.logger.info("Relaunching deduceLanguage");
                         _this.deduce_language_retry = null;
                         _this.deduceLanguage({is_retry:true});
                     }, this.deduce_language_retry_delay);
@@ -772,12 +770,13 @@ AutomaticDictionary.Class.prototype = {
             }else if( this.window.ChangeLanguage ){
                 this.window.ChangeLanguage( fake_event );
             }else{
+                this.logger.error("No way to change language");
                 this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
             }
         }catch(e){
-            this.log("Exception received on setCurrentLang");
-            this.log(e);
-            this.log("Updating default dictionary instead as maybe spellcecher is not ready.");
+            this.logger.error("Exception received on setCurrentLang");
+            this.logger.error(e);
+            this.logger.info("Updating default dictionary instead as maybe spellcecher is not ready.");
             this.prefManager.setCharPref("spellchecker.dictionary",target);
         }finally{
             this.running = true;
@@ -894,10 +893,10 @@ AutomaticDictionary.Class.prototype = {
     collect: function(visit, options){
         this.last_visit = visit;
         if( this.allowCollect() ){
-            this.log("collect for visit "+visit);
+            this.logger.debug("collect for visit "+visit);
             this.ga.visit(visit, options);
         }else{
-            this.log("DISABLED track for visit "+visit);            
+            this.logger.debug("DISABLED track for visit "+visit);
         }
     },
     collect_event: function(category, action, e_opts, options){
@@ -906,7 +905,7 @@ AutomaticDictionary.Class.prototype = {
         
         if( this.allowCollect() ){
             e_opts = e_opts || {};
-            this.log("collect for event "+action+" on "+category);
+            this.logger.debug("collect for event "+action+" on "+category);
             this.ga.event(this.last_visit, {
                 cat:category,
                 action:action,
@@ -915,7 +914,7 @@ AutomaticDictionary.Class.prototype = {
                 non_interaction: e_opts.non_interaction
             }, options);
         }else{
-            this.log("DISABLED track for action "+action);            
+            this.logger.debug("DISABLED track for action "+action);            
         }
         
         this.dispatchEvent({type:category, data:{action: action}});
@@ -928,7 +927,7 @@ AutomaticDictionary.Class.prototype = {
         if( alias[key]) 
             key = alias[key];
         var ret = this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
-        this.log("CunterFor "+key+ " is "+ret);
+        this.logger.debug("CunterFor "+key+ " is "+ret);
         return ret;
     },
     
@@ -940,7 +939,7 @@ AutomaticDictionary.Class.prototype = {
     
     //TODO: migrate to observable/observer pattern
     notifyMailSent:function(){
-        this.log("Mail sent event");
+        this.logger.debug("Mail sent event");
         this.collect_event("mail","sent");
     },
     
@@ -949,10 +948,10 @@ AutomaticDictionary.Class.prototype = {
         //set all default values
         for(var k in this.defaults){
             try{
-                this.log("Value for "+k+ " is ");
-                this.log(this.prefManager.get(k,this.defaults[k]));
+                this.logger.debug("Value for "+k+ " is ");
+                this.logger.debug(this.prefManager.get(k,this.defaults[k]));
             }catch(e){
-                this.log("setting default for "+k);
+                this.logger.debug("setting default for "+k);
                 this.prefManager.set(k,this.defaults[k]);
             }
         }        
@@ -965,7 +964,7 @@ AutomaticDictionary.Class.prototype = {
             try{
                 plugin.init(this);
             }catch(e){
-                this.log("Plugin init error");
+                this.logger.error("Plugin init error");
                 AutomaticDictionary.logException(e);
             }
         }
@@ -1008,10 +1007,10 @@ AutomaticDictionary.Class.prototype = {
             var migration_key = available_migrations[ idx ];
             if( migrations_applied.indexOf( migration_key ) < 0 ){
                 //apply migration
-                this.log("applying migration "+ migration_key);
+                this.logger.info("applying migration "+ migration_key);
                 this.migrations[ migration_key ](this);
                 migrations_applied.push( migration_key );
-                this.log("migration "+ migration_key + " applied successfully");
+                this.logger.info("migration "+ migration_key + " applied successfully");
             }
         }
         this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
@@ -1021,7 +1020,7 @@ AutomaticDictionary.Class.prototype = {
     migrations: {
         //Key is date
         "201101010000": function(self){
-            self.log("running base migration");
+            self.logger.debug("running base migration");
         },
         "201102130000": function(self){
             //Adpat data structure to new one
@@ -1032,7 +1031,7 @@ AutomaticDictionary.Class.prototype = {
                 try{
                     v = JSON.parse( v );
                 }catch(e){
-                    self.log("Failed the read of the old preferences. Maybe they were empty.");
+                    self.logger.debug("Failed the read of the old preferences. Maybe they were empty.");
                     return; // Nothing to migrate.
                 }
             }else{
@@ -1077,7 +1076,7 @@ AutomaticDictionary.Class.prototype = {
             self.start = function(){
                 var start_at = (new Date()).getTime(),
                     keys = self.data.keys(), key, lang;
-                self.log("migrating to generate freq_suffix with "+JSON.stringify(keys));
+                self.logger.debug("migrating to generate freq_suffix with "+JSON.stringify(keys));
                 for(var i=0;i< keys.length;i++){
                     key = keys[i];
                     //Only use single items, exclude grouped ones

@@ -81,13 +81,11 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
     },
     
     add: function(string, value){
-        //logger.info(">>>>>>>>>> FreqSuffix add "+ string + " value: "+value);
         var parts = this.slice(string);
         this.root.add(parts, value);
         this.pair_counter.add(string,value);
     },
     remove: function(string, value){
-        //logger.debug(">>>>>>>>>> FreqSuffix remove "+ string + " value: "+value);
         var parts = this.slice(string);
         this.root.remove(parts, value);
         this.pair_counter.remove(string,value);
@@ -129,7 +127,6 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
     }
 };
 AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
-    //logger.debug("creating TreeNode with "+ key);
     this.key = key; 
     this.values = new AutomaticDictionary.Lib.FreqTable();
     this.nodes = {};
@@ -138,23 +135,18 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
 AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     // list is an array of prefix parts already splitted
     add: function(list, value){
-        //logger.debug("TN add " + value + " at "+ list.toSource());
         this.navigateThrough(list, function(node){
-            //logger.debug("TN adding value "+ value + " to "+ node.key);
             node.values.add(value);
         });
     },
     remove: function(list, value){
-        //logger.debug("TN remove " + value + " at "+ list.toSource());
         this.navigateThrough(list, function(node){
-            //logger.debug("TN remove value "+ value + " from "+ node.key);
             node.values.remove(value);
         });
     },
     get: function(list){
         var result;
         this.navigateTo(list, function(node){
-            //logger.debug("found node on GET "+ node.toString());
             result = node.values.getFirst();
         });
         return result;
@@ -162,7 +154,6 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     //Runs func on each node. Force create by default
     // Returns null when reaches a dead end (cannot walk to the leaf)
     navigateThrough: function(list, func, forceCreate){
-        //logger.debug("TN navthrough "+ list.toSource());
         var node, 
             forced = (forceCreate !== false),
             item = list[0];
@@ -183,7 +174,6 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
         func(this);
     },
     navigateTo: function( list, func){
-        //logger.debug("TN navto "+ list.toSource());
         //We know we reach leaf first so save it
         var leaf, reached = false;
         this.navigateThrough(list, function(node){
@@ -192,7 +182,6 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
                 leaf = node;
             }
         }, false);
-        //logger.debug("TN end of navto gives "+ leaf);
         //Notice we do not call func unless node found.
         if(leaf) func(leaf);
     }
