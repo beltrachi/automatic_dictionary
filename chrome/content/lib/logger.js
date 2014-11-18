@@ -15,6 +15,16 @@ AutomaticDictionary.Lib.Logger = function(level, writer_fn){
         filters: filters,
         log: function(level, msg) {
             if( is_current_level( level ) ) {
+                if (typeof(msg) == 'function'){
+                    msg = msg();
+                }
+                if (typeof(msg) === 'undefined'){
+                    msg = '';
+                }
+                if (msg.toString){
+                    msg = msg.toString();
+                }
+                msg = "" + msg;
                 msg = this.filter(msg);
                 if(msg){
                     this.write("["+level+"]: " + msg);
@@ -72,7 +82,7 @@ AutomaticDictionary.Lib.LoggerObfuscator = function(regexp, replace_fn){
     var fn = function(match) {
         //Search for it or get a new one.
         if (!dict[match]){
-            dict[match] = replace_func.apply(this,arguments);
+            dict[match] = replace_fn.apply(this,arguments);
         }
         return dict[match]
     };
