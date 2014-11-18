@@ -182,7 +182,8 @@ AutomaticDictionary.Class = function(options){
             "ad": this,
             name: this.name,
             logo_url: this.logo_url,
-            notification_time: this.notification_time
+            notification_time: this.notification_time,
+            logger: this.logger
         }
     );
 

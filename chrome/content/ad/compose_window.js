@@ -35,6 +35,7 @@ AutomaticDictionary.ComposeWindow = (function( params ){
     this.ad = params.ad;
     this.params = params;
     this.shutdown_chain = [];
+    this.logger = params.logger;
 });
 
 AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
@@ -51,38 +52,39 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     notificationbox_elem_id: "automatic_dictionary_notification",
 
     name: "ComposeWindow",
+    logger: null,
 
     setListeners:function(){
         var window = this.ad.window;
         if( window && !window.automatic_dictionary_initialized ){
             var _this = this;
-            
+
             this.setListener( window, 'unload', function(){
-                _this.log("[event] window unload");
+                _this.logger.debug("[event] window unload");
                 _this.ad.stop();
                 _this.ad.shutdown();
             });
            
             this.setListener( window, 'compose-window-reopen', function(){
-                _this.log("[event] compose window reopen");
+                _this.logger.debug("[event] compose window reopen");
                 _this.ad.start();
             }, false);
             //Observe when the dict changes
             this.setListener( window.document.getElementById("languageMenuList"),"command",
                 function(event){
-                    _this.log('[event] languageMenuList command');
+                    _this.logger.debug('[event] languageMenuList command');
                     _this.ad.languageChanged(event);
                 },false);
             //deactivate is the old window blur event
             this.setListener( window, "deactivate", function(evt){
                 if(evt.target == window){
-                    _this.log("[event] window deactivate");
+                    _this.logger.debug("[event] window deactivate");
                     _this.ad.stop();
                 }
             } , false);
             //activate is the old window focus event
             this.setListener( window, "activate", function(){
-                _this.log("[event] window activate");
+                _this.logger.debug("[event] window activate");
                 _this.ad.start();
                 try{
                     _this.ad.deduceLanguage();
@@ -91,21 +93,21 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 }
             }, false );
             this.setListener( window, "focus", function(){
-                _this.log('[event] window focus');
+                _this.logger.debug('[event] window focus');
                 _this.ad.start();
                 _this.ad.deduceLanguage();
             }, false);
             //Blur on input items. Do not confuse with window blur as windows
             //do not fire blur events anymore. They fire deactivate events.
             this.setListener( window, "blur", function(){
-                _this.log('[event] window blur');
+                _this.logger.debug('[event] window blur');
                 _this.ad.deduceLanguage();
             }, false);
 
             this.listenToSpellCheckingCommands(window);
 
             this.setListener(window, "compose-send-message", function(evt){
-                _this.log('[event] window compose-send-message');
+                _this.logger.debug('[event] window compose-send-message');
                 _this.ad.notifyMailSent();
             }, false );
 
@@ -115,18 +117,18 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             this.shutdown_chain.push(function(){
                 window.automatic_dictionary_initialized = false;
             });
-            this.log("events registered");
+            this.logger.debug("events registered");
         }else{
-            this.log("no window found or already initialized");
+            this.logger.debug("no window found or already initialized");
         }
     },
 
     listenToSpellCheckingCommands: function(window){
         var _this = this, func;
         this.setListener(window,"command", function(evt){
-            _this.log("[event] window commmand (evt.target = "+evt.target);
+            _this.logger.debug("[event] window commmand (evt.target = "+evt.target);
             if( evt.target.parentNode.id == "spellCheckDictionariesMenu"){
-                _this.log("clicked on context dict menu");
+                _this.logger.debug("clicked on context dict menu");
                 window.setTimeout(function(){
                     _this.ad.languageChanged();
                 },500); //Hardcoded. Enough? Otherways the lang is still not changed
@@ -134,15 +136,15 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             //TODO: research on being notified by spellchecker and not sniff events around
             if( evt.target.id == "spellCheckEnable" || 
                 evt.target.id == "menu_inlineSpellCheck"){
-                _this.log("spellCheckEnable");
+                _this.logger.debug("spellCheckEnable");
                 window.setTimeout( function(){
                     _this.ad.deduceLanguage();
                 }, 500);
             }
-            _this.log("evt.target.id is "+ evt.target.id);
+            _this.logger.debug("evt.target.id is "+ evt.target.id);
         }, true);
         func = function(subject, topic, data){
-            _this.log('[event] spellchecker.dictionary changed');
+            _this.logger.debug('[event] spellchecker.dictionary changed');
             _this.ad.languageChanged();
         };
         this.ad.prefManager.instance.addObserver("spellchecker.dictionary", func, false);
@@ -167,11 +169,6 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         });
     },
 
-    //Log function
-    log:function( msg ){
-        this.ad.logger.debug( this.name + ":: "+ msg );
-    },
-
     recipients:function( recipientType ){
         recipientType = recipientType || "to";
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
@@ -190,7 +187,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 arr.push(nsIMsgRecipientArrayInstance[i].toString());
             }
         }
-        this.log("recipients found: " + arr.toSource());
+        this.logger.debug("recipients found: " + arr.toSource());
         return arr;
     },
 
@@ -212,7 +209,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
 
     changeLabel: function( str ){
         var window = this.ad.window;
-        this.log("Writting to label: " + str);
+        this.logger.debug("Writting to label: " + str);
         if( str=="" ){
             return;
         }
