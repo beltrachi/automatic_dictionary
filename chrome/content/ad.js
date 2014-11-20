@@ -84,14 +84,17 @@ AutomaticDictionary.dump = function(msg){
         AutomaticDictionary.logger.debug(msg);
     }
 }
+
 var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
-AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){steelApp.log(msg)});
+AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
+    steelApp.console.log(msg);
+});
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w]+)/g,
         (function(){
             var seq = 0;
             return function(match){
-                return "email-"+(seq++)+"@domain";
+                return "masked-email-"+(seq++)+"@domain";
             }
         })()));
 
