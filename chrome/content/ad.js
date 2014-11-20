@@ -491,7 +491,7 @@ AutomaticDictionary.Class.prototype = {
         this.logger.debug("ccss are "+ ccs.toSource());
         var maxRecipients = this.getMaxRecipients();
         if( tos.length + ccs.length > maxRecipients ){
-            this.logger.warn("Discarded to save data. Too much recipients.(maxRecipients is "+maxRecipients+")");
+            this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
             this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
             return;
         }
