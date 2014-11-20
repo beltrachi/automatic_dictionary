@@ -23,6 +23,7 @@ var nsISupportsString = Components.interfaces.nsISupportsString;
 AutomaticDictionary.ConversationsComposeWindow = (function( params ){
     this.ad = params.ad;
     this.params = params;
+    this.logger = params.logger;
 });
 
 AutomaticDictionary.ConversationsComposeWindow.fetchWindowAndInit = function(window){
@@ -60,7 +61,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
             }, true);
             this.setListener(window,"blur", function(evt){
                 if( evt.target.tagName == "textarea"){
-                    _this.log("blur on textarea detected");
+                    _this.logger.debug("blur on textarea detected");
                     _this.last_textarea_detected = evt.target;
                     _this.ad.stop();
                 }
@@ -68,7 +69,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
             this.setListener(window,"focus", function(evt){
                 if( evt.target.tagName == "textarea" && !evt.automatic_dictionary_managed){
                     _this.ad.start();
-                    _this.log("focus on textarea detected");
+                    _this.logger.debug("focus on textarea detected");
                     _this.last_textarea_detected = evt.target;
                     evt.automatic_dictionary_managed = true;
                     window.setTimeout(function(){
@@ -100,7 +101,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
                 this.setListener( window.document.getElementById(inputs[x]),
                     "change",
                     function(){
-                        _this.log("CHANGE ON INPUT");
+                        _this.logger.debug("CHANGE ON INPUT");
                         try{
                             _this.ad.deduceLanguage();
                         }catch(e){
@@ -114,7 +115,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
             
             this.prepareWindow(AutomaticDictionary.main_window);
             
-            this.log("events seem to be registered");
+            this.logger.debug("events seem to be registered");
 
             window.automatic_dictionary_initialized = true;
             this.shutdown_chain.push(function(){
@@ -133,7 +134,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
         for(var x=0;x<  recipients.length;x++){
             recipients[x] = this.cleanEmail(recipients[x]);
         }
-        this.log("recipients found: " + recipients.toSource());
+        this.logger.debug("recipients found: " + recipients.toSource());
         return recipients;
     },
     
@@ -164,7 +165,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
     
     changeLabel: function( str ){
         var window = AutomaticDictionary.main_window;
-        this.log("Writting to label: " + str);
+        this.logger.debug("Writting to label: " + str);
         if( str=="" ){
             return;
         }
@@ -195,7 +196,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
         // callback to select a dictionary
         InlineSpellCheckerUI.selectDictionaryByName = function(name){
             if (! this.mInlineSpellChecker || name == "" ){
-                _this.log("No mInlineSpellChecker or empty")
+                _this.logger.debug("No mInlineSpellChecker or empty")
                 return;
             }
             

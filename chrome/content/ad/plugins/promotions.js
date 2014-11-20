@@ -41,8 +41,9 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
     //Called on ad boot
     init:function(ad){
         this.ad = ad;
+        this.logger = ad.logger;
         var _this = this;
-        this.log("Adding listener!")
+        this.logger.debug("Adding listener!")
         this.setListener( this.ad, "window-load", function(evt){
             _this.extensionLoaded(evt);
         });
@@ -54,30 +55,30 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
     },
     
     log:function(msg){
-        this.ad.log(msg);
+        this.ad.logger.debug(msg);
     },
     
     extensionLoaded:function(){
         if(!this.promotionsAllowed()){
-            this.log("Promotions are blocked");
+            this.logger.debug("Promotions are blocked");
             return;
         }
         var usages = this.ad.counterFor("usages");
-        this.log("Usages are "+usages);
-        this.log(" "+usages+" > "+this.min_usages+" && (usages % "+this.show_up_every+") ");
-        this.log(" usages modul es " + (usages % this.show_up_every));
+        this.logger.debug("Usages are "+usages);
+        this.logger.debug(" "+usages+" > "+this.min_usages+" && (usages % "+this.show_up_every+") ");
+        this.logger.debug(" usages modul es " + (usages % this.show_up_every));
         if( usages > this.min_usages && ((usages % this.show_up_every) == 0)){
             this.showPromotionsMessage();
         }else{
-            this.log("not this time");
+            this.logger.debug("not this time");
         }
     },
     
     showPromotionsMessage:function(){
-        this.log("Show promotions...");
+        this.logger.debug("Show promotions...");
         //We choose which one...
         var promo = this.choosePromotions();
-        this.log("Choosen is "+promo);
+        this.logger.debug("Choosen is "+promo);
         this.ad.collect_event("promotion","show",{
             label:promo
         });
@@ -97,7 +98,7 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
             });
             total += weight;
         }
-        this.log(options.toSource());
+        this.logger.debug(options.toSource());
         /*
          *  Now in options we have an ascendant acumulation like this:
          *  
@@ -112,7 +113,7 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
 
         // We walk from the
         var point = rnd * total, it;
-        this.log("Point is "+point+" from a total of "+total);
+        this.logger.debug("Point is "+point+" from a total of "+total);
         for( var x=options.length-1; x>= 0; x--){
             it = options[x];
             if(it.weight < point){
@@ -218,13 +219,13 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
     
     promotionsAllowed: function(){
         var v = this.ad.getPref(this.allow_promotions_pref_key);
-        this.log("Promallowed is :" + v);
+        this.logger.debug("Promallowed is :" + v);
         return v === true;
     },
     
     //delegate translations to AD
     t: function(k){
-        this.log("get label for "+k);
+        this.logger.debug("get label for "+k);
         return this.ad.t(k);
     },
     
