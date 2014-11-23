@@ -57,6 +57,7 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/logger.js",
     "chrome://automatic_dictionary/content/lib/ga.js",
     "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
+    "chrome://automatic_dictionary/content/lib/file_writer.js",
 
     "chrome://automatic_dictionary/content/ad/compose_window.js",
     "chrome://automatic_dictionary/content/ad/compose_window_stub.js",
@@ -86,8 +87,18 @@ AutomaticDictionary.dump = function(msg){
 }
 
 var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
+
+Components.utils.import("resource://gre/modules/FileUtils.jsm");
+
+// get the "data.txt" file in the profile directory
+var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
+
+var log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
+log_writer.write("Logger started");
+
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
     steelApp.console.log(msg);
+    log_writer.write(msg);
 });
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w]+)/g,

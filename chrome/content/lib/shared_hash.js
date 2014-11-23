@@ -133,7 +133,7 @@ AutomaticDictionary.SharedHash.prototype = {
     set: function(key, value){
         var next_version = this.id + this.internal_version++;
         var _this = this;
-        this.sincronized_with_patience( 
+        this.sincronized_with_patience(
             function(){
                 _this.refresh(); //Avoid to ask for sync again
                 _this.data.set(key, value);

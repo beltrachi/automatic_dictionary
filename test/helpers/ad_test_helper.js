@@ -88,7 +88,31 @@ function test_setup(){
             },
             "@mozilla.org/steel/application;1":{
                 getService: function(){
-                    return { log: print };
+                    return { console: { log: print } };
+                }
+            },
+            "@mozilla.org/file/local;1":{
+                createInstance: function(){
+                    return {
+                        initWithPath:function(){},
+                        exists: function(){ return true }
+                    }
+                }
+            },
+            "@mozilla.org/network/file-output-stream;1":{
+                createInstance: function(){
+                    return {
+                        init: function(){}
+                    }
+                }
+            },
+            "@mozilla.org/intl/converter-output-stream;1":{
+                createInstance: function(){
+                    return {
+                        init: function(){},
+                        writeString: function(){},
+                        close: function(){}
+                    }
                 }
             }
         },
@@ -172,8 +196,13 @@ function test_setup(){
     window.Image = function(){
         built_images.push(this);
     };
+    FileUtils = {
+        getFile: function(){
+            return { path: 'a file path' };
+        }
+    }
 }
-    
+
 // Method to mock the recipients of an automatic_dictonary instance
 var mock_recipients = function(inst, params){
     inst.getRecipients = function( type ){

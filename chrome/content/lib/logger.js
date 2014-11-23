@@ -27,7 +27,8 @@ AutomaticDictionary.Lib.Logger = function(level, writer_fn){
                 msg = "" + msg;
                 msg = this.filter(msg);
                 if(msg){
-                    this.write("["+level+"]: " + msg);
+                    msg = (new Date()).toJSON() + " ["+level+"] " + msg;
+                    this.write(msg);
                 }
             }
         },
