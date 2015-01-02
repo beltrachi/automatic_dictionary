@@ -36,3 +36,12 @@ mates or writing a review, or some suggestion to improve it.">
 <!ENTITY notificationLevel.warn "Warning">
 <!ENTITY notificationLevel.error "Error">
 
+<!ENTITY logLevel.label "Log level:">
+<!ENTITY logLevel.description
+"The level you want the plugin to log.">
+<!ENTITY logLevel.recommendation "Set it to &quot;Warning&quot; to log only when something is not working well.">
+
+<!ENTITY logLevel.debug "Debug">
+<!ENTITY logLevel.info "Info">
+<!ENTITY logLevel.warn "Warning">
+<!ENTITY logLevel.error "Error">

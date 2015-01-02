@@ -1,6 +1,6 @@
 /**
     Implementation comments:
-    
+
      * To support various compose windows we share the data hash between instances
        of ad, through the preferences service with SharedHash
 
@@ -58,13 +58,14 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/ga.js",
     "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
     "chrome://automatic_dictionary/content/lib/file_writer.js",
+    "chrome://automatic_dictionary/content/lib/mail_composer.js",
 
     "chrome://automatic_dictionary/content/ad/compose_window.js",
     "chrome://automatic_dictionary/content/ad/compose_window_stub.js",
-    "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",    
+    "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",
 
-    "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",  
-    "chrome://automatic_dictionary/content/ad/plugins/promotions.js",    
+    "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",
+    "chrome://automatic_dictionary/content/ad/plugins/promotions.js",
 ];
 
 for( var idx in resources){
@@ -73,18 +74,6 @@ for( var idx in resources){
 }
 
 Cu.import("resource:///modules/StringBundle.js");
-
-/* DEBUGGING METHOD
- *
- * This method is used all over the code to show debugging messages.
- *
- * Uncomment the return to show messages on console
- */
-AutomaticDictionary.dump = function(msg){
-    if( AutomaticDictionary.logger ){
-        AutomaticDictionary.logger.debug(msg);
-    }
-}
 
 var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
 
@@ -100,6 +89,8 @@ AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function
     steelApp.console.log(msg);
     log_writer.write(msg);
 });
+AutomaticDictionary.logger.error("Logger started");
+AutomaticDictionary.logger.filepath = file.path;
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w]+)/g,
         (function(){
@@ -190,6 +181,8 @@ AutomaticDictionary.Class = function(options){
     //Version migrations upgrade check
     this.migrate();
 
+    AutomaticDictionary.logger.setLevel(this.logLevel());
+
     var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
     this.compose_window = new (cw_builder)(
         {
@@ -259,6 +252,7 @@ AutomaticDictionary.Class.prototype = {
     ALLOW_COLLECT_KEY:"allowCollect",
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
     NOTIFICATION_LEVEL:"extensions.automatic_dictionary.notificationLevel",
+    LOG_LEVEL:"extensions.automatic_dictionary.logLevel",
     
     METHODS:{
         REMEMBER:"remember",
@@ -319,6 +313,7 @@ AutomaticDictionary.Class.prototype = {
 
             "allowPromotions": true,
             "notificationLevel": 'info', // or "warn" or "error"
+            "logLevel": 'warn',
 
             //Events collected from
             //we set them as strings as we'll use SimpleStorage
@@ -904,6 +899,9 @@ AutomaticDictionary.Class.prototype = {
     notificationLevel: function(){
         return this.prefManager.get(this.NOTIFICATION_LEVEL);
     },
+    logLevel: function(){
+        return this.prefManager.get(this.LOG_LEVEL);
+    },
     // options are forwarded to ga.visit function
     collect: function(visit, options){
         this.last_visit = visit;
@@ -960,16 +958,22 @@ AutomaticDictionary.Class.prototype = {
     
     //It sets default values in case they are not setted
     setDefaults:function(){
+        var v;
         //set all default values
         for(var k in this.defaults){
             try{
                 this.logger.debug("Value for "+k+ " is ");
-                this.logger.debug(this.prefManager.get(k,this.defaults[k]));
+                v = this.prefManager.get(k,this.defaults[k]);
+                this.logger.debug(v);
             }catch(e){
+                // a get on a non existing key raises an exception.
+                v = null;
+            }
+            if(v === null || typeof(v) == 'undefined'){
                 this.logger.debug("setting default for "+k);
                 this.prefManager.set(k,this.defaults[k]);
             }
-        }        
+        }
     },
     
     initPlugins: function(){
@@ -1120,6 +1124,10 @@ AutomaticDictionary.Class.prototype = {
             self.setDefaults();
         },
         "201405132246": function(self){
+            //Added notificationLevel
+            self.setDefaults();
+        },
+        "201501011313": function(self){
             //Added notificationLevel
             self.setDefaults();
         }

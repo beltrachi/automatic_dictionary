@@ -10,6 +10,7 @@ pref("extensions.automatic_dictionary.maxRecipients", 10);
 pref("extensions.automatic_dictionary.allowCollect", true);
 pref("extensions.automatic_dictionary.hasClosedCollectMessage", "false");
 pref("extensions.automatic_dictionary.notificationLevel", "info");
+pref("extensions.automatic_dictionary.logLevel", "warn");
 
 pref("extensions.automatic_dictionary.allowHeuristic", true);
 pref("extensions.automatic_dictionary.freqTableData", "");
