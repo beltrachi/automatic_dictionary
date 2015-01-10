@@ -1,3 +1,8 @@
+=== 1.7.0
+
+* Refactor logger calls
+* Add logger to file and button to send to developer.
+
 === 1.6.0
 
 * Add option to disable popups [resolves #10]
