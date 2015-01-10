@@ -28,7 +28,11 @@ AutomaticDictionary.enabled_plugins = [];
 
 //Helper function to copy prototypes
 AutomaticDictionary.extend = function (destination,source) {
-    if( source == {} || !source ) AutomaticDictionary.logger.warn("Extension with empty source.");
+    if( source == {} || !source ){
+        if (AutomaticDictionary.logger){
+            AutomaticDictionary.logger.warn("Extension with empty source.");
+        }
+    }
     for (var property in source)
         destination[property] = source[property];
     return destination;
@@ -79,15 +83,13 @@ var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService
 
 Components.utils.import("resource://gre/modules/FileUtils.jsm");
 
-// get the "data.txt" file in the profile directory
 var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
 
-var log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
-log_writer.write("Logger started");
-
+AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
+AutomaticDictionary.log_writer.write("Logger started");
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
     steelApp.console.log(msg);
-    log_writer.write(msg);
+    AutomaticDictionary.log_writer.write(msg);
 });
 AutomaticDictionary.logger.error("Logger started");
 AutomaticDictionary.logger.filepath = file.path;
@@ -182,6 +184,9 @@ AutomaticDictionary.Class = function(options){
     this.migrate();
 
     AutomaticDictionary.logger.setLevel(this.logLevel());
+    AutomaticDictionary.log_writer.enabled =
+        this.prefManager.getBoolPref(this.SAVE_LOG_FILE);
+
 
     var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
     this.compose_window = new (cw_builder)(
@@ -253,7 +258,8 @@ AutomaticDictionary.Class.prototype = {
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
     NOTIFICATION_LEVEL:"extensions.automatic_dictionary.notificationLevel",
     LOG_LEVEL:"extensions.automatic_dictionary.logLevel",
-    
+    SAVE_LOG_FILE:"extensions.automatic_dictionary.saveLogFile",
+
     METHODS:{
         REMEMBER:"remember",
         GUESS:"guess"
@@ -314,6 +320,7 @@ AutomaticDictionary.Class.prototype = {
             "allowPromotions": true,
             "notificationLevel": 'info', // or "warn" or "error"
             "logLevel": 'warn',
+            "saveLogFile": false,
 
             //Events collected from
             //we set them as strings as we'll use SimpleStorage
@@ -698,7 +705,6 @@ AutomaticDictionary.Class.prototype = {
             }
         }
 
-        
         if(lang){
             try{
                 this.setCurrentLang( lang );
@@ -948,6 +954,7 @@ AutomaticDictionary.Class.prototype = {
         this.logger.debug("Shutdown instance call");
         this.dispatchEvent({type:"shutdown"});
         this.compose_window.shutdown();
+        AutomaticDictionary.log_writer.close();
     },
     
     //TODO: migrate to observable/observer pattern
@@ -1130,8 +1137,11 @@ AutomaticDictionary.Class.prototype = {
         "201501011313": function(self){
             //Added notificationLevel
             self.setDefaults();
+        },
+        "201501061812": function(self){
+            //Added saveLogFile
+            self.setDefaults();
         }
-
     }
 };
 

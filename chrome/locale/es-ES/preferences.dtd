@@ -36,3 +36,19 @@ compañeros o escribiendo una valoración.">
 <!ENTITY notificationLevel.warn "Advertencia">
 <!ENTITY notificationLevel.error "Error">
 
+<!ENTITY logLevel.label "Nivel de log:">
+<!ENTITY logLevel.description
+"El nivel que quieres que se registre.">
+<!ENTITY logLevel.recommendation "Usa &quot;warning&quot; si solo quieres que se registre cuando algo no va bien.">
+
+<!ENTITY logLevel.debug "Debug">
+<!ENTITY logLevel.info "Info">
+<!ENTITY logLevel.warn "Warning">
+<!ENTITY logLevel.error "Error">
+
+<!ENTITY saveLogFile.label "Guardar log en fichero:">
+<!ENTITY saveLogFile.info
+"Escribe todos los mensajes generados por la extension en un fichero que
+podr&acute; ser enviado posteriormente al desarrollador para detectar problemas.
+Reinicia Thunderbird si cambias este parámetro para que tenga efecto.">
+<!ENTITY saveLogFile.recomendation "">

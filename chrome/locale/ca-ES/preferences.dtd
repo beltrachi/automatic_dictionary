@@ -35,3 +35,20 @@ compartint-lo amb els companys o escribint-ne una valoració.">
 <!ENTITY notificationLevel.info "Informació">
 <!ENTITY notificationLevel.warn "Advertència">
 <!ENTITY notificationLevel.error "Error">
+
+<!ENTITY logLevel.label "Nivell de log:">
+<!ENTITY logLevel.description
+"El nivell que vols que es registri.">
+<!ENTITY logLevel.recommendation "Utilitza &quot;warning&quot; si nom&eacute;s vols qye es registri quan alguna cosa no va b&eacute;">
+
+<!ENTITY logLevel.debug "Debug">
+<!ENTITY logLevel.info "Info">
+<!ENTITY logLevel.warn "Warning">
+<!ENTITY logLevel.error "Error">
+
+<!ENTITY saveLogFile.label "Guardar log en fitxer:">
+<!ENTITY saveLogFile.info
+"Escriu tots els missatges generats per la extensi&oacute; en un fitxer que
+podr&acute; ser enviat posteriorment al desenvolupador per detectar problemes.
+Reinicia Thunderbird si canvies aquest par&agrave;metre perque tingui efecte.">
+<!ENTITY saveLogFile.recomendation "">

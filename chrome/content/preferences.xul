@@ -38,9 +38,76 @@ function sendLogToDeveloper(link){
             <preference id="allowPromotions" name="extensions.automatic_dictionary.allowPromotions" type="bool"/>
             <preference id="notificationLevel" name="extensions.automatic_dictionary.notificationLevel" type="string"/>
             <preference id="logLevel" name="extensions.automatic_dictionary.logLevel" type="string"/>
+            <preference id="saveLogFile" name="extensions.automatic_dictionary.saveLogFile" type="bool"/>
         </preferences>
         <vbox class="prefoptions">
-            <description onclick="sendLogToDeveloper(this);" class="text-link">Click to see log file.
+            <hbox>
+                <label control="input_allowCollect" value="&allowCollect.label;"/>
+                <checkbox preference="allowCollect" id="input_allowCollect" />
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &allowCollect.info;
+                &allowCollect.recomendation;
+            </description>
+            <!-- Remember to set the promotion id upper in this file at <preferences> -->
+            <hbox>
+                <label control="input_allowPromotions" value="&allowPromotions.label;"/>
+                <checkbox preference="allowPromotions" id="input_allowPromotions" />
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &allowPromotions.info;
+                &allowPromotions.recomendation;
+            </description>
+            
+            <hbox>
+                <label control="input_notificationLevel" value="&notificationLevel.label;"/>
+                <!-- List example (this example would be stored as an integer) -->
+                <setting pref="extensions.automatic_dictionary.notificationLevel" type="menulist" title="">
+                  <menulist preference="notificationLevel">
+                    <menupopup>
+                      <menuitem value="info" label="&notificationLevel.info;"/>
+                      <menuitem value="warn" label="&notificationLevel.warn;"/>
+                      <menuitem value="error" label="&notificationLevel.error;"/>
+                    </menupopup>
+                  </menulist>
+                </setting>
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &notificationLevel.description;
+                &notificationLevel.recommendation;
+            </description>
+            <hbox>
+                <label control="input_logLevel" value="&logLevel.label;"/>
+                <setting pref="extensions.automatic_dictionary.logLevel" type="menulist" title="">
+                  <menulist preference="logLevel">
+                    <menupopup>
+                      <menuitem value="debug" label="&logLevel.debug;"/>
+                      <menuitem value="info" label="&logLevel.info;"/>
+                      <menuitem value="warn" label="&logLevel.warn;"/>
+                      <menuitem value="error" label="&logLevel.error;"/>
+                    </menupopup>
+                  </menulist>
+                </setting>
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &logLevel.description;
+                &logLevel.recommendation;
+            </description>
+            <hbox>
+                <label control="input_saveLogFile" value="&saveLogFile.label;"/>
+                <checkbox preference="saveLogFile" id="input_saveLogFile" />
+                <label value="" flex="10"/>
+            </hbox>
+            <description class="info">
+                &saveLogFile.info;
+                &saveLogFile.recomendation;
+            </description>
+            <description>
+              <button label="Send log to developer" onclick="sendLogToDeveloper(this);"/>
             </description>
             <description class="intro">
                 &introduction.text;
@@ -62,63 +129,6 @@ function sendLogToDeveloper(link){
             <description class="info">
                 &maxRecipients.info;
                 &maxRecipients.recomendation;
-            </description>
-            <hbox>
-                <label control="input_allowCollect" value="&allowCollect.label;"/>
-                <checkbox preference="allowCollect" id="input_allowCollect" />
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &allowCollect.info;
-                &allowCollect.recomendation;
-            </description>
-            <!-- Remember to set the promotion id upper in this file at <preferences> -->
-            <hbox>
-                <label control="input_allowPromotions" value="&allowPromotions.label;"/>
-                <checkbox preference="allowPromotions" id="input_allowPromotions" />
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &allowPromotions.info;
-                &allowPromotions.recomendation;
-            </description>
-
-            <hbox>
-                <label control="input_notificationLevel" value="&notificationLevel.label;"/>
-                <!-- List example (this example would be stored as an integer) -->
-                <setting pref="extensions.automatic_dictionary.notificationLevel" type="menulist" title="">
-                  <menulist preference="notificationLevel">
-                    <menupopup>
-                      <menuitem value="info" label="&notificationLevel.info;"/>
-                      <menuitem value="warn" label="&notificationLevel.warn;"/>
-                      <menuitem value="error" label="&notificationLevel.error;"/>
-                    </menupopup>
-                  </menulist>
-                </setting>
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &notificationLevel.description;
-                &notificationLevel.recommendation;
-            </description>
-            
-            <hbox>
-                <label control="input_logLevel" value="&logLevel.label;"/>
-                <setting pref="extensions.automatic_dictionary.logLevel" type="menulist" title="">
-                  <menulist preference="logLevel">
-                    <menupopup>
-                      <menuitem value="debug" label="&logLevel.debug;"/>
-                      <menuitem value="info" label="&logLevel.info;"/>
-                      <menuitem value="warn" label="&logLevel.warn;"/>
-                      <menuitem value="error" label="&logLevel.error;"/>
-                    </menupopup>
-                  </menulist>
-                </setting>
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &logLevel.description;
-                &logLevel.recommendation;
             </description>
         </vbox>
     </prefpane>
