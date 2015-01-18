@@ -94,7 +94,7 @@ AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function
 AutomaticDictionary.logger.error("Logger started");
 AutomaticDictionary.logger.filepath = file.path;
 AutomaticDictionary.logger.addFilter(
-    AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w]+)/g,
+    AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
         (function(){
             var seq = 0;
             return function(match){
