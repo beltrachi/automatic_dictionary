@@ -625,15 +625,18 @@ AutomaticDictionary.Class.prototype = {
          3. TO (one by one): The recipients alone in order of appearence.
     */
     deduceLanguage: function( opt ){
-        if( !this.isSpellCheckerEnabled() ) return;
-        
+        if( !this.isSpellCheckerEnabled() ){
+            this.logger.debug("Spellcheck is disabled");
+            return;
+        }
+
         if(!opt) opt = {};
         if( !opt.is_retry && this.deduce_language_retry ){
             this.logger.info("Cancelled a deduceLanguage call as there is a retry waiting...");
             // There is a retry queued. Stay quiet and wait for it.
             return;
         }
-        
+
         var recipients = this.getRecipients();
         if( !this.running || recipients.length == 0 ){
             return;
