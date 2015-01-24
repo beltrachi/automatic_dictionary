@@ -612,7 +612,6 @@ AutomaticDictionary.Class.prototype = {
             this.freq_suffix.remove(parts[1], lang);
         }
     },
-    
     // Updates the interface with the lang deduced from the recipients
     /*
         How we search the lang:
@@ -625,12 +624,22 @@ AutomaticDictionary.Class.prototype = {
          3. TO (one by one): The recipients alone in order of appearence.
     */
     deduceLanguage: function( opt ){
-        if( !this.isSpellCheckerEnabled() ){
-            this.logger.debug("Spellcheck is disabled");
+        var self = this;
+        if(!opt) opt = {};
+
+        if( !this.canSpellCheck() ){
+            if( this.running && (!opt.count || opt.count < 10)){
+                this.logger.info("Deferring deduceLanguage because spellchecker"+
+                                 " is not ready");
+                opt.count = opt.count || 0;
+                opt.count += 1;
+                this.window.setTimeout(function(){ self.deduceLanguage(opt) },300);
+            }else{
+                this.logger.warn("spellchecker is not enabled or not running");
+            }
             return;
         }
 
-        if(!opt) opt = {};
         if( !opt.is_retry && this.deduce_language_retry ){
             this.logger.info("Cancelled a deduceLanguage call as there is a retry waiting...");
             // There is a retry queued. Stay quiet and wait for it.
@@ -805,9 +814,14 @@ AutomaticDictionary.Class.prototype = {
     getCurrentLang: function(){
         return this.prefManager.getCharPref("spellchecker.dictionary");
     },
-    
+
+    canSpellCheck:function(){
+        var is = this.window.gSpellChecker.canSpellCheck && this.isSpellCheckerEnabled();
+        return is;
+    },
+
     isSpellCheckerEnabled:function(){
-        var is = this.window.gSpellChecker.canSpellCheck && this.window.gSpellChecker.enabled;
+        var is = this.window.gSpellChecker.enabled;
         return is;
     },
   
