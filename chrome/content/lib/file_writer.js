@@ -5,6 +5,7 @@ AutomaticDictionary.Lib.FileWriter.prototype = {
     file: null,
     converter: null,
     enabled: null,
+    closed: true,
     initialize: function(file){
         this.file = Components.classes["@mozilla.org/file/local;1"].
             createInstance(Components.interfaces.nsILocalFile);
@@ -28,14 +29,16 @@ AutomaticDictionary.Lib.FileWriter.prototype = {
         this.converter = Components.classes["@mozilla.org/intl/converter-output-stream;1"].
             createInstance(Components.interfaces.nsIConverterOutputStream);
         this.converter.init(foStream, "UTF-8", 0, 0);
+        this.closed = false;
         this.enabled = true;
     },
     write: function(string){
-        if (this.enabled) {
+        if (this.enabled && !this.closed) {
             this.converter.writeString(string + "\n");
         }
     },
     close: function(){
         this.converter.close(); // this closes foStream
+        this.closed = true;
     }
 }
