@@ -19,7 +19,6 @@ var Cc = Components.classes;
 var Cu = Components.utils;
 var Cr = Components.results;
 
-
 var AutomaticDictionary = this.AutomaticDictionary || {};
 
 AutomaticDictionary.Plugins = {};
@@ -628,6 +627,7 @@ AutomaticDictionary.Class.prototype = {
         if(!opt) opt = {};
 
         if( !this.canSpellCheck() ){
+            //TODO: notify user when spellcheck while you type is disabled.
             if( this.running && (!opt.count || opt.count < 10)){
                 this.logger.info("Deferring deduceLanguage because spellchecker"+
                                  " is not ready");

@@ -7,7 +7,7 @@ if( typeof(AutomaticDictionary)=== "undefined" ){
 AutomaticDictionary.check_int_range = function( field , min, max, defv ){
     defv = defv || min;
     var value = field.value * 1;
-    // reset if it's not the same as string of it 
+    // reset if it's not the same as string of it
     if( (value === NaN) || (value + "" !== field.value) ){
         field.value = defv;
     }
@@ -16,6 +16,7 @@ AutomaticDictionary.check_int_range = function( field , min, max, defv ){
     }else if( value > max ){
         field.value = max;
     }
-    
+
     return false;
 };
+
