@@ -9,3 +9,11 @@
     color:#666666;
     padding-left:1em;
 }
+.advanced{
+    padding-top: 1em;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.hidden_js_string{
+    display:none;
+}

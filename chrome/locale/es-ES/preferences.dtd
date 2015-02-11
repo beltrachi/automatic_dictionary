@@ -52,3 +52,17 @@ compañeros o escribiendo una valoración.">
 podr&acute; ser enviado posteriormente al desarrollador para detectar problemas.
 Reinicia Thunderbird si cambias este parámetro para que tenga efecto.">
 <!ENTITY saveLogFile.recomendation "">
+
+<!ENTITY mailToDev.label "Enviar registro al desarrollador">
+<!ENTITY mailToDev.description "Prepara un email con el registro pero no  lo envia. Podrás revisar el fichero antes de enviarlo.">
+<!ENTITY mailToDev.body "Este correo contiene un registro anonimizado de tu
+actividad que permitirá al desarrollador investigar cualquier comportamiento
+extraño.
+
+DESCRIBE EL PROBLEMA AQUI o crea un issue aqui:
+https://github.com/beltrachi/automatic_dictionary/issues/new
+y pon un enlace del issue aqui.
+
+Puedes inspeccionar el contenido del registro que vas a enviar haciendo doble
+click en la zona de ficheros adjuntos">
+<!ENTITY mailToDev.subject "AutomaticDictionary log report">

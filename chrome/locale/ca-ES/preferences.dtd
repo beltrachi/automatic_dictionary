@@ -52,3 +52,19 @@ compartint-lo amb els companys o escribint-ne una valoració.">
 podr&acute; ser enviat posteriorment al desenvolupador per detectar problemes.
 Reinicia Thunderbird si canvies aquest par&agrave;metre perque tingui efecte.">
 <!ENTITY saveLogFile.recomendation "">
+
+<!ENTITY mailToDev.label "Enviar registe al desenvolupador">
+<!ENTITY mailToDev.description "Prepara un email amb el registre
+pero no l'envia. Podràs revisar el fitxer abans d'enviar-lo.">
+
+<!ENTITY mailToDev.body "Aquest correu conté un registre anonimitzat
+de la teva activitat que permetrà al desenvolupador investigar qualsevol
+comportament extrany.
+
+DESCRIU EL PROBLEMA AQUI o crea un issue aqui:
+https://github.com/beltrachi/automatic_dictionary/issues/new
+i afegeix l'enllaç aqui.
+
+Pots inspeccionar el contingut del registre que estas a punt d'enviar fent
+doble click a la zona de fitxers adjunts.">
+<!ENTITY mailToDev.subject "AutomaticDictionary log report">

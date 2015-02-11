@@ -52,3 +52,18 @@ mates or writing a review, or some suggestion to improve it.">
 afterwards to the developer do detect issues. Restart thunderbird after changing
  it to take effect.">
 <!ENTITY saveLogFile.recomendation "">
+
+<!ENTITY mailToDev.label "Send log file to developer">
+<!ENTITY mailToDev.description "It composes an email with the log file but does
+not send it. You will be able to review the file you are sending and send it
+yourself.">
+<!ENTITY mailToDev.body "This email contains an anonymized log of your activity
+that will allow the developer to trace down some weird behavior.
+
+DESCRIBE THE PROBLEM HERE or file a bug here
+https://github.com/beltrachi/automatic_dictionary/issues/new
+and put here the link.
+
+You can inspect the log content by double clicking on it in attachments.
+">
+<!ENTITY mailToDev.subject "AutomaticDictionary log report">

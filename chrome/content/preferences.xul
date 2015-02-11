@@ -15,18 +15,17 @@
                         window: window,
                         compose_window_builder: AutomaticDictionary.ComposeWindowStub
                     });
-        ad.shutdown();
+        ad.stop();
 
 function sendLogToDeveloper(link){
     try{
-        var body = "This email contains a anonimized log of your activity that"+
-            " will allow the developer to trace down some weird behaviour";
+        var body = document.getElementById('mailToDev_body').textContent;
+        var subject = document.getElementById('mailToDev_subject').textContent;
         AutomaticDictionary.Lib.MailComposer.openComposeMailWindow(
-            'beltrachi+ad@gmail.com',null, "AutomaticDictionary log report", body,
+            'beltrachi+ad@gmail.com',null, subject, body,
             [AutomaticDictionary.logger.filepath]);
     }catch(e){ AutomaticDictionary.logger.error(e)}
 }
-
     </script>
     <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
 
@@ -40,6 +39,12 @@ function sendLogToDeveloper(link){
             <preference id="logLevel" name="extensions.automatic_dictionary.logLevel" type="string"/>
             <preference id="saveLogFile" name="extensions.automatic_dictionary.saveLogFile" type="bool"/>
         </preferences>
+        <!-- little hack: hidden tags to have translated mailToDev strings -->
+        <description class="hidden_js_string" id="mailToDev_subject"
+                     >&mailToDev.subject;</description>
+        <description class="hidden_js_string" id="mailToDev_body"
+                     >&mailToDev.body;</description>
+
         <vbox class="prefoptions">
             <hbox>
                 <label control="input_allowCollect" value="&allowCollect.label;"/>
@@ -106,10 +111,11 @@ function sendLogToDeveloper(link){
                 &saveLogFile.info;
                 &saveLogFile.recomendation;
             </description>
-            <description>
-              <button label="Send log to developer" onclick="sendLogToDeveloper(this);"/>
+            <description class="info">
+              <button label="&mailToDev.label;" onclick="sendLogToDeveloper(this);"/>
+              &mailToDev.description;
             </description>
-            <description class="intro">
+            <description class="intro advanced">
                 &introduction.text;
             </description>
             <hbox>
