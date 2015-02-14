@@ -4,34 +4,40 @@
 <!ENTITY maxSize.info
 "El numero máximo de asociaciones entre un destinatario o grupo de destinatarios
 y un idioma de diccionario. Cuando el almacenamiento llega a este máximo, el dato
-mas antiguo o menos usado se elimina para dejar sitio a los datos nuevos. 
+mas antiguo o menos usado se elimina para dejar sitio a los datos nuevos.
 (Conocido como LRU)">
 <!ENTITY maxSize.recomendation "Valor recomendado: 1200.">
 
 <!ENTITY maxRecipients.label "Máximos destinatarios por correo:">
 <!ENTITY maxRecipients.info
-"Cuando un correo supera el máximo de destinatarios (sumando destinatarios directos y 'en copia')
-no se guardara el idioma para aquellos destinatarios. Útil para evitar procesar correos masivos.">
+"Cuando un correo supera el máximo de destinatarios (sumando destinatarios
+directos y 'en copia') no se guardara el idioma para aquellos destinatarios.
+Útil para evitar procesar correos masivos.">
 <!ENTITY maxRecipients.recomendation "Valor recomendado: 10.">
 
 <!ENTITY allowCollect.label "Permitir recoger datos estadísticos:">
-<!ENTITY allowCollect.info 
-"Recogemos datos anonimos en una cuenta de Google Analytics para saber como se usa
-el plugin y para decidir mejor que conviene para siguientes versiones. 
+<!ENTITY allowCollect.info
+"Recogemos datos anonimos en una cuenta de Google Analytics para saber como se
+usa el plugin y para decidir mejor que conviene para siguientes versiones.
 Nunca guardaremos ni direcciones de correo ni contenidos. Solo el idioma que se
 utiliza y que acciones se realizan.">
 <!ENTITY allowCollect.recomendation "">
 
-<!ENTITY allowPromotions.label "Permitir sugerir maneras de promocionar este plugin:">
-<!ENTITY allowPromotions.info
-"Intentaremos sugerirte maneras de ayudarnos a promover este plugin, como compartir con tus
-compañeros o escribiendo una valoración.">
+<!ENTITY allowPromotions.label "Permitir sugerir maneras de promocionar este
+plugin:">
+<!ENTITY allowPromotions.info "Intentaremos sugerirte maneras de ayudarnos a
+promover este plugin, como compartir con tus compañeros o escribiendo una
+valoración.">
 <!ENTITY allowPromotions.recomendation "">
 
 <!ENTITY notificationLevel.label "Nivel de notificaciones:">
 <!ENTITY notificationLevel.description
-"El nivel de las notificaciones que se te mostraran. &quote;Información&quote; te informará de todo lo que haga, como cambiar el diccionario o deducir un idioma (valor por defecto). &quote;Error&quote; te informará solo cuando algo haya ido mal.">
-<!ENTITY notificationLevel.recommendation "Ponlo en &quote;Advertencia&quote; si no quieres que te moleste mucho y solo te avise de cosas importantes.">
+"El nivel de las notificaciones que se te mostrarán. &quote;Información&quote;
+te informará de todo lo que haga, como cambiar el diccionario o deducir un
+idioma (valor por defecto). &quote;Error&quote; te informará solo cuando algo
+haya ido mal.">
+<!ENTITY notificationLevel.recommendation "Ponlo en &quote;Advertencia&quote;
+si no quieres que te moleste mucho y solo te avise de cosas importantes.">
 <!ENTITY notificationLevel.info "Información">
 <!ENTITY notificationLevel.warn "Advertencia">
 <!ENTITY notificationLevel.error "Error">
@@ -39,7 +45,8 @@ compañeros o escribiendo una valoración.">
 <!ENTITY logLevel.label "Nivel de log:">
 <!ENTITY logLevel.description
 "El nivel que quieres que se registre.">
-<!ENTITY logLevel.recommendation "Usa &quot;warning&quot; si solo quieres que se registre cuando algo no va bien.">
+<!ENTITY logLevel.recommendation "Usa &quot;warning&quot; si solo quieres que
+se registre cuando algo no va bien.">
 
 <!ENTITY logLevel.debug "Debug">
 <!ENTITY logLevel.info "Info">
@@ -54,7 +61,8 @@ Reinicia Thunderbird si cambias este parámetro para que tenga efecto.">
 <!ENTITY saveLogFile.recomendation "">
 
 <!ENTITY mailToDev.label "Enviar registro al desarrollador">
-<!ENTITY mailToDev.description "Prepara un email con el registro pero no  lo envia. Podrás revisar el fichero antes de enviarlo.">
+<!ENTITY mailToDev.description "Prepara un email con el registro pero no lo
+envia. Podrás revisar el fichero antes de enviarlo.">
 <!ENTITY mailToDev.body "Este correo contiene un registro anonimizado de tu
 actividad que permitirá al desarrollador investigar cualquier comportamiento
 extraño.
