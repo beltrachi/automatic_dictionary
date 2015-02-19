@@ -2,12 +2,11 @@
     margin-top:8px;
 }
 .intro{
-    max-width:400px;
 }
 .info{
-    max-width:400px;
     color:#666666;
     padding-left:1em;
+    padding-right: 1em;
 }
 .advanced{
     padding-top: 1em;
