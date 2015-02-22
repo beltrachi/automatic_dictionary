@@ -4,7 +4,7 @@
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
     <em:type>2</em:type>
     <em:bootstrap>true</em:bootstrap>
-    <em:version>1.7.0</em:version>
+    <em:version>1.7.1</em:version>
     <em:optionsURL>chrome://automatic_dictionary/content/preferences.xul?12</em:optionsURL>
     
     <em:targetApplication>
@@ -23,7 +23,7 @@
       <Description>
         <em:locale>es-ES</em:locale>
         <em:name>Automatic dictionary</em:name>
-        <em:description>Extensión que recuerda el idioma usado en el corrector ortográfico asociandola al destinatario del correo.</em:description>
+        <em:description>Extensión que recuerda el idioma usado en el corrector ortográfico asociandolo al destinatario del correo.</em:description>
       </Description>
     </em:localized>
     <em:localized>
