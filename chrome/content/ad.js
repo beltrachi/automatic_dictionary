@@ -78,7 +78,8 @@ for( var idx in resources){
 
 Cu.import("resource://app/modules/StringBundle.js");
 
-var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
+var steelApp = Components.classes["@mozilla.org/steel/application;1"]
+    .getService(Components.interfaces.steelIApplication);
 
 Components.utils.import("resource://gre/modules/FileUtils.jsm");
 

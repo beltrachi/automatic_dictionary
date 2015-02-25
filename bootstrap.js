@@ -100,9 +100,6 @@ function startup(aData, aReason) {
         shutdown_chain.push(function(){
             Services.ww.unregisterNotification(ww_observer);
         });
-        
-        
-
     } catch (e) {
         log("fail");
         log(e);

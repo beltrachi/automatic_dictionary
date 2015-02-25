@@ -27,13 +27,11 @@ window.addEventListener("DOMContentLoaded", function(evt){
         ((screen.availHeight || screen.height) - 100) + "px";
 
     var descriptions = document.getElementsByTagName('description');
-    for (var i=0; i &lt; descriptions.length; i++) {
-        descriptions[i].style.height =
-            document.defaultView.getComputedStyle(descriptions[i], null)
-            .getPropertyValue('height');
-        descriptions[i].style.width =
-            document.defaultView.getComputedStyle(descriptions[i], null)
-            .getPropertyValue('width');
+    for (var i=0; i < descriptions.length; i++) {
+        descriptions[i].style.height = document.defaultView
+            .getComputedStyle(descriptions[i], null).getPropertyValue('height');
+        descriptions[i].style.width = document.defaultView
+            .getComputedStyle(descriptions[i], null).getPropertyValue('width');
     }
 });
 
