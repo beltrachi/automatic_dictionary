@@ -76,7 +76,7 @@ for( var idx in resources){
     loader.loadSubScript(url);
 }
 
-Cu.import("resource:///modules/StringBundle.js");
+Cu.import("resource://app/modules/StringBundle.js");
 
 var steelApp = Components.classes["@mozilla.org/steel/application;1"].getService(Components.interfaces.steelIApplication);
 
