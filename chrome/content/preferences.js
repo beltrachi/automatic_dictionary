@@ -20,3 +20,36 @@ AutomaticDictionary.check_int_range = function( field , min, max, defv ){
     return false;
 };
 
+window.addEventListener("DOMContentLoaded", function(evt){
+    document.documentElement.style.maxWidth =
+        ((screen.availWidth || screen.width) - 100) + "px";
+    document.documentElement.style.maxHeight =
+        ((screen.availHeight || screen.height) - 100) + "px";
+
+    var descriptions = document.getElementsByTagName('description');
+    for (var i=0; i &lt; descriptions.length; i++) {
+        descriptions[i].style.height =
+            document.defaultView.getComputedStyle(descriptions[i], null)
+            .getPropertyValue('height');
+        descriptions[i].style.width =
+            document.defaultView.getComputedStyle(descriptions[i], null)
+            .getPropertyValue('width');
+    }
+});
+
+//Bootup and shutdown to migrate data when required.
+var ad = new AutomaticDictionary.Class({
+    window: window,
+    compose_window_builder: AutomaticDictionary.ComposeWindowStub
+});
+ad.stop();
+
+function sendLogToDeveloper(link){
+    try{
+        var body = document.getElementById('mailToDev_body').textContent;
+        var subject = document.getElementById('mailToDev_subject').textContent;
+        AutomaticDictionary.Lib.MailComposer.openComposeMailWindow(
+            'beltrachi+ad@gmail.com',null, subject, body,
+            [AutomaticDictionary.logger.filepath]);
+    }catch(e){ AutomaticDictionary.logger.error(e) }
+}
