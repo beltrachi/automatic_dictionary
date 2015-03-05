@@ -1,4 +1,4 @@
-# Collecting data on AutomaticDictioanrySwitcher Thunderbird addon #
+# Collecting data on AutomaticDictionarySwitcher Thunderbird addon #
 
 This information is provided to inform the users about the data collecting process that
 the plugin performs.
