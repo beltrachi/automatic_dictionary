@@ -93,6 +93,8 @@
             </description>
             <description class="info">
               <button label="&mailToDev.label;" onclick="sendLogToDeveloper(this);"/>
+            </description>
+            <description class="info">
               &mailToDev.description;
             </description>
             <description class="intro advanced">
