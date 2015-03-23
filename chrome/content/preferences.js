@@ -20,6 +20,7 @@ AutomaticDictionary.check_int_range = function( field , min, max, defv ){
     return false;
 };
 
+// onload to fix prefpanel size https://bugzilla.mozilla.org/show_bug.cgi?id=451997
 window.addEventListener("DOMContentLoaded", function(evt){
     document.documentElement.style.maxWidth =
         ((screen.availWidth || screen.width) - 100) + "px";
