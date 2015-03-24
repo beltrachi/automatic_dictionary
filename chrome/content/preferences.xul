@@ -6,7 +6,6 @@
      title="AutomaticDictionary Preferences"
      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     >
-    <!-- onload to fix prefpanel size https://bugzilla.mozilla.org/show_bug.cgi?id=451997 -->
     <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
     <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
     <prefpane id="main-pane" label="Preferencess" style="overflow:auto;">
@@ -93,6 +92,8 @@
             </description>
             <description class="info">
               <button label="&mailToDev.label;" onclick="sendLogToDeveloper(this);"/>
+            </description>
+            <description class="info">
               &mailToDev.description;
             </description>
             <description class="intro advanced">

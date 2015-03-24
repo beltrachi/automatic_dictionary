@@ -3,3 +3,4 @@ content     automatic_dictionary    chrome/content/
 locale automatic_dictionary en-US chrome/locale/en-US/
 locale automatic_dictionary es-ES chrome/locale/es-ES/
 locale automatic_dictionary ca-ES chrome/locale/ca-ES/
+locale automatic_dictionary de chrome/locale/de/
