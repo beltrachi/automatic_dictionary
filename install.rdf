@@ -4,9 +4,8 @@
     <em:id>automatic_dictionary_extension@jordi_beltran.net</em:id>
     <em:type>2</em:type>
     <em:bootstrap>true</em:bootstrap>
-    <em:version>1.7.1</em:version>
+    <em:version>1.8.0</em:version>
     <em:optionsURL>chrome://automatic_dictionary/content/preferences.xul?12</em:optionsURL>
-    
     <em:targetApplication>
       <Description>
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
@@ -14,7 +13,6 @@
         <em:maxVersion>31.*</em:maxVersion>
       </Description>
     </em:targetApplication>
-    
     <em:name>Automatic Dictionary</em:name>
     <em:description>Extension that remembers the language of the email when composing.</em:description>
     <em:creator>Jordi Beltran</em:creator>

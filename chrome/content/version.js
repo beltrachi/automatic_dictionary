@@ -1,3 +1,3 @@
 // Do not edit manually.
 // File updated by build.sh
-AutomaticDictionary.version='1.7.1';
+AutomaticDictionary.version='1.8.0';
