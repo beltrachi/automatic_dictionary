@@ -1,41 +1,38 @@
 <!ENTITY introduction.text "Erweiterte Einstellungen">
 <!ENTITY maxSize.label "Maximal gespeicherte Werte:">
-<!ENTITY maxSize.info
-"Die maximale Anzahl der gespeicherten Verbindungen aus Empfänger oder
-Empfänger-Gruppe und Wörterbuch-Sprache. Wenn der Speicher die maximale Größe
-erreicht, werden die ältesten und am wenigsten genutzten Daten gelöscht, um
-Platz für neue Verbindungen zu schaffen.">
+<!ENTITY maxSize.info 
+"Die maximale Anzahl der gespeicherten Verbindungen aus Empfänger oder Empfänger-Gruppe 
+und Wörterbuch-Sprache. Wenn der Speicher die maximale Größe erreicht, werden die ältesten 
+und am wenigsten genutzten Daten gelöscht, um Platz für neue Verbindungen zu schaffen.">
 <!ENTITY maxSize.recomendation "Empfohlener Wert: 1200.">
 
 <!ENTITY maxRecipients.label "Maximal zu bearbeitende Empfänger pro E-Mail:">
-<!ENTITY maxRecipients.info
-"Hat eine E-Mail mehr als diese Anzahl Empfänger, wird keine Sprache für sie
-gespeichert (Summe aus AN und CC). Sinnvoll, um die Verarbeitung von
-Massen-Mails zu verhindern.">
+<!ENTITY maxRecipients.info 
+"Hat eine E-Mail mehr als diese Anzahl Empfänger, wird keine Sprache für sie gespeichert 
+(Summe aus AN und CC). Sinnvoll, um die Verarbeitung von Massen-Mails zu verhindern.">
 <!ENTITY maxRecipients.recomendation "Empfohlener Wert: 10.">
 
 <!ENTITY allowCollect.label "Erlaube Erhebung von Nutzungsdaten:">
-<!ENTITY allowCollect.info
-"Wir sammeln anonyme Daten mit Google Analytics, um herauszufinden, wie das
-Add-on benutzt wird und welche Funktionen in kommenden Updates wichtig sind. Wir
-werden niemals private Informationen wie E-Mail Adressen oder E-Mail Inhalte
-speichern, ausschließlich die benutzten Sprachen und ausgeführten Aktionen.">
+<!ENTITY allowCollect.info 
+"Wir sammeln anonyme Daten mit Google Analytics, um herauszufinden, wie das Add-on 
+benutzt wird und welche Funktionen in kommenden Updates wichtig sind. Wir werden niemals 
+private Informationen wie E-Mail Adressen oder E-Mail Inhalte speichern, ausschließlich die 
+benutzten Sprachen und ausgeführten Aktionen.">
 <!ENTITY allowCollect.recomendation "">
 
+
 <!ENTITY allowPromotions.label "Wege vorschlagen, um das Add-on zu verbreiten:">
-<!ENTITY allowPromotions.info
-"Wir werden Wege vorschlagen, um das Add-on zu verbreiten, wie Teilen mit den
-Freunden, Schreiben einer Bewertung oder Vorschläge, um es zu verbessern.">
+<!ENTITY allowPromotions.info 
+"Wir werden Wege vorschlagen, um das Add-on zu verbreiten. Dazu gehören Teilen mit den Freunden, 
+Schreiben einer Bewertung oder Fragen über Verbesserungsvorschläge für das Add-on.">
 <!ENTITY allowPromotions.recomendation "">
 
 <!ENTITY notificationLevel.label "Benachrichtigungs-Stufe:">
 <!ENTITY notificationLevel.description
-"Die Stufe für Benachrichtigungen, die das Add-on anzeigt.
-&quot;Information&quot; wird alle Aktionen des Add-ons anzeigen, beispielsweise
-das Ändern von Wörterbüchern oder das Erkennen neuer Sprachen. &quot;Fehler&quot;
-wird nur benachrichtigen, wenn ein Problem auftritt.">
-<!ENTITY notificationLevel.recommendation "Setze es auf &quot;Warnung&quot;,
-wenn du nicht allzu oft gestört werden möchtest.">
+"Die Stufe für Benachrichtigungen, die das Add-on anzeigt. &quot;Information&quot; wird alle Aktionen 
+des Add-ons anzeigen, beispielsweise das Ändern von Wörterbüchern oder das Erkennen neuer Sprachen. 
+&quot;Fehler&quot; wird nur benachrichtigen, wenn ein Problem auftritt.">
+<!ENTITY notificationLevel.recommendation "Setze es auf &quot;Warnung&quot;, wenn du nicht allzu oft gestört werden möchtest.">
 
 <!ENTITY notificationLevel.info "Information">
 <!ENTITY notificationLevel.warn "Warnung">
@@ -44,9 +41,7 @@ wenn du nicht allzu oft gestört werden möchtest.">
 <!ENTITY logLevel.label "Protokoll-Stufe:">
 <!ENTITY logLevel.description
 "Die Ausführlichkeit des Protokolls des Add-ons.">
-<!ENTITY logLevel.recommendation
-"Setze es auf &quot;Warnung&quot;, um nur aufzuzeichnen, wenn etwas nicht
-funktioniert.">
+<!ENTITY logLevel.recommendation "Setze es auf &quot;Warnung&quot;, um nur aufzuzeichnen, wenn etwas nicht funktioniert.">
 
 <!ENTITY logLevel.debug "Fehlersuche">
 <!ENTITY logLevel.info "Information">
@@ -55,18 +50,16 @@ funktioniert.">
 
 <!ENTITY saveLogFile.label "Protokoll in Datei speichern:">
 <!ENTITY saveLogFile.info
-"Alle Protokolldaten, die von diesem Add-on generiert werden, werden in eine
-Datei geschrieben, die später an den Entwickler gesendet werden kann, um
-Probleme zu beheben. Thunderbird nach Änderung neustarten, um Änderungen zu
-übernehmen.">
+"Alle Protokolldaten, die von diesem Add-on generiert werden, werden in eine Datei geschrieben, die später 
+an den Entwickler gesendet werden kann, um Probleme zu beheben. Thunderbird nach Änderung neustarten, um 
+Änderungen zu übernehmen.">
 <!ENTITY saveLogFile.recomendation "">
 
 <!ENTITY mailToDev.label "Protokoll an Entwickler senden">
-<!ENTITY mailToDev.description "Es wird eine E-Mail mit der Protokoll-Datei
-erstellt, aber nicht gesendet. Du kannst den Inhalt überprüfen und dann selbst
-senden.">
-<!ENTITY mailToDev.body "Diese E-Mail enthält ein anonymisiertes Protokoll
-deiner Aktionen, das es dem Entwickler ermöglicht, Probleme zu erkennen.
+<!ENTITY mailToDev.description "Es wird eine E-Mail mit der Protokoll-Datei 
+erstellt, aber nicht gesendet. Du kannst den Inhalt überprüfen und dann selbst senden.">
+<!ENTITY mailToDev.body "Diese E-Mail enthält ein anonymisiertes Protokoll deiner Aktionen, 
+das es dem Entwickler ermöglicht, Probleme zu erkennen.
 
 BESCHREIBE DAS PROBLEM ODER DEN FEHLER HIER
 https://github.com/beltrachi/automatic_dictionary/issues/new
