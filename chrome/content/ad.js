@@ -813,6 +813,9 @@ AutomaticDictionary.Class.prototype = {
     },
     //Take care as this language is globally set.
     getCurrentLang: function(){
+        if(this.compose_window.getCurrentLang){
+            return this.compose_window.getCurrentLang();
+        }
         return this.prefManager.getCharPref("spellchecker.dictionary");
     },
 

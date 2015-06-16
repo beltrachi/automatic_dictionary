@@ -36,6 +36,7 @@ AutomaticDictionary.ComposeWindow = (function( params ){
     this.params = params;
     this.shutdown_chain = [];
     this.logger = params.logger;
+    this.window = this.ad.window;
 });
 
 AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
@@ -167,6 +168,13 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         this.shutdown_chain.push(function(){
             hbox.parentNode.removeChild(hbox);
         });
+    },
+
+    getCurrentLang:function(){
+        var spellChecker = this.window.gSpellChecker.mInlineSpellChecker.spellChecker;
+        var lang = spellChecker.GetCurrentDictionary();
+        this.logger.info("gSpellChecker says current lang is "+lang);
+        return lang;
     },
 
     recipients:function( recipientType ){

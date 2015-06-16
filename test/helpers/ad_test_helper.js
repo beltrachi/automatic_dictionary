@@ -137,7 +137,14 @@ function test_setup(){
         document: document,
         gSpellChecker: {
             canSpellCheck: true,
-            enabled: true
+            enabled: true,
+            mInlineSpellChecker: {
+                spellChecker: {
+                    GetCurrentDictionary: function(){
+                        return dictionary_object.dictionary;
+                    }
+                }
+            }
         }
     };
         
