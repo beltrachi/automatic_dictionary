@@ -18,7 +18,7 @@ StringBundle = function(){
         }
     }
 };
-    
+
 function test_setup(){
     dictionary_object.dictionary = "en";
     Components = {
@@ -36,7 +36,7 @@ function test_setup(){
         },
         classes:{
             "@mozilla.org/preferences-service;1":{
-                getService: function(){             
+                getService: function(){
                     var _get = function(k){
                         var v = Components.savedPrefs[k];
                         if(k == "spellchecker.dictionary"){
@@ -44,11 +44,11 @@ function test_setup(){
                         }
 
                         logger.debug("asking for "+k + " and gets "+v);
-                        return v; 
+                        return v;
                     };
                     var _set = function(k,v){
                         logger.debug("seting "+k+" the value "+v);
-                        Components.savedPrefs[k] = v; 
+                        Components.savedPrefs[k] = v;
                     };
                     return {
                         addObserver: function(){},
@@ -123,7 +123,7 @@ function test_setup(){
             "import": function(){}
         }
     };
-    
+
     window = {
         addEventListener: function(){},
         setTimeout:function(){},
@@ -147,9 +147,9 @@ function test_setup(){
             }
         }
     };
-        
-    document = {    
-        getElementById: function(id){ 
+
+    document = {
+        getElementById: function(id){
             if(id ==="automaticdictionarystrings") return {
                 getString: function(k){
                     return k;
@@ -165,7 +165,6 @@ function test_setup(){
                         return {};
                     },
                     appendNotification:function(){
-                            
                     },
                     removeAllNotifications:function(){},
                     parentNode:{
@@ -177,7 +176,6 @@ function test_setup(){
                 return {
                     parentNode:{
                         insertBefore:function(){
-                            
                         }
                     }
                 }
@@ -189,10 +187,10 @@ function test_setup(){
         createElement: function(name){
             return{
                 appendChild:function(item){
-                    
                 }
             };
-        }
+        },
+        addEventListener: function(){}
     };
 
     AddonManager = {
@@ -220,7 +218,7 @@ var mock_recipients = function(inst, params){
         }
     };
 }
-    
+
 //Method to call deduce language with a lang
 var call_language_changed = function( adi, lang ){
     var evt = {
@@ -236,5 +234,4 @@ function ad_instance(){
     return new AutomaticDictionary.Class( {window:window} );
 }
 
-    
 test_setup();

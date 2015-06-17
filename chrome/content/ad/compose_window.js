@@ -76,6 +76,11 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                     _this.logger.debug('[event] languageMenuList command');
                     _this.ad.languageChanged(event);
                 },false);
+            //capture language change event
+            this.setListener( window.document, 'spellcheck-changed', function(evt){
+                _this.logger.debug("spellcheck-changed event captured");
+                _this.ad.languageChanged();
+            }, false);
             //deactivate is the old window blur event
             this.setListener( window, "deactivate", function(evt){
                 if(evt.target == window){
@@ -93,6 +98,12 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                     AutomaticDictionary.logException(e);
                 }
             }, false );
+            // Listen to subject input and find dictionary for current recipients.
+            this.setListener( window.document.getElementById('msgSubject'), 'focus', function(evt){
+                _this.logger.debug('subject focus');
+                _this.ad.deduceLanguage();
+            });
+
             this.setListener( window, "focus", function(){
                 _this.logger.debug('[event] window focus');
                 _this.ad.start();
