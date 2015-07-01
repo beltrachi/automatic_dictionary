@@ -802,15 +802,11 @@ AutomaticDictionary.Class.prototype = {
                 this.logger.error("No way to change language");
                 this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
             }
-        }catch(e){
-            this.logger.error("Exception received on setCurrentLang");
-            this.logger.error(e);
-            this.logger.info("Updating default dictionary instead as maybe spellcecher is not ready.");
-            this.prefManager.setCharPref("spellchecker.dictionary",target);
         }finally{
             this.running = true;
         }
     },
+
     //Take care as this language is globally set.
     getCurrentLang: function(){
         if(this.compose_window.getCurrentLang){

@@ -65,7 +65,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 _this.ad.stop();
                 _this.ad.shutdown();
             });
-           
+
             this.setListener( window, 'compose-window-reopen', function(){
                 _this.logger.debug("[event] compose window reopen");
                 _this.ad.start();
@@ -181,14 +181,14 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         });
     },
 
-    getCurrentLang:function(){
+    getCurrentLang: function(){
         var spellChecker = this.window.gSpellChecker.mInlineSpellChecker.spellChecker;
         var lang = spellChecker.GetCurrentDictionary();
         this.logger.info("gSpellChecker says current lang is "+lang);
         return lang;
     },
 
-    recipients:function( recipientType ){
+    recipients: function( recipientType ){
         recipientType = recipientType || "to";
         var fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
             .createInstance(Components.interfaces.nsIMsgCompFields);
