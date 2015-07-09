@@ -59,6 +59,9 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         var window = this.ad.window;
         if( window && !window.automatic_dictionary_initialized ){
             var _this = this;
+            var wait_and = function(fn){
+                window.setTimeout(fn,800);
+            }
 
             this.setListener( window, 'unload', function(){
                 _this.logger.debug("[event] window unload");
@@ -74,12 +77,12 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             this.setListener( window.document.getElementById("languageMenuList"),"command",
                 function(event){
                     _this.logger.debug('[event] languageMenuList command');
-                    _this.ad.languageChanged(event);
+                    wait_and(function(){ _this.ad.languageChanged(event); });
                 },false);
             //capture language change event
             this.setListener( window.document, 'spellcheck-changed', function(evt){
                 _this.logger.debug("spellcheck-changed event captured");
-                _this.ad.languageChanged();
+                wait_and(function(){ _this.ad.languageChanged(); });
             }, false);
             //deactivate is the old window blur event
             this.setListener( window, "deactivate", function(evt){
