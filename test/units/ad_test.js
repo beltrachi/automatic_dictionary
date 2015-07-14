@@ -219,9 +219,18 @@
         assert.equal( 3, setted_langs.length);
         assert.equal( "toB-lang", setted_langs[2]);
 
+        // Setting lang to a group does not update the ones alone
+        mock_recipients( adi, {"to":["A","B"]} );
+        call_language_changed( adi, "toA-toB-lang");
+
+        mock_recipients( adi, {"to":["A"]})
+        adi.deduceLanguage();
+        assert.equal( 4, setted_langs.length);
+        assert.equal( "toA-lang", setted_langs[setted_langs.length -1]);
     })();
 
-    /*
+    /*        call_language_changed( adi, "toB-lang");
+
          
          5. Limit the max CCs or TOs management to a number to avoid loading
             the hash with useless data or too much processing of useless data.
@@ -261,9 +270,18 @@
         call_language_changed( adi, "foobar");
         
         adi.deduceLanguage();
-        assert.equal( 2, setted_langs.length);
-        assert.equal("ca_es", setted_langs[1]);
-        
+        // We do not want to update the current lang because
+        // the user has manually changed the lang and do not
+        // want it to be reverted.
+        assert.equal( 1, setted_langs.length);
+
+        // When the recipients goes lower the limit
+        recipients.to.pop();
+        call_language_changed( adi, "andromeda");
+        dictionary_object.dictionary = 'unknown';
+        //It restores the new one
+        adi.deduceLanguage();
+        assert.equal("andromeda", setted_langs[setted_langs.length-1]);
     })();
     
     /*

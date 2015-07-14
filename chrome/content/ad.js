@@ -509,8 +509,10 @@ AutomaticDictionary.Class.prototype = {
         if( tos.length + ccs.length > maxRecipients ){
             this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
             this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
+            this.last_lang_discarded = true;
             return;
         }
+        this.last_lang_discarded = false;
         var saved_recipients = 0;
         if( tos.length > 0 ){
             this.logger.debug("Enter cond 1");
@@ -648,7 +650,10 @@ AutomaticDictionary.Class.prototype = {
         }
 
         var recipients = this.getRecipients();
-        if( !this.running || recipients.length == 0 ){
+        if( !this.running || recipients.length == 0 || this.last_lang_discarded ){
+            // we stop deducing when last_lang_discarded because it means that
+            // the user setted a language but we did not store because it was bigger
+            // than MaxRecipients
             return;
         }
         var lang = null, method = this.METHODS.REMEMBER, i;
