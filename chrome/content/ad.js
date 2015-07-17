@@ -509,7 +509,7 @@ AutomaticDictionary.Class.prototype = {
         if( tos.length + ccs.length > maxRecipients ){
             this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
             this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
-            this.last_lang_discarded = true;
+            this.last_lang_discarded = current_lang;
             return;
         }
         this.last_lang_discarded = false;
@@ -700,15 +700,15 @@ AutomaticDictionary.Class.prototype = {
         }
         
         this.logger.debug("Language found: "+ lang);
-                
+        
         if(!lang && this.allowHeuristic()){
             lang = this.heuristic_guess(recipients);
             if(lang){
                 method = this.METHODS.GUESS;
-                this.logger.debug("Heuristic says: "+ lang);            
+                this.logger.debug("Heuristic says: "+ lang);
             }
         }
-        
+
         // Rule: when you detect a language and you detected it last time,
         // Set it again if it's not the current. (Support multi compose windows) 
         var nothing_changed = this.last_toandcc_key == toandcc_key && 
@@ -760,7 +760,7 @@ AutomaticDictionary.Class.prototype = {
         this.last_lang = lang;
         this.last_toandcc_key = toandcc_key;
     },
-    
+
     //Tries to guess by other recipients domains
     heuristic_guess: function(recipients){
         var recipient, parts, rightside, lang,
