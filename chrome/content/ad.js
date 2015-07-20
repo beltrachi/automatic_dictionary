@@ -513,67 +513,32 @@ AutomaticDictionary.Class.prototype = {
             return;
         }
         this.last_lang_discarded = false;
-        var saved_recipients = 0;
+        var stats = {saved_recipients:0};
         if( tos.length > 0 ){
-            this.logger.debug("Enter cond 1");
+            this.logger.debug("Enter cond 1.x");
             //The user has set the language for the recipients
             //We update the assignment of language for those recipients
-            if( tos.length > 1 ){
-                this.logger.debug("Enter cond 1.1");
-                var group = this.stringifyRecipientsGroup( tos );
-                this.data.set( group, current_lang );
-                saved_recipients += tos.length;
-                for( var i in tos){
+            //We overwrite it if it's alone but not if it has CCs
+            this.saveRecipientsToStructures({to:tos}, current_lang, stats, {force: tos.length > 1 || ccs.length == 0});
+            if (tos.length > 1){
+                for( var i in tos ){
                     // Save the lang only if it has no lang setted!
-                    if( !this.data.get( tos[i] ) ){
-                        this.data.set(tos[i], current_lang);
-                        this.save_heuristic(tos[i], current_lang);
-                        saved_recipients++;
-                    }
-                }
-            }else{
-                // There is only a "TO"
-                
-                // We save it if it does not exist.
-                // We overwrite it if it's alone but not if it has CCs
-                this.logger.debug("Enter cond 1.2");
-                
-                var curr = this.data.get(tos[0]);
-                this.logger.debug("curr is what is next")
-                this.logger.debug(curr);
-                if( this.isBlank( curr ) || ccs.length == 0 ){
-                    this.logger.debug("Enter cond 1.2.1");
-                    this.data.set(tos[0], current_lang);
-                    if( !this.isBlank(curr) ){
-                        this.remove_heuristic(tos[0], curr);
-                    }
-                    this.save_heuristic(tos[0], current_lang);
-                    saved_recipients++;
+                    this.saveRecipientsToStructures({to:[tos[i]]}, current_lang, stats);
                 }
             }
-            
         }
         // Save a lang for tos and ccs
         if( ccs.length > 0 ){
             this.logger.debug("Enter cond 2");
+            this.saveRecipientsToStructures({to:tos, cc:ccs}, current_lang, stats, {force:true});
 
-            var key = this.getKeyForToAndCCRecipients(tos, ccs);
-            this.data.set( key, current_lang );
-            saved_recipients += tos.length;
-            saved_recipients += ccs.length;
             // Add recipients alone if they are undefined
             var curr = null;
             for( var i = 0; i< ccs.length; i++ ){
-                curr = this.data.get( ccs[i] );
-                if( this.isBlank( curr )){
-                    this.data.set( ccs[i], current_lang );
-                    this.save_heuristic(ccs[i], current_lang);
-                    saved_recipients += 1;
-                }
+                this.saveRecipientsToStructures({to:[ccs[i]]}, current_lang, stats);
             }
-            
         }
-        if( saved_recipients > 0 ){
+        if( stats.saved_recipients > 0 ){
             if(this.deduce_language_retry){
                 this.deduce_language_retry.stop();
                 this.deduce_language_retry = null;
@@ -581,19 +546,43 @@ AutomaticDictionary.Class.prototype = {
             this.last_lang = current_lang;
             this.logger.debug("Enter cond 3");
 
-            this.logger.debug("saved recipients are: " + saved_recipients);
+            this.logger.debug("saved recipients are: " + stats.saved_recipients);
             this.changeLabel("info",
                 this.ft( "savedForRecipients",
-                    [ current_lang, saved_recipients ] )
+                    [ current_lang, stats.saved_recipients ] )
                 );
         }
         this.collect_event("language","saved", {label: current_lang});
     },
 
-    getKeyForToAndCCRecipients: function(tos, ccs){
-        return this.stringifyRecipientsGroup( tos ) + "[cc]" + this.stringifyRecipientsGroup( ccs );
+    // @param recipients [Hash] with "to" and "cc" keys
+    saveRecipientsToStructures: function(recipients, lang, stats, options){
+        options = options || {};
+        var key = this.getKeyForRecipients(recipients);
+        var is_single = !recipients.cc && recipients.to.length == 1;
+        var force = options.force;
+        var old = this.data.get(key);
+
+        if( this.isBlank(old) || force ){
+            if( !this.isBlank(old) && is_single){
+                this.remove_heuristic(key, old);
+            }
+            this.data.set(key, lang);
+            if( is_single ){
+                this.save_heuristic(key, lang);
+            }
+            stats.saved_recipients += key.split(",").length;
+        }
     },
-    
+
+    getKeyForRecipients: function(recipients){
+        var key = this.stringifyRecipientsGroup( recipients.to );
+        if (recipients.cc){
+            key += "[cc]" + this.stringifyRecipientsGroup( recipients.cc );
+        }
+        return key;
+    },
+
     // True when the value is something we consider nonData
     isBlank: function( value ){
         return ((typeof value) == "undefined" || value === "" ||value === null);
@@ -659,14 +648,14 @@ AutomaticDictionary.Class.prototype = {
         var lang = null, method = this.METHODS.REMEMBER, i;
         // TO all and CC all
         var ccs = this.getRecipients("cc");
-        var toandcc_key = this.getKeyForToAndCCRecipients( recipients, ccs ); 
+        var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
         var ga_customVars = [
                 {name:"to",value:recipients.length},
                 {name:"cc",value:ccs.length}
         ];
         this.logger.debug("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
-        
+
         if( !lang ){
             this.logger.debug("Check for the TO's together")
             // TO all
