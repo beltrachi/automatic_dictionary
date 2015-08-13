@@ -102,7 +102,9 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                     _this.logger.debug("[event] window activate");
                     _this.ad.start();
                     try{
-                        _this.ad.deduceLanguage();
+                        wait_and(function(){
+                            _this.ad.deduceLanguage();
+                        });
                     }catch(e){
                         AutomaticDictionary.logException(e);
                     }
@@ -111,19 +113,25 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             // Listen to subject input and find dictionary for current recipients.
             this.setListener( window.document.getElementById('msgSubject'), 'focus', function(evt){
                 _this.logger.debug('subject focus');
-                _this.ad.deduceLanguage();
+                wait_and(function(){
+                    _this.ad.deduceLanguage();
+                });
             });
 
             this.setListener( window, "focus", function(){
                 _this.logger.debug('[event] window focus');
                 _this.ad.start();
-                _this.ad.deduceLanguage();
+                wait_and(function(){
+                    _this.ad.deduceLanguage();
+                });
             }, false);
             //Blur on input items. Do not confuse with window blur as windows
             //do not fire blur events anymore. They fire deactivate events.
             this.setListener( window, "blur", function(){
                 _this.logger.debug('[event] window blur');
-                _this.ad.deduceLanguage();
+                wait_and(function(){
+                    _this.ad.deduceLanguage();
+                });
             }, false);
 
             this.listenToSpellCheckingCommands(window);
