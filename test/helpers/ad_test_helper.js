@@ -206,6 +206,14 @@ function test_setup(){
             return { path: 'a file path' };
         }
     }
+    Services = {
+        vc: {
+            compare: function(version,otherVersion){
+                //Always returning that other is lower than current version.
+                return 1;
+            }
+        }
+    }
 }
 
 // Method to mock the recipients of an automatic_dictonary instance

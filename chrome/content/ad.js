@@ -81,17 +81,19 @@ Cu.import("resource://app/modules/StringBundle.js");
 var steelApp = Components.classes["@mozilla.org/steel/application;1"]
     .getService(Components.interfaces.steelIApplication);
 
-Components.utils.import("resource://gre/modules/FileUtils.jsm");
+Cu.import("resource://gre/modules/FileUtils.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
 
 var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
 
 AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
-AutomaticDictionary.log_writer.write("Logger started");
+AutomaticDictionary.log_writer.write("Log file writer started");
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
     steelApp.console.log(msg);
     AutomaticDictionary.log_writer.write(msg);
 });
-AutomaticDictionary.logger.error("Logger started");
+AutomaticDictionary.logger.warn("Logger started");
+AutomaticDictionary.logger.warn("Thunderbird version is "+steelApp.version);
 AutomaticDictionary.logger.filepath = file.path;
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
@@ -172,6 +174,7 @@ AutomaticDictionary.Class = function(options){
     AutomaticDictionary.instances.push(this); //Possible memmory leak!
     options = options || {};
     this.window = options.window;
+    this.thunderbirdVersion = steelApp.version;
     var start = (new Date()).getTime(), _this = this;
     this.logger.debug("ad: init");
 
@@ -789,8 +792,10 @@ AutomaticDictionary.Class.prototype = {
         this.running = false;
         try{
             if( this.compose_window.changeLanguage ){
+                this.logger.debug("calling compose_window.changeLanguage");
                 this.compose_window.changeLanguage( fake_event );
             }else if( this.window.ChangeLanguage ){
+                this.logger.debug("calling window.changeLanguage");
                 this.window.ChangeLanguage( fake_event );
             }else{
                 this.logger.error("No way to change language");
@@ -954,13 +959,18 @@ AutomaticDictionary.Class.prototype = {
         var alias = {
             "usages":"data.built"
         }
-        if( alias[key]) 
+        if(alias[key]){
             key = alias[key];
+        }
         var ret = this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
         this.logger.debug("CunterFor "+key+ " is "+ret);
         return ret;
     },
-    
+
+    thunderbirdVersionGreaterOrEq:function(version){
+        Services.vc.compare(this.thunderbirdVersion, version) !== -1;
+    },
+
     shutdown:function(){
         this.logger.debug("Shutdown instance call");
         this.dispatchEvent({type:"shutdown"});

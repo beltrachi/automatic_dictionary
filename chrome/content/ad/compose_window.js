@@ -84,23 +84,30 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 _this.logger.debug("spellcheck-changed event captured");
                 wait_and(function(){ _this.ad.languageChanged(); });
             }, false);
-            //deactivate is the old window blur event
-            this.setListener( window, "deactivate", function(evt){
-                if(evt.target == window){
-                    _this.logger.debug("[event] window deactivate");
-                    _this.ad.stop();
-                }
-            } , false);
-            //activate is the old window focus event
-            this.setListener( window, "activate", function(){
-                _this.logger.debug("[event] window activate");
-                _this.ad.start();
-                try{
-                    _this.ad.deduceLanguage();
-                }catch(e){
-                    AutomaticDictionary.logException(e);
-                }
-            }, false );
+
+            // Since Thunderbird 38, it manages to recover spellchecking
+            // dictionary after switching compposers yet so no need to observe
+            // them.
+            if(!this.ad.thunderbirdVersionGreaterOrEq("38")){
+                this.logger.debug("Applying window events observers");
+                //deactivate is the old window blur event
+                this.setListener( window, "deactivate", function(evt){
+                    if(evt.target == window){
+                        _this.logger.debug("[event] window deactivate");
+                        _this.ad.stop();
+                    }
+                } , false);
+                //activate is the old window focus event
+                this.setListener( window, "activate", function(){
+                    _this.logger.debug("[event] window activate");
+                    _this.ad.start();
+                    try{
+                        _this.ad.deduceLanguage();
+                    }catch(e){
+                        AutomaticDictionary.logException(e);
+                    }
+                }, false );
+            }
             // Listen to subject input and find dictionary for current recipients.
             this.setListener( window.document.getElementById('msgSubject'), 'focus', function(evt){
                 _this.logger.debug('subject focus');
