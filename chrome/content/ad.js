@@ -516,7 +516,7 @@ AutomaticDictionary.Class.prototype = {
             return;
         }
         this.last_lang_discarded = false;
-        var stats = {saved_recipients:0};
+        var stats = {saved_recipients:0, groups:0, individuals:0};
         if( tos.length > 0 ){
             this.logger.debug("Enter cond 1.x");
             //The user has set the language for the recipients
@@ -570,11 +570,17 @@ AutomaticDictionary.Class.prototype = {
             if( !this.isBlank(old) && is_single){
                 this.remove_heuristic(key, old);
             }
+
+            // Store it!
             this.data.set(key, lang);
+
             if( is_single ){
                 this.save_heuristic(key, lang);
+                stats.individuals++;
+            }else{
+                stats.groups++;
             }
-            stats.saved_recipients += key.split(",").length;
+            stats.saved_recipients++;
         }
     },
 
