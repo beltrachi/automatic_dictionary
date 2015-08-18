@@ -55,14 +55,14 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     name: "ComposeWindow",
     logger: null,
 
+    waitAnd:function(fn){
+        this.ad.window.setTimeout(fn,800);
+    },
+
     setListeners:function(){
         var window = this.ad.window;
         if( window && !window.automatic_dictionary_initialized ){
             var _this = this;
-            var wait_and = function(fn){
-                window.setTimeout(fn,800);
-            }
-
             this.setListener( window, 'unload', function(){
                 _this.logger.debug("[event] window unload");
                 _this.ad.stop();
@@ -77,12 +77,12 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             this.setListener( window.document.getElementById("languageMenuList"),"command",
                 function(event){
                     _this.logger.debug('[event] languageMenuList command');
-                    wait_and(function(){ _this.ad.languageChanged(event); });
+                    _this.waitAnd(function(){ _this.ad.languageChanged(event); });
                 },false);
             //capture language change event
             this.setListener( window.document, 'spellcheck-changed', function(evt){
                 _this.logger.debug("spellcheck-changed event captured");
-                wait_and(function(){ _this.ad.languageChanged(); });
+                _this.waitAnd(function(){ _this.ad.languageChanged(); });
             }, false);
 
             // Since Thunderbird 38, it manages to recover spellchecking
@@ -102,7 +102,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                     _this.logger.debug("[event] window activate");
                     _this.ad.start();
                     try{
-                        wait_and(function(){
+                        _this.waitAnd(function(){
                             _this.ad.deduceLanguage();
                         });
                     }catch(e){
@@ -113,7 +113,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             // Listen to subject input and find dictionary for current recipients.
             this.setListener( window.document.getElementById('msgSubject'), 'focus', function(evt){
                 _this.logger.debug('subject focus');
-                wait_and(function(){
+                _this.waitAnd(function(){
                     _this.ad.deduceLanguage();
                 });
             });
@@ -121,7 +121,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             this.setListener( window, "focus", function(){
                 _this.logger.debug('[event] window focus');
                 _this.ad.start();
-                wait_and(function(){
+                _this.waitAnd(function(){
                     _this.ad.deduceLanguage();
                 });
             }, false);
@@ -129,7 +129,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             //do not fire blur events anymore. They fire deactivate events.
             this.setListener( window, "blur", function(){
                 _this.logger.debug('[event] window blur');
-                wait_and(function(){
+                _this.waitAnd(function(){
                     _this.ad.deduceLanguage();
                 });
             }, false);
@@ -159,23 +159,25 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             _this.logger.debug("[event] window commmand (evt.target = "+evt.target);
             if( evt.target.parentNode.id == "spellCheckDictionariesMenu"){
                 _this.logger.debug("clicked on context dict menu");
-                window.setTimeout(function(){
+                _this.waitAnd(function(){
                     _this.ad.languageChanged();
-                },500); //Hardcoded. Enough? Otherways the lang is still not changed
+                }); //Hardcoded. Enough? Otherways the lang is still not changed
             }
             //TODO: research on being notified by spellchecker and not sniff events around
             if( evt.target.id == "spellCheckEnable" || 
                 evt.target.id == "menu_inlineSpellCheck"){
                 _this.logger.debug("spellCheckEnable");
-                window.setTimeout( function(){
+                _this.waitAnd(function(){
                     _this.ad.deduceLanguage();
-                }, 500);
+                });
             }
             _this.logger.debug("evt.target.id is "+ evt.target.id);
         }, true);
         func = function(subject, topic, data){
             _this.logger.debug('[event] spellchecker.dictionary changed');
-            _this.ad.languageChanged();
+            _this.waitAnd(function(){
+                _this.ad.languageChanged();
+            });
         };
         this.ad.prefManager.instance.addObserver("spellchecker.dictionary", func, false);
         this.shutdown_chain.push(function(){
