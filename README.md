@@ -30,7 +30,28 @@ language.
 
 Once a language is set to a user, each time you Compose a message and that
 recipient appears in the "TO" or "CC" recipients, the language will be set to that.
-  
+
+## Bug reporting
+
+If you have issues using this plugin, you can file an issue in github: https://github.com/beltrachi/automatic_dictionary/issues/new
+
+If the plugin does something you did not expect it will be helpful if you send us the logs of the plugin (as described in the next section)
+
+### Sending logs
+
+You can send me a detailed description of which steps to reproduce your bug with the plugin logs attached.
+
+Steps to activate the plugin logs:
+
+1. Go to preferences of the plugin (in Thunderbird > Addons > Automatic Dictionary > Preferences)
+2. Activate "Save log to file"
+3. Set Log level to "Debug"
+4. Restart thunderbird
+5. Reproduce the case that do not work.
+6. Close Thunderbird and open it again.
+7. Go to Automatic Dictionary preferences and click on "Send log to developer"
+
+After that, you should disable the "Save to log file" and set Log level back to "Warning".
 
 ## Contributors
 
