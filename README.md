@@ -1,6 +1,6 @@
-== Automatic Dictionary extension for Thunderbird ==
+# Automatic Dictionary extension for Thunderbird
 
-=== Target ===
+## Target
   Users that write emails in different languages very often to the same addresses each
   time.
 
@@ -13,39 +13,31 @@
   It can also guess the language based on the domain of the recipients of the mail.
   
   
-=== Usage ===
+## Usage
   
-  To associate a language to a recipient:
-   * Go to "Compose message"
-   * Write it's address in the TO field
-   * Choose the language you want to assign
-     * There will appear a message on the status bar announcing that that language
-       has been assigned to a recipient.
+To associate a language to a recipient:
+
+1. Go to "Compose message"
+2. Write it's address in the TO field
+3. Choose the language you want to assign
+4. There will appear a message on the status bar announcing that that language has been assigned to a recipient.
   
-  You can assign various recipients at once, setting them all to the language.
+You can assign various recipients at once, setting them all to the language.
   
-  Caution, the plugin only assigns the languages to the recipients when the
-  language is changed, so if the language set by default is the one you want to
-  assign to the users, you'll have to change the language to any other, wait the
-  extension to register that (the status bar will change), and then set the target
-  language.
-    
-  Once a language is set to a user, each time you Compose a message and that
-  recipient appears in the "TO" or "CC" recipients, the language will be set to that.
+Caution, the plugin only assigns the languages to the recipients when the
+language is changed, so if the language set by default is the one you want to
+assign to the users, you'll have to change the language to any other, wait the
+extension to register that (the status bar will change), and then set the target
+language.
+
+Once a language is set to a user, each time you Compose a message and that
+recipient appears in the "TO" or "CC" recipients, the language will be set to that.
   
 
-=== Development plan ===
+## Contributors
 
- Version 2.x
-    -> Detect based on text
-      In case no previous data is available or there is not a unique language for the
-      recipients, the extension can try to guess it based on the mistakes that appear
-      applying the most used dictionaries.    
-
-=== Contributors ===
-
-beltrachi
-Marcos Diez
-Giacomo Ciani
-ByteHamster
-SimonSapin
+* beltrachi
+* Marcos Diez
+* Giacomo Ciani
+* ByteHamster
+* SimonSapin
