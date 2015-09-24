@@ -1,18 +1,16 @@
 # Automatic Dictionary extension for Thunderbird
 
 ## Target
-  Users that write emails in different languages very often to the same addresses each
-  time.
+  
+Users that write emails in different languages very often to the same addresses each
+time.
 
-  When writing a new email or answering one, get the dictionary language correctly
-  set.
-  
-  The extension will keep a record of the language previously selected for the
-  recipients of the mail and switch it.
+When writing a new email or answering one, you had to manually change the dictionary language each time.
 
-  It can also guess the language based on the domain of the recipients of the mail.
-  
-  
+This addon will keep a record of the language you choose for the recipients of a mail and switch it next time you write to them.
+
+It can also guess the language based on the domain of the recipients of the mail. For example, if you write to domains that go to ".es" domains, it can "learn" to switch to Spanish if you write to them in Spanish.
+
 ## Usage
   
 To associate a language to a recipient:
