@@ -1,5 +1,8 @@
 # Automatic Dictionary extension for Thunderbird
 
+This is the source code of the Mozilla Thunderbird plugin Automatic dictionary:
+https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switching/
+
 ## Target
   
 Users that write emails in different languages very often to the same addresses each
