@@ -1,7 +1,10 @@
-# Automatic Dictionary extension for Thunderbird
+#  Automatic Dictionary extension for Thunderbird
 
-This is the source code of the Mozilla Thunderbird plugin Automatic dictionary:
+![Logo](https://raw.githubusercontent.com/beltrachi/automatic_dictionary/master/chrome/content/logo.png)
+
+This is the source code of the Automatic dictionary plugin:
 https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switching/
+
 
 ## Target
   
