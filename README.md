@@ -5,6 +5,7 @@
 This is the source code of the Automatic dictionary plugin:
 https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switching/
 
+[![Build Status](https://api.travis-ci.org/beltrachi/automatic_dictionary.svg)](https://travis-ci.org/beltrachi/automatic_dictionary)
 
 ## Target
   
