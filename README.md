@@ -1,3 +1,6 @@
+<a href="https://codeclimate.com/github/beltrachi/automatic_dictionary"><img src="https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/gpa.svg" /></a>
+<a href="https://codeclimate.com/github/beltrachi/automatic_dictionary/coverage"><img src="https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/coverage.svg" /></a>
+
 #  Automatic Dictionary extension for Thunderbird
 
 ![Logo](https://raw.githubusercontent.com/beltrachi/automatic_dictionary/master/chrome/content/logo.png)
