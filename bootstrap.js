@@ -51,12 +51,8 @@ function startup(aData, aReason) {
         log("\nSTARTUP CALLED\n");
 
     ResourceRegister.init(aData.installPath, "automatic_dictionary");
-     
     try {
-
         global.AutomaticDictionary = {};
-        
-        
         Cu.import("chrome://automatic_dictionary/content/ad.js", global);
         
         global.AutomaticDictionary.shutdown_chain = [];
@@ -103,7 +99,9 @@ function startup(aData, aReason) {
     } catch (e) {
         log("fail");
         log(e);
-        log(e.stack.toString());
+        if(e.stack){
+            log(e.stack.toString());
+        }
     }
 }
 

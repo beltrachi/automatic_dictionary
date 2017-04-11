@@ -214,6 +214,26 @@ function test_setup(){
             }
         }
     }
+    AppConstants = {
+        MOZ_APP_VERSION: '1.2.3.4'
+    },
+    Log = {
+        repository: {
+            getLogger: function(){
+                return {
+                    level: null,
+                    addAppender: function(){},
+                    info: function(){}
+                };
+            }
+        },
+        Level: {
+            Debug: 1
+        },
+        ConsoleAppender: function(){},
+        BasicFormatter: function(){},
+        DumpAppender: function(){}
+    }
 }
 
 // Method to mock the recipients of an automatic_dictonary instance

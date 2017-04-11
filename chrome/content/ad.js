@@ -45,7 +45,6 @@ var global = this;
 var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                        .getService(Components.interfaces.mozIJSSubScriptLoader); 
 var resources = [
-    "chrome://global/content/inlineSpellCheckUI.js",
     "chrome://automatic_dictionary/content/version.js",
     "chrome://automatic_dictionary/content/lib.js",
     "chrome://automatic_dictionary/content/lib/sorted_set.js",
@@ -79,22 +78,29 @@ for( var idx in resources){
 
 Cu.import("resource://app/modules/StringBundle.js");
 
-var steelApp = Components.classes["@mozilla.org/steel/application;1"]
-    .getService(Components.interfaces.steelIApplication);
+Cu.import("resource://gre/modules/Log.jsm");
+
+let log = Log.repository.getLogger("AutomaticDictionary");
+log.level = Log.Level.Debug;
+// A console appender logs to the browser console.
+log.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
+// A dump appender logs to stdout.
+log.addAppender(new Log.DumpAppender(new Log.BasicFormatter()));
 
 Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/AppConstants.jsm");
 
 var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
 
 AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
 AutomaticDictionary.log_writer.write("Log file writer started");
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
-    steelApp.console.log(msg);
+    log.info(msg);
     AutomaticDictionary.log_writer.write(msg);
 });
 AutomaticDictionary.logger.warn("Logger started");
-AutomaticDictionary.logger.warn("Thunderbird version is "+steelApp.version);
+AutomaticDictionary.logger.warn("Thunderbird version is "+ AppConstants.MOZ_APP_VERSION);
 AutomaticDictionary.logger.filepath = file.path;
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
@@ -175,7 +181,7 @@ AutomaticDictionary.Class = function(options){
     AutomaticDictionary.instances.push(this); //Possible memmory leak!
     options = options || {};
     this.window = options.window;
-    this.thunderbirdVersion = steelApp.version;
+    this.thunderbirdVersion = AppConstants.MOZ_APP_VERSION;
     var start = (new Date()).getTime(), _this = this;
     this.logger.debug("ad: init");
 
