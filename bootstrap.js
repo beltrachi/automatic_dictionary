@@ -74,7 +74,7 @@ function startup(aData, aReason) {
             Services.obs.removeObserver(observer, "Conversations");
         });
         
-        for each (let w in fixIterator(Services.wm.getEnumerator(null))){
+        for (let w of fixIterator(Services.wm.getEnumerator(null))){
             global.AutomaticDictionary.initWindow(w);
         }
 
