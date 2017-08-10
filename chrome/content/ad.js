@@ -76,7 +76,7 @@ for( var idx in resources){
     loader.loadSubScript(url);
 }
 
-Cu.import("resource://app/modules/StringBundle.js");
+Cu.import("resource:///modules/StringBundle.js");
 
 Cu.import("resource://gre/modules/Log.jsm");
 
