@@ -4,4 +4,6 @@ addons:
   apt:
     packages:
       - rhino
-script: ./test.sh
+script:
+  - ./test.sh
+  - ./integration_test.sh

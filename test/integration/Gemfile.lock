@@ -1,0 +1,36 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    byebug (9.0.6)
+    diff-lcs (1.3)
+    mini_portile2 (2.2.0)
+    nokogiri (1.8.0)
+      mini_portile2 (~> 2.2.0)
+    rmagick (2.16.0)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
+    rspec-core (3.6.0)
+      rspec-support (~> 3.6.0)
+    rspec-expectations (3.6.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.6.0)
+    rspec-mocks (3.6.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.6.0)
+    rspec-support (3.6.0)
+    rtesseract (2.1.0)
+      nokogiri
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  byebug
+  rmagick
+  rspec (~> 3.6.0)
+  rtesseract (~> 2.1.0)
+
+BUNDLED WITH
+   1.10.6
