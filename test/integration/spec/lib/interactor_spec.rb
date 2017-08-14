@@ -1,9 +1,7 @@
 require 'interactor'
 
 describe Interactor do
-  let(:klass) { Class.new }
-  before { klass.include ::Interactor }
-  let(:instance) { klass.new }
+  let(:instance) { Interactor.client }
 
   context '#create_screenshot' do
     let(:file) { instance.create_screenshot }
