@@ -19,6 +19,6 @@ module Interactor
   end
 
   def hit_key(key)
-    KeyboardHitter.hit(key)
+    KeyboardHitter.hit_key(key)
   end
 end
