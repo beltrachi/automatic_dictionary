@@ -8,10 +8,12 @@ module Interactor
       include Shared
       RESIZE_RATIO = 4
 
-      def text_position(text)
-        file = Interactor::Snapshooter.create_screenshot
-        file = prepare_image_to_read(file)
-        position_of(text, file)
+      def text_position(text, attempt = 0)
+        position_of(text, readed_words(attempt))
+      end
+
+      def words(attempt = 0)
+        readed_words(attempt).map(&:word)
       end
 
       private
@@ -40,25 +42,32 @@ module Interactor
         end
       end
 
-      def prepare_image_to_read(file)
+      def readed_words(attempt = 0)
+        file = Interactor::Snapshooter.create_screenshot
+        file = prepare_image_to_read(file, attempt)
+        words = RTesseract::Box.new(file, lang: 'eng').words
+        words.map!{|word| Word.new(word) }
+      end
+
+      def prepare_image_to_read(file, attempt = 0)
+        negate = '-negate' if attempt % 2 == 1
+        high_contrast = '-level %50' if attempt > 1
         tmp="#{Tempfile.new('for-tesseract').path}.jpg"
         run("convert #{file} -quality 99% -colorspace Gray "\
-            "-resize #{RESIZE_RATIO * 100}% #{tmp}")
+            "-resize #{RESIZE_RATIO * 100}% #{negate} #{high_contrast}"\
+            " #{tmp}")
         tmp
       end
 
-      def position_of(text, file)
+      def position_of(text, readed_words)
         # It returns a list of separated words. We need to find them in order
         # and merge the data to create a bounding box.
-        readed_words = RTesseract::Box.new(file, lang: 'eng').words
-        readed_words.map!{|word| Word.new(word) }
         target_words = text.split(/\s/)
         found_words = find_words(target_words, readed_words)
         return unless found_words.first
+        puts found_words.first.inspect
         fix_ratio(found_words.first.reduce(:+).center)
       end
-
-      private
 
       def find_words(target_words, readed_words)
         needle = target_words.first

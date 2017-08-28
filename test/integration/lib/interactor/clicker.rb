@@ -1,5 +1,4 @@
 require 'interactor/shared'
-require 'tempfile'
 
 module Interactor
   module Clicker
@@ -7,8 +6,8 @@ module Interactor
       include Shared
 
       def click_on(position)
-        run("xdotool mousemove #{position.first} #{position.last}")
-        run("xdotool click -c 1")
+        run("xdotool mousemove --sync #{position.first} #{position.last} "\
+            "click -c 1")
       end
     end
   end
