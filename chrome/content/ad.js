@@ -981,7 +981,7 @@ AutomaticDictionary.Class.prototype = {
     },
 
     thunderbirdVersionGreaterOrEq:function(version){
-        Services.vc.compare(this.thunderbirdVersion, version) !== -1;
+        return Services.vc.compare(this.thunderbirdVersion, version) !== -1;
     },
 
     shutdown:function(){
