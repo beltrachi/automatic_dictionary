@@ -400,6 +400,9 @@ AutomaticDictionary.Class.prototype = {
             get:function(key,val){
                 return pm["get"+getType(val,key)+"Pref"](key,val);
             },
+            get_or_raise:function(key,val){
+                return pm["get"+getType(val,key)+"Pref"](key);
+            },
             //getters with fallback to defaults
             getCharPref:function(k){
                 return orDefault(k, function(){return pm.getCharPref(k)});
@@ -1004,7 +1007,7 @@ AutomaticDictionary.Class.prototype = {
         for(var k in this.defaults){
             try{
                 this.logger.debug("Value for "+k+ " is ");
-                v = this.prefManager.get(k,this.defaults[k]);
+                v = this.prefManager.get_or_raise(k,this.defaults[k]);
                 this.logger.debug(v);
             }catch(e){
                 // a get on a non existing key raises an exception.
