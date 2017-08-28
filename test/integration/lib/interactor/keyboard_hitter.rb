@@ -1,5 +1,4 @@
 require 'interactor/shared'
-require 'interactor/keyboard_hitter/char_to_keysym'
 
 module Interactor
   module KeyboardHitter
