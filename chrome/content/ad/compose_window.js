@@ -85,11 +85,22 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 _this.waitAnd(function(){ _this.ad.languageChanged(); });
             }, false);
 
+            // Observe the language attribute so we can update the language button label.
+            var langObserver = new window.MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type == "attributes" && mutation.attributeName == "lang") {
+                        _this.logger.debug("Mutation received");
+                        _this.ad.languageChanged();
+                    }
+                });
+            });
+            langObserver.observe(window.document.documentElement, { attributes: true });
+
             // Since Thunderbird 38, it manages to recover spellchecking
             // dictionary after switching compposers yet so no need to observe
             // them.
             if(!this.ad.thunderbirdVersionGreaterOrEq("38")){
-                this.logger.debug("Applying window events observers");
+                this.logger.debug("Applying window events observers to version lower than 38");
                 //deactivate is the old window blur event
                 this.setListener( window, "deactivate", function(evt){
                     if(evt.target == window){
@@ -202,9 +213,8 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     },
 
     getCurrentLang: function(){
-        var spellChecker = this.window.gSpellChecker.mInlineSpellChecker.spellChecker;
-        var lang = spellChecker.GetCurrentDictionary();
-        this.logger.info("gSpellChecker says current lang is "+lang);
+        var lang = this.ad.window.document.documentElement.getAttribute("lang");
+        this.logger.info("document attribute says current lang is "+lang);
         return lang;
     },
 

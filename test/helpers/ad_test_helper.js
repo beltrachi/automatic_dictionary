@@ -145,6 +145,11 @@ function test_setup(){
                     }
                 }
             }
+        },
+        MutationObserver: function(func){
+            return {
+                observe: function(){}
+            }
         }
     };
 
@@ -190,8 +195,14 @@ function test_setup(){
                 }
             };
         },
-        addEventListener: function(){}
+        addEventListener: function(){},
+        getAttribute: function(attr){
+            if(attr == "lang"){
+                return dictionary_object.dictionary
+            }
+        }
     };
+    document.documentElement = document;
 
     AddonManager = {
         getAddonByID: function(){}
