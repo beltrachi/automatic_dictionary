@@ -20,5 +20,6 @@ wget "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-dict
 thunderbird --profile "$PROFILE_PATH" -offline --no-remote &
 #exit
 cd test/integration/
+bundle install
 ruby -v
 bundle exec rspec spec/automatic_dictionary
