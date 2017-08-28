@@ -2,10 +2,10 @@
 
 set -ex
 
-#sudo apt-get update
-#sudo apt-get install -y xvfb thunderbird unzip fluxbox
+sudo apt-get update
+sudo apt-get install -y xvfb thunderbird unzip fluxbox
 
-if [ "$DEBUG" -eq "1" ]; then
+if [ "$DEBUG" = true ]; then
     Xephyr -ac -screen 1280x960x24 :99 &
 else
     Xvfb :99 -screen 0 1280x960x24 &
