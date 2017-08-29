@@ -4,6 +4,7 @@ set -ex
 
 sudo apt-get update
 sudo apt-get install -y xvfb thunderbird unzip fluxbox
+sudo apt-get install -y imagemagick libmagickwand-dev xvfb unzip imagemagick xdotool tesseract-ocr
 
 if [ "$DEBUG" = true ]; then
     Xephyr -ac -screen 1280x960x24 :99 &
