@@ -1,4 +1,24 @@
 require 'interactor'
+require 'net/http/post/multipart'
+require 'json'
+
+class FileUploader
+  def upload(filepath)
+    url = URI.parse('http://uploads.im/api')
+    File.open(filepath) do |jpg|
+      req = Net::HTTP::Post::Multipart.new(
+        url.path,
+        "upload" => UploadIO.new(jpg, "image/jpeg", "image.jpg")
+      )
+      res = Net::HTTP.start(url.host, url.port) do |http|
+        http.request(req)
+      end
+      puts 'Uploaded screenshot: ' +
+           JSON.parse(res.body)['data']['img_url'].gsub('\/', '/')
+      res
+    end
+  end
+end
 
 describe "AutomaticDictionary integration tests" do
   # Counting on:
@@ -22,7 +42,7 @@ describe "AutomaticDictionary integration tests" do
       sleep 5
       interactor.click_on_text('Skip this and use my existing email')
       sleep 2
-      
+
       interactor.input_text('Test user')
       interactor.hit_key('Tab')
       interactor.input_text('testing@example.com')
@@ -79,7 +99,6 @@ describe "AutomaticDictionary integration tests" do
       interactor.hit_key('Tab')
       interactor.input_text('Un asunto')
       interactor.hit_key('Tab')
-#      interactor.input_text('Ese cuerpo')
       sleep 1
       interactor.hit_key('Ctrl+Shift+P')
       interactor.hit_key('Alt+l')
@@ -89,6 +108,13 @@ describe "AutomaticDictionary integration tests" do
       interactor.hit_key('Alt+c')
 
       interactor.text_position!('Saved es-ES as default')
+    rescue => e
+      filepath = interactor.create_screenshot
+      FileUploader.new.upload(filepath)
+      puts e.inspect
+      puts e.backtrace.join("\n")
+      puts Interactor::Reader.words
+      raise e
     end
   end
 end

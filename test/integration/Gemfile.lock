@@ -4,6 +4,7 @@ GEM
     byebug (9.0.6)
     diff-lcs (1.3)
     mini_portile2 (2.2.0)
+    multipart-post (2.0.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     rmagick (2.16.0)
@@ -28,6 +29,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  multipart-post
   rmagick
   rspec (~> 3.6.0)
   rtesseract (~> 2.1.0)
