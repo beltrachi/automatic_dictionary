@@ -38,6 +38,7 @@ describe "AutomaticDictionary integration tests" do
   it 'works :_D' do
     begin
       interactor = Interactor.client
+
       # Configure a fake test account
       sleep 5
       interactor.click_on_text('Skip this and use my existing email')

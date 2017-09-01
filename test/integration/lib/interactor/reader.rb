@@ -7,6 +7,7 @@ module Interactor
     class << self
       include Shared
       RESIZE_RATIO = 4
+      attr_accessor :screenshot
 
       def text_position(text, attempt = 0)
         position_of(text, readed_words(attempt))
@@ -42,8 +43,12 @@ module Interactor
         end
       end
 
+      def screenshot
+        @screenshot || Interactor::Snapshooter.create_screenshot
+      end
+
       def readed_words(attempt = 0)
-        file = Interactor::Snapshooter.create_screenshot
+        file = screenshot
         file = prepare_image_to_read(file, attempt)
         words = RTesseract::Box.new(file, lang: 'eng').words
         words.map!{|word| Word.new(word) }
