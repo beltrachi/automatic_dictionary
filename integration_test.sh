@@ -1,25 +1,27 @@
 #!/bin/bash
+# This script executes thunderbird installing the extension and runs it.
 
 set -ex
-# This script executes thunderbird installing the extension and runs it.
 source script/setup_test_env.sh
+source ~/.bash_profile
 
 PROFILE_NAME="TestUser"
 PROFILE_PATH="$(mktemp -d)"
 
-thunderbird -CreateProfile "$PROFILE_NAME $PROFILE_PATH"
+tar -xvf test/integration/fixtures/test-profile.tar.gz -C $PROFILE_PATH
 
 # Update build to lastest
 ./build.sh
 ./script/install_extension.sh --path $PROFILE_PATH --extension automatic_dictionary.xpi
 
 # Install spanish dictionary
-wget "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-dictionary/addon-3554-latest.xpi?src=dp-btn-primary" -O spanish-dictionary.xpi
+ls spanish-dictionary.xpi || \
+    curl "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-dictionary/addon-3554-latest.xpi?src=dp-btn-primary" -o spanish-dictionary.xpi
+
 ./script/install_extension.sh --path $PROFILE_PATH --extension spanish-dictionary.xpi
 
-thunderbird --profile "$PROFILE_PATH" -offline --no-remote &
-#exit
+thunderbird --profile "$PROFILE_PATH" --no-remote &
+
 cd test/integration/
 bundle install
-ruby -v
 bundle exec rspec spec/automatic_dictionary
