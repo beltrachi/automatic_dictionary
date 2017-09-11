@@ -514,6 +514,10 @@ AutomaticDictionary.Class.prototype = {
         if( !this.running ) return;
         this.logger.debug("languageChanged call");
         var current_lang = this.getCurrentLang();
+        if (current_lang == this.last_lang){
+            this.logger.debug('Same language as last setted '+current_lang);
+            return;
+        }
         var tos = this.getRecipients();
         var ccs = this.getRecipients("cc");
         this.logger.debug("tos are "+ tos.toSource());
@@ -564,8 +568,8 @@ AutomaticDictionary.Class.prototype = {
                 this.ft( "savedForRecipients",
                     [ current_lang, stats.saved_recipients ] )
                 );
+            this.collect_event("language","saved", {label: current_lang});
         }
-        this.collect_event("language","saved", {label: current_lang});
     },
 
     // @param recipients [Hash] with "to" and "cc" keys
@@ -731,6 +735,8 @@ AutomaticDictionary.Class.prototype = {
             }
         }
 
+        this.last_lang = lang;
+        this.last_toandcc_key = toandcc_key;
         if(lang){
             try{
                 this.setCurrentLang( lang );
@@ -765,8 +771,6 @@ AutomaticDictionary.Class.prototype = {
             this.changeLabel("info", this.t( "noLangForRecipients" ));
             this.collect_event("language","miss",{}, {customVars: ga_customVars});
         }
-        this.last_lang = lang;
-        this.last_toandcc_key = toandcc_key;
     },
 
     //Tries to guess by other recipients domains
@@ -803,7 +807,6 @@ AutomaticDictionary.Class.prototype = {
             },
             stopPropagation: function(){}
         };
-        this.last_lang = target;
         //Temporary disable language change detection that we trigger ourself
         this.running = false;
         try{
