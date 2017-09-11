@@ -1,10 +1,11 @@
 sudo: required
 dist: trusty
+services:
+  - docker
 addons:
   apt:
     packages:
       - rhino
 script:
   - ./test.sh
-  - ./script/install_dependencies.sh
-  - ./integration_test.sh
+  - ./script/docker_integration_test.sh
