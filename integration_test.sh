@@ -16,7 +16,7 @@ tar -xvf test/integration/fixtures/test-profile.tar.gz -C $PROFILE_PATH
 
 # Install spanish dictionary
 ls spanish-dictionary.xpi || \
-    curl "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-dictionary/addon-3554-latest.xpi?src=dp-btn-primary" -o spanish-dictionary.xpi
+    curl -L "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-dictionary/addon-3554-latest.xpi?src=dp-btn-primary" -o spanish-dictionary.xpi
 
 ./script/install_extension.sh --path $PROFILE_PATH --extension spanish-dictionary.xpi
 
