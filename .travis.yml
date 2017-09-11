@@ -6,4 +6,5 @@ addons:
       - rhino
 script:
   - ./test.sh
+  - ./script/install_dependencies.sh
   - ./integration_test.sh
