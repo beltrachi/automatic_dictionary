@@ -234,7 +234,10 @@ function test_setup(){
                 return {
                     level: null,
                     addAppender: function(){},
-                    info: function(){}
+                    info: function(msg){
+                        //Send addon logs to test logger with debug level
+                        logger.debug(msg);
+                    }
                 };
             }
         },
