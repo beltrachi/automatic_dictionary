@@ -34,7 +34,7 @@
             "spain.es",
             "catalonia.cat",
             "anything.com"
-        ]    
+        ];
         
         //Fill structures
         logger.info("Filling structure with sample data ("+size+" items) ...")

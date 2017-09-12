@@ -514,10 +514,6 @@ AutomaticDictionary.Class.prototype = {
         if( !this.running ) return;
         this.logger.debug("languageChanged call");
         var current_lang = this.getCurrentLang();
-        if (current_lang == this.last_lang){
-            this.logger.debug('Same language as last setted '+current_lang);
-            return;
-        }
         var tos = this.getRecipients();
         var ccs = this.getRecipients("cc");
         this.logger.debug("tos are "+ tos.toSource());
@@ -527,6 +523,12 @@ AutomaticDictionary.Class.prototype = {
             this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
             this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
             this.last_lang_discarded = current_lang;
+            return;
+        }
+        var toandcc_key = this.getKeyForRecipients({to: tos, cc: ccs});
+
+        if (current_lang == this.last_lang && toandcc_key == this.last_toandcc_key){
+            this.logger.debug('Same language and recipients as before '+current_lang);
             return;
         }
         this.last_lang_discarded = false;
