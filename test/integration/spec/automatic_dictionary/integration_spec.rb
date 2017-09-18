@@ -41,12 +41,9 @@ end
 
 describe "AutomaticDictionary integration tests" do
   # Counting on:
-  # - Thunderbird has been started
   # - the DISPLAY is where the app is running
   # - It has the focus
-  # - The addon as been installed directly on the profile.
   # - The application language is english.
-  # . Thunderbird is started in offline mode.
 
   # Target:
   # - Test that it gets installed correctly
@@ -54,13 +51,57 @@ describe "AutomaticDictionary integration tests" do
   # - It remembers languages.
   # - Preferences window works correctly.
 
+  let(:profile_path) { Dir.mktmpdir }
+
+  def run(command)
+#    command = "cd #{root} ; #{command}"
+    puts command
+    system(command)
+  end
+
+  def prepare_profile(path)
+    source = File.join(root, 'test/integration/fixtures/test-profile.tar.gz')
+    run("tar -xvf #{source} -C #{path}")
+  end
+
+  def install_extension(extension_file, profile_path)
+    cmd = File.join(root, 'script/install_extension.sh')
+    extension = File.join(root, extension_file)
+    install = "#{cmd} --path #{profile_path} --extension #{extension}"
+    run(install)
+  end
+
   let(:root) do
-    File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+    File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', '..'))
   end
 
   let(:local_tmp) { File.join(root, 'tmp') }
 
   let(:interactor) { Interactor.client }
+  let(:spanish_dictionary_url) do
+    "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-"\
+    "dictionary/addon-3554-latest.xpi?src=dp-btn-primary"
+  end
+  let(:spanish_dictionary_file) { 'spanish-dictionary.xpi' }
+  let(:spanish_dictionary_path) { File.join(root, spanish_dictionary_file) }
+
+  before(:suite) do
+    # Update build to lastest
+    run(File.join(root, "build.sh"))
+    run("ls #{File.join(root, spanish_dictionary_file)} || "\
+        " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_file}")
+  end
+
+  before do
+    prepare_profile(profile_path)
+    install_extension('automatic_dictionary.xpi', profile_path)
+    install_extension('spanish-dictionary.xpi', profile_path)
+    run("thunderbird --profile #{profile_path} --no-remote &")
+  end
+
+  after do
+    run("pkill thunderbird")
+  end
 
   it 'works :_D' do
     begin
@@ -161,7 +202,6 @@ describe "AutomaticDictionary integration tests" do
       interactor.hit_key('Tab')
       sleep 1
       interactor.text_position!('Remembered es-ES')
-
     rescue => e
       filepath = interactor.create_screenshot
       FileUploader.new.upload(filepath)

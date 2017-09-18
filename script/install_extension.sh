@@ -35,9 +35,9 @@ mkdir -p "$PROFILE_PATH/extensions"
 
 TMP_DIR=$(mktemp -d)
 
-cp $EXTENSION $TMP_DIR
-unzip "$TMP_DIR/$EXTENSION" -d $TMP_DIR
-rm $TMP_DIR/$EXTENSION
+cp $EXTENSION $TMP_DIR/tmp.xpi
+unzip "$TMP_DIR/tmp.xpi" -d $TMP_DIR
+rm $TMP_DIR/tmp.xpi
 
 EXTENSION_ID=$(cat $TMP_DIR/install.rdf |grep "em:id" | head -n 1 | cut -d ">" -f 2 | cut -d "<" -f 1)
 
