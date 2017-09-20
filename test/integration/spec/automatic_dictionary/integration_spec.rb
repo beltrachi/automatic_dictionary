@@ -103,20 +103,46 @@ describe "AutomaticDictionary integration tests" do
     run("pkill thunderbird")
   end
 
+  def on_composer(to: nil, subject: nil, body: nil)
+    interactor.hit_key('Control+n')
+    sleep 1
+    interactor.input_text(to) if to
+    interactor.hit_key('Tab')
+    interactor.input_text(subject) if subject
+    interactor.hit_key('Tab')
+    interactor.input_text(body) if body
+
+    yield
+
+    # Close window without saving draft
+    interactor.hit_key('Ctrl+w')
+    interactor.hit_key('Alt+n')
+  end
+
+  def change_spellchecker_language(dict_name)
+    interactor.hit_key('Ctrl+Shift+P')
+    interactor.hit_key('Alt+l')
+    # Send chars separated by spaces to simulate keystokes
+    interactor.hit_key(dict_name.chars.join(' '))
+    sleep 0.5
+    interactor.hit_key('Return')
+    interactor.hit_key('Alt+c')
+  end
+
   it 'works :_D' do
     begin
-      # Configure a fake test account
       sleep 5
 
+      # Escape any wizard on start
       5.times do
         interactor.hit_key('Escape')
       end
-      # Focus on the new account
+      # Focus on the account
       interactor.click_on_text('test@mail.com')
 
       sleep 1
 
-      # Enalbe plugins
+      # Enable plugins
       interactor.hit_key('Alt+t a', clear_modifiers: false)
       sleep 2
 
@@ -135,78 +161,36 @@ describe "AutomaticDictionary integration tests" do
 
       interactor.hit_key('Control+w')
 
-      # Open composer
-      interactor.hit_key('Control+n')
-      sleep 1
-      interactor.input_text('en@en.en')
-      interactor.hit_key('Tab')
-      interactor.input_text('Some subject')
-      interactor.hit_key('Tab')
-      interactor.input_text('This is the body')
-      sleep 1
+      on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
+        # Accept to collect data
+        interactor.click_on_text("Don't do it")
 
-      # Accept to collect data
-      interactor.click_on_text("Don't do it")
-
+        # Open a window without closing the other
+        on_composer(to: 'es@es.es', subject:'Un asunto') do
+          change_spellchecker_language('spa')
+          interactor.text_position!('Saved es-ES as default')
+        end
+      end
       # TODO: have a fake smtp/pop server to send
       # emails.
-      interactor.hit_key('Control+n')
-      sleep 1
-      interactor.input_text('es@es.es')
-      interactor.hit_key('Tab')
-      interactor.input_text('Un asunto')
-      interactor.hit_key('Tab')
-      sleep 1
-      interactor.hit_key('Ctrl+Shift+P')
-      interactor.hit_key('Alt+l')
-      interactor.hit_key('s p a')
-      sleep 1
-      interactor.hit_key('Return')
-      interactor.hit_key('Alt+c')
-
-      interactor.text_position!('Saved es-ES as default')
-      # Close the window
-      interactor.hit_key('Ctrl+w')
-      interactor.hit_key('Alt+n')
-
-      # Close other window
-      interactor.hit_key('Ctrl+w')
-      interactor.hit_key('Alt+n')
 
       # Save en-US for en@en.en
-      interactor.hit_key('Control+n')
-      sleep 1
-      interactor.input_text('en@en.en')
-      interactor.hit_key('Tab')
-      interactor.input_text('A subject')
-      interactor.hit_key('Tab')
-      sleep 1
-      interactor.hit_key('Ctrl+Shift+P')
-      interactor.hit_key('Alt+l')
-      interactor.hit_key('e n g')
-      sleep 1
-      interactor.hit_key('Return')
-      interactor.hit_key('Alt+c')
+      on_composer(to: 'en@en.en', subject: 'A subject') do
+        change_spellchecker_language('eng')
+        sleep 0.5
+        interactor.text_position!('Saved en-US as default')
+      end
 
-      interactor.text_position!('Saved en-US as default')
+      # Remember es-ES
+      on_composer(to:'es@es.es') do
+        sleep 1
+        interactor.text_position!('Remembered es-ES')
+      end
 
-      # Close other window
-      interactor.hit_key('Ctrl+w')
-      interactor.hit_key('Alt+n')
-
-      # Restore es-ES
-      interactor.hit_key('Control+n')
-      sleep 1
-      interactor.input_text('es@es.es')
-      interactor.hit_key('Tab')
-      interactor.hit_key('Tab')
-      sleep 1
-      interactor.text_position!('Remembered es-ES')
     rescue => e
+      T.log_screenshot
       filepath = interactor.create_screenshot
       FileUploader.new.upload(filepath)
-      require 'byebug';byebug;2+2
-
       puts e.inspect
       puts e.backtrace.join("\n")
       puts Interactor::Reader.words

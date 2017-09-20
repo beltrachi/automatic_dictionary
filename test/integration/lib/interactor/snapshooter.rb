@@ -13,6 +13,7 @@ module Interactor
         # Note: we are using jpg because imagemagick png can last as much as 12s
         # when converting images. Jpg is 1s. Increased quality be less lossy.
         run("import -window root -quality 99% #{file}")
+        T.log_screenshot(file)
         file
       end
     end
