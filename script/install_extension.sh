@@ -26,7 +26,7 @@ do
     shift # past argument or value
 done
 
-if [ -z "$EXTENSION"] || [ -z "$PROFILE_PATH" ]; then
+if [ -z "$EXTENSION" ] || [ -z "$PROFILE_PATH" ]; then
     echo "Extension and path parameters required."
     exit 1;
 fi

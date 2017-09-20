@@ -85,17 +85,18 @@ describe "AutomaticDictionary integration tests" do
   let(:spanish_dictionary_file) { 'spanish-dictionary.xpi' }
   let(:spanish_dictionary_path) { File.join(root, spanish_dictionary_file) }
 
-  before(:suite) do
+  before do
     # Update build to lastest
-    run(File.join(root, "build.sh"))
-    run("ls #{File.join(root, spanish_dictionary_file)} || "\
-        " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_file}")
+    puts "FOOOOOOOOOOO" * 10
+    run("cd #{root} ; build.sh")
+    run("ls #{spanish_dictionary_path} || "\
+        " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_path}")
   end
 
   before do
     prepare_profile(profile_path)
     install_extension('automatic_dictionary.xpi', profile_path)
-    install_extension('spanish-dictionary.xpi', profile_path)
+    install_extension(spanish_dictionary_file, profile_path)
     run("thunderbird --profile #{profile_path} --no-remote &")
   end
 
