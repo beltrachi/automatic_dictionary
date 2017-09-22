@@ -7,11 +7,12 @@ module Interactor
   class Client
     class TextNotFound < StandardError; end
 
-    attr_accessor :retries, :delay
+    attr_accessor :retries, :delay, :hit_delay
 
     def initialize(options = {})
       self.retries = options.fetch(:retries, 5)
       self.delay = options.fetch(:delay, 1)
+      self.hit_delay = options.fetch(:hit_delay, 0.2)
     end
 
     def text_position(text)
@@ -33,17 +34,17 @@ module Interactor
     end
 
     def hit_key(*args)
-      sleep 0.5
+      sleep hit_delay
       KeyboardHitter.hit_key(*args)
     end
 
     def wait_for_text(text, screen_file: nil)
       puts ">>> wait for text #{text}"
-      sleep 0.5
       retries.times do |attempt|
-        position = Reader.text_position(text, attempt)
-        return position if position
-        sleep delay
+        sleep_if_faster_than(delay) do
+          position = Reader.text_position(text, attempt)
+          return position if position
+        end
       end
       fail TextNotFound.new("Text '#{text}' not found")
     end
@@ -51,6 +52,18 @@ module Interactor
     def input_text(text)
       sleep delay
       KeyboardHitter.input_text(text)
+    end
+
+    private
+
+    def sleep_if_faster_than(desired_delta)
+      start = Time.now
+
+      out = yield
+
+      delta = (Time.now - start) - desired_delta
+      sleep(delta) if delta > 0
+      out
     end
   end
 end

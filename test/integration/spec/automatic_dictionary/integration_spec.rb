@@ -153,9 +153,9 @@ describe "AutomaticDictionary integration tests" do
       if interactor.text_position('Enable')
         interactor.click_on_text('Enable')
       end
+
       # Enable spanish
       interactor.click_on_text('Dictionaries')
-
       if interactor.text_position('Enable')
         interactor.click_on_text('Enable')
       end
@@ -169,7 +169,7 @@ describe "AutomaticDictionary integration tests" do
         # Open a window without closing the other
         on_composer(to: 'es@es.es', subject:'Un asunto') do
           change_spellchecker_language('spa')
-          interactor.text_position!('Saved es-ES as default')
+          interactor.wait_for_text('Saved es-ES as default')
         end
       end
       # TODO: have a fake smtp/pop server to send
@@ -178,14 +178,12 @@ describe "AutomaticDictionary integration tests" do
       # Save en-US for en@en.en
       on_composer(to: 'en@en.en', subject: 'A subject') do
         change_spellchecker_language('eng')
-        sleep 0.5
-        interactor.text_position!('Saved en-US as default')
+        interactor.wait_for_text('Saved en-US as default')
       end
 
       # Remember es-ES
       on_composer(to:'es@es.es') do
-        sleep 1
-        interactor.text_position!('Remembered es-ES')
+        interactor.wait_for_text('Remembered es-ES')
       end
 
     rescue => e
