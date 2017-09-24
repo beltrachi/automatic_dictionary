@@ -3,7 +3,7 @@ require 'benchmark'
 module Interactor
   module Shared
     def run(command)
-      puts command
+      puts "#{Time.now} - #{command}"
       out = nil
       delta = Benchmark.realtime do
         out = `#{command}`

@@ -1,6 +1,7 @@
 require 'interactor/shared'
 require 'tempfile'
 require 'rtesseract'
+require 'benchmark'
 
 module Interactor
   module Reader
@@ -10,14 +11,27 @@ module Interactor
       attr_accessor :screenshot
 
       def text_position(text, attempt = 0)
-        position_of(text, readed_words(attempt))
+        log_performance('text_position') do
+          position_of(text, readed_words(attempt))
+        end
       end
 
       def words(attempt = 0)
-        readed_words(attempt).map(&:word)
+        log_performance('words') do
+          readed_words(attempt).map(&:word)
+        end
       end
 
       private
+
+      def log_performance(title)
+        out = nil
+        delta = Benchmark.realtime do
+          out = yield
+        end
+        puts "Performance of #{title}: #{delta}"
+        out
+      end
 
       class Word
         attr_accessor :word, :x_start, :y_start, :x_end, :y_end

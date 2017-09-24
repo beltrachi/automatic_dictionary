@@ -130,6 +130,12 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Alt+c')
   end
 
+  def wait_for_label(text)
+    # Label lasts a little to appear. Let's wait a little bit.
+    sleep 2
+    interactor.wait_for_text(text)
+  end
+
   it 'works :_D' do
     begin
       sleep 5
@@ -169,7 +175,7 @@ describe "AutomaticDictionary integration tests" do
         # Open a window without closing the other
         on_composer(to: 'es@es.es', subject:'Un asunto') do
           change_spellchecker_language('spa')
-          interactor.wait_for_text('Saved es-ES as default')
+          wait_for_label('Saved es-ES as default')
         end
       end
       # TODO: have a fake smtp/pop server to send
@@ -178,12 +184,12 @@ describe "AutomaticDictionary integration tests" do
       # Save en-US for en@en.en
       on_composer(to: 'en@en.en', subject: 'A subject') do
         change_spellchecker_language('eng')
-        interactor.wait_for_text('Saved en-US as default')
+        wait_for_label('Saved en-US as default')
       end
 
       # Remember es-ES
       on_composer(to:'es@es.es') do
-        interactor.wait_for_text('Remembered es-ES')
+        wait_for_label('Remembered es-ES')
       end
 
     rescue => e

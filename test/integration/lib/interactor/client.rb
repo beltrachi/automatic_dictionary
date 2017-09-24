@@ -57,12 +57,15 @@ module Interactor
     private
 
     def sleep_if_faster_than(desired_delta)
-      start = Time.now
+      start = Time.now.to_f
 
       out = yield
 
-      delta = (Time.now - start) - desired_delta
-      sleep(delta) if delta > 0
+      delta = desired_delta - (Time.now.to_f - start)
+      if delta > 0
+        puts "Sleeping #{delta}"
+        sleep(delta)
+      end
       out
     end
   end
