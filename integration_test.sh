@@ -5,6 +5,8 @@ set -ex
 source script/setup_test_env.sh
 source ~/.bash_profile
 
+# Set log level to debug
+sed -i 's/\s*"logLevel":.*/"logLevel":"debug",/g' chrome/content/ad.js
 cd test/integration/
 bundle install
 bundle exec rspec spec/automatic_dictionary
