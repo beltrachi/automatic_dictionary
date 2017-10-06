@@ -98,10 +98,44 @@ describe "AutomaticDictionary integration tests" do
     install_extension('automatic_dictionary.xpi', profile_path)
     install_extension(spanish_dictionary_file, profile_path)
     run("thunderbird --profile #{profile_path} --no-remote &")
+
+    sleep 5
+
+    # Escape any wizard on start
+    5.times do
+      interactor.hit_key('Escape')
+    end
+    # Focus on the account
+    interactor.click_on_text('test@mail.com')
+
+    sleep 1
+
+    enable_plugins
   end
 
   after do
     run("pkill thunderbird")
+  end
+
+  def enable_plugins
+    # Enable plugins
+    interactor.hit_key('Alt+t a', clear_modifiers: false)
+    sleep 2
+
+    # Enable extension
+    interactor.click_on_text('Extensions')
+    sleep 1
+    if interactor.text_position('Enable')
+      interactor.click_on_text('Enable')
+    end
+
+    # Enable spanish
+    interactor.click_on_text('Dictionaries')
+    if interactor.text_position('Enable')
+      interactor.click_on_text('Enable')
+    end
+
+    interactor.hit_key('Control+w')
   end
 
   def on_composer(to: nil, subject: nil, body: nil)
@@ -136,38 +170,16 @@ describe "AutomaticDictionary integration tests" do
     interactor.wait_for_text(text)
   end
 
+  def log_and_fail(error)
+    filepath = interactor.create_screenshot
+    FileUploader.new.upload(filepath)
+    puts e.inspect
+    puts e.backtrace.join("\n")
+    raise e
+  end
+
   it 'works :_D' do
     begin
-      sleep 5
-
-      # Escape any wizard on start
-      5.times do
-        interactor.hit_key('Escape')
-      end
-      # Focus on the account
-      interactor.click_on_text('test@mail.com')
-
-      sleep 1
-
-      # Enable plugins
-      interactor.hit_key('Alt+t a', clear_modifiers: false)
-      sleep 2
-
-      # Enable extension
-      interactor.click_on_text('Extensions')
-      sleep 1
-      if interactor.text_position('Enable')
-        interactor.click_on_text('Enable')
-      end
-
-      # Enable spanish
-      interactor.click_on_text('Dictionaries')
-      if interactor.text_position('Enable')
-        interactor.click_on_text('Enable')
-      end
-
-      interactor.hit_key('Control+w')
-
       on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
         # Accept to collect data
         interactor.click_on_text("Don't do it")
@@ -191,15 +203,24 @@ describe "AutomaticDictionary integration tests" do
       on_composer(to:'es@es.es') do
         wait_for_label('Remembered es-ES')
       end
-
     rescue => e
-      T.log_screenshot
-      filepath = interactor.create_screenshot
-      FileUploader.new.upload(filepath)
-      puts e.inspect
-      puts e.backtrace.join("\n")
-      puts Interactor::Reader.words
-      raise e
+      log_and_fail(e)
+    end
+  end
+
+  it 'preferences window' do
+    begin
+      interactor.hit_key('Alt+t a', clear_modifiers: false)
+      sleep 2
+
+      # Enable extension
+      interactor.click_on_text('Extensions')
+      sleep 1
+      interactor.click_on_text('Preferences')
+
+      interactor.text_position!('Allow to collect statistical data:')
+    rescue => e
+      log_and_fail(e)
     end
   end
 end
