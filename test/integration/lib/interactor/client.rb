@@ -18,7 +18,7 @@ module Interactor
     def text_position(text)
       # TODO: make this method multi-attempt to not
       # capture screen 4 times (Because screen can change)
-      Reader.text_position(text)
+      Reader.new.text_position(text)
     end
 
     def text_position!(text)
@@ -42,7 +42,8 @@ module Interactor
       puts ">>> wait for text #{text}"
       retries.times do |attempt|
         sleep_if_faster_than(delay) do
-          position = Reader.text_position(text, attempt)
+          ratio = 4 + attempt * 2
+          position = Reader.new(resize_ratio: ratio).text_position(text, attempt)
           return position if position
         end
       end
