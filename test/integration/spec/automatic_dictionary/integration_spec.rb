@@ -201,6 +201,13 @@ describe "AutomaticDictionary integration tests" do
       on_composer(to:'es@es.es') do
         wait_for_label('Remembered es-ES')
       end
+
+      # Test when recipients are too much
+      recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
+      on_composer(to: recipients) do
+        change_spellchecker_language('eng')
+        wait_for_label('Discarded to save language preferences as there are too much recipients.')
+      end
     rescue => e
       log_and_fail(e)
     end
