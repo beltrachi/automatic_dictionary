@@ -170,10 +170,10 @@ describe "AutomaticDictionary integration tests" do
 
   def log_and_fail(error)
     filepath = interactor.create_screenshot
-    FileUploader.new.upload(filepath)
-    puts e.inspect
-    puts e.backtrace.join("\n")
-    raise e
+    FileUploader.new.upload(filepath) rescue nil # Not upload when offline
+    puts error.inspect
+    puts error.backtrace.join("\n")
+    raise error
   end
 
   it 'works :_D' do
