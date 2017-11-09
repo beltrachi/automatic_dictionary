@@ -54,7 +54,6 @@ describe "AutomaticDictionary integration tests" do
   let(:profile_path) { Dir.mktmpdir }
 
   def run(command)
-#    command = "cd #{root} ; #{command}"
     puts command
     system(command)
   end
@@ -87,7 +86,6 @@ describe "AutomaticDictionary integration tests" do
 
   before do
     # Update build to lastest
-    puts "FOOOOOOOOOOO" * 10
     run("cd #{root} ; build.sh")
     run("ls #{spanish_dictionary_path} || "\
         " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_path}")
