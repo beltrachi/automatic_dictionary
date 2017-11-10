@@ -1,24 +1,6 @@
 require 'interactor'
-require 'net/http/post/multipart'
 require 'json'
-
-class FileUploader
-  def upload(filepath)
-    url = URI.parse('http://uploads.im/api')
-    File.open(filepath) do |jpg|
-      req = Net::HTTP::Post::Multipart.new(
-        url.path,
-        "upload" => UploadIO.new(jpg, "image/jpeg", "image.jpg")
-      )
-      res = Net::HTTP.start(url.host, url.port) do |http|
-        http.request(req)
-      end
-      puts 'Uploaded screenshot: ' +
-           JSON.parse(res.body)['data']['img_url'].gsub('\/', '/')
-      res
-    end
-  end
-end
+require 'image_uploader'
 
 class T
   class << self
@@ -170,7 +152,7 @@ describe "AutomaticDictionary integration tests" do
 
   def log_and_fail(error)
     filepath = interactor.create_screenshot
-    FileUploader.new.upload(filepath) rescue nil # Not upload when offline
+    ImageUploader.new.upload(filepath) rescue nil # Not upload when offline
     puts error.inspect
     puts error.backtrace.join("\n")
     raise error
