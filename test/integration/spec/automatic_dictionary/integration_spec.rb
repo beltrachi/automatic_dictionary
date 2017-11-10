@@ -86,7 +86,7 @@ describe "AutomaticDictionary integration tests" do
 
   before do
     # Update build to lastest
-    run("cd #{root} ; build.sh")
+    run("cd #{root} ; ./build.sh")
     run("ls #{spanish_dictionary_path} || "\
         " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_path}")
   end

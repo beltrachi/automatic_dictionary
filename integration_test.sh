@@ -1,8 +1,8 @@
 #!/bin/bash
-# This script executes thunderbird installing the extension and runs it.
 
 set -ex
 source script/setup_test_env.sh
+# load profile for rbenv to work
 source ~/.bash_profile
 
 # Set log level to debug
