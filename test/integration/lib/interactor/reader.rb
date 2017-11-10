@@ -80,7 +80,7 @@ module Interactor
       high_contrast = '-level %50' if attempt > 1
       tmp="#{Tempfile.new('for-tesseract').path}.jpg"
       run("convert #{file} -quality 99% -colorspace Gray "\
-          "-resize #{resize_ratio * 100}% #{negate} #{high_contrast}"\
+          " #{negate} #{high_contrast} -resize #{resize_ratio * 100}%"\
           " #{tmp}")
       tmp
     end
