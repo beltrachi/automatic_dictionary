@@ -11,13 +11,6 @@ module Interactor
         run('xdotool click 1')
         sleep 2
       end
-
-      private
-
-      def window_id
-        window = run('xdotool getmouselocation --shell | grep WINDOW').strip
-        window.split('=').last
-      end
     end
   end
 end
