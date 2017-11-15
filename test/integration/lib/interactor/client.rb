@@ -43,7 +43,7 @@ module Interactor
       retries.times do |attempt|
         sleep_if_faster_than(delay) do
           ratio = 4 + attempt * 2
-          position = Reader.new(resize_ratio: ratio).text_position(text, attempt)
+          position = Reader.new(resize_ratio: ratio).text_position(text)
           return position if position
         end
       end

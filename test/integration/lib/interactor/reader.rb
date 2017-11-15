@@ -15,15 +15,15 @@ module Interactor
       self.logger = Logger.new('log/reader.log')
     end
 
-    def text_position(text, attempt = 0)
+    def text_position(text)
       log_performance('text_position') do
-        position_of(text, readed_words(attempt))
+        position_of(text, readed_words)
       end
     end
 
-    def words(attempt = 0)
+    def words
       log_performance('words') do
-        readed_words(attempt).map(&:word)
+        readed_words.map(&:word)
       end
     end
 
@@ -66,21 +66,19 @@ module Interactor
       @screenshot || Interactor::Snapshooter.create_screenshot
     end
 
-    def readed_words(attempt = 0)
+    def readed_words
       file = screenshot
-      file = prepare_image_to_read(file, attempt)
+      file = prepare_image_to_read(file)
       words = RTesseract::Box.new(file, lang: 'eng').words
       words.map!{|word| Word.new(word) }
       logger.debug("Words: #{words}")
       words
     end
 
-    def prepare_image_to_read(file, attempt = 0)
-      negate = '-negate' if attempt % 2 == 1
-      high_contrast = '-level %50' if attempt > 1
+    def prepare_image_to_read(file)
       tmp="#{Tempfile.new('for-tesseract').path}.jpg"
       run("convert #{file} -quality 99% -colorspace Gray "\
-          " #{negate} #{high_contrast} -resize #{resize_ratio * 100}%"\
+          " -resize #{resize_ratio * 100}%"\
           " #{tmp}")
       tmp
     end
