@@ -11,5 +11,9 @@ module Interactor
       puts "### Command executed in #{delta}" if delta > 1.0
       out
     end
+
+    def logger
+      @logger ||= Logger.new(STDOUT)
+    end
   end
 end

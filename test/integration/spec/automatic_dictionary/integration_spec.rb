@@ -2,25 +2,6 @@ require 'interactor'
 require 'json'
 require 'image_uploader'
 
-class T
-  class << self
-    def root
-      File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
-    end
-
-    def local_tmp
-      File.join(root, 'tmp')
-    end
-
-    def log_screenshot(img = nil)
-      `mkdir -p #{local_tmp}`
-      img ||= Interactor.client.create_screenshot
-      `cp  #{img} #{File.join(local_tmp, File.basename(img))} `
-    end
-  end
-end
-`rm -rf #{T.local_tmp}/*`
-
 describe "AutomaticDictionary integration tests" do
   # Counting on:
   # - the DISPLAY is where the app is running
