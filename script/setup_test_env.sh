@@ -2,7 +2,7 @@
 
 set -ex
 
-if [ "$DEBUG" = true ]; then
+if [ "$LOCAL_DEBUG" == "1" ]; then
     Xephyr -ac -screen 1280x960x24 :99 &
 else
     Xvfb :99 -screen 0 1280x960x24 &

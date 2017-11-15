@@ -3,7 +3,7 @@
 set -ex
 
 sudo apt-get update
-sudo apt-get install -y xvfb thunderbird zip unzip fluxbox
+sudo apt-get install -y xvfb thunderbird zip unzip fluxbox xserver-xephyr
 sudo apt-get install -y imagemagick libmagickwand-dev xvfb unzip imagemagick xdotool tesseract-ocr
 
 sudo apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev openjdk-8-jre-headless
