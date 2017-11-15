@@ -163,14 +163,17 @@ describe "AutomaticDictionary integration tests" do
       attempts = 3
       begin
         interactor.click_on_text('Preferences')
-        sleep 1
+        sleep 5
         interactor.wait_for_text('Allow to collect statistical data:')
       rescue => e
         # Some times clicking on preferences button does not work so we have to
         # click twice. Don't know why a button would not react to a click.
         # TODO: investigate why this happens.
-        puts "Retrying from error #{e}"
-        retry if (attempts -= 1) > 0
+        if (attempts -= 1) > 0
+          puts "Retrying from error #{e}"
+          retry
+        end
+        raise
       end
     rescue => e
       log_and_fail(e)
