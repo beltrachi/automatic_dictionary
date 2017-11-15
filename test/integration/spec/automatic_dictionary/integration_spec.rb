@@ -69,33 +69,10 @@ describe "AutomaticDictionary integration tests" do
     interactor.click_on_text('test@mail.com')
 
     sleep 1
-
-    enable_plugins
   end
 
   after do
     run("pkill thunderbird")
-  end
-
-  def enable_plugins
-    # Enable plugins
-    interactor.hit_key('Alt+t a', clear_modifiers: false)
-    sleep 2
-
-    # Enable extension
-    interactor.click_on_text('Extensions')
-    sleep 1
-    if interactor.text_position('Enable')
-      interactor.click_on_text('Enable')
-    end
-
-    # Enable spanish
-    interactor.click_on_text('Dictionaries')
-    if interactor.text_position('Enable')
-      interactor.click_on_text('Enable')
-    end
-
-    interactor.hit_key('Control+w')
   end
 
   def on_composer(to: nil, subject: nil, body: nil)
