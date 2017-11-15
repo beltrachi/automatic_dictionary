@@ -4,21 +4,20 @@ require 'image_uploader'
 
 describe "AutomaticDictionary integration tests" do
   # Counting on:
-  # - the DISPLAY is where the app is running
-  # - It has the focus
+  # - the DISPLAY env var is a valid X server
   # - The application language is english.
 
   # Target:
-  # - Test that it gets installed correctly
+  # - Test that it gets installed correctly.
   # - We can compose.
   # - It remembers languages.
-  # - Preferences window works correctly.
+  # - Preferences window shows correctly.
 
   let(:profile_path) { Dir.mktmpdir }
 
   def run(command)
-    puts command
-    system(command)
+    puts command if ENV['DEBUG']
+    system(command) || raise("Command failed: #{command}")
   end
 
   def prepare_profile(path)
