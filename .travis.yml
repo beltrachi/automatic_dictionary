@@ -9,3 +9,7 @@ addons:
 script:
   - ./test.sh
   - ./script/docker_integration_test.sh
+
+env:
+  - THUNDERBIRD_VERSION=beta
+  - THUNDERBIRD_VERSION=stable

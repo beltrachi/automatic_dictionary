@@ -1,5 +1,6 @@
 FROM ubuntu:16.04
 
+ARG THUNDERBIRD_VERSION=stable
 # Container to run functional tests of the extension.
 
 # Configure locale as utf to avoid encoding issues

@@ -3,8 +3,22 @@
 set -ex
 
 sudo apt-get update
-sudo apt-get install -y xvfb thunderbird zip unzip fluxbox xserver-xephyr
+sudo apt-get install -y xvfb zip unzip fluxbox xserver-xephyr
 sudo apt-get install -y imagemagick libmagickwand-dev xvfb unzip imagemagick xdotool tesseract-ocr
+
+if [ "$THUNDERBIRD_VERSION" == "" ] || [ "$THUNDERBIRD_VERSION" == "stable" ]; then
+    sudo apt-get install -y thunderbird
+else
+    if [ "$THUNDERBIRD_VERSION" == "beta" ]; then
+        sudo apt-get install -y software-properties-common python-software-properties
+        sudo add-apt-repository -y ppa:mozillateam/thunderbird-next
+        sudo apt-get update
+        sudo apt-get install -y thunderbird
+    else
+        echo "Something happened, the version is not there"
+        exit 12
+    fi
+fi
 
 sudo apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev openjdk-8-jre-headless
 
