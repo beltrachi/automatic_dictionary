@@ -12,7 +12,7 @@ module Interactor
 
     def initialize(options = {})
       self.resize_ratio = options[:resize_ratio] || 4
-      self.logger = Logger.new('log/reader.log')
+      self.logger = Logger.new(logger_file)
     end
 
     def text_position(text)
@@ -36,6 +36,10 @@ module Interactor
       end
       puts "Performance of #{title}: #{delta}"
       out
+    end
+
+    def logger_file
+      @logger_file ||= File.join(log_dir, 'reader.log')
     end
 
     class Word
