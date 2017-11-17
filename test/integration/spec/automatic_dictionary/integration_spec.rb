@@ -32,6 +32,15 @@ describe "AutomaticDictionary integration tests" do
     run(install)
   end
 
+  around do |example|
+    begin
+      example.run
+    rescue => e
+      # Report any error and current screenshot
+      log_and_fail(e)
+    end
+  end
+
   let(:root) do
     File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', '..'))
   end
@@ -116,67 +125,59 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'works :_D' do
-    begin
-      on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
-        # Accept to collect data
-        interactor.click_on_text("Don't do it")
+    on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
+      # Accept to collect data
+      interactor.click_on_text("Don't do it")
 
-        # Open a window without closing the other
-        on_composer(to: 'es@es.es', subject:'Un asunto') do
-          change_spellchecker_language('spa')
-          wait_for_label('Saved es-ES as default')
-        end
+      # Open a window without closing the other
+      on_composer(to: 'es@es.es', subject:'Un asunto') do
+        change_spellchecker_language('spa')
+        wait_for_label('Saved es-ES as default')
       end
-      # TODO: have a fake smtp/pop server to send
-      # emails.
+    end
+    # TODO: have a fake smtp/pop server to send
+    # emails.
 
-      # Save en-US for en@en.en
-      on_composer(to: 'en@en.en', subject: 'A subject') do
-        change_spellchecker_language('eng')
-        wait_for_label('Saved en-US as default')
-      end
+    # Save en-US for en@en.en
+    on_composer(to: 'en@en.en', subject: 'A subject') do
+      change_spellchecker_language('eng')
+      wait_for_label('Saved en-US as default')
+    end
 
-      # Remember es-ES
-      on_composer(to:'es@es.es') do
-        wait_for_label('Remembered es-ES')
-      end
+    # Remember es-ES
+    on_composer(to:'es@es.es') do
+      wait_for_label('Remembered es-ES')
+    end
 
-      # Test when recipients are too much
-      recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
-      on_composer(to: recipients) do
-        change_spellchecker_language('eng')
-        wait_for_label('Discarded to save language preferences as there are too much recipients.')
-      end
-    rescue => e
-      log_and_fail(e)
+    # Test when recipients are too much
+    recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
+    on_composer(to: recipients) do
+      change_spellchecker_language('eng')
+      wait_for_label('Discarded to save language preferences as there are too much recipients.')
     end
   end
 
   it 'preferences window' do
-    begin
-      interactor.hit_key('Alt+t a', clear_modifiers: false)
-      sleep 2
+    interactor.hit_key('Alt+t a', clear_modifiers: false)
+    sleep 2
 
-      # Enable extension
-      interactor.click_on_text('Extensions')
-      sleep 1
-      attempts = 3
-      begin
-        interactor.click_on_text('Preferences')
-        sleep 5
-        interactor.wait_for_text('Allow to collect statistical data:')
-      rescue => e
-        # Some times clicking on preferences button does not work so we have to
-        # click twice. Don't know why a button would not react to a click.
-        # TODO: investigate why this happens.
-        if (attempts -= 1) > 0
-          puts "Retrying from error #{e}"
-          retry
-        end
-        raise
-      end
+    # Enable extension
+    interactor.click_on_text('Extensions')
+    sleep 1
+    attempts = 3
+    begin
+      interactor.click_on_text('Preferences')
+      sleep 5
+      interactor.wait_for_text('Allow to collect statistical data:')
     rescue => e
-      log_and_fail(e)
+      # Some times clicking on preferences button does not work so we have to
+      # click twice. Don't know why a button would not react to a click.
+      # TODO: investigate why this happens.
+      if (attempts -= 1) > 0
+        puts "Retrying from error #{e}"
+        retry
+      end
+      raise
     end
   end
 end
