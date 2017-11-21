@@ -8,7 +8,7 @@ AutomaticDictionary.Lib.FileWriter.prototype = {
     closed: true,
     initialize: function(file){
         this.file = Components.classes["@mozilla.org/file/local;1"].
-            createInstance(Components.interfaces.nsILocalFile);
+            createInstance(Components.interfaces.nsIFile);
         this.file.initWithPath(file);
         if( !this.file.exists() ){
             this.file.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
