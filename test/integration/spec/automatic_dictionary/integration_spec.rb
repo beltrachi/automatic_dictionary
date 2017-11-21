@@ -75,7 +75,11 @@ describe "AutomaticDictionary integration tests" do
       interactor.hit_key('Escape')
     end
     # Focus on the account
-    interactor.click_on_text('test@mail.com')
+    begin
+      interactor.click_on_text('test@mail.com')
+    rescue
+      puts "Can't click on test@mail.com, let's see if we can go on"
+    end
 
     sleep 1
   end
