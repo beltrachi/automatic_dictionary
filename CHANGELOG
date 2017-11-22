@@ -1,3 +1,11 @@
+=== 1.10.2
+
+* Fix support for Thunderbird 57.x
+* Fix thunderbird version detection
+* Fix defaults setup migrations on upgrade
+* Use document lang attribute to detect current language
+* Skip language detection when is triggered by us
+
 === 1.10.1
 
 * Fix support for Thunderbird 56.x
