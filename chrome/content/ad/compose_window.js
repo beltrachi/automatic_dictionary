@@ -73,6 +73,14 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
                 _this.logger.debug("[event] compose window reopen");
                 _this.ad.start();
             }, false);
+            this.setListener( window, 'compose-window-init', function(){
+                _this.logger.debug("[event] compose window init");
+                _this.ad.start();
+                // Deduce language in case its composing a reply.
+                _this.waitAnd(function(){
+                    _this.ad.deduceLanguage();
+                });
+            }, true);
             //Observe when the dict changes
             this.setListener( window.document.getElementById("languageMenuList"),"command",
                 function(event){
@@ -89,7 +97,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
             var langObserver = new window.MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.type == "attributes" && mutation.attributeName == "lang") {
-                        _this.logger.debug("Mutation received");
+                        _this.logger.debug("Lang attr mutation received");
                         _this.ad.languageChanged();
                     }
                 });
