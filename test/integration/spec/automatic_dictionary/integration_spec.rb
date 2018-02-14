@@ -39,6 +39,7 @@ describe "AutomaticDictionary integration tests" do
     rescue => e
       # Report any error and current screenshot
       log_and_fail(e)
+      raise e
     end
   end
 
@@ -117,7 +118,7 @@ describe "AutomaticDictionary integration tests" do
 
   def wait_for_label(text)
     # Label lasts a little to appear. Let's wait a little bit.
-    sleep 2
+    sleep 1
     interactor.wait_for_text(text)
   end
 
@@ -140,13 +141,9 @@ describe "AutomaticDictionary integration tests" do
         wait_for_label('Saved es-ES as default')
       end
     end
-    # TODO: have a fake smtp/pop server to send
-    # emails.
 
-    # Save en-US for en@en.en
-    on_composer(to: 'en@en.en', subject: 'A subject') do
-      change_spellchecker_language('eng')
-      wait_for_label('Saved en-US as default')
+    on_composer(to: 'es2@es.es', subject: 'Otro asunto') do
+      wait_for_label('Guessed es-ES')
     end
 
     # Remember es-ES
@@ -157,16 +154,16 @@ describe "AutomaticDictionary integration tests" do
     # Test when recipients are too much
     recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
     on_composer(to: recipients) do
-      change_spellchecker_language('eng')
+      change_spellchecker_language('spa')
       wait_for_label('Discarded to save language preferences as there are too much recipients.')
     end
   end
 
   it 'preferences window' do
-    interactor.hit_key('Alt+t a', clear_modifiers: false)
+    interactor.hit_key('Alt+t', clear_modifiers: false)
+    interactor.hit_key('a', clear_modifiers: false)
     sleep 2
 
-    # Enable extension
     interactor.click_on_text('Extensions')
     sleep 1
     attempts = 3
