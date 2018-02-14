@@ -73,7 +73,7 @@ module Interactor
     def readed_words
       file = screenshot
       file = prepare_image_to_read(file)
-      words = RTesseract::Box.new(file, lang: 'eng').words
+      words = RTesseract::Box.new(file, lang: 'eng', processor: "none").words
       words.map!{|word| Word.new(word) }
       logger.debug("Words: #{words}")
       words
