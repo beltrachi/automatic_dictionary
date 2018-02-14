@@ -67,7 +67,7 @@ module Interactor
     end
 
     def screenshot
-      @screenshot || Interactor::Snapshooter.create_screenshot
+      @screenshot ||= Interactor::Snapshooter.create_screenshot
     end
 
     def readed_words

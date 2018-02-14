@@ -38,13 +38,22 @@ module Interactor
       KeyboardHitter.hit_key(*args)
     end
 
-    def wait_for_text(text, screen_file: nil)
+    def wait_for_text(text)
       puts ">>> wait for text #{text}"
+      reader = Reader.new
       retries.times do |attempt|
         sleep_if_faster_than(delay) do
-          ratio = 4 + attempt * 2
-          position = Reader.new(resize_ratio: ratio).text_position(text)
-          return position if position
+          # As reader can take up to 40s, to read a screen, we can't
+          # capture the screen shot on each retry because that can be
+          # too late. Best way would be to reuse the same reader while
+          # increasing size. (Reader memoizes the screenshot)
+          # FIXME: BUT THEN IT'S NOT WAIT FOR TEXT ANY MORE!
+          reader.resize_ratio = 4 + attempt * 2
+          position = reader.text_position(text)
+          if position
+            puts "Position found for #{text} at attempt number #{attempt}"
+            return position
+          end
         end
       end
       fail TextNotFound.new("Text '#{text}' not found")
