@@ -8,9 +8,7 @@ module Interactor
       include Shared
 
       def create_screenshot
-        file=Tempfile.new('screenshot').path
-        file="#{file}.jpg"
-
+        file = tmp_file.path
         # Note: we are using jpg because imagemagick png can last as much as 12s
         # when converting images. Jpg is 1s. Increased quality be less lossy.
         run("import -window root -quality 99% #{file}")
@@ -35,6 +33,11 @@ module Interactor
         target_path = File.join(local_tmp, File.basename(img))
         FileUtils.cp(img, target_path)
         logger.info("Copied screenshot to #{target_path}")
+      end
+
+      def tmp_file
+        timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
+        Tempfile.new(["screenshot-#{timestamp}",'.jpg'])
       end
     end
   end
