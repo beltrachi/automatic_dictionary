@@ -1,12 +1,12 @@
+# Container to run functional tests of the extension.
 FROM ubuntu:16.04
 
+# Configurable container argument
 ARG THUNDERBIRD_VERSION=stable
-# Container to run functional tests of the extension.
 
 # Configure locale as utf to avoid encoding issues
 RUN apt-get update
 RUN apt-get install -y sudo
-
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
