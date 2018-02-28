@@ -12,14 +12,3 @@ sleep 1
 # Start window manager to focus window correctly.
 fluxbox &
 sleep 1
-
-ls greenmail-standalone-1.5.5.jar || \
-    curl http://central.maven.org/maven2/com/icegreen/greenmail-standalone/1.5.5/greenmail-standalone-1.5.5.jar -o greenmail-standalone-1.5.5.jar
-
-#sudo echo "127.0.0.1   mail.com mail.mail.com smtp.mail.com" >> /etc/hosts
-
-# java -Dgreenmail.setup.test.all \
-#      -Dgreenmail.users=test:testtest@mail.com \
-#      -jar greenmail-standalone-1.5.5.jar &
-
-# sleep 10
