@@ -1,7 +1,5 @@
 require 'interactor'
-require 'json'
 require 'image_uploader'
-require 'memory_profiler'
 
 describe "AutomaticDictionary integration tests" do
   # Counting on:
