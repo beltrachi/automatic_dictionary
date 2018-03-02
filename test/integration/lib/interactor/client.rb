@@ -16,8 +16,6 @@ module Interactor
     end
 
     def text_position(text)
-      # TODO: make this method multi-attempt to not
-      # capture screen 4 times (Because screen can change)
       Reader.new.text_position(text)
     end
 
