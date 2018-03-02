@@ -10,6 +10,7 @@ describe "AutomaticDictionary integration tests" do
   # - Test that it gets installed correctly.
   # - We can compose.
   # - It remembers languages.
+  # - It deduces langauge based on domain.
   # - Preferences window shows correctly.
 
   let(:profile_path) { Dir.mktmpdir }
