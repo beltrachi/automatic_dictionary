@@ -15,9 +15,15 @@ describe "AutomaticDictionary integration tests" do
   # - Preferences window shows correctly.
 
   let(:profile_path) { Dir.mktmpdir }
+  let(:logger) do
+    puts "DEBUG IS #{ENV['DEBUG']}"
+    Logger.new(STDOUT).tap do |logger|
+      logger.level = Logger::ERROR unless ENV['DEBUG']
+    end
+  end
 
   def run(command)
-    puts command if ENV['DEBUG']
+    logger.debug(command)
     system(command) || raise("Command failed: #{command}")
   end
 
@@ -80,7 +86,7 @@ describe "AutomaticDictionary integration tests" do
     begin
       interactor.click_on_text('test@mail.com')
     rescue
-      puts "Can't click on test@mail.com, let's see if we can go on"
+      logger.error("Can't click on test@mail.com, let's see if we can go on")
     end
 
     sleep 1
@@ -125,8 +131,8 @@ describe "AutomaticDictionary integration tests" do
   def log_and_fail(error)
     filepath = interactor.create_screenshot
     ImageUploader.new.upload(filepath) rescue nil # Not upload when offline
-    puts error.inspect
-    puts error.backtrace.join("\n")
+    logger.error(error.inspect)
+    logger.error(error.backtrace.join("\n"))
     raise error
   end
 
@@ -176,7 +182,7 @@ describe "AutomaticDictionary integration tests" do
       # click twice. Don't know why a button would not react to a click.
       # TODO: investigate why this happens.
       if (attempts -= 1) > 0
-        puts "Retrying from error #{e}"
+        logger.warn("Retrying from error #{e}")
         retry
       end
       raise

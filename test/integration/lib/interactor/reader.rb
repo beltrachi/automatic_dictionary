@@ -8,11 +8,10 @@ module Interactor
   class Reader
     include Shared
 
-    attr_accessor :screenshot, :resize_ratio, :logger
+    attr_accessor :screenshot, :resize_ratio
 
     def initialize(options = {})
       self.resize_ratio = options[:resize_ratio] || 4
-      self.logger = Logger.new(logger_file)
     end
 
     def text_position(text)
@@ -34,12 +33,8 @@ module Interactor
       delta = Benchmark.realtime do
         out = yield
       end
-      puts "Performance of #{title}: #{delta}"
+      logger.debug("Performance of #{title}: #{delta}")
       out
-    end
-
-    def logger_file
-      @logger_file ||= File.join(log_dir, 'reader.log')
     end
 
     class Word
@@ -93,7 +88,7 @@ module Interactor
       target_words = text.split(/\s/)
       found_words = find_words(target_words, readed_words)
       return unless found_words.first
-      puts found_words.first.inspect
+      logger.debug("Words found: #{found_words.first.inspect}")
       fix_ratio(found_words.first.reduce(:+).center)
     end
 

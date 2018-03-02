@@ -3,17 +3,17 @@ require 'benchmark'
 module Interactor
   module Shared
     def run(command)
-      puts "#{Time.now} - #{command}"
+      logger.info("Executing command #{command}")
       out = nil
       delta = Benchmark.realtime do
         out = `#{command}`
       end
-      puts "### Command executed in #{delta}" if delta > 1.0
+      logger.debug("Command executed in #{delta}")
       out
     end
 
     def logger
-      @logger ||= Logger.new(STDOUT)
+      Interactor.logger
     end
 
     def log_dir

@@ -6,6 +6,7 @@ require 'interactor/keyboard_hitter'
 module Interactor
   class Client
     class TextNotFound < StandardError; end
+    include Interactor::Shared
 
     attr_accessor :retries, :delay, :hit_delay
 
@@ -37,7 +38,7 @@ module Interactor
     end
 
     def wait_for_text(text)
-      puts ">>> wait for text #{text}"
+      logger.info "wait_for_text #{text}"
       reader = Reader.new
       retries.times do |attempt|
         sleep_if_faster_than(delay) do
@@ -49,7 +50,7 @@ module Interactor
           reader.resize_ratio = 4 + attempt * 2
           position = reader.text_position(text)
           if position
-            puts "Position found for #{text} at attempt number #{attempt}"
+            logger.info "Position found for #{text} at attempt number #{attempt}"
             return position
           end
         end
@@ -71,7 +72,7 @@ module Interactor
 
       delta = desired_delta - (Time.now.to_f - start)
       if delta > 0
-        puts "Sleeping #{delta}"
+        logger.debug("Sleeping #{delta} because faster than #{desired_delta}")
         sleep(delta)
       end
       out

@@ -1,15 +1,25 @@
 require 'interactor/client'
 
 module Interactor
-  def self.client(opts = {})
-    Interactor::Client.new(opts)
-  end
+  class << self
+    attr_reader :logger
 
-  def self.root
-    File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
-  end
+    def client(opts = {})
+      Interactor::Client.new(opts)
+    end
 
-  def self.debug?
-    ENV['DEBUG'] == "1"
+    def root
+      File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+    end
+
+    def debug?
+      ENV['DEBUG'] == "1"
+    end
+
+    def logger
+      @logger ||= Logger.new(STDOUT).tap do |logger|
+        logger.level = Logger::INFO unless ENV['DEBUG']
+      end
+    end
   end
 end

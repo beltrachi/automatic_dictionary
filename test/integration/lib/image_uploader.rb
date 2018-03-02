@@ -13,12 +13,14 @@ class ImageUploader
         url.path,
         "upload" => UploadIO.new(jpg, "image/jpeg", "image.jpg")
       )
-      res = Net::HTTP.start(url.host, url.port) do |http|
+      response = Net::HTTP.start(url.host, url.port) do |http|
         http.request(req)
       end
-      puts 'Uploaded screenshot: ' +
-           JSON.parse(res.body)['data']['img_url'].gsub('\/', '/')
-      res
+      logger.info(
+        'Uploaded screenshot: ' +
+        JSON.parse(response.body)['data']['img_url'].gsub('\/', '/')
+      )
+      response
     end
   end
 end
