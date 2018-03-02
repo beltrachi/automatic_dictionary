@@ -1,3 +1,0 @@
-require 'bundler'
-require 'rtesseract'
-
