@@ -1,3 +1,7 @@
+=== 1.10.3
+
+* Detect compose window init to deduce lang (issue #31)
+
 === 1.10.2
 
 * Fix support for Thunderbird 57.x
