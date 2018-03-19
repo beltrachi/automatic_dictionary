@@ -11,7 +11,7 @@ module Interactor
     attr_accessor :retries, :delay, :hit_delay
 
     def initialize(options = {})
-      self.retries = options.fetch(:retries, 5)
+      self.retries = options.fetch(:retries, 2)
       self.delay = options.fetch(:delay, 1)
       self.hit_delay = options.fetch(:hit_delay, 0.2)
     end
@@ -40,7 +40,7 @@ module Interactor
     def wait_for_text(text)
       logger.info "wait_for_text #{text}"
       reader = Reader.new
-      retries.times do |attempt|
+      (1 + retries).times do |attempt|
         sleep_if_faster_than(delay) do
           # As reader can take up to 40s, to read a screen, we can't
           # capture the screen shot on each retry because that can be
