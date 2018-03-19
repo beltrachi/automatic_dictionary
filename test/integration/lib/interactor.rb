@@ -1,4 +1,5 @@
 require 'interactor/client'
+require 'logger'
 
 module Interactor
   class << self
