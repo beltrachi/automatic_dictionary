@@ -40,8 +40,8 @@ describe Interactor do
     let(:position) { [100,200] }
     let(:text) { 'foo' }
     before do
-      expect(Interactor::Reader).to receive(:text_position).with(text)
-        .and_return(position)
+      expect_any_instance_of(Interactor::Reader).to receive(:text_position)
+        .with(text).and_return(position)
     end
 
     # TODO: find a way to test that it actually works. Now it only calls
