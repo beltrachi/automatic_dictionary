@@ -81,11 +81,24 @@ describe "AutomaticDictionary integration tests" do
     5.times do
       interactor.hit_key('Escape')
     end
+
     # Focus on the account
     begin
       interactor.click_on_text('test@mail.com')
     rescue
       logger.error("Can't click on test@mail.com, let's see if we can go on")
+    end
+
+    begin
+      # Enable plugins on Thunderbird 60 and below
+      2.times do
+        interactor.click_on_text('Install Add-on')
+        interactor.click_on_text('Allow this installation')
+        interactor.click_on_text('Continue')
+        sleep 1
+      end
+    rescue => e
+      logger.error("Failed to enable plugins: #{e}")
     end
 
     sleep 1
