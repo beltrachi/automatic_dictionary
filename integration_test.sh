@@ -10,3 +10,4 @@ sed -i 's/\s*"logLevel":.*/"logLevel":"debug",/g' chrome/content/ad.js
 cd test/integration/
 bundle install
 bundle exec rspec spec/automatic_dictionary
+bundle exec rspec spec/lib
