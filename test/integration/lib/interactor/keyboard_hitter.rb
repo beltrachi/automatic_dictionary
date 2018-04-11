@@ -8,7 +8,7 @@ module Interactor
       def hit_key(key, options = {})
         options = {clear_modifiers: true}.merge(options)
         sleep 0.5
-        clear = '-c' if options[:clear_modifiers]
+        clear = '--clearmodifiers' if options[:clear_modifiers]
         run("xdotool key #{clear} #{key}")
       end
 
