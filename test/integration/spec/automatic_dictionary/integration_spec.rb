@@ -104,7 +104,11 @@ describe "AutomaticDictionary integration tests" do
     sleep 1
   end
 
-  after do
+  after do |example|
+    if example.exception != nil && ENV['DEBUG'] == "1"
+      require 'byebug'
+      byebug
+    end
     run("pkill thunderbird")
   end
 
