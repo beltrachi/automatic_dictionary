@@ -191,26 +191,13 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    interactor.hit_key('Alt+t', clear_modifiers: false)
-    interactor.hit_key('a', clear_modifiers: false)
+    interactor.hit_key('Alt+t a')
     sleep 2
 
     interactor.click_on_text('Extensions')
     sleep 1
-    attempts = 3
-    begin
-      interactor.click_on_text('Preferences')
-      sleep 5
-      interactor.wait_for_text('Allow to collect statistical data:')
-    rescue => e
-      # Some times clicking on preferences button does not work so we have to
-      # click twice. Don't know why a button would not react to a click.
-      # TODO: investigate why this happens.
-      if (attempts -= 1) > 0
-        logger.warn("Retrying from error #{e}")
-        retry
-      end
-      raise
-    end
+    interactor.click_on_text('Preferences')
+    sleep 5
+    interactor.wait_for_text('Allow to collect statistical data:')
   end
 end
