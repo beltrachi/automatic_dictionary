@@ -82,23 +82,26 @@ describe "AutomaticDictionary integration tests" do
       interactor.hit_key('Escape')
     end
 
-    # Focus on the account
-    begin
-      interactor.click_on_text('test@mail.com')
-    rescue
-      logger.error("Can't click on test@mail.com, let's see if we can go on")
-    end
-
     begin
       # Enable plugins on Thunderbird 60 and below
       2.times do
         interactor.click_on_text('Install Add-on')
         interactor.click_on_text('Allow this installation')
-        interactor.click_on_text('Continue')
+        # Tesseract has problems reading "Continue" button, so
+        # we navigate with tab.
+        interactor.hit_key('Tab')
+        interactor.hit_key('Return')
         sleep 1
       end
     rescue => e
-      logger.error("Failed to enable plugins: #{e}")
+      logger.error("Failed to enable plugins: #{e}. Maybe TB < 60?")
+    end
+
+    # Focus on the account
+    begin
+      interactor.click_on_text('test@mail.com')
+    rescue
+      logger.error("Can't click on test@mail.com, let's see if we can go on")
     end
 
     sleep 1
