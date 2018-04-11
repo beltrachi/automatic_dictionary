@@ -122,6 +122,12 @@ describe "AutomaticDictionary integration tests" do
     # Close window without saving draft
     interactor.hit_key('Ctrl+w')
     interactor.hit_key('Alt+n')
+
+    # for TB 60
+    if interactor.current_window_title.include? "Save Message"
+      # Window did not close, lets try the "Discard" shortcut
+      interactor.hit_key('Alt+d')
+    end
   end
 
   def change_spellchecker_language(dict_name)

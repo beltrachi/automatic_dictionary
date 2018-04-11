@@ -37,6 +37,12 @@ module Interactor
       KeyboardHitter.hit_key(*args)
     end
 
+    def current_window_title
+      KeyboardHitter.current_window_title.tap do |x|
+        logger.info("Current window title is #{x}")
+      end
+    end
+
     def wait_for_text(text)
       logger.info "wait_for_text #{text}"
       reader = Reader.new

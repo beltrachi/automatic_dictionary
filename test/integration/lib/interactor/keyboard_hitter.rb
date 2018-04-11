@@ -16,6 +16,16 @@ module Interactor
         escaped_text = text.gsub("'",'\\')
         run("xdotool type -clearmodifiers '#{escaped_text}'")
       end
+
+      def current_window_title
+        run("xdotool getwindowname #{current_window_id}")
+      end
+
+      protected
+
+      def current_window_id
+        run('xdotool getactivewindow')
+      end
     end
   end
 end
