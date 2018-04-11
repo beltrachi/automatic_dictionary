@@ -67,12 +67,28 @@ describe "AutomaticDictionary integration tests" do
     run("cd #{root} ; ./build.sh")
     run("ls #{spanish_dictionary_path} || "\
         " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_path}")
-  end
 
-  before do
     prepare_profile(profile_path)
     install_extension('automatic_dictionary.xpi', profile_path)
     install_extension(spanish_dictionary_file, profile_path)
+
+    # Change interface font to be easier to read for tesseract
+    run("mkdir #{profile_path}/chrome")
+    File.open("#{profile_path}/chrome/userChrome.css", "w") do |css|
+      css.write '
+* {
+  font-family: monospace !important;
+}'
+    end
+    # Tune extensions tabs too.
+    File.open("#{profile_path}/chrome/userContent.css", "w") do |css|
+      css.write '
+* {
+  font-family: monospace !important;
+}'
+    end
+    run("touch #{log_file}")
+    run("tail -f #{log_file} &")
     run("thunderbird --profile #{profile_path} --no-remote &")
 
     sleep 5
@@ -161,7 +177,7 @@ describe "AutomaticDictionary integration tests" do
     raise error
   end
 
-  it 'works :_D' do
+  xit 'works :_D' do
     on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
       # Accept to collect data
       interactor.click_on_text("Don't do it")
