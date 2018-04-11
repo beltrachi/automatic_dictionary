@@ -103,11 +103,7 @@ describe "AutomaticDictionary integration tests" do
       2.times do
         interactor.click_on_text('Install Add-on')
         interactor.click_on_text('Allow this installation')
-        # Tesseract has problems reading "Continue" button, so
-        # we navigate with tab.
-        interactor.hit_key('Tab')
-        interactor.hit_key('Return')
-        sleep 1
+        interactor.click_on_text('Continue')
       end
     rescue => e
       logger.error("Failed to enable plugins: #{e}. Maybe TB < 60?")

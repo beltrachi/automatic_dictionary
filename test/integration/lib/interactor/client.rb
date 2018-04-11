@@ -53,7 +53,7 @@ module Interactor
           # too late. Best way would be to reuse the same reader while
           # increasing size. (Reader memoizes the screenshot)
           # FIXME: BUT THEN IT'S NOT WAIT FOR TEXT ANY MORE!
-          reader.resize_ratio = 4 + attempt * 2
+          reader.resize_ratio = 2 + attempt * 2
           position = reader.text_position(text)
           if position
             logger.info "Position found for #{text} at attempt number #{attempt}"
