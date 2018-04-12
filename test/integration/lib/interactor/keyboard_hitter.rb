@@ -6,10 +6,13 @@ module Interactor
       include Shared
 
       def hit_key(key, options = {})
-        options = {clear_modifiers: true}.merge(options)
-        sleep 0.5
+        options = {
+          clear_modifiers: true
+        }.merge(options)
         clear = '--clearmodifiers' if options[:clear_modifiers]
-        run("xdotool key #{clear} #{key}")
+        # Delay time is in miliseconds
+        delay = "--delay #{options[:delay] * 1000}" if options[:delay]
+        run("xdotool key #{clear} #{delay} #{key}")
       end
 
       def input_text(text)

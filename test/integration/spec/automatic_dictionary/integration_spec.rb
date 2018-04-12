@@ -203,7 +203,7 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    interactor.hit_key('Alt+t a')
+    interactor.hit_key('Alt+t a', delay: 0.15)
     sleep 2
 
     interactor.click_on_text('Extensions')
