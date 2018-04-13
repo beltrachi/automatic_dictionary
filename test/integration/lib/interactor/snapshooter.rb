@@ -36,8 +36,14 @@ module Interactor
       end
 
       def tmp_file
+        # We need to keep tempfile in memory to not be garbage collected.
+        # When garbage collected file gets removed. We want this to
+        # happen when ruby process ends.
+        @@tmp_files ||= []
         timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
-        Tempfile.new(["screenshot-#{timestamp}",'.jpg'])
+        Tempfile.new(["screenshot-#{timestamp}",'.jpg']).tap do |file|
+          @@tmp_files << file
+        end
       end
     end
   end

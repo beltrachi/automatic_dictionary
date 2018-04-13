@@ -120,9 +120,13 @@ describe "AutomaticDictionary integration tests" do
   end
 
   after do |example|
-    if example.exception != nil && ENV['DEBUG'] == "1"
-      require 'byebug'
-      byebug
+    if example.exception != nil
+      if ENV['DEBUG'] == "1"
+        require 'byebug'
+        byebug
+      else
+        log_and_fail(example.exception)
+      end
     end
     run("pkill thunderbird")
   end

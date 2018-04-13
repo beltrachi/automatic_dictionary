@@ -7,21 +7,18 @@ require 'net/http/post/multipart'
 # see what was on the screen then.
 class ImageUploader
   def upload(filepath)
-    url = URI.parse('http://uploads.im/api')
-    File.open(filepath) do |jpg|
-      req = Net::HTTP::Post::Multipart.new(
-        url.path,
-        "upload" => UploadIO.new(jpg, "image/jpeg", "image.jpg")
-      )
-      response = Net::HTTP.start(url.host, url.port) do |http|
-        http.request(req)
-      end
-      logger.info(
-        'Uploaded screenshot: ' +
-        JSON.parse(response.body)['data']['img_url'].gsub('\/', '/')
-      )
-      response
-    end
+    url = URI.parse('https://file.io/?expires=1w')
+    json = `curl -F "file=@#{filepath}" #{url}`
+    logger.info(
+      'Uploaded screenshot: ' +
+      JSON.parse(json)['link']
+    )
+  end
+
+  private
+
+  def logger
+    @logger ||= Logger.new(STDOUT)
   end
 end
 
