@@ -121,7 +121,7 @@ describe "AutomaticDictionary integration tests" do
 
   after do |example|
     if example.exception != nil
-      if ENV['DEBUG'] == "1"
+      if ENV['LOCAL_DEBUG'] == "1"
         require 'byebug'
         byebug
       else
