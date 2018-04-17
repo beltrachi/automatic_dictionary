@@ -61,7 +61,7 @@ describe "AutomaticDictionary integration tests" do
   end
   let(:spanish_dictionary_file) { 'spanish-dictionary.xpi' }
   let(:spanish_dictionary_path) { File.join(root, spanish_dictionary_file) }
-
+  let(:log_file) { "#{profile_path}/automatic_dictionary.log" }
   before do
     # Update build to lastest
     run("cd #{root} ; ./build.sh")
@@ -129,6 +129,7 @@ describe "AutomaticDictionary integration tests" do
       end
     end
     run("pkill thunderbird")
+    run("pkill tail")
   end
 
   def on_composer(to: nil, subject: nil, body: nil)
