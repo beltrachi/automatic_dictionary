@@ -95,6 +95,7 @@ describe "AutomaticDictionary integration tests" do
 
     # Escape any wizard on start
     5.times do
+      sleep 1
       interactor.hit_key('Escape')
     end
 
