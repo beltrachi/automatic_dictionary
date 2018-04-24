@@ -95,7 +95,7 @@ var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
 
 AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
 AutomaticDictionary.log_writer.write("Log file writer started");
-AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
+AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
     log.info(msg);
     AutomaticDictionary.log_writer.write(msg);
 });
