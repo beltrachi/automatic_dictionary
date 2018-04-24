@@ -11,7 +11,7 @@ https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switchin
 [![Build Status](https://api.travis-ci.org/beltrachi/automatic_dictionary.svg)](https://travis-ci.org/beltrachi/automatic_dictionary)
 
 ## Target
-  
+
 Users that write emails in different languages very often to the same addresses each
 time.
 
@@ -22,16 +22,16 @@ This addon will keep a record of the language you choose for the recipients of a
 It can also guess the language based on the domain of the recipients of the mail. For example, if you write to domains that go to ".es" domains, it can "learn" to switch to Spanish if you write to them in Spanish.
 
 ## Usage
-  
+
 To associate a language to a recipient:
 
 1. Go to "Compose message"
 2. Write it's address in the TO field
 3. Choose the language you want to assign
 4. There will appear a message on the status bar announcing that that language has been assigned to a recipient.
-  
+
 You can assign various recipients at once, setting them all to the language.
-  
+
 Caution, the plugin only assigns the languages to the recipients when the
 language is changed, so if the language set by default is the one you want to
 assign to the users, you'll have to change the language to any other, wait the
@@ -70,3 +70,19 @@ After that, you should disable the "Save to log file" and set Log level back to 
 * Giacomo Ciani
 * ByteHamster
 * SimonSapin
+
+## How to release a new version
+
+When we release a new version of the plugin we do:
+
+1. Merge the changes to master branch.
+2. Update install.rdf version tag with the new one (following SEMVER).
+3. Execute ./update_version.sh
+4. Update the CHANGELOG file with changes since last release.
+5. Create tag with git.
+6. Execute ./build.sh
+7. Commit all changes.
+8. Push all changes.
+9. Go to Mozilla addon page and upload new version.
+
+Then you have to wait till they approve it.
