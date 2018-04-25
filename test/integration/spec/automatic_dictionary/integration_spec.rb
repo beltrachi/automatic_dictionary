@@ -179,7 +179,7 @@ describe "AutomaticDictionary integration tests" do
     raise error
   end
 
-  xit 'works :_D' do
+  it 'works :_D' do
     on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
       # Accept to collect data
       interactor.click_on_text("Don't do it")
