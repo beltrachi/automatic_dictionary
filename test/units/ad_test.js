@@ -337,93 +337,6 @@
 
     /*
             
-         7. Test collecting statistical data on GA
-            
-    */
-    (function(){
-        test_setup();
-        var adi = ad_instance();
-        
-        //When building the ad instance, it registers the visit on compose
-        assert.equal(3,built_images.length);
-        assert.contains("compose", built_images[0].src);
-        
-        var ga_actions = [], ga_events = [];
-        adi.ga = {
-            visit:function(url){
-                ga_actions.push(url);
-            },
-            event:function(url,event_data){
-                ga_events.push([url,event_data]);
-            }
-        }
-        
-        //Prepare scenario
-        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        var labels = [];
-        adi.setCurrentLang = function(lang){ 
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-        adi.changeLabel = function(level, str){ labels.push( str );}
-        
-        adi.deduceLanguage();
-        assert.equal( 1, labels.length);
-        assert.equal( 1, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[0]);
-        //No change
-        adi.deduceLanguage();
-        logger.debug(labels);
-        assert.equal( 1, labels.length);
-        assert.equal( 1, ga_events.length);
-        
-        mock_recipients( adi, {"to":["foo"]} );
-        adi.deduceLanguage();
-        adi.deduceLanguage();
-        
-        assert.equal( 2, labels.length);
-        assert.equal( 2, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[1]);
-
-        call_language_changed( adi, "foobar");
-        
-        assert.equal( 3, labels.length);
-        assert.equal( 3, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"saved",label:"foobar"}], ga_events[2]);
-
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-        //We do not expect any new label as it has just saved it. DOnt be so noisy
-        assert.equal( 3, labels.length);
-        assert.equal( 3, ga_events.length);
-
-        //Register when sent
-        adi.notifyMailSent();
-        assert.equal( 4, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"mail",action:"sent"}], ga_events[3]);
-        
-        
-        ///////   Disable tracking
-        
-        Components.savedPrefs[adi.pref_prefix + adi.ALLOW_COLLECT_KEY] = false;
-        
-        mock_recipients( adi, {"to":["unknown"]} );
-        adi.deduceLanguage();
-        
-        //No new tracking
-        assert.equal( 4, ga_events.length);
-        
-        call_language_changed( adi, "unknownlang");
-        
-        //No new tracking
-        assert.equal( 4, ga_events.length);
-
-    })();
-
-    /*
-            
          8. Test using heuristics
             
     */
@@ -459,54 +372,33 @@
         adi.changeLabel = function(level, str){
             labels.push( str );
         }
-
-        var ga_actions = [], ga_events = [];
-        adi.ga = {
-            visit:function(url){
-                ga_actions.push(url);
-            },
-            event:function(url,event_data){
-                ga_events.push([url,event_data]);
-            }
-        }
-        
         
         adi.deduceLanguage();
         assert.equal( 1, labels.length);
-        assert.equal( 1, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[0]);
 
         //No change
         adi.deduceLanguage();
         logger.debug(labels);
         assert.equal( 1, labels.length);
-        assert.equal( 1, ga_events.length);
         
         mock_recipients( adi, {"to":["foo@bar.dom"]} );
         adi.deduceLanguage();
         adi.deduceLanguage();
         
         assert.equal( 2, labels.length);
-        assert.equal( 2, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"miss"}], ga_events[1]);
 
         call_language_changed( adi, "foobar");
         
         assert.equal( 3, labels.length);
-        assert.equal( 3, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"saved",label:"foobar"}], ga_events[2]);
 
         adi.deduceLanguage();
         assert.equal( 3, labels.length);
-        assert.equal( 3, ga_events.length);
         
         mock_recipients( adi, {"to":["abc@bar.dom"]} );
 
         adi.deduceLanguage();
         
         assert.equal( 4, labels.length);
-        assert.equal( 4, ga_events.length);
-        assert.equalJSON( ["compose",{cat:"language",action:"guess",label:"foobar"}], ga_events[3]);
         assert.equal("foobar", setted_langs[0]);
  
         //Test it's saved
