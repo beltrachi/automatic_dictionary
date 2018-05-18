@@ -57,7 +57,6 @@ var resources = [
     "chrome://automatic_dictionary/content/lib/freq_suffix.js",
     "chrome://automatic_dictionary/content/lib/shutdownable.js",
     "chrome://automatic_dictionary/content/lib/logger.js",
-    "chrome://automatic_dictionary/content/lib/ga.js",
     "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
     "chrome://automatic_dictionary/content/lib/file_writer.js",
     "chrome://automatic_dictionary/content/lib/mail_composer.js",
@@ -215,24 +214,8 @@ AutomaticDictionary.Class = function(options){
     this.initialized = true;
     
     this.storage = this.getSimpleStorage(this.prefManager,this.pref_prefix);
-    this.ga = new AutomaticDictionary.Lib.GoogleAnalytics({
-        domain: this.ga_domain,
-        code: this.UA_CODE,
-        storage: this.storage,
-        window: this.window
-    });
     //Heuristic init
     this.initFreqSuffix();
-    
-    this.collect("compose",
-        {customVars:[
-                {name:"size",value:this.data.size()},
-                {name:"maxRecipients",value:this.getMaxRecipients()},
-                {name:"maxSize", value:this.data.maxSize},
-                {name:"cw",value:this.compose_window.name}
-        ]
-    });
-    this.collect_event("data","built", {value:((new Date()).getTime() - start)});
     
     this.start();
 
@@ -240,7 +223,6 @@ AutomaticDictionary.Class = function(options){
     try{
         var onwindowload = function (event){
             _this.window.removeEventListener("load", onwindowload, false); //remove listener, no longer needed
-            _this.showCollectWarning();
             _this.dispatchEvent({type:"window-load"});
         };
         this.window.addEventListener("load", onwindowload ,false);
@@ -264,7 +246,6 @@ AutomaticDictionary.Class.prototype = {
     ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",
     MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
-    ALLOW_COLLECT_KEY:"allowCollect",
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
     NOTIFICATION_LEVEL:"extensions.automatic_dictionary.notificationLevel",
     LOG_LEVEL:"extensions.automatic_dictionary.logLevel",
@@ -279,10 +260,8 @@ AutomaticDictionary.Class.prototype = {
     
     POLLING_DELAY: 3000, //Miliseconds
     
-    UA_CODE: "UA-35579454-1",
     pref_prefix: "extensions.automatic_dictionary.",
-    ga_domain: "automatic_dictionary",
-  
+
     //Attributes
     initialized: false,
     running: false, //Stopped
@@ -290,7 +269,6 @@ AutomaticDictionary.Class.prototype = {
     last_timeout: null, //Timer object of the next poll
     instance_number: -1,
     prefManager: null,
-    ga: null,
     last_toandcc_key: null,
     name: "AutomaticDictionary",
     notification_time: 4000,
@@ -314,9 +292,6 @@ AutomaticDictionary.Class.prototype = {
             "migrations_applied": "",
             
             "maxRecipients": 10,
-            "allowCollect": true,
-            "hasClosedCollectMessage": "false",
-            
             "allowHeuristic": true,
             "freqTableData": "",
             "freqTableData.version": "",
@@ -330,16 +305,7 @@ AutomaticDictionary.Class.prototype = {
             "allowPromotions": true,
             "notificationLevel": 'info', // or "warn" or "error"
             "logLevel": 'warn',
-            "saveLogFile": false,
-
-            //Events collected from
-            //we set them as strings as we'll use SimpleStorage
-            "stats.data.built": 0,
-            "stats.language.saved": 0,
-            "stats.language.guessed": 0,
-            "stats.language.miss":0,
-            "stats.mail.sent":0,
-            "stats.process.build_from_hash":0
+            "saveLogFile": false
         };
         var out = {};
         //Add prefix
@@ -570,7 +536,6 @@ AutomaticDictionary.Class.prototype = {
                 this.ft( "savedForRecipients",
                     [ current_lang, stats.saved_recipients ] )
                 );
-            this.collect_event("language","saved", {label: current_lang});
         }
     },
 
@@ -674,10 +639,6 @@ AutomaticDictionary.Class.prototype = {
         // TO all and CC all
         var ccs = this.getRecipients("cc");
         var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
-        var ga_customVars = [
-                {name:"to",value:recipients.length},
-                {name:"cc",value:ccs.length}
-        ];
         this.logger.debug("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
 
@@ -744,7 +705,6 @@ AutomaticDictionary.Class.prototype = {
                 this.setCurrentLang( lang );
                 if( !nothing_changed ){
                     this.changeLabel("info", this.ft("deducedLang."+method, [lang]))
-                    this.collect_event("language",method, {label:lang}, {customVars: ga_customVars});
                 }
             }catch( e ){
                 AutomaticDictionary.logException(e);
@@ -764,14 +724,12 @@ AutomaticDictionary.Class.prototype = {
                     return;
                 }else{
                     this.changeLabel("error", this.ft("errorSettingSpellLanguage", [lang] ));
-                    this.collect_event("error","deduceLanguage", {label:e.toString()}, {customVars: ga_customVars});
                     throw e;
                 }
             }
             this.deduce_language_retries_counter = 0;
         }else{
             this.changeLabel("info", this.t( "noLangForRecipients" ));
-            this.collect_event("language","miss",{}, {customVars: ga_customVars});
         }
     },
 
@@ -869,43 +827,6 @@ AutomaticDictionary.Class.prototype = {
     showMessage:function( str, options ){
         return this.compose_window.showMessage(str, options);
     },
-    
-    showCollectWarning:function(){
-        var _this = this;
-        if(!this.storage.get("hasClosedCollectMessage") && !this.shown_collect_message){
-            this.showMessage(this.t("WeAreCollectingData"),{buttons:[
-                {
-                    callback:function(){
-                        _this.storage.set("hasClosedCollectMessage",true);
-                    },
-                    label: this.t("IMOKWithIt"),
-                    accessKey: ""
-                },
-                {
-                    callback:function(){
-                        _this.storage.set("hasClosedCollectMessage",true);
-                        _this.prefManager.setBoolPref(
-                            _this.pref_prefix + _this.ALLOW_COLLECT_KEY, false);
-                    },
-                    label: this.t("DontDoIt"),
-                    accessKey: ""
-                },
-                {
-                    callback:function(){
-                        var url='https://github.com/beltrachi/automatic_dictionary/blob/master/COLLECTED_DATA.md';
-                        var messenger = Components.classes["@mozilla.org/messenger;1"].createInstance();
-                        messenger = messenger.QueryInterface(Components.interfaces.nsIMessenger);
-                        messenger.launchExternalURL(url);
-                    },
-                    label: this.t("MoreInfo"),
-                    accessKey: ""
-                }
-                
-            ]
-            });
-            this.shown_collect_message = true;
-        }
-    },
 
     getStrBundle: function(){
         if(!this.string_bundle){
@@ -936,44 +857,11 @@ AutomaticDictionary.Class.prototype = {
         return this.prefManager.getBoolPref(this.ALLOW_HEURISTIC);
     },
     
-    allowCollect: function(){
-        return this.prefManager.getBoolPref(this.pref_prefix + this.ALLOW_COLLECT_KEY);
-    },
     notificationLevel: function(){
         return this.prefManager.get(this.NOTIFICATION_LEVEL);
     },
     logLevel: function(){
         return this.prefManager.get(this.LOG_LEVEL);
-    },
-    // options are forwarded to ga.visit function
-    collect: function(visit, options){
-        this.last_visit = visit;
-        if( this.allowCollect() ){
-            this.logger.debug("collect for visit "+visit);
-            this.ga.visit(visit, options);
-        }else{
-            this.logger.debug("DISABLED track for visit "+visit);
-        }
-    },
-    collect_event: function(category, action, e_opts, options){
-        //Update internal stats
-        this.prefManager.inc(this.pref_prefix + "stats." + category+"."+action);
-        
-        if( this.allowCollect() ){
-            e_opts = e_opts || {};
-            this.logger.debug("collect for event "+action+" on "+category);
-            this.ga.event(this.last_visit, {
-                cat:category,
-                action:action,
-                label: e_opts.label,
-                value: e_opts.value,
-                non_interaction: e_opts.non_interaction
-            }, options);
-        }else{
-            this.logger.debug("DISABLED track for action "+action);            
-        }
-        
-        this.dispatchEvent({type:category, data:{action: action}});
     },
     
     counterFor:function(key){
@@ -998,13 +886,7 @@ AutomaticDictionary.Class.prototype = {
         this.compose_window.shutdown();
         AutomaticDictionary.log_writer.close();
     },
-    
-    //TODO: migrate to observable/observer pattern
-    notifyMailSent:function(){
-        this.logger.debug("Mail sent event");
-        this.collect_event("mail","sent");
-    },
-    
+
     //It sets default values in case they are not setted
     setDefaults:function(){
         var v;

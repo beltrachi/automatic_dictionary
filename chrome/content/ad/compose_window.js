@@ -155,11 +155,6 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
 
             this.listenToSpellCheckingCommands(window);
 
-            this.setListener(window, "compose-send-message", function(evt){
-                _this.logger.debug('[event] window compose-send-message');
-                _this.ad.notifyMailSent();
-            }, false );
-
             this.prepareWindow(window);
 
             window.automatic_dictionary_initialized = true;

@@ -13,7 +13,6 @@
         <preferences>
             <preference id="maxSize" name="extensions.automatic_dictionary.addressesInfo.maxSize" type="int"/>
             <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
-            <preference id="allowCollect" name="extensions.automatic_dictionary.allowCollect" type="bool"/>
             <preference id="allowPromotions" name="extensions.automatic_dictionary.allowPromotions" type="bool"/>
             <preference id="notificationLevel" name="extensions.automatic_dictionary.notificationLevel" type="string"/>
             <preference id="logLevel" name="extensions.automatic_dictionary.logLevel" type="string"/>
@@ -26,15 +25,6 @@
                      >&mailToDev.body;</description>
 
         <vbox class="prefoptions">
-            <hbox>
-                <label control="input_allowCollect" value="&allowCollect.label;"/>
-                <checkbox preference="allowCollect" id="input_allowCollect" />
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &allowCollect.info;
-                &allowCollect.recomendation;
-            </description>
             <!-- Remember to set the promotion id upper in this file at <preferences> -->
             <hbox>
                 <label control="input_allowPromotions" value="&allowPromotions.label;"/>

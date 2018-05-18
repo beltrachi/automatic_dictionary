@@ -81,21 +81,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
                     }, 300); //Time for input to wait inputs updates.
                 }
             }, true );
-            
-            //Collect sent event
-            try{
-                var onStartSending = window.sendListener.onStartSending;
-                window.sendListener.onStartSending = function(){
-                    var ret = onStartSending.apply(this, arguments);
-                    _this.ad.notifyMailSent();
-                    return ret;
-                }
-                this.shutdown_chain.push(function(){
-                    window.sendListener.onStartSending = onStartSending;
-                })
-            }catch(e){
-                AutomaticDictionary.logException(e);
-            }
+
             // Listening on change on inputs is not working. To fix that, I've
             // added a deduce language some milis after focus on textarea to let
             // the inputs be updated.

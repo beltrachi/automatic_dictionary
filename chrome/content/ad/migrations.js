@@ -80,10 +80,6 @@ AutomaticDictionary.Migrations = {
             var maxSize = self.prefManager.getIntPref( prefPath );
             self.prefManager.setIntPref( prefPath, maxSize * factor );
         },
-        "201210142159": function(self){
-            //Allow collect data by default
-            self.prefManager.setBoolPref( self.pref_prefix + self.ALLOW_COLLECT_KEY, true);
-        },
         "201210192306": function(self){
             //Add limit of max_recipients
             self.prefManager.setBoolPref( self.ALLOW_HEURISTIC, true);
@@ -108,9 +104,6 @@ AutomaticDictionary.Migrations = {
                         }
                     }
                 }
-                self.collect_event("process","build_from_hash",
-                    {value:((new Date()).getTime() - start_at)}
-                );
                 //Undo the trick and call start.
                 self.start = start;
                 start.apply(self);

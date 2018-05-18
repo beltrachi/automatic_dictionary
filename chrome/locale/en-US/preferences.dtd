@@ -12,15 +12,6 @@ and less used data will be removed, leaving space for new assignments. (aka LRU)
  (sum TOs and CCs). Useful to avoid processing massive mails.">
 <!ENTITY maxRecipients.recomendation "Recomended value: 10.">
 
-<!ENTITY allowCollect.label "Allow to collect statistical data:">
-<!ENTITY allowCollect.info 
-"We collect anonymous data to a Google analytics account to know how is the plugin
-being used and decide better what is more convenient on next versions. We'll never
-store private data like email addresses or mail contents. Only languages used and
-actions performed.">
-<!ENTITY allowCollect.recomendation "">
-
-
 <!ENTITY allowPromotions.label "Allow to suggest you ways to promote this plugin:">
 <!ENTITY allowPromotions.info 
 "We'll try to suggest you ways to help us promote this plugin, like sharing with your

@@ -12,15 +12,6 @@ und am wenigsten genutzten Daten gelöscht, um Platz für neue Verbindungen zu s
 (Summe aus AN und CC). Sinnvoll, um die Verarbeitung von Massen-Mails zu verhindern.">
 <!ENTITY maxRecipients.recomendation "Empfohlener Wert: 10.">
 
-<!ENTITY allowCollect.label "Erlaube Erhebung von Nutzungsdaten:">
-<!ENTITY allowCollect.info 
-"Wir sammeln anonyme Daten mit Google Analytics, um herauszufinden, wie das Add-on 
-benutzt wird und welche Funktionen in kommenden Updates wichtig sind. Wir werden niemals 
-private Informationen wie E-Mail Adressen oder E-Mail Inhalte speichern, ausschließlich die 
-benutzten Sprachen und ausgeführten Aktionen.">
-<!ENTITY allowCollect.recomendation "">
-
-
 <!ENTITY allowPromotions.label "Wege vorschlagen, um das Add-on zu verbreiten:">
 <!ENTITY allowPromotions.info 
 "Wir werden Wege vorschlagen, um das Add-on zu verbreiten. Dazu gehören Teilen mit den Freunden, 

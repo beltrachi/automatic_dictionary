@@ -197,9 +197,6 @@ describe "AutomaticDictionary integration tests" do
 
   it 'works :_D' do
     on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
-      # Accept to collect data
-      interactor.click_on_text("Don't do it")
-
       # Open a window without closing the other
       on_composer(to: 'es@es.es', subject:'Un asunto') do
         change_spellchecker_language('spa')
@@ -239,7 +236,7 @@ describe "AutomaticDictionary integration tests" do
       # The workaround since TB 60 is to go to addon preferences via menu.
       interactor.hit_key('Alt+t p a', delay: 0.15)
     end
-    sleep 2
+    sleep 5
     interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')
   end
 end

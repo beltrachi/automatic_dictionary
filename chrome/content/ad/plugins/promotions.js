@@ -79,9 +79,6 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         //We choose which one...
         var promo = this.choosePromotions();
         this.logger.debug("Choosen is "+promo);
-        this.ad.collect_event("promotion","show",{
-            label:promo
-        });
         this[promo]();
     },
     
@@ -139,7 +136,6 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         {
             callback:function(){
                 try{
-                    _this.ad.collect_event("promotion","share");
                     var url=_this.localizeUrl(_this.shareUrls);
                     _this.launchExternalUrl(url);
                 }catch(e){
@@ -162,7 +158,6 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         {
             callback:function(){
                 try{
-                    _this.ad.collect_event("promotion","review");
                     _this.openInternalUrl( _this.addon.reviewURL );
                 }catch(e){
                     AutomaticDictionary.logException(e);
@@ -183,9 +178,7 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
         
         return [
         {
-            callback:function(){
-                _this.ad.collect_event("promotion","not_now");
-            },
+            callback:function(){},
             label: this.t("PromotionsNotNowButton"),
             accessKey: ""
         },
@@ -193,7 +186,6 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
             callback:function(){
                 try{
                     _this.ad.setPref(_this.allow_promotions_pref_key, false);
-                    _this.ad.collect_event("promotion","blocked");
                 }catch(e){
                     AutomaticDictionary.logException(e);
                 }

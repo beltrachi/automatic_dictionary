@@ -15,14 +15,6 @@ directos y 'en copia') no se guardará el idioma para aquellos destinatarios.
 Útil para evitar procesar correos masivos.">
 <!ENTITY maxRecipients.recomendation "Valor recomendado: 10.">
 
-<!ENTITY allowCollect.label "Permitir recoger datos estadísticos:">
-<!ENTITY allowCollect.info
-"Recogemos datos anónimos en una cuenta de Google Analytics para saber como se
-usa el plugin y para decidir mejor que conviene para siguientes versiones.
-Nunca guardaremos ni direcciones de correo ni contenidos. Solo el idioma que se
-utiliza y que acciones se realizan.">
-<!ENTITY allowCollect.recomendation "">
-
 <!ENTITY allowPromotions.label "Permitir sugerir maneras de promocionar este
 plugin:">
 <!ENTITY allowPromotions.info "Intentaremos sugerirte maneras de ayudarnos a
