@@ -1,3 +1,5 @@
+# This information is deprecated. The plugin is NOT collecting data since version 1.11.0
+
 # Collecting data on AutomaticDictionarySwitcher Thunderbird addon #
 
 This information is provided to inform the users about the data collecting process that
