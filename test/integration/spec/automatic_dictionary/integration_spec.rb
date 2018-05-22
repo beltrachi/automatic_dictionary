@@ -80,14 +80,14 @@ describe "AutomaticDictionary integration tests" do
     File.open("#{profile_path}/chrome/userChrome.css", "w") do |css|
       css.write '
 * {
-  font-family: monospace !important;
+  font-family: Tahoma, Geneva, sans-serif !important;
 }'
     end
     # Tune extensions tabs too.
     File.open("#{profile_path}/chrome/userContent.css", "w") do |css|
       css.write '
 * {
-  font-family: monospace !important;
+  font-family: Tahoma, Geneva, sans-serif !important;
 }'
     end
     run("touch #{log_file}")
