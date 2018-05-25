@@ -14,6 +14,9 @@ ENV APP_HOME /app
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-ADD . $APP_HOME
-
+ADD ./script/install_* $APP_HOME/script/
+ADD ./test/integration/Gemfile* ./test/integration/.ruby-version $APP_HOME/test/integration/
 RUN $APP_HOME/script/install_dependencies.sh
+RUN $APP_HOME/script/install_thunderbird.sh
+
+ADD . $APP_HOME

@@ -212,10 +212,18 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Alt+t a', delay: 0.15)
     sleep 2
 
-    interactor.click_on_text('Extensions')
-    sleep 1
-    interactor.click_on_text('Preferences')
-    sleep 5
-    interactor.wait_for_text('Allow to collect statistical data:')
+    begin
+      interactor.click_on_text('Extensions')
+      sleep 1
+      sleep 1
+      interactor.click_on_text('Preferences')
+    rescue
+      # Sometimes the today pane makes the left menu of addons tab
+      # hide the words "Extensions" etc.
+      # The workaround since TB 60 is to go to addon preferences via menu.
+      interactor.hit_key('Alt+t p a', delay: 0.15)
+    end
+    sleep 2
+    interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')
   end
 end
