@@ -6,7 +6,7 @@
 ![Logo](https://raw.githubusercontent.com/beltrachi/automatic_dictionary/master/chrome/content/logo.png)
 
 This is the source code of the Automatic dictionary plugin:
-https://addons.mozilla.org/en-US/thunderbird/addon/automatic-dictionary-switching/
+https://addons.thunderbird.net/en-US/thunderbird/addon/automatic-dictionary-switching/
 
 [![Build Status](https://api.travis-ci.org/beltrachi/automatic_dictionary.svg)](https://travis-ci.org/beltrachi/automatic_dictionary)
 

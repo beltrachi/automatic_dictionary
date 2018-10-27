@@ -56,8 +56,8 @@ describe "AutomaticDictionary integration tests" do
 
   let(:interactor) { Interactor.client }
   let(:spanish_dictionary_url) do
-    "https://addons.mozilla.org/thunderbird/downloads/latest/spanish-spain-"\
-    "dictionary/addon-3554-latest.xpi?src=dp-btn-primary"
+    "https://addons.thunderbird.net/thunderbird/downloads/latest/"\
+    "spanish-spain-dictionary/addon-3554-latest.xpi?src=dp-btn-primary"
   end
   let(:spanish_dictionary_file) { 'spanish-dictionary.xpi' }
   let(:spanish_dictionary_path) { File.join(root, spanish_dictionary_file) }
