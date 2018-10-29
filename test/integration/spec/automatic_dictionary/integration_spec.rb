@@ -62,6 +62,9 @@ describe "AutomaticDictionary integration tests" do
   let(:spanish_dictionary_file) { 'spanish-dictionary.xpi' }
   let(:spanish_dictionary_path) { File.join(root, spanish_dictionary_file) }
   let(:log_file) { "#{profile_path}/automatic_dictionary.log" }
+  let(:thunderbird_version) do
+    Gem::Version.new(`thunderbird --version`.chomp.match(/\d+\.\d+/)[0])
+  end
   before do
     # Update build to lastest
     run("cd #{root} ; ./build.sh")
@@ -100,11 +103,24 @@ describe "AutomaticDictionary integration tests" do
     end
 
     begin
-      # Enable plugins on Thunderbird 60 and below
-      2.times do
-        interactor.click_on_text('Install Add-on')
-        interactor.click_on_text('Allow this installation')
-        interactor.click_on_text('Continue')
+      if thunderbird_version >= Gem::Version.new('64')
+        # Popup asking to enable our plugin.
+        interactor.hit_key('Alt+e')
+        # Enable spanish dictionary
+        sleep 1
+        interactor.hit_key('Alt+t a')
+        sleep 1
+        interactor.click_on_text('Dictionaries')
+        interactor.click_on_text('Enable')
+        sleep 1
+        interactor.hit_key('Ctrl+w')
+      elsif thunderbird_version >= Gem::Version.new('60')
+        # Enable plugins on Thunderbird 60 and below
+        2.times do
+          interactor.click_on_text('Install Add-on')
+          interactor.click_on_text('Allow this installation')
+          interactor.click_on_text('Continue')
+        end
       end
     rescue => e
       logger.error("Failed to enable plugins: #{e}. Maybe TB < 60?")
