@@ -45,6 +45,14 @@ recipient appears in the "TO" or "CC" recipients, the language will be set to th
 
 If you have issues using this plugin, you can file an issue in github: https://github.com/beltrachi/automatic_dictionary/issues/new
 
+With the following information:
+ * Operating System? (Windows vista, Windows 7, MacOSX, Ubuntu, etc.)
+ * Thunderbird version. (Go to Help > About)
+ * The plugins you have installed. You can do a screenshot of the addons page and send it to me.
+ * A list of steps to reproduce the bug.
+ * Tell me what it does and what would you expect.
+ * Error console lessages. That usually is in "Tools" > "Developer tools" > "Error console".
+
 If the plugin does something you did not expect it will be helpful if you send us the logs of the plugin (as described in the next section)
 
 ### Sending logs
