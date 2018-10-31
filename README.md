@@ -79,9 +79,9 @@ When we release a new version of the plugin we do:
 2. Update install.rdf version tag with the new one (following SEMVER).
 3. Execute ./update_version.sh
 4. Update the CHANGELOG file with changes since last release.
-5. Create tag with git.
-6. Execute ./build.sh
-7. Commit all changes.
+5. Execute ./build.sh
+6. Commit all changes.
+7. Create tag with git.
 8. Push all changes.
 9. Go to Mozilla addon page and upload new version.
 
