@@ -1,3 +1,7 @@
+=== 1.10.5
+
+* Fix support for Thunderbird 64 and earlier
+
 === 1.10.4
 
 * Fix support for Thunderbird 60 (issue #32)
