@@ -212,11 +212,14 @@ AutomaticDictionary.Class = function(options){
     this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF, {logger: this.logger} );
     this.setListeners();
     this.initialized = true;
-    
+
     this.storage = this.getSimpleStorage(this.prefManager,this.pref_prefix);
     //Heuristic init
     this.initFreqSuffix();
-    
+
+    // Count the number of times it has been initialized.
+    this.storage.inc('stats.usages');
+
     this.start();
 
     //Show warning when loaded
@@ -305,7 +308,8 @@ AutomaticDictionary.Class.prototype = {
             "allowPromotions": true,
             "notificationLevel": 'info', // or "warn" or "error"
             "logLevel": 'warn',
-            "saveLogFile": false
+            "saveLogFile": false,
+            "stats.usages": 0
         };
         var out = {};
         //Add prefix
@@ -865,12 +869,6 @@ AutomaticDictionary.Class.prototype = {
     },
     
     counterFor:function(key){
-        var alias = {
-            "usages":"data.built"
-        }
-        if(alias[key]){
-            key = alias[key];
-        }
         var ret = this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
         this.logger.debug("CunterFor "+key+ " is "+ret);
         return ret;
