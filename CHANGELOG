@@ -1,3 +1,7 @@
+=== 1.11.0
+
+* Remove Google Analytics data collection completely.
+
 === 1.10.5
 
 * Fix support for Thunderbird 64 and earlier
