@@ -307,8 +307,8 @@ AutomaticDictionary.Class.prototype = {
 
             "allowPromotions": true,
             "notificationLevel": 'info', // or "warn" or "error"
-            "logLevel": 'warn',
-            "saveLogFile": false,
+"logLevel":"debug",
+"saveLogFile":"true",
             "stats.usages": 0
         };
         var out = {};

@@ -109,11 +109,15 @@ describe "AutomaticDictionary integration tests" do
       if thunderbird_version >= Gem::Version.new('64')
         # Popup asking to enable our plugin.
         sleep 1
+
+        filepath = interactor.create_screenshot
+        ImageUploader.new.upload(filepath) rescue nil # Not upload when offline
+
         begin
           interactor.wait_for_text('Enable')
           interactor.hit_key('Alt+e')
         rescue
-          logger.warning("Enable extension popup not found")
+          logger.warn("Enable extension popup not found")
         end
       elsif thunderbird_version >= Gem::Version.new('60')
         # Enable plugins on Thunderbird 60 and below
