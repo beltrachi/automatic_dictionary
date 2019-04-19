@@ -109,7 +109,12 @@ describe "AutomaticDictionary integration tests" do
       if thunderbird_version >= Gem::Version.new('64')
         # Popup asking to enable our plugin.
         sleep 1
-        interactor.hit_key('Alt+e')
+        begin
+          interactor.wait_for_text('Enable')
+          interactor.hit_key('Alt+e')
+        rescue
+          logger.warning("Enable extension popup not found")
+        end
       elsif thunderbird_version >= Gem::Version.new('60')
         # Enable plugins on Thunderbird 60 and below
         1.times do
