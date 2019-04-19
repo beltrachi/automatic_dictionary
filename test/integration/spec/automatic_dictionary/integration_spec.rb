@@ -55,12 +55,6 @@ describe "AutomaticDictionary integration tests" do
   let(:local_tmp) { File.join(root, 'tmp') }
 
   let(:interactor) { Interactor.client }
-  let(:spanish_dictionary_url) do
-    "https://addons.thunderbird.net/thunderbird/downloads/latest/"\
-    "spanish-spain-dictionary/addon-3554-latest.xpi?src=dp-btn-primary"
-  end
-  let(:spanish_dictionary_file) { 'spanish-dictionary.xpi' }
-  let(:spanish_dictionary_path) { File.join(root, spanish_dictionary_file) }
   let(:log_file) { "#{profile_path}/automatic_dictionary.log" }
   let(:thunderbird_version) do
     Gem::Version.new(`thunderbird --version`.chomp.match(/\d+\.\d+/)[0])
@@ -68,12 +62,9 @@ describe "AutomaticDictionary integration tests" do
   before do
     # Update build to lastest
     run("cd #{root} ; ./build.sh")
-    run("ls #{spanish_dictionary_path} || "\
-        " curl -L #{spanish_dictionary_url} -o #{spanish_dictionary_path}")
 
     prepare_profile(profile_path)
     install_extension('automatic_dictionary.xpi', profile_path)
-    install_extension(spanish_dictionary_file, profile_path)
 
     # Change interface font to be easier to read for tesseract
     run("mkdir #{profile_path}/chrome")
@@ -106,17 +97,11 @@ describe "AutomaticDictionary integration tests" do
       if thunderbird_version >= Gem::Version.new('64')
         # Popup asking to enable our plugin.
         interactor.hit_key('Alt+e')
-        # Enable spanish dictionary
-        sleep 1
-        interactor.hit_key('Alt+t a')
-        sleep 1
-        interactor.click_on_text('Dictionaries')
-        interactor.click_on_text('Enable')
         sleep 1
         interactor.hit_key('Ctrl+w')
       elsif thunderbird_version >= Gem::Version.new('60')
         # Enable plugins on Thunderbird 60 and below
-        2.times do
+        1.times do
           interactor.click_on_text('Install Add-on')
           interactor.click_on_text('Allow this installation')
           interactor.click_on_text('Continue')
