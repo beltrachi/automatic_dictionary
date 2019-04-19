@@ -70,7 +70,7 @@ module Interactor
       file = prepare_image_to_read(file)
       words = RTesseract::Box.new(file, lang: 'eng', processor: "none").words
       words.map!{|word| Word.new(word) }
-      logger.debug("Words: #{words}")
+      logger.debug("Words: #{words.map(&:word)}")
       words
     end
 
