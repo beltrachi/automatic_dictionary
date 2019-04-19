@@ -202,7 +202,7 @@ describe "AutomaticDictionary integration tests" do
     recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
     on_composer(to: recipients) do
       change_spellchecker_language('spa')
-      wait_for_label('Discarded to save language preferences as there are too much recipients.')
+      wait_for_label('Discarded to save language preferences as there are too much recipients')
     end
   end
 

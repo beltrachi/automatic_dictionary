@@ -92,18 +92,30 @@ module Interactor
       fix_ratio(found_words.first.reduce(:+).center)
     end
 
+    # Returns the list of Word objects that contain the list of target words.
     def find_words(target_words, readed_words)
+      # The strategy is: look for the first word, then check if the following
+      # words match the list of target words.
       needle = target_words.first
       readed_words.each_with_index.map do |word, index|
         if word.word == needle
+          # We did find the first word, lets see if following words
+          # match the target.
           word_chain(target_words, readed_words, index)
         end
       end.compact
     end
 
+    # Returns an array of words that contain the target words
+    # or nil if it does not match the full list of target words.
     def word_chain(target_words, readed_words, index)
-      target_words.inject([]) do |acc, word|
-        return if readed_words[index].word != word
+      target_words.each_with_index.inject([]) do |acc, (word, target_index)|
+        if target_index == target_words.size - 1
+          # Last word, we only need to match the first part
+          return unless readed_words[index].word.start_with? word
+        else
+          return if readed_words[index].word != word
+        end
         index+=1
         acc << readed_words[index-1]
       end
