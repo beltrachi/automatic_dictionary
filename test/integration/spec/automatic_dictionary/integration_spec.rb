@@ -26,8 +26,16 @@ describe "AutomaticDictionary integration tests" do
     system(command) || raise("Command failed: #{command}")
   end
 
+  let(:profile_base) do
+    if thunderbird_version >= Gem::Version.new('66')
+      'test/integration/fixtures/test-profile-tb-66.tar.gz'
+    else
+      'test/integration/fixtures/test-profile.tar.gz'
+    end
+  end
+
   def prepare_profile(path)
-    source = File.join(root, 'test/integration/fixtures/test-profile.tar.gz')
+    source = File.join(root, profile_base)
     run("tar -xvf #{source} -C #{path}")
   end
 
@@ -88,17 +96,20 @@ describe "AutomaticDictionary integration tests" do
     sleep 5
 
     # Escape any wizard on start
-    5.times do
-      sleep 1
+    if thunderbird_version >= Gem::Version.new('64')
       interactor.hit_key('Escape')
+    else
+      5.times do
+        sleep 1
+        interactor.hit_key('Escape')
+      end
     end
 
     begin
       if thunderbird_version >= Gem::Version.new('64')
         # Popup asking to enable our plugin.
-        interactor.hit_key('Alt+e')
         sleep 1
-        interactor.hit_key('Ctrl+w')
+        interactor.hit_key('Alt+e')
       elsif thunderbird_version >= Gem::Version.new('60')
         # Enable plugins on Thunderbird 60 and below
         1.times do
