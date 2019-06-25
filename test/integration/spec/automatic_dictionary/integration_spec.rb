@@ -136,7 +136,7 @@ describe "AutomaticDictionary integration tests" do
 
   def on_composer(to: nil, subject: nil, body: nil)
     interactor.hit_key('Control+n')
-    sleep 1
+    sleep 2
     interactor.input_text(to) if to
     interactor.hit_key('Tab')
     interactor.input_text(subject) if subject
