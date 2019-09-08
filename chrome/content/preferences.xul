@@ -1,113 +1,104 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet type="text/css" href="chrome://global/skin/"?>
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://automatic_dictionary/content/preferences.css" type="text/css"?>
+<?xml-stylesheet type="text/css" href="chrome://automatic_dictionary/content/preferences.css"?>
 <!DOCTYPE window SYSTEM "chrome://automatic_dictionary/locale/preferences.dtd">
-<prefwindow id="automatic_dictionary-prefs"
-     title="AutomaticDictionary Preferences"
-     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    >
-    <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
+
+<dialog id="automatic_dictionary-prefs"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+title="Automatic dictionary preferences"         >
+  <script language="JavaScript" src="chrome://automatic_dictionary/content/ad.js"/>
+  <!-- little hack: hidden tags to have translated mailToDev strings -->
+    <description class="hidden_js_string" id="mailToDev_subject"
+                 >&mailToDev.subject;</description>
+    <description class="hidden_js_string" id="mailToDev_body"
+                 >&mailToDev.body;</description>
+
+    <vbox class="prefoptions">
+      <hbox>
+        <label control="input_allowPromotions" value="&allowPromotions.label;"/>
+        <checkbox preference="extensions.automatic_dictionary.allowPromotions" id="input_allowPromotions" />
+      </hbox>
+      <description class="info">
+        &allowPromotions.info;
+        &allowPromotions.recomendation;
+      </description>
+
+      <hbox>
+        <label control="input_notificationLevel" value="&notificationLevel.label;"/>
+        <!-- List example (this example would be stored as an integer) -->
+        <setting pref="extensions.automatic_dictionary.notificationLevel" type="menulist" title="">
+          <menulist preference="extensions.automatic_dictionary.notificationLevel">
+            <menupopup>
+              <menuitem value="info" label="&notificationLevel.info;"/>
+              <menuitem value="warn" label="&notificationLevel.warn;"/>
+              <menuitem value="error" label="&notificationLevel.error;"/>
+            </menupopup>
+          </menulist>
+        </setting>
+        <label value="" flex="10"/>
+      </hbox>
+      <description class="info">
+        &notificationLevel.description;
+        &notificationLevel.recommendation;
+      </description>
+      <hbox>
+        <label control="input_logLevel" value="&logLevel.label;"/>
+        <setting pref="extensions.automatic_dictionary.logLevel" type="menulist" title="">
+          <menulist preference="extensions.automatic_dictionary.logLevel">
+            <menupopup>
+              <menuitem value="debug" label="&logLevel.debug;"/>
+              <menuitem value="info" label="&logLevel.info;"/>
+              <menuitem value="warn" label="&logLevel.warn;"/>
+              <menuitem value="error" label="&logLevel.error;"/>
+            </menupopup>
+          </menulist>
+        </setting>
+        <label value="" flex="10"/>
+      </hbox>
+      <description class="info">
+        &logLevel.description;
+        &logLevel.recommendation;
+      </description>
+      <hbox>
+        <label control="input_saveLogFile" value="&saveLogFile.label;"/>
+        <checkbox preference="extensions.automatic_dictionary.saveLogFile" id="input_saveLogFile" />
+        <label value="" flex="10"/>
+      </hbox>
+      <description class="info">
+        &saveLogFile.info;
+        &saveLogFile.recomendation;
+      </description>
+      <description class="info">
+        <button label="&mailToDev.label;" onclick="sendLogToDeveloper(this);"/>
+      </description>
+      <description class="info">
+        &mailToDev.description;
+      </description>
+      <h2 class="intro advanced">
+        &introduction.text;
+      </h2>
+      <hbox>
+        <label control="input_maxRecipients" value="&maxSize.label;"/>
+        <textbox preference="extensions.automatic_dictionary.addressesInfo.maxSize" id="input_maxSize" maxlength="7" size="7" onchange="AutomaticDictionary.check_int_range(this,100,99999);"/>
+        <label value="" flex="10"/>
+      </hbox>
+      <description class="info">
+        &maxSize.info;
+        &maxSize.recomendation;
+      </description>
+      <hbox>
+        <label control="input_maxRecipients" value="&maxRecipients.label;"/>
+        <textbox preference="extensions.automatic_dictionary.maxRecipients" id="input_maxRecipients" maxlength="4" size="5" onchange="AutomaticDictionary.check_int_range(this,1,9999);"/>
+        <label value="" flex="10"/>
+      </hbox>
+      <description class="info">
+        &maxRecipients.info;
+        &maxRecipients.recomendation;
+      </description>
+    </vbox>
+    <script
+        src="chrome://global/content/preferencesBindings.js"
+        type="application/javascript"/>
     <script language="JavaScript" src="chrome://automatic_dictionary/content/preferences.js"/>
-    <prefpane id="main-pane" label="Preferencess" style="overflow:auto;">
-        <preferences>
-            <preference id="maxSize" name="extensions.automatic_dictionary.addressesInfo.maxSize" type="int"/>
-            <preference id="maxRecipients" name="extensions.automatic_dictionary.maxRecipients" type="int"/>
-            <preference id="allowPromotions" name="extensions.automatic_dictionary.allowPromotions" type="bool"/>
-            <preference id="notificationLevel" name="extensions.automatic_dictionary.notificationLevel" type="string"/>
-            <preference id="logLevel" name="extensions.automatic_dictionary.logLevel" type="string"/>
-            <preference id="saveLogFile" name="extensions.automatic_dictionary.saveLogFile" type="bool"/>
-        </preferences>
-        <!-- little hack: hidden tags to have translated mailToDev strings -->
-        <description class="hidden_js_string" id="mailToDev_subject"
-                     >&mailToDev.subject;</description>
-        <description class="hidden_js_string" id="mailToDev_body"
-                     >&mailToDev.body;</description>
-
-        <vbox class="prefoptions">
-            <!-- Remember to set the promotion id upper in this file at <preferences> -->
-            <hbox>
-                <label control="input_allowPromotions" value="&allowPromotions.label;"/>
-                <checkbox preference="allowPromotions" id="input_allowPromotions" />
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &allowPromotions.info;
-                &allowPromotions.recomendation;
-            </description>
-
-            <hbox>
-                <label control="input_notificationLevel" value="&notificationLevel.label;"/>
-                <!-- List example (this example would be stored as an integer) -->
-                <setting pref="extensions.automatic_dictionary.notificationLevel" type="menulist" title="">
-                  <menulist preference="notificationLevel">
-                    <menupopup>
-                      <menuitem value="info" label="&notificationLevel.info;"/>
-                      <menuitem value="warn" label="&notificationLevel.warn;"/>
-                      <menuitem value="error" label="&notificationLevel.error;"/>
-                    </menupopup>
-                  </menulist>
-                </setting>
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &notificationLevel.description;
-                &notificationLevel.recommendation;
-            </description>
-            <hbox>
-                <label control="input_logLevel" value="&logLevel.label;"/>
-                <setting pref="extensions.automatic_dictionary.logLevel" type="menulist" title="">
-                  <menulist preference="logLevel">
-                    <menupopup>
-                      <menuitem value="debug" label="&logLevel.debug;"/>
-                      <menuitem value="info" label="&logLevel.info;"/>
-                      <menuitem value="warn" label="&logLevel.warn;"/>
-                      <menuitem value="error" label="&logLevel.error;"/>
-                    </menupopup>
-                  </menulist>
-                </setting>
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &logLevel.description;
-                &logLevel.recommendation;
-            </description>
-            <hbox>
-                <label control="input_saveLogFile" value="&saveLogFile.label;"/>
-                <checkbox preference="saveLogFile" id="input_saveLogFile" />
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &saveLogFile.info;
-                &saveLogFile.recomendation;
-            </description>
-            <description class="info">
-              <button label="&mailToDev.label;" onclick="sendLogToDeveloper(this);"/>
-            </description>
-            <description class="info">
-              &mailToDev.description;
-            </description>
-            <description class="intro advanced">
-                &introduction.text;
-            </description>
-            <hbox>
-                <label control="input_maxSize" value="&maxSize.label;"/>
-                <textbox preference="maxSize" id="input_maxSize" maxlength="7" size="7" onchange="AutomaticDictionary.check_int_range(this,100,99999);"/>
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &maxSize.info;
-                &maxSize.recomendation;
-            </description>
-            <hbox>
-                <label control="input_maxRecipients" value="&maxRecipients.label;"/>
-                <textbox preference="maxRecipients" id="input_maxRecipients" maxlength="4" size="5" onchange="AutomaticDictionary.check_int_range(this,1,9999);"/>
-                <label value="" flex="10"/>
-            </hbox>
-            <description class="info">
-                &maxRecipients.info;
-                &maxRecipients.recomendation;
-            </description>
-        </vbox>
-    </prefpane>
-</prefwindow>
+  </dialog>

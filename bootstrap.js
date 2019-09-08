@@ -1,139 +1,108 @@
-//TODO: prepare the shutdown and unregister all listeners
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
-"use strict";
+function install(data, reason) {
+}
 
-var Ci = Components.interfaces;
-var Cc = Components.classes;
-var Cu = Components.utils;
-var Cr = Components.results;
+function uninstall(data, reason) {
+}
 
-var BOOTSTRAP_REASONS = {
-  APP_STARTUP     : 1,
-  APP_SHUTDOWN    : 2,
-  ADDON_ENABLE    : 3,
-  ADDON_DISABLE   : 4,
-  ADDON_INSTALL   : 5,
-  ADDON_UNINSTALL : 6,
-  ADDON_UPGRADE   : 7,
-  ADDON_DOWNGRADE : 8
-};
+function startup(data, reason) {
+  // Check if the window we want to modify is already open.
+    let windows = Services.wm.getEnumerator("msgcompose");
+    console.log("In startup!");
+  while (windows.hasMoreElements()) {
+    let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+    WindowListener.loadIntoWindow(domWindow);
+  }
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource:///modules/iteratorUtils.jsm");
-
-let global = this;
-let Log;
-
-var log = dump;
-log = function(){}; //Comment to allow logging on bootstrap
-
-// from wjohnston (cleary for Fennec)
-let ResourceRegister = {
-    init: function(aFile, aName) {
-        let resource = Services.io.getProtocolHandler("resource")
-        .QueryInterface(Ci.nsIResProtocolHandler);
-        let alias = Services.io.newFileURI(aFile);
-        if (!aFile.isDirectory()) {
-            alias = Services.io.newURI("jar:" + alias.spec + "!/", null, null);
-        }
-        resource.setSubstitution(aName, alias);
-    },
-
-    uninit: function(aName) {
-        let resource = Services.io.getProtocolHandler("resource")
-        .QueryInterface(Ci.nsIResProtocolHandler);
-        resource.setSubstitution(aName, null);
-    }
-};
-
-function startup(aData, aReason) {
-        log("\nSTARTUP CALLED\n");
-
-    ResourceRegister.init(aData.installPath, "automatic_dictionary");
-    try {
-        global.AutomaticDictionary = {};
-        Cu.import("chrome://automatic_dictionary/content/ad.js", global);
-        
-        global.AutomaticDictionary.shutdown_chain = [];
-        var shutdown_chain = global.AutomaticDictionary.shutdown_chain;
-
-        var observer = {
-            observe: function(aMsgFolder, aTopic, aData) {  
-                try{
-                    //window.gDBView.addColumnHandler("betweenCol", columnHandler);
-                    global.AutomaticDictionary.conversationsDetected();
-                }catch(e){
-                    log(e);
-                }
-            }
-        };
-        
-        Services.obs.addObserver(observer, "Conversations", false);
-        shutdown_chain.push(function(){
-            Services.obs.removeObserver(observer, "Conversations");
-        });
-        
-        for (let w of fixIterator(Services.wm.getEnumerator(null))){
-            global.AutomaticDictionary.initWindow(w);
-        }
-
-        // All future windows
-        var ww_observer = {
-            observe: function (aSubject, aTopic, aData) {
-                try{
-                    if (aTopic == "domwindowopened") {
-                        aSubject.QueryInterface(Ci.nsIDOMWindow);
-                        global.AutomaticDictionary.initWindow(aSubject.window);
-                    }
-                }catch(e){
-                    log("Failed registerNotification \n");
-                    log(e.toString());
-                }
-            }
-        };
-        Services.ww.registerNotification(ww_observer);
-        shutdown_chain.push(function(){
-            Services.ww.unregisterNotification(ww_observer);
-        });
-    } catch (e) {
-        log("fail");
-        log(e);
-        if(e.stack){
-            log(e.stack.toString());
-        }
-    }
+  // Wait for any new windows to open.
+  Services.wm.addListener(WindowListener);
 }
 
 function shutdown(data, reason) {
-    log("\nCALLED SHUTDOWN\n");
-    try{
+  // When the application is shutting down we normally don't have to clean
+  // up any UI changes made.
+  if (reason == APP_SHUTDOWN) {
+    return;
+  }
+
+  let windows = Services.wm.getEnumerator("msgcompose");
+  while (windows.hasMoreElements()) {
+    let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+    WindowListener.unloadFromWindow(domWindow);
+  }
+
+  // Stop listening for any new windows to open.
+  Services.wm.removeListener(WindowListener);
+}
+
+var WindowListener = {
+
+    async loadIntoWindow(window) {
+        console.log("load (1/2): " + window.document.readyState);
+        if (window.document.readyState != "complete") {
+            // Make sure the window load has completed.
+            await new Promise(resolve => {
+                window.addEventListener("load", resolve, { once: true });
+            });
+        }
+
+        this.loadIntoWindowAfterWindowIsReady(window);
+    },
+
+    loadIntoWindowAfterWindowIsReady(window) {
+        var windowtype = window.document.documentElement
+            .getAttribute("windowtype");
+        console.log("Windowtype is: " + windowtype);
+        console.log(window);
+        console.log(window.document.URL);
+        // Check if the opened window is the one we want to modify.
+        if ( windowtype !== "msgcompose") {
+            console.log("wrong window type: "+windowtype);
+            return;
+        }
+
+        var log = console.log;
+        console.log("load (2/2): " + window.document.readyState);
+        let document = window.document;
+        global = window;
+
+        let { AutomaticDictionary } = ChromeUtils.import("chrome://automatic_dictionary/content/ad.js");
+
+        AutomaticDictionary.initWindow(window);
+    },
+
+    unloadFromWindow(window) {
+        console.log("unload: " + window.document.readyState);
+        let document = window.document;
+
         // No need to do extra work here
         if (reason == BOOTSTRAP_REASONS.APP_SHUTDOWN){
             return;
         }
 
         //remove listeners and other unloading procs
-        var list = global.AutomaticDictionary.shutdown_chain;
-        for(var x =0;x<list.length;x++){
-            try{
-                list[x]();
-            }catch(e){
-                global.AutomaticDictionary.logException(e);
-            }
-        }
-        global.AutomaticDictionary.shutdown();
+        document.AutomaticDictionary.shutdown();
 
-        ResourceRegister.uninit("automatic_dictionary");
-        global.AutomaticDictionary.log("shutdown");
-    }catch(e){
-        log("EXCEPTION ON SH "+e.toString());
-    }
-}
+        // Take any steps to remove UI or anything from the window
+        // document.getElementById() etc. will work here.
+    },
 
-function install(data, reason) {
-    //TODO: move migrations here?
-}
+    // nsIWindowMediatorListener functions
+    onOpenWindow: function(xulWindow) {
+        console.log("onOpenWindow: " + xulWindow);
+        // A new window has opened.
+        let domWindow = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+            .getInterface(Ci.nsIDOMWindow);
+        this.loadIntoWindow(domWindow);
+    },
 
-function uninstall(data, reason) {
-}
+    onCloseWindow(xulWindow) {
+    },
+
+    onWindowTitleChange(xulWindow, newTitle) {
+    },
+};
+
+
+

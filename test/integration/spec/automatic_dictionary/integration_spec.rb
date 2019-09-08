@@ -26,8 +26,16 @@ describe "AutomaticDictionary integration tests" do
     system(command) || raise("Command failed: #{command}")
   end
 
+  let(:profile_base) do
+    if thunderbird_version >= Gem::Version.new('66')
+      'test/integration/fixtures/test-profile-tb-66.tar.gz'
+    else
+      'test/integration/fixtures/test-profile.tar.gz'
+    end
+  end
+
   def prepare_profile(path)
-    source = File.join(root, 'test/integration/fixtures/test-profile.tar.gz')
+    source = File.join(root, profile_base)
     run("tar -xvf #{source} -C #{path}")
   end
 
@@ -88,17 +96,29 @@ describe "AutomaticDictionary integration tests" do
     sleep 5
 
     # Escape any wizard on start
-    5.times do
-      sleep 1
+    if thunderbird_version >= Gem::Version.new('64')
       interactor.hit_key('Escape')
+    else
+      5.times do
+        sleep 1
+        interactor.hit_key('Escape')
+      end
     end
 
     begin
       if thunderbird_version >= Gem::Version.new('64')
         # Popup asking to enable our plugin.
-        interactor.hit_key('Alt+e')
         sleep 1
-        interactor.hit_key('Ctrl+w')
+
+        filepath = interactor.create_screenshot
+        ImageUploader.new.upload(filepath) rescue nil # Not upload when offline
+
+        begin
+          interactor.wait_for_text('Enable')
+          interactor.hit_key('Alt+e')
+        rescue
+          logger.warn("Enable extension popup not found")
+        end
       elsif thunderbird_version >= Gem::Version.new('60')
         # Enable plugins on Thunderbird 60 and below
         1.times do
@@ -207,19 +227,23 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    interactor.hit_key('Alt+t a', delay: 0.15)
-    sleep 2
-
-    begin
-      interactor.click_on_text('Extensions')
-      sleep 1
-      sleep 1
-      interactor.click_on_text('Preferences')
-    rescue
-      # Sometimes the today pane makes the left menu of addons tab
-      # hide the words "Extensions" etc.
-      # The workaround since TB 60 is to go to addon preferences via menu.
+    if thunderbird_version >= Gem::Version.new('68')
       interactor.hit_key('Alt+t p a', delay: 0.15)
+    else
+      interactor.hit_key('Alt+t a', delay: 0.15)
+      sleep 2
+
+      begin
+        interactor.click_on_text('Extensions')
+        sleep 1
+        sleep 1
+        interactor.click_on_text('Preferences')
+      rescue
+        # Sometimes the today pane makes the left menu of addons tab
+        # hide the words "Extensions" etc.
+        # The workaround since TB 60 is to go to addon preferences via menu.
+        interactor.hit_key('Alt+t p a', delay: 0.15)
+      end
     end
     sleep 5
     interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')

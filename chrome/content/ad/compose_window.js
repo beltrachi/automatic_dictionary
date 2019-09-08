@@ -50,8 +50,6 @@ AutomaticDictionary.extend(
 
 AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
 
-    notificationbox_elem_id: "automatic_dictionary_notification",
-
     name: "ComposeWindow",
     logger: null,
 
@@ -200,19 +198,8 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     },
 
     prepareWindow:function(window){
-        var document = window.document;
-        //Add window items
-        var hbox=document.createElement("hbox");
-        var nb = document.createElement("notificationbox");
-        nb.id = this.notificationbox_elem_id;
-        nb.flex="1";
-        hbox.appendChild(nb);
-        var target = document.getElementById("status-bar");
-        target.parentNode.insertBefore(hbox, target);
-
-        this.shutdown_chain.push(function(){
-            hbox.parentNode.removeChild(hbox);
-        });
+        // No need to create items because composewindow already has a
+        // notification box
     },
 
     getCurrentLang: function(){
@@ -248,7 +235,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         options = options || {};
         var notification_value = "show-message";
         //FIXME: DRY this code with changeLabel
-        var nb = this.ad.window.document.getElementById(this.notificationbox_elem_id);
+        let nb = window.gNotification.notificationbox;
         var n = nb.getNotificationWithValue(notification_value);
         if(n) {
             n.label = str;
@@ -268,7 +255,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         if(this.label_timeout){
             window.clearTimeout(this.label_timeout);
         }
-        var nb = window.document.getElementById(this.notificationbox_elem_id);
+        let nb = window.gNotification.notificationbox;
         var n = nb.getNotificationWithValue('change-label');
         str = this.params.name + ": " + str;
         if(n) {

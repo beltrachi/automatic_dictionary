@@ -84,7 +84,7 @@ After that, you should disable the "Save to log file" and set Log level back to 
 When we release a new version of the plugin we do:
 
 1. Merge the changes to master branch.
-2. Update install.rdf version tag with the new one (following SEMVER).
+2. Update manifest.json version tag with the new one (following SEMVER).
 3. Execute ./update_version.sh
 4. Update the CHANGELOG file with changes since last release.
 5. Execute ./build.sh

@@ -39,7 +39,7 @@ cp $EXTENSION $TMP_DIR/tmp.xpi
 unzip "$TMP_DIR/tmp.xpi" -d $TMP_DIR
 rm $TMP_DIR/tmp.xpi
 
-EXTENSION_ID=$(cat $TMP_DIR/install.rdf |grep "em:id" | head -n 1 | cut -d ">" -f 2 | cut -d "<" -f 1)
+EXTENSION_ID=$(ruby -e "require 'json'; puts JSON.load(File.read('$TMP_DIR/manifest.json'))['applications']['gecko']['id']")
 
 mkdir "$PROFILE_PATH/extensions/$EXTENSION_ID"
 mv $TMP_DIR/* "$PROFILE_PATH/extensions/$EXTENSION_ID"

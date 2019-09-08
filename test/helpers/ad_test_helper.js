@@ -134,6 +134,20 @@ function test_setup(){
             language:"en_us"
         },
         document: document,
+        gNotification: {
+            notificationbox: {
+                PRIORITY_INFO_MEDIUM: 1,
+                getNotificationWithValue:function(){
+                    return {};
+                },
+                appendNotification:function(){
+                },
+                removeAllNotifications:function(){},
+                parentNode:{
+                    insertBefore:function(){}
+                }
+            }
+        },
         gSpellChecker: {
             canSpellCheck: true,
             enabled: true,
@@ -162,20 +176,6 @@ function test_setup(){
                     return k
                     }
             };
-            if( id == "automatic_dictionary_notification"){
-                return {
-                    PRIORITY_INFO_MEDIUM: 1,
-                    getNotificationWithValue:function(){
-                        return {};
-                    },
-                    appendNotification:function(){
-                    },
-                    removeAllNotifications:function(){},
-                    parentNode:{
-                        insertBefore:function(){}
-                    }
-                };
-            }
             if(id=="status-bar"){
                 return {
                     parentNode:{

@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "applications": {
+        "gecko": {
+            "id": "automatic_dictionary_extension@jordi_beltran.net",
+            "strict_min_version": "67.0"
+        }
+    },
+    "name": "Automatic Dictionary",
+    "description": "Extension that remembers the language of the email when composing.",
+    "version": "1.11.0",
+
+    "legacy": {
+        "type" : "bootstrap",
+        "options": {
+            "page": "chrome://automatic_dictionary/content/preferences.xul?12",
+            "open_in_tab": true
+        }
+    }
+}
