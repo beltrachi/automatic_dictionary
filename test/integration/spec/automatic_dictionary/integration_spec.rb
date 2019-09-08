@@ -227,19 +227,23 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    interactor.hit_key('Alt+t a', delay: 0.15)
-    sleep 2
-
-    begin
-      interactor.click_on_text('Extensions')
-      sleep 1
-      sleep 1
-      interactor.click_on_text('Preferences')
-    rescue
-      # Sometimes the today pane makes the left menu of addons tab
-      # hide the words "Extensions" etc.
-      # The workaround since TB 60 is to go to addon preferences via menu.
+    if thunderbird_version >= Gem::Version.new('68')
       interactor.hit_key('Alt+t p a', delay: 0.15)
+    else
+      interactor.hit_key('Alt+t a', delay: 0.15)
+      sleep 2
+
+      begin
+        interactor.click_on_text('Extensions')
+        sleep 1
+        sleep 1
+        interactor.click_on_text('Preferences')
+      rescue
+        # Sometimes the today pane makes the left menu of addons tab
+        # hide the words "Extensions" etc.
+        # The workaround since TB 60 is to go to addon preferences via menu.
+        interactor.hit_key('Alt+t p a', delay: 0.15)
+      end
     end
     sleep 5
     interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')
