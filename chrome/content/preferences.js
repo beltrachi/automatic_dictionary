@@ -52,3 +52,12 @@ function sendLogToDeveloper(link){
             [AutomaticDictionary.logger.filepath]);
     }catch(e){ AutomaticDictionary.logger.error(e) }
 }
+
+Preferences.addAll([
+    { id: "extensions.automatic_dictionary.allowPromotions", type: "bool" },
+    { id: "extensions.automatic_dictionary.notificationLevel", type: "string" },
+    { id: "extensions.automatic_dictionary.logLevel", type: "string" },
+    { id: "extensions.automatic_dictionary.saveLogFile", type: "bool" },
+    { id: "extensions.automatic_dictionary.addressesInfo.maxSize", type: "int" },
+    { id: "extensions.automatic_dictionary.maxRecipients", type: "int" },
+]);

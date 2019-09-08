@@ -4,8 +4,6 @@
 label{
     font-weight:bold;
 }
-.intro{
-}
 .info{
     color:#666666;
     padding-left:1em;
@@ -18,7 +16,4 @@ label{
 }
 .hidden_js_string{
     display:none;
-}
-textbox{
-    margin-right:1em;
 }
