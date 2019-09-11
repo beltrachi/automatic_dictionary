@@ -14,6 +14,3 @@ env:
   - THUNDERBIRD_VERSION=beta
   - THUNDERBIRD_VERSION=stable
 
-matrix:
-  allow_failures:
-  - env: THUNDERBIRD_VERSION=beta
