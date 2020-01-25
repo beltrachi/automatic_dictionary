@@ -159,6 +159,11 @@ describe "AutomaticDictionary integration tests" do
     sleep 2
     interactor.input_text(to) if to
     interactor.hit_key('Tab')
+    if thunderbird_version >= Gem::Version.new('73')
+      # On tb>73 we need two tabs to jump to subject because
+      # first tab only confirms email.
+      interactor.hit_key('Tab')
+    end
     interactor.input_text(subject) if subject
     interactor.hit_key('Tab')
     interactor.input_text(body) if body

@@ -20,7 +20,6 @@ var Cu = Components.utils;
 var Cr = Components.results;
 
 var AutomaticDictionary = this.AutomaticDictionary || {};
-
 AutomaticDictionary.Plugins = {};
 
 AutomaticDictionary.enabled_plugins = [];
@@ -139,7 +138,7 @@ AutomaticDictionary.initWindow = function(window, loaded){
             for(idx in AutomaticDictionary.window_managers){
                 cw = AutomaticDictionary.window_managers[idx];
                 if( cw.canManageWindow(window)){
-                    var ad = new AutomaticDictionary.Class({
+                      var ad = new AutomaticDictionary.Class({
                         compose_window_builder: cw,
                         window: window
                     });
@@ -198,9 +197,9 @@ AutomaticDictionary.Class = function(options){
 
 
     var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
-    this.compose_window = new (cw_builder)(
+    this.compose_window = new cw_builder(
         {
-            "ad": this,
+            ad: this,
             name: this.name,
             logo_url: this.logo_url,
             notification_time: this.notification_time,

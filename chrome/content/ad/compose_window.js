@@ -41,7 +41,8 @@ AutomaticDictionary.ComposeWindow = (function( params ){
 
 AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
     //We can manage the messengercompose window.
-    return window.document.location == "chrome://messenger/content/messengercompose/messengercompose.xul";
+    regex = /chrome.*messengercompose\.(xul|xhtml)/
+    return regex.test(window.document.location);
 };
 
 AutomaticDictionary.extend(

@@ -8,10 +8,10 @@ function uninstall(data, reason) {
 
 function startup(data, reason) {
   // Check if the window we want to modify is already open.
-    let windows = Services.wm.getEnumerator("msgcompose");
-    console.log("In startup!");
+  let windows = Services.wm.getEnumerator("msgcompose");
   while (windows.hasMoreElements()) {
-    let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+      let domWindow = windows.getNext();
+      domWindow = domWindow.QueryInterface(Ci.nsIDOMWindow);
     WindowListener.loadIntoWindow(domWindow);
   }
 
@@ -66,10 +66,12 @@ var WindowListener = {
         console.log("load (2/2): " + window.document.readyState);
         let document = window.document;
         global = window;
-
         let { AutomaticDictionary } = ChromeUtils.import("chrome://automatic_dictionary/content/ad.js");
-
-        AutomaticDictionary.initWindow(window);
+        try{
+            AutomaticDictionary.initWindow(window);
+        }catch(e){
+            console.log(e);
+        }
     },
 
     unloadFromWindow(window) {
