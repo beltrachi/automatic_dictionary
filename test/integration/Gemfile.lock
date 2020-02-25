@@ -8,7 +8,7 @@ GEM
     memory_profiler (0.9.14)
     mini_portile2 (2.4.0)
     multipart-post (2.1.1)
-    nokogiri (1.10.4)
+    nokogiri (1.10.8)
       mini_portile2 (~> 2.4.0)
     rmagick (4.0.0)
     rspec (3.8.0)
