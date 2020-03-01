@@ -22,35 +22,35 @@
         ]
     },
 
-    "permissions": ["storage", "compose"]
-    // "experiment_apis": {
-    //     // "prefs": {
-    //     //     "schema": "apis/prefs/schema.json",
-    //     //     "parent": {
-    //     //         "scopes": [
-    //     //             "addon_parent"
-    //     //         ],
-    //     //         "paths": [
-    //     //             [
-    //     //                 "prefs"
-    //     //             ]
-    //     //         ],
-    //     //         "script": "apis/prefs/implementation.js"
-    //     //     }
-    //     // },
-    //     // "compose-ext": {
-    //     //     "schema": "apis/compose_ext/schema.json",
-    //     //     "parent": {
-    //     //         "scopes": [
-    //     //             "addon_parent"
-    //     //         ],
-    //     //         "paths": [
-    //     //             [
-    //     //                 "compose_ext"
-    //     //             ]
-    //     //         ],
-    //     //         "script": "apis/compose_ext/api.js"
-    //     //     }
-    //     // }
-    // }
+    // "permissions": [],
+    "experiment_apis": {
+        // "prefs": {
+        //     "schema": "apis/prefs/schema.json",
+        //     "parent": {
+        //         "scopes": [
+        //             "addon_parent"
+        //         ],
+        //         "paths": [
+        //             [
+        //                 "prefs"
+        //             ]
+        //         ],
+        //         "script": "apis/prefs/implementation.js"
+        //     }
+        // },
+        "compose_ext": {
+            "schema": "apis/compose_ext/schema.json",
+            "parent": {
+                "scopes": [
+                    "addon_parent"
+                ],
+                "paths": [
+                    [
+                        "compose_ext"
+                    ]
+                ],
+                "script": "apis/compose_ext/implementation.js"
+            }
+        }
+    }
 }
