@@ -1,0 +1,186 @@
+{
+  "savedForRecipients": {
+    "message": "Guardado %S como idioma por defecto para %S combinaciones",
+    "description": "savedForRecipients"
+  },
+  "noLangForRecipients": {
+    "message": "No hay idioma registrado para estos recipientes",
+    "description": "noLangForRecipients"
+  },
+  "deducedLang.remember": {
+    "message": "Recordado %S",
+    "description": "deducedLang.remember"
+  },
+  "deducedLang.guess": {
+    "message": "Deducido %S",
+    "description": "deducedLang.guess"
+  },
+  "settingListenersError": {
+    "message": "Error interno (Inicializaci\\u00f3n de observadores)",
+    "description": "settingListenersError"
+  },
+  "errorSettingSpellLanguage": {
+    "message": "Error: No se pudo poner el diccionario %S. \\u00bfQuiz\\u00e1 se ha desinstalado?",
+    "description": "errorSettingSpellLanguage"
+  },
+  "DiscardedUpdateTooMuchRecipients": {
+    "message": "Se descarta guardar idioma. Demasiados destinatarios. (M\\u00e1ximos destinatarios son %S)",
+    "description": "DiscardedUpdateTooMuchRecipients"
+  },
+  "IMOKWithIt": {
+    "message": "Me parece bien!",
+    "description": "IMOKWithIt"
+  },
+  "DontDoIt": {
+    "message": "No lo hagas",
+    "description": "DontDoIt"
+  },
+  "MoreInfo": {
+    "message": "M\\u00e1s informaci\\u00f3n",
+    "description": "MoreInfo"
+  },
+  "PromotionsNotNowButton": {
+    "message": "Ahora no",
+    "description": "PromotionsNotNowButton"
+  },
+  "PromotionsNotAnyMoreButton": {
+    "message": "No mostrar mas esto",
+    "description": "PromotionsNotAnyMoreButton"
+  },
+  "PromotionsShareMessage": {
+    "message": "Automatic Dictionary - Porque no compartes este plugin con tus seguidores? Todo el mundo tendria que probarlo!",
+    "description": "PromotionsShareMessage"
+  },
+  "PromotionsShareButton": {
+    "message": "Compartir!",
+    "description": "PromotionsShareButton"
+  },
+  "PromotionsReviewButton": {
+    "message": "Quiero valorarlo!",
+    "description": "PromotionsReviewButton"
+  },
+  "PromotionsReviewMessage": {
+    "message": "Automatic Dictionary - Te gusta este plugin? Ayudanos escribiendo una valoraci\\u00f3n!",
+    "description": "PromotionsReviewMessage"
+  },
+  "introduction.text": {
+    "message": "Parámetros avanzados",
+    "description": "introduction.text"
+  },
+  "maxSize.label": {
+    "message": "Máximas asignaciones a guardar:",
+    "description": "maxSize.label"
+  },
+  "maxSize.info": {
+    "message": "El numero máximo de asociaciones entre un destinatario o grupo de destinatarios\ny un idioma de diccionario. Cuándo el almacenamiento llega a este máximo, el dato\nmas antiguo o menos usado se elimina para dejar sitio a los datos nuevos.\n(Conocido como LRU)",
+    "description": "maxSize.info"
+  },
+  "maxSize.recomendation": {
+    "message": "Valor recomendado: 1200.",
+    "description": "maxSize.recomendation"
+  },
+  "maxRecipients.label": {
+    "message": "Máximos destinatarios por correo:",
+    "description": "maxRecipients.label"
+  },
+  "maxRecipients.info": {
+    "message": "Cuando un correo supera el máximo de destinatarios (sumando destinatarios\ndirectos y 'en copia') no se guardará el idioma para aquellos destinatarios.\nÚtil para evitar procesar correos masivos.",
+    "description": "maxRecipients.info"
+  },
+  "maxRecipients.recomendation": {
+    "message": "Valor recomendado: 10.",
+    "description": "maxRecipients.recomendation"
+  },
+  "allowPromotions.label": {
+    "message": "Permitir sugerir maneras de promocionar este\nplugin:",
+    "description": "allowPromotions.label"
+  },
+  "allowPromotions.info": {
+    "message": "Intentaremos sugerirte maneras de ayudarnos a\npromover este plugin, como compartir con tus compañeros o escribiendo una\nvaloración.",
+    "description": "allowPromotions.info"
+  },
+  "allowPromotions.recomendation": {
+    "message": "",
+    "description": "allowPromotions.recomendation"
+  },
+  "notificationLevel.label": {
+    "message": "Nivel de notificaciones:",
+    "description": "notificationLevel.label"
+  },
+  "notificationLevel.description": {
+    "message": "El nivel de las notificaciones que se te mostrarán. &quot;Información&quot;\nte informará de todo lo que haga, como cambiar el diccionario o deducir un\nidioma (valor por defecto). &quot;Error&quot; te informará solo cuando algo\nhaya ido mal.",
+    "description": "notificationLevel.description"
+  },
+  "notificationLevel.recommendation": {
+    "message": "Ponlo en &quot;Advertencia&quot;\nsi no quieres que te moleste mucho y solo te avise de cosas importantes.",
+    "description": "notificationLevel.recommendation"
+  },
+  "notificationLevel.info": {
+    "message": "Información",
+    "description": "notificationLevel.info"
+  },
+  "notificationLevel.warn": {
+    "message": "Advertencia",
+    "description": "notificationLevel.warn"
+  },
+  "notificationLevel.error": {
+    "message": "Error",
+    "description": "notificationLevel.error"
+  },
+  "logLevel.label": {
+    "message": "Nivel de log:",
+    "description": "logLevel.label"
+  },
+  "logLevel.description": {
+    "message": "El nivel que quieres que se registre.",
+    "description": "logLevel.description"
+  },
+  "logLevel.recommendation": {
+    "message": "Usa &quot;warning&quot; si solo quieres que\nse registre cuando algo no va bien.",
+    "description": "logLevel.recommendation"
+  },
+  "logLevel.debug": {
+    "message": "Debug",
+    "description": "logLevel.debug"
+  },
+  "logLevel.info": {
+    "message": "Info",
+    "description": "logLevel.info"
+  },
+  "logLevel.warn": {
+    "message": "Warning",
+    "description": "logLevel.warn"
+  },
+  "logLevel.error": {
+    "message": "Error",
+    "description": "logLevel.error"
+  },
+  "saveLogFile.label": {
+    "message": "Guardar log en fichero:",
+    "description": "saveLogFile.label"
+  },
+  "saveLogFile.info": {
+    "message": "Escribe todos los mensajes generados por la extensión en un fichero que\npodrá ser enviado posteriormente al desarrollador para detectar problemas.\nReinicia Thunderbird si cambias este parámetro para que surja efecto.",
+    "description": "saveLogFile.info"
+  },
+  "saveLogFile.recomendation": {
+    "message": "",
+    "description": "saveLogFile.recomendation"
+  },
+  "mailToDev.label": {
+    "message": "Enviar fichero al desarrollador",
+    "description": "mailToDev.label"
+  },
+  "mailToDev.description": {
+    "message": "Prepara un email con el registro pero no lo\nenvía. Podrás revisar el fichero antes de enviarlo.",
+    "description": "mailToDev.description"
+  },
+  "mailToDev.body": {
+    "message": "Este correo contiene un registro anonimizado de tu\nactividad que permitirá al desarrollador investigar cualquier comportamiento\nextraño.\n\nDESCRIBE EL PROBLEMA AQUÍ o crea un issue aquí:\nhttps://github.com/beltrachi/automatic_dictionary/issues/new\ny pon un enlace del issue aquí.\n\nPuedes inspeccionar el contenido del registro que vas a enviar haciendo doble\nclick en la zona de ficheros adjuntos",
+    "description": "mailToDev.body"
+  },
+  "mailToDev.subject": {
+    "message": "AutomaticDictionary log report",
+    "description": "mailToDev.subject"
+  }
+}

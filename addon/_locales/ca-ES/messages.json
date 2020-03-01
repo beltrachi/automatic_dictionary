@@ -1,0 +1,186 @@
+{
+  "savedForRecipients": {
+    "message": "S'ha guardat %S com a idioma per defecte per %S combinacions",
+    "description": "savedForRecipients"
+  },
+  "noLangForRecipients": {
+    "message": "No hi ha cap idioma registrat per aquests destinataris",
+    "description": "noLangForRecipients"
+  },
+  "deducedLang.remember": {
+    "message": "Recordat %S",
+    "description": "deducedLang.remember"
+  },
+  "deducedLang.guess": {
+    "message": "Dedu\\u00eft %S",
+    "description": "deducedLang.guess"
+  },
+  "settingListenersError": {
+    "message": "Error intern (Inicializaci\\u00f3 d'observadors)",
+    "description": "settingListenersError"
+  },
+  "errorSettingSpellLanguage": {
+    "message": "Error: No es pot posar el diccionari %S. Potser s'ha desinstal\\u00b7lat?",
+    "description": "errorSettingSpellLanguage"
+  },
+  "DiscardedUpdateTooMuchRecipients": {
+    "message": "Descartat guardar l'idioma. Masses destinataris. (M\\u00e0xims destinataris s\\u00f3n %S)",
+    "description": "DiscardedUpdateTooMuchRecipients"
+  },
+  "IMOKWithIt": {
+    "message": "Ho trobo b\\u00e9!",
+    "description": "IMOKWithIt"
+  },
+  "DontDoIt": {
+    "message": "No ho facis",
+    "description": "DontDoIt"
+  },
+  "MoreInfo": {
+    "message": "M\\u00e9s informaci\\u00f3",
+    "description": "MoreInfo"
+  },
+  "PromotionsNotNowButton": {
+    "message": "Ara no",
+    "description": "PromotionsNotNowButton"
+  },
+  "PromotionsNotAnyMoreButton": {
+    "message": "No mostrar m\\u00e9s aix\\u00f2",
+    "description": "PromotionsNotAnyMoreButton"
+  },
+  "PromotionsShareMessage": {
+    "message": "Automatic Dictionary - Perqu\\u00e8 no comparteixes aquest plugin amb els teus? Tothom hauria de disfrutar-ne!",
+    "description": "PromotionsShareMessage"
+  },
+  "PromotionsShareButton": {
+    "message": "Compartir!",
+    "description": "PromotionsShareButton"
+  },
+  "PromotionsReviewButton": {
+    "message": "Valora'l!",
+    "description": "PromotionsReviewButton"
+  },
+  "PromotionsReviewMessage": {
+    "message": "Automatic Dictionary - T'agrada aquest plugin? Ajuda'ns escribint-ne una valoraci\\u00f3!",
+    "description": "PromotionsReviewMessage"
+  },
+  "introduction.text": {
+    "message": "Paràmetres avançats",
+    "description": "introduction.text"
+  },
+  "maxSize.label": {
+    "message": "Màxim d'assignacions a guardar:",
+    "description": "maxSize.label"
+  },
+  "maxSize.info": {
+    "message": "El màxim nombre d'associacions entre un destinatari o un grup de destinataris\ni un idioma de diccionari. Quan l'emmagatzemament arriba al màxim, la dada més\nantiga o menys usada s'elimina per deixar lloc per les noves dades.\n(Conegut com LRU).",
+    "description": "maxSize.info"
+  },
+  "maxSize.recomendation": {
+    "message": "Valor recomanat: 1200.",
+    "description": "maxSize.recomendation"
+  },
+  "maxRecipients.label": {
+    "message": "Màxims destinataris per correu:",
+    "description": "maxRecipients.label"
+  },
+  "maxRecipients.info": {
+    "message": "Quan un correu supera el màxim de destinataris (sumant destinataris directes i\n'en còpia') no es guardarà l'idioma per aquells recipients. Útil per evitar\nprocessar emails massius.",
+    "description": "maxRecipients.info"
+  },
+  "maxRecipients.recomendation": {
+    "message": "Valor recomanat: 10.",
+    "description": "maxRecipients.recomendation"
+  },
+  "allowPromotions.label": {
+    "message": "Permetre suggerir maneres de promocionar aquest\nplugin:",
+    "description": "allowPromotions.label"
+  },
+  "allowPromotions.info": {
+    "message": "Intentarem suggerir-te maneres d'ajudar-nos a promocionar aquest plugin, com\ncompartint-lo amb els companys o escrivint-ne una valoració.",
+    "description": "allowPromotions.info"
+  },
+  "allowPromotions.recomendation": {
+    "message": "",
+    "description": "allowPromotions.recomendation"
+  },
+  "notificationLevel.label": {
+    "message": "Nivell de notificació:",
+    "description": "notificationLevel.label"
+  },
+  "notificationLevel.description": {
+    "message": "El nivell de les notificacions que vols veure. &quot;Informació&quot;\n(valor per defecte) t'informarà de tot el que faci, com canviar de diccionari\no deduir un idioma. &quot;Error&quot; t'informarà només quan alguna cosa vagi\nmalament.",
+    "description": "notificationLevel.description"
+  },
+  "notificationLevel.recommendation": {
+    "message": "Selecciona &quot;Advertència&quot; si\nno vols que se't molesti molt i només t'avisi de les coses importants.",
+    "description": "notificationLevel.recommendation"
+  },
+  "notificationLevel.info": {
+    "message": "Informació",
+    "description": "notificationLevel.info"
+  },
+  "notificationLevel.warn": {
+    "message": "Advertència",
+    "description": "notificationLevel.warn"
+  },
+  "notificationLevel.error": {
+    "message": "Error",
+    "description": "notificationLevel.error"
+  },
+  "logLevel.label": {
+    "message": "Nivell de log:",
+    "description": "logLevel.label"
+  },
+  "logLevel.description": {
+    "message": "El nivell que vols que es registri.",
+    "description": "logLevel.description"
+  },
+  "logLevel.recommendation": {
+    "message": "Utilitza &quot;warning&quot; si només vols que\nes registri quan alguna cosa no va bé.",
+    "description": "logLevel.recommendation"
+  },
+  "logLevel.debug": {
+    "message": "Debug",
+    "description": "logLevel.debug"
+  },
+  "logLevel.info": {
+    "message": "Info",
+    "description": "logLevel.info"
+  },
+  "logLevel.warn": {
+    "message": "Warning",
+    "description": "logLevel.warn"
+  },
+  "logLevel.error": {
+    "message": "Error",
+    "description": "logLevel.error"
+  },
+  "saveLogFile.label": {
+    "message": "Guardar log en fitxer:",
+    "description": "saveLogFile.label"
+  },
+  "saveLogFile.info": {
+    "message": "Escriu tots els missatges generats per la extensió en un fitxer que\npodrà ser enviat posteriorment al desenvolupador per detectar problemes.\nReinicia Thunderbird si canvies aquest paràmetre perquè tingui efecte.",
+    "description": "saveLogFile.info"
+  },
+  "saveLogFile.recomendation": {
+    "message": "",
+    "description": "saveLogFile.recomendation"
+  },
+  "mailToDev.label": {
+    "message": "Enviar registe al desenvolupador",
+    "description": "mailToDev.label"
+  },
+  "mailToDev.description": {
+    "message": "Prepara un email amb el registre\nperò no l'envia. Podràs revisar el fitxer abans d'enviar-lo.",
+    "description": "mailToDev.description"
+  },
+  "mailToDev.body": {
+    "message": "Aquest correu conté un registre anonimitzat\nde la teva activitat que permetrà al desenvolupador investigar qualsevol\ncomportament inesperat.\n\nDESCRIU EL PROBLEMA AQUI o crea un issue aquí:\nhttps://github.com/beltrachi/automatic_dictionary/issues/new\ni afegeix l'enllaç aquí.\n\nPots inspeccionar el contingut del registre que estas a punt d'enviar fent\ndoble click a la zona de fitxers adjunts.",
+    "description": "mailToDev.body"
+  },
+  "mailToDev.subject": {
+    "message": "AutomaticDictionary log report",
+    "description": "mailToDev.subject"
+  }
+}

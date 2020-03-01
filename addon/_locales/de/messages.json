@@ -1,0 +1,186 @@
+{
+  "savedForRecipients": {
+    "message": "%S wurde als Standard für %S Empfänger gespeichert",
+    "description": "savedForRecipients"
+  },
+  "noLangForRecipients": {
+    "message": "Keine Sprache für diese Empfänger gespeichert",
+    "description": "noLangForRecipients"
+  },
+  "deducedLang.remember": {
+    "message": "%S eingestellt",
+    "description": "deducedLang.remember"
+  },
+  "deducedLang.guess": {
+    "message": "%S geraten",
+    "description": "deducedLang.guess"
+  },
+  "settingListenersError": {
+    "message": "Interner Fehler",
+    "description": "settingListenersError"
+  },
+  "errorSettingSpellLanguage": {
+    "message": "Fehler: Wörterbuch kann nicht zu %S geändert werden. Möglicherweise ist es nicht mehr installiert.",
+    "description": "errorSettingSpellLanguage"
+  },
+  "DiscardedUpdateTooMuchRecipients": {
+    "message": "Speichern der Spracheinstellungen abgebrochen, da zu viele Empfänger vorhanden sind (Maximale Empfänger sind %S)",
+    "description": "DiscardedUpdateTooMuchRecipients"
+  },
+  "IMOKWithIt": {
+    "message": "Das ist OK!",
+    "description": "IMOKWithIt"
+  },
+  "DontDoIt": {
+    "message": "Bitte nicht",
+    "description": "DontDoIt"
+  },
+  "MoreInfo": {
+    "message": "Weitere Informationen",
+    "description": "MoreInfo"
+  },
+  "PromotionsNotNowButton": {
+    "message": "Nicht jetzt",
+    "description": "PromotionsNotNowButton"
+  },
+  "PromotionsNotAnyMoreButton": {
+    "message": "Nicht mehr anzeigen",
+    "description": "PromotionsNotAnyMoreButton"
+  },
+  "PromotionsShareMessage": {
+    "message": "Automatic Dictionary - Wie wäre es, das Add-on mit deinen Followern zu teilen? Jeder sollte Spaß daran haben!",
+    "description": "PromotionsShareMessage"
+  },
+  "PromotionsShareButton": {
+    "message": "Jetzt teilen!",
+    "description": "PromotionsShareButton"
+  },
+  "PromotionsReviewButton": {
+    "message": "Bewertung schreiben!",
+    "description": "PromotionsReviewButton"
+  },
+  "PromotionsReviewMessage": {
+    "message": "Automatic Dictionary - Magst du dieses Add-on? Hilf mit, indem du eine Bewertung schreibst!",
+    "description": "PromotionsReviewMessage"
+  },
+  "introduction.text": {
+    "message": "Erweiterte Einstellungen",
+    "description": "introduction.text"
+  },
+  "maxSize.label": {
+    "message": "Maximal gespeicherte Werte:",
+    "description": "maxSize.label"
+  },
+  "maxSize.info": {
+    "message": "Die maximale Anzahl der gespeicherten Verbindungen aus Empfänger oder Empfänger-Gruppe \nund Wörterbuch-Sprache. Wenn der Speicher die maximale Größe erreicht, werden die ältesten \nund am wenigsten genutzten Daten gelöscht, um Platz für neue Verbindungen zu schaffen.",
+    "description": "maxSize.info"
+  },
+  "maxSize.recomendation": {
+    "message": "Empfohlener Wert: 1200.",
+    "description": "maxSize.recomendation"
+  },
+  "maxRecipients.label": {
+    "message": "Maximal zu bearbeitende Empfänger pro E-Mail:",
+    "description": "maxRecipients.label"
+  },
+  "maxRecipients.info": {
+    "message": "Hat eine E-Mail mehr als diese Anzahl Empfänger, wird keine Sprache für sie gespeichert \n(Summe aus AN und CC). Sinnvoll, um die Verarbeitung von Massen-Mails zu verhindern.",
+    "description": "maxRecipients.info"
+  },
+  "maxRecipients.recomendation": {
+    "message": "Empfohlener Wert: 10.",
+    "description": "maxRecipients.recomendation"
+  },
+  "allowPromotions.label": {
+    "message": "Wege vorschlagen, um das Add-on zu verbreiten:",
+    "description": "allowPromotions.label"
+  },
+  "allowPromotions.info": {
+    "message": "Wir werden Wege vorschlagen, um das Add-on zu verbreiten. Dazu gehören Teilen mit den Freunden, \nSchreiben einer Bewertung oder Fragen über Verbesserungsvorschläge für das Add-on.",
+    "description": "allowPromotions.info"
+  },
+  "allowPromotions.recomendation": {
+    "message": "",
+    "description": "allowPromotions.recomendation"
+  },
+  "notificationLevel.label": {
+    "message": "Benachrichtigungs-Stufe:",
+    "description": "notificationLevel.label"
+  },
+  "notificationLevel.description": {
+    "message": "Die Stufe für Benachrichtigungen, die das Add-on anzeigt. &quot;Information&quot; wird alle Aktionen \ndes Add-ons anzeigen, beispielsweise das Ändern von Wörterbüchern oder das Erkennen neuer Sprachen. \n&quot;Fehler&quot; wird nur benachrichtigen, wenn ein Problem auftritt.",
+    "description": "notificationLevel.description"
+  },
+  "notificationLevel.recommendation": {
+    "message": "Setze es auf &quot;Warnung&quot;, wenn du nicht allzu oft gestört werden möchtest.",
+    "description": "notificationLevel.recommendation"
+  },
+  "notificationLevel.info": {
+    "message": "Information",
+    "description": "notificationLevel.info"
+  },
+  "notificationLevel.warn": {
+    "message": "Warnung",
+    "description": "notificationLevel.warn"
+  },
+  "notificationLevel.error": {
+    "message": "Fehler",
+    "description": "notificationLevel.error"
+  },
+  "logLevel.label": {
+    "message": "Protokoll-Stufe:",
+    "description": "logLevel.label"
+  },
+  "logLevel.description": {
+    "message": "Die Ausführlichkeit des Protokolls des Add-ons.",
+    "description": "logLevel.description"
+  },
+  "logLevel.recommendation": {
+    "message": "Setze es auf &quot;Warnung&quot;, um nur aufzuzeichnen, wenn etwas nicht funktioniert.",
+    "description": "logLevel.recommendation"
+  },
+  "logLevel.debug": {
+    "message": "Fehlersuche",
+    "description": "logLevel.debug"
+  },
+  "logLevel.info": {
+    "message": "Information",
+    "description": "logLevel.info"
+  },
+  "logLevel.warn": {
+    "message": "Warnung",
+    "description": "logLevel.warn"
+  },
+  "logLevel.error": {
+    "message": "Fehler",
+    "description": "logLevel.error"
+  },
+  "saveLogFile.label": {
+    "message": "Protokoll in Datei speichern:",
+    "description": "saveLogFile.label"
+  },
+  "saveLogFile.info": {
+    "message": "Alle Protokolldaten, die von diesem Add-on generiert werden, werden in eine Datei geschrieben, die später \nan den Entwickler gesendet werden kann, um Probleme zu beheben. Thunderbird nach Änderung neustarten, um \nÄnderungen zu übernehmen.",
+    "description": "saveLogFile.info"
+  },
+  "saveLogFile.recomendation": {
+    "message": "",
+    "description": "saveLogFile.recomendation"
+  },
+  "mailToDev.label": {
+    "message": "Protokoll an Entwickler senden",
+    "description": "mailToDev.label"
+  },
+  "mailToDev.description": {
+    "message": "Es wird eine E-Mail mit der Protokoll-Datei \nerstellt, aber nicht gesendet. Du kannst den Inhalt überprüfen und dann selbst senden.",
+    "description": "mailToDev.description"
+  },
+  "mailToDev.body": {
+    "message": "Diese E-Mail enthält ein anonymisiertes Protokoll deiner Aktionen, \ndas es dem Entwickler ermöglicht, Probleme zu erkennen.\n\nBESCHREIBE DAS PROBLEM ODER DEN FEHLER HIER\nhttps://github.com/beltrachi/automatic_dictionary/issues/new\nund füge den Link hier hinzu.\n\nDu kannst den Protokoll-Inhalt durch Doppelklicken des Anhangs überprüfen.\n",
+    "description": "mailToDev.body"
+  },
+  "mailToDev.subject": {
+    "message": "Automatic Dictionary Fehlerprotokoll",
+    "description": "mailToDev.subject"
+  }
+}
