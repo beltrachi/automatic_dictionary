@@ -3,18 +3,54 @@
     "applications": {
         "gecko": {
             "id": "automatic_dictionary_extension@jordi_beltran.net",
-            "strict_min_version": "67.0"
+            "strict_min_version": "73.0"
         }
     },
     "name": "Automatic Dictionary",
     "description": "Extension that remembers the language of the email when composing.",
-    "version": "1.12.1beta",
+    "version": "2.0.0",
+    "default_locale": "en",
 
-    "legacy": {
-        "type" : "bootstrap",
-        "options": {
-            "page": "chrome://automatic_dictionary/content/preferences.xul?12",
-            "open_in_tab": true
-        }
-    }
+    "options_ui": {
+        "open_in_tab": true,
+        "page": "preferences.html"
+    },
+
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+
+    "permissions": ["storage", "compose"]
+    // "experiment_apis": {
+    //     // "prefs": {
+    //     //     "schema": "apis/prefs/schema.json",
+    //     //     "parent": {
+    //     //         "scopes": [
+    //     //             "addon_parent"
+    //     //         ],
+    //     //         "paths": [
+    //     //             [
+    //     //                 "prefs"
+    //     //             ]
+    //     //         ],
+    //     //         "script": "apis/prefs/implementation.js"
+    //     //     }
+    //     // },
+    //     // "compose-ext": {
+    //     //     "schema": "apis/compose_ext/schema.json",
+    //     //     "parent": {
+    //     //         "scopes": [
+    //     //             "addon_parent"
+    //     //         ],
+    //     //         "paths": [
+    //     //             [
+    //     //                 "compose_ext"
+    //     //             ]
+    //     //         ],
+    //     //         "script": "apis/compose_ext/api.js"
+    //     //     }
+    //     // }
+    // }
 }
