@@ -51,45 +51,69 @@ var { ExtensionSupport } = ChromeUtils.import("resource:///modules/ExtensionSupp
 // what this example is about, but you might be interested as it's a common pattern. We count the
 // number of callbacks waiting for events so that we're only listening if we need to be.
 var windowListener = new class extends ExtensionCommon.EventEmitter {
-  constructor() {
-    super();
-    this.callbackCount = 0;
-  }
-
-  handleEvent(event) {
-    // TODO: fetch which language is it.
-    windowListener.emit("language-changed", 'es');
-  }
-
-  add(callback) {
-    this.on("language-changed", callback);
-    this.callbackCount++;
-
-    if (this.callbackCount == 1) {
-        ExtensionSupport.registerWindowListener("windowListener", {
-            //TODO: set composer url.
-        chromeURLs: ["chrome://messenger/content/messenger.xul"],
-            onLoadWindow: function(window) {
-                //TODO: fetch language changed item and attach to it's event.
-                // let toolbox = window.document.getElementById("mail-toolbox");
-                // toolbox.addEventListener("click", windowListener.handleEvent);
-        },
-      });
+    constructor() {
+        super();
+        this.callbackCount = 0;
     }
-  }
 
-  remove(callback) {
-    this.off("language-changed", callback);
-    this.callbackCount--;
+    handleEvent(event) {
+        console.log("handle event with event: ");
+        console.log(event);
+        // TODO: fetch which language is it.
+        windowListener.emit("language-changed", 'es');
+    }
 
-    if (this.callbackCount == 0) {
-        for (let window of ExtensionSupport.openWindows) {
-            //TODO: remove event listeners from all windows
-            // if (window.location.href == "chrome://messenger/content/messenger.xul") {
-            //   let toolbox = window.document.getElementById("mail-toolbox");
-            // toolbox.removeEventListener("click", this.handleEvent);
+    add(callback) {
+        this.on("language-changed", callback);
+        this.callbackCount++;
+
+        if (this.callbackCount == 1) {
+            ExtensionSupport.registerWindowListener("windowListener", {
+                //TODO: set composer url.
+                chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
+                onLoadWindow: function(window) {
+                    console.log("Loaded window of messengercompose");
+                    windowListener.subscribeLanguageChangeEvents(window);
+                    //TODO: fetch language changed item and attach to it's event.
+                    // let toolbox = window.document.getElementById("mail-toolbox");
+                    // toolbox.addEventListener("click", windowListener.handleEvent);
+                },
+            });
         }
     }
-    ExtensionSupport.unregisterWindowListener("windowListener");
-  }
+
+    remove(callback) {
+        this.off("language-changed", callback);
+        this.callbackCount--;
+
+        if (this.callbackCount == 0) {
+            for (let window of ExtensionSupport.openWindows) {
+                //TODO: remove event listeners from all windows
+                // if (window.location.href == "chrome://messenger/content/messenger.xul") {
+                //   let toolbox = window.document.getElementById("mail-toolbox");
+                // toolbox.removeEventListener("click", this.handleEvent);
+            }
+        }
+        ExtensionSupport.unregisterWindowListener("windowListener");
+    }
+
+    subscribeLanguageChangeEvents(window) {
+        //We don't capture "spellcheck-changed" event because it's only fired
+        //when language is changed in the context menu (rigt click menu). Not when changed
+        //from any other source.
+
+        // The document lang attribute is updated always so its the best way.
+        var langObserver = new window.MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type == "attributes" && mutation.attributeName == "lang") {
+                    console.log("Lang attr mutation received");
+                    // Todo: get which language it is!
+                    console.log("Mutation is ");
+                    console.log(mutation);
+                    windowListener.handleEvent(mutation.target.getAttribute('lang'));
+                }
+            });
+        });
+        langObserver.observe(window.document.documentElement, { attributes: true });
+    }
 };
