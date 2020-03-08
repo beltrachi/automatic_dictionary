@@ -38,6 +38,24 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
           },
         }).api(),
 
+        onRecipientsChange: new ExtensionCommon.EventManager({
+          context,
+          name: "myapi.onRecipientsChange",
+          // In this function we add listeners for any events we want to listen to, and return a
+          // function that removes those listeners. To have the event fire in your extension,
+          // call fire.async.
+          register(fire) {
+            function callback(event, language) {
+              return fire.async(language);
+            }
+
+            recipientsChangeWindowListener.add(callback);
+            return function() {
+              recipientsChangeWindowListener.remove(callback);
+            };
+          },
+        }).api(),
+
       },
     };
   }
@@ -115,5 +133,77 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
             });
         });
         langObserver.observe(window.document.documentElement, { attributes: true });
+    }
+};
+
+
+var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmitter {
+    constructor() {
+        super();
+        this.callbackCount = 0;
+    }
+
+    handleEvent(event) {
+        console.log("recipients change handle event with event: ");
+        console.log(event);
+        var tab = event.target.ownerDocument.defaultView.activeTab;
+        console.log("Tab is ");
+        console.log(tab);
+        console.log(tab.id);
+        recipientsChangeWindowListener.emit("recipients-changed", tab.id);
+    }
+
+    add(callback) {
+        this.on("recipients-changed", callback);
+        this.callbackCount++;
+
+        if (this.callbackCount == 1) {
+            ExtensionSupport.registerWindowListener("recipientsChangeWindowListener", {
+                //TODO: set composer url.
+                chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
+                onLoadWindow: function(window) {
+                    console.log("Loaded window of messengercompose for recipients change");
+                    recipientsChangeWindowListener.detectRecipientsChange(window);
+                    //TODO: fetch language changed item and attach to it's event.
+                    // let toolbox = window.document.getElementById("mail-toolbox");
+                    // toolbox.addEventListener("click", recipientsChangeWindowListener.handleEvent);
+                },
+            });
+        }
+    }
+
+    remove(callback) {
+        this.off("recipients-changed", callback);
+        this.callbackCount--;
+
+        if (this.callbackCount == 0) {
+            for (let window of ExtensionSupport.openWindows) {
+                //TODO: remove event listeners from all windows
+                // if (window.location.href == "chrome://messenger/content/messenger.xul") {
+                //   let toolbox = window.document.getElementById("mail-toolbox");
+                // toolbox.removeEventListener("click", this.handleEvent);
+            }
+        }
+        ExtensionSupport.unregisterWindowListener("recipientsChangeWindowListener");
+    }
+
+    detectRecipientsChange(window) {
+        // Attach to any change in the html that holds the recipients.
+        // THIS IS NOT WORKING BECAUASE SOMETHING IS CAPTURING CHANGE EVENT!
+        window.document.getElementById('recipientsContainer').addEventListener('change', function(event) {
+                console.log('change on recipients container');
+                console.log(event)
+                recipientsChangeWindowListener.handleEvent(event);
+            });
+        // Workaround to at least calculate which language is correct.
+        window.document.getElementById('msgSubject').addEventListener('focus', function(event) {
+                console.log("focus on subject");
+                recipientsChangeWindowListener.handleEvent(event);
+            });
+
+        window.document.getElementById('content-frame').addEventListener('focus', function(event){
+                console.log("focus on body");
+                recipientsChangeWindowListener.handleEvent(event);
+            });
     }
 };
