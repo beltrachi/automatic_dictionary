@@ -62,10 +62,14 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     setListeners:function(){
         var _this = this;
         //capture language change event
-        browser.compose_ext.onLanguageChange.addListener(function (param){
-            console.log("Listener has received event. Language changed?!? param is following");
-            console.log(param);
-            _this.waitAnd(function(){ _this.ad.languageChanged(); });
+      browser.compose_ext.onLanguageChange.addListener(function (param){
+        try{
+            console.log("onLanguageChange param is following");
+          console.log(param);
+          _this.ad.languageChanged();
+        }catch(e){
+          console.error(e);
+        }
         });
         browser.compose_ext.onRecipientsChange.addListener(function (tabId){
             console.log("Listener has received event. Recipients changed?!?");

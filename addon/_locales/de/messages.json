@@ -1,6 +1,6 @@
 {
   "savedForRecipients": {
-    "message": "%S wurde als Standard für %S Empfänger gespeichert",
+    "message": "$1 wurde als Standard für $2 Empfänger gespeichert",
     "description": "savedForRecipients"
   },
   "noLangForRecipients": {
@@ -8,11 +8,11 @@
     "description": "noLangForRecipients"
   },
   "deducedLang.remember": {
-    "message": "%S eingestellt",
+    "message": "$1 eingestellt",
     "description": "deducedLang.remember"
   },
   "deducedLang.guess": {
-    "message": "%S geraten",
+    "message": "$1 geraten",
     "description": "deducedLang.guess"
   },
   "settingListenersError": {
@@ -20,11 +20,11 @@
     "description": "settingListenersError"
   },
   "errorSettingSpellLanguage": {
-    "message": "Fehler: Wörterbuch kann nicht zu %S geändert werden. Möglicherweise ist es nicht mehr installiert.",
+    "message": "Fehler: Wörterbuch kann nicht zu $1 geändert werden. Möglicherweise ist es nicht mehr installiert.",
     "description": "errorSettingSpellLanguage"
   },
   "DiscardedUpdateTooMuchRecipients": {
-    "message": "Speichern der Spracheinstellungen abgebrochen, da zu viele Empfänger vorhanden sind (Maximale Empfänger sind %S)",
+    "message": "Speichern der Spracheinstellungen abgebrochen, da zu viele Empfänger vorhanden sind (Maximale Empfänger sind $1)",
     "description": "DiscardedUpdateTooMuchRecipients"
   },
   "IMOKWithIt": {

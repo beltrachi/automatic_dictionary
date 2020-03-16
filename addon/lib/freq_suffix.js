@@ -109,7 +109,12 @@ AutomaticDictionary.Lib.FreqSuffix.prototype = {
         return JSON.stringify(this.pair_counter.pairsWithCounter());
     },
     fromJSON: function(pairs_with_counter){
+      pairs_with_counter = JSON.parse(pairs_with_counter);
+      if (typeof(pairs_with_counter) == "string"){
+        console.warn("double serialization for freq suffix");
         pairs_with_counter = JSON.parse(pairs_with_counter);
+      }
+      console.log(["parsed are", pairs_with_counter]);
         this.initialize();
         var i, j, value;
         for(i=0; i < pairs_with_counter.length;i++){
@@ -152,7 +157,7 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     //Runs func on each node. Force create by default
     // Returns null when reaches a dead end (cannot walk to the leaf)
     navigateThrough: function(list, func, forceCreate){
-        var node, 
+        var node,
             forced = (forceCreate !== false),
             item = list[0];
         if(list.length > 0 ){

@@ -108,14 +108,14 @@ AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', functio
 AutomaticDictionary.logger.warn("Logger started");
 //AutomaticDictionary.logger.warn("Thunderbird version is "+ AppConstants.MOZ_APP_VERSION);
 // AutomaticDictionary.logger.filepath = file.path;
-AutomaticDictionary.logger.addFilter(
-    AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
-        (function(){
-            var seq = 0;
-            return function(match){
-                return "masked-email-"+(seq++)+"@domain";
-            }
-        })()));
+// AutomaticDictionary.logger.addFilter(
+//     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
+//         (function(){
+//             var seq = 0;
+//             return function(match){
+//                 return "masked-email-"+(seq++)+"@domain";
+//             }
+//         })()));
 
 AutomaticDictionary.logException = function( e ){
     try {
@@ -204,7 +204,7 @@ AutomaticDictionary.Class = function(options){
         //Version migrations upgrade check
       _this.migrate().then(function(){
         _this.logLevel().then(function(level){
-          AutomaticDictionary.logger.setLevel(level);
+          //TODO enable this! AutomaticDictionary.logger.setLevel(level);
         });
         _this.prefManager.getBoolPref(_this.SAVE_LOG_FILE).then(function(value){
           //AutomaticDictionary.log_writer.enabled = value;
@@ -250,12 +250,11 @@ AutomaticDictionary.Class.prototype = {
     id: "automatic_dictionary_extension@jordi_beltran.net",
     //Constants
     ADDRESS_INFO_KEY:"addressesInfo",
-    PREFERENCE_SCOPE: "extensions.automatic_dictionary",
-    MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
-    ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
-    NOTIFICATION_LEVEL:"extensions.automatic_dictionary.notificationLevel",
-    LOG_LEVEL:"extensions.automatic_dictionary.logLevel",
-    SAVE_LOG_FILE:"extensions.automatic_dictionary.saveLogFile",
+    MAX_RECIPIENTS_KEY:"maxRecipients",
+    ALLOW_HEURISTIC:"allowHeuristic",
+    NOTIFICATION_LEVEL:"notificationLevel",
+    LOG_LEVEL:"logLevel",
+    SAVE_LOG_FILE:"saveLogFile",
 
     METHODS:{
         REMEMBER:"remember",
@@ -285,7 +284,7 @@ AutomaticDictionary.Class.prototype = {
     //Retries till ifce gets ready
     max_deduce_language_retries: 10,
     
-    logo_url: "chrome://automatic_dictionary/logo.png",
+  logo_url: browser.runtime.getURL("logo.png"),
 
     logger: AutomaticDictionary.logger,
     
@@ -341,8 +340,12 @@ AutomaticDictionary.Class.prototype = {
     var _this = this;
     var logger = console;
     var orDefault = async function(k,func){
-      var value = await func();
-      if(value == null){
+      try{
+        var value = await func();
+        if(value == null){
+          value = defaults[k];
+        }
+      }catch(e){
         value = defaults[k];
       }
       return value;
@@ -497,9 +500,13 @@ AutomaticDictionary.Class.prototype = {
         .....
     */
     
-    languageChanged: async function(){
-        if( !this.running ) return;
+  languageChanged: async function(){
+    console.log("FOOOOOO");
+    console.log("log level is " +this.logger.getLevel());
         this.logger.debug("languageChanged call");
+    
+        if( !this.running ) return;
+        this.logger.debug("languageChanged call and running");
         var current_lang = await this.getCurrentLang();
         var tos = await this.getRecipients();
         var ccs = await this.getRecipients("cc");
@@ -701,7 +708,8 @@ AutomaticDictionary.Class.prototype = {
         
         this.logger.debug("Language found: "+ lang);
         
-        if(!lang && await this.allowHeuristic()){
+      if(!lang && await this.allowHeuristic()){
+        this.logger.info("trying to get by heuristics");
             lang = this.heuristic_guess(recipients);
             if(lang){
                 method = this.METHODS.GUESS;
@@ -762,7 +770,8 @@ AutomaticDictionary.Class.prototype = {
     heuristic_guess: function(recipients){
         var recipient, parts, rightside, lang,
             freq_table = new AutomaticDictionary.Lib.FreqTable();
-
+      console.log("freq suffix status");
+      console.log(this.freq_suffix.pairs());
         for(var i=0; i < recipients.length; i++){
             recipient = recipients[i];
             parts = recipient.split("@");
@@ -863,18 +872,20 @@ AutomaticDictionary.Class.prototype = {
     },
     
     getMaxRecipients: function(){
-        return this.prefManager.getIntPref( this.MAX_RECIPIENTS_KEY );
+        return this.prefManager.getIntPref( this.pref_prefix + this.MAX_RECIPIENTS_KEY );
     },
     
-    allowHeuristic: function(){
-        return this.prefManager.getBoolPref(this.ALLOW_HEURISTIC);
+  allowHeuristic: async function(){
+    var value = await this.prefManager.getBoolPref(this.pref_prefix + this.ALLOW_HEURISTIC)
+    console.log(["allowHeuristics", value]);
+    return value;
     },
     
     notificationLevel: function(){
-        return this.prefManager.get(this.NOTIFICATION_LEVEL);
+        return this.prefManager.get(this.pref_prefix + this.NOTIFICATION_LEVEL);
     },
     logLevel: function(){
-        return this.prefManager.get(this.LOG_LEVEL);
+        return this.prefManager.get(this.pref_prefix + this.LOG_LEVEL);
     },
     
     counterFor: async function(key){

@@ -7,7 +7,7 @@ AutomaticDictionary.Migrations = {
     // Upgrades plugin data to current release version
     migrate: async function(){
         // Get current migrations applied
-        var pref_key = this.PREFERENCE_SCOPE + ".migrations_applied";
+        var pref_key = this.pref_prefix + "migrations_applied";
 
         var migrations_applied = [];
         var raw_data = await this.prefManager.getCharPref( pref_key );
@@ -46,7 +46,7 @@ AutomaticDictionary.Migrations = {
         "201102130000": async function(self){
             //Adpat data structure to new one
             // Steps: 1. Load old data. 2. Save as new data
-            var prefPath = self.ADDRESS_INFO_PREF;
+            var prefPath = self.pref_prefix + self.ADDRESS_INFO_PREF;
             var v = await self.prefManager.getCharPref( prefPath );
             if( v ){
                 try{
@@ -67,7 +67,7 @@ AutomaticDictionary.Migrations = {
         },
         "201106032254": async function(self){
             //Add limit of max_recipients
-            var prefPath = self.MAX_RECIPIENTS_KEY;
+            var prefPath = self.pref_prefix + self.MAX_RECIPIENTS_KEY;
             var maxRecipients = await self.prefManager.getIntPref( prefPath );
             if( self.isBlank( maxRecipients ) ){
                 await self.prefManager.setIntPref( prefPath, 10);
@@ -77,13 +77,13 @@ AutomaticDictionary.Migrations = {
             //The CCs so 200 can be really low. Should be 1000 at least. A mail with
             // 1 A and 4 CCs generates 6 keys saved. A, A+CCs, CC1, CC2, CC3, CC4
             var factor = 6; // 6 times the current limit
-            prefPath = self.ADDRESS_INFO_PREF + ".maxSize";
+            prefPath = self.pref_prefix + self.ADDRESS_INFO_PREF + ".maxSize";
             var maxSize = await self.prefManager.getIntPref( prefPath );
             await self.prefManager.setIntPref( prefPath, maxSize * factor );
         },
         "201210192306": async function(self){
             //Add limit of max_recipients
-            await self.prefManager.setBoolPref( self.ALLOW_HEURISTIC, true);
+            await self.prefManager.setBoolPref( self.pref_prefix + self.ALLOW_HEURISTIC, true);
         },
         "201211112134": async function(self){
           //Create freq table base data from current data already stored.
@@ -125,10 +125,14 @@ AutomaticDictionary.Migrations = {
         //     //Added notificationLevel
         //     await self.setDefaults();
         // },
-        "201501061812": async function(self){
-            //Added saveLogFile
-            await self.setDefaults();
-        }
+        // "201501061813": async function(self){
+        //     //Added saveLogFile
+        //     await self.setDefaults();
+      //  },
+      "202003161545": async function(self){
+        //Added saveLogFile
+        await self.setDefaults();
+      }
     }
 };
 

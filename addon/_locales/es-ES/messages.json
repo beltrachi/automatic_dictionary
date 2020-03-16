@@ -1,6 +1,6 @@
 {
   "savedForRecipients": {
-    "message": "Guardado %S como idioma por defecto para %S combinaciones",
+    "message": "Guardado $1 como idioma por defecto para $2 combinaciones",
     "description": "savedForRecipients"
   },
   "noLangForRecipients": {
@@ -8,11 +8,11 @@
     "description": "noLangForRecipients"
   },
   "deducedLang.remember": {
-    "message": "Recordado %S",
+    "message": "Recordado $1",
     "description": "deducedLang.remember"
   },
   "deducedLang.guess": {
-    "message": "Deducido %S",
+    "message": "Deducido $1",
     "description": "deducedLang.guess"
   },
   "settingListenersError": {
@@ -20,11 +20,11 @@
     "description": "settingListenersError"
   },
   "errorSettingSpellLanguage": {
-    "message": "Error: No se pudo poner el diccionario %S. \\u00bfQuiz\\u00e1 se ha desinstalado?",
+    "message": "Error: No se pudo poner el diccionario $1. \\u00bfQuiz\\u00e1 se ha desinstalado?",
     "description": "errorSettingSpellLanguage"
   },
   "DiscardedUpdateTooMuchRecipients": {
-    "message": "Se descarta guardar idioma. Demasiados destinatarios. (M\\u00e1ximos destinatarios son %S)",
+    "message": "Se descarta guardar idioma. Demasiados destinatarios. (M\\u00e1ximos destinatarios son $1)",
     "description": "DiscardedUpdateTooMuchRecipients"
   },
   "IMOKWithIt": {

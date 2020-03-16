@@ -18,13 +18,13 @@ var prefs = class extends ExtensionCommon.ExtensionAPI {
       prefs: {
         getCharPref: async function(k){
           console.log("getcjarpref with "+k);
-          return pm.getCharPref(k, null);
+          return pm.getCharPref(k);
         },
         getIntPref: async function(k){
-          return pm.getIntPref(k, null);
+          return pm.getIntPref(k);
         },
         getBoolPref: async function(k){
-          return pm.getBoolPref(k, null);
+          return pm.getBoolPref(k);
         },
         setCharPref: async function(k,v){
             return pm.setCharPref(k,v);

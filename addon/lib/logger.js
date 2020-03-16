@@ -9,16 +9,16 @@ AutomaticDictionary.Lib.Logger = function(level, writer_fn){
     if (!writer_fn){
         writer_fn = typeof(dump) === 'undefined' ? print : dump;
     }
-
+  console.log("Logger with level "+level);
     return {
         filters: filters,
-        log: function(level, msg) {
+      log: function(level, msg) {
             if( is_current_level( level ) ) {
                 if (typeof(msg) == 'function'){
                     msg = msg();
                 }
                 if (typeof(msg) === 'undefined'){
-                    msg = '';
+                    msg = '(undefined)';
                 }
                 if (msg.toString){
                     msg = msg.toString();
@@ -65,7 +65,10 @@ AutomaticDictionary.Lib.Logger = function(level, writer_fn){
             if( log_level_idx === -1 ){
                 throw "Wrong logger level: "+ level;
             }
-        }
+        },
+      getLevel: function(){
+        return levels[log_level_idx];
+      }
     };
 };
 

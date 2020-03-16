@@ -1,6 +1,6 @@
 {
   "savedForRecipients": {
-    "message": "S'ha guardat %S com a idioma per defecte per %S combinacions",
+    "message": "S'ha guardat $1 com a idioma per defecte per $2 combinacions",
     "description": "savedForRecipients"
   },
   "noLangForRecipients": {
@@ -8,11 +8,11 @@
     "description": "noLangForRecipients"
   },
   "deducedLang.remember": {
-    "message": "Recordat %S",
+    "message": "Recordat $1",
     "description": "deducedLang.remember"
   },
   "deducedLang.guess": {
-    "message": "Dedu\\u00eft %S",
+    "message": "Dedu\\u00eft $1",
     "description": "deducedLang.guess"
   },
   "settingListenersError": {
@@ -20,11 +20,11 @@
     "description": "settingListenersError"
   },
   "errorSettingSpellLanguage": {
-    "message": "Error: No es pot posar el diccionari %S. Potser s'ha desinstal\\u00b7lat?",
+    "message": "Error: No es pot posar el diccionari $1. Potser s'ha desinstal\\u00b7lat?",
     "description": "errorSettingSpellLanguage"
   },
   "DiscardedUpdateTooMuchRecipients": {
-    "message": "Descartat guardar l'idioma. Masses destinataris. (M\\u00e0xims destinataris s\\u00f3n %S)",
+    "message": "Descartat guardar l'idioma. Masses destinataris. (M\\u00e0xims destinataris s\\u00f3n $1)",
     "description": "DiscardedUpdateTooMuchRecipients"
   },
   "IMOKWithIt": {

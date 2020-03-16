@@ -1,6 +1,6 @@
 {
   "savedForRecipients": {
-    "message": "Saved %S as default for %S combinations",
+    "message": "Saved $1 as default for $2 combinations",
     "description": "savedForRecipients"
   },
   "noLangForRecipients": {
@@ -8,11 +8,11 @@
     "description": "noLangForRecipients"
   },
   "deducedLang.remember": {
-    "message": "Remembered %S",
+    "message": "Remembered $1",
     "description": "deducedLang.remember"
   },
   "deducedLang.guess": {
-    "message": "Guessed %S",
+    "message": "Guessed $1",
     "description": "deducedLang.guess"
   },
   "settingListenersError": {
@@ -20,11 +20,11 @@
     "description": "settingListenersError"
   },
   "errorSettingSpellLanguage": {
-    "message": "Error: Could not set language to %S. Maybe its not installed any more?",
+    "message": "Error: Could not set language to $1. Maybe its not installed any more?",
     "description": "errorSettingSpellLanguage"
   },
   "DiscardedUpdateTooMuchRecipients": {
-    "message": "Discarded to save language preferences as there are too much recipients. (Max recipients are %S)",
+    "message": "Discarded to save language preferences as there are too much recipients. (Max recipients are $1)",
     "description": "DiscardedUpdateTooMuchRecipients"
   },
   "IMOKWithIt": {
