@@ -1,3 +1,4 @@
+export function apply(AutomaticDictionary){
 // Adds event listener pattern to the object.
 /*
  * Usage: AutomaticDictionary.extend( myclass, EventDispatcher );
@@ -23,7 +24,10 @@ AutomaticDictionary.EventDispatcher = {
         }
     },
     dispatchEvent: function ( event ) {
-        if(this.logger) this.logger.debug("dispatching event "+event.toSource());
+        if(this.logger) {
+            this.logger.debug("dispatching event ");
+            this.logger.debug(event);
+        }
         var listenerArray = this.event_listeners[ event.type ];
         var list;
         if ( listenerArray !== undefined ) {
@@ -40,4 +44,5 @@ AutomaticDictionary.EventDispatcher = {
             }
         }
     }
+}
 }

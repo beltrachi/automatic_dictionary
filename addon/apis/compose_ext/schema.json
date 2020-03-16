@@ -14,6 +14,68 @@
             "description": "Who to say hello to."
           }
         ]
+      },
+      {
+        "name": "getCurrentLanguage",
+        "type": "function",
+        "description": "Returns spellchecker language on that tab",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer",
+            "description": "Id of the tab"
+          }
+        ]
+      },
+      {
+        "name": "setSpellCheckerLanguage",
+        "type": "function",
+        "description": "Updates spellchecker language on that tab",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer",
+            "description": "tabId of the tab"
+          },
+          {
+            "name": "language",
+            "type": "string",
+            "description": "language"
+          }
+        ]
+      },
+      {
+        "name": "canSpellCheck",
+        "type": "function",
+        "description": "Returns spellchecker enabled and available",
+        "async": true,
+        "parameters": []
+      },
+      {
+        "name": "showNotification",
+        "type": "function",
+        "description": "Show notification on that tab",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer",
+            "description": "tabId of the tab"
+          },
+          {
+            "name": "message",
+            "type": "string",
+            "description": "message"
+          },
+          {
+            "name": "options",
+            "type": "object",
+            "description": "options",
+            "additionalProperties": { "type": "any" }
+          }
+        ]
       }
     ],
     "events": [

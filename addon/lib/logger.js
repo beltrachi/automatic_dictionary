@@ -1,5 +1,4 @@
-if( !AutomaticDictionary.Lib ) AutomaticDictionary.Lib = {}
-
+export function apply(AutomaticDictionary){
 AutomaticDictionary.Lib.Logger = function(level, writer_fn){
     var levels = ["debug","performance","info","warn","error"];
     var log_level_idx = levels.indexOf(level);
@@ -105,4 +104,5 @@ AutomaticDictionary.Lib.NullLogger = function(){
         warn: null_fn,
         error: null_fn
     };
+}
 }

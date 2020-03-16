@@ -9,56 +9,104 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 // This is the important part. It implements the functions and events defined in schema.json.
 // The variable must have the same name you've been using so far, "myapi" in this case.
 var compose_ext = class extends ExtensionCommon.ExtensionAPI {
-  getAPI(context) {
-    return {
-      // Again, this key must have the same name.
-      compose_ext: {
+    getAPI(context) {
+        return {
+            // Again, this key must have the same name.
+            compose_ext: {
 
-        // A function.
-        sayHello: async function(name) {
-          Services.wm.getMostRecentWindow("mail:3pane").alert("Hello " + name + "!");
-        },
+                // A function.
+                sayHello: async function(name) {
+                    Services.wm.getMostRecentWindow("mail:3pane").alert("Hello " + name + "!");
+                },
 
-        // An event. Most of this is boilerplate you don't need to worry about, just copy it.
-        onLanguageChange: new ExtensionCommon.EventManager({
-          context,
-          name: "myapi.onLanguageChange",
-          // In this function we add listeners for any events we want to listen to, and return a
-          // function that removes those listeners. To have the event fire in your extension,
-          // call fire.async.
-          register(fire) {
-            function callback(event, language) {
-              return fire.async(language);
-            }
+                getCurrentLanguage: async function(tabId) {
+                    // todo: use tabId
+                    return Services.wm.getMostRecentWindow("msgcompose").document.documentElement.getAttribute("lang");
+                },
 
-            windowListener.add(callback);
-            return function() {
-              windowListener.remove(callback);
-            };
-          },
-        }).api(),
+                canSpellCheck: async function() {
+                  // todo: use tabId
+                  var window = Services.wm.getMostRecentWindow("msgcompose");
+                  return window.gSpellChecker.canSpellCheck && window.gSpellChecker.enabled;
+                },
 
-        onRecipientsChange: new ExtensionCommon.EventManager({
-          context,
-          name: "myapi.onRecipientsChange",
-          // In this function we add listeners for any events we want to listen to, and return a
-          // function that removes those listeners. To have the event fire in your extension,
-          // call fire.async.
-          register(fire) {
-            function callback(event, language) {
-              return fire.async(language);
-            }
+              setSpellCheckerLanguage: async function(tabId, lang) {
+                var window = Services.wm.getMostRecentWindow("msgcompose");
+                var fake_event = {
+                  target: {
+                    value: lang
+                  },
+                  stopPropagation: function(){}
+                };
+                return window.ChangeLanguage(fake_event);
+              },
 
-            recipientsChangeWindowListener.add(callback);
-            return function() {
-              recipientsChangeWindowListener.remove(callback);
-            };
-          },
-        }).api(),
+              showNotification: async function(tabId, string, options){
+                options = options || {};
+                var window = Services.wm.getMostRecentWindow("msgcompose");
+                var notification_value = "show-message";
+                //FIXME: DRY this code with changeLabel
+                let nb = window.gNotification.notificationbox;
+                var n = nb.getNotificationWithValue(notification_value);
+                if(n) {
+                  n.label = string;
+                } else {
+                  var buttons = options.buttons || [];
+                  var priority = nb.PRIORITY_INFO_HIGH;
+                  n = nb.appendNotification(string, notification_value, options.logo_url, priority, buttons);
+                }
+                console.log(window);
+                // setup timeout
+                if (options.notification_time) {
+                  if(this.label_timeout){
+                    window.clearTimeout(this.label_timeout);
+                  }
+                  this.label_timeout = window.setTimeout( function(){
+                    nb.removeNotification( n );
+                  }, options.notification_time);
+                }
+              },
 
-      },
-    };
-  }
+                // An event. Most of this is boilerplate you don't need to worry about, just copy it.
+                onLanguageChange: new ExtensionCommon.EventManager({
+                    context,
+                    name: "myapi.onLanguageChange",
+                    // In this function we add listeners for any events we want to listen to, and return a
+                    // function that removes those listeners. To have the event fire in your extension,
+                    // call fire.async.
+                    register(fire) {
+                        function callback(event, language) {
+                            return fire.async(language);
+                        }
+
+                        windowListener.add(callback);
+                        return function() {
+                            windowListener.remove(callback);
+                        };
+                    },
+                }).api(),
+
+                onRecipientsChange: new ExtensionCommon.EventManager({
+                    context,
+                    name: "myapi.onRecipientsChange",
+                    // In this function we add listeners for any events we want to listen to, and return a
+                    // function that removes those listeners. To have the event fire in your extension,
+                    // call fire.async.
+                    register(fire) {
+                        function callback(event, language) {
+                            return fire.async(language);
+                        }
+
+                        recipientsChangeWindowListener.add(callback);
+                        return function() {
+                            recipientsChangeWindowListener.remove(callback);
+                        };
+                    },
+                }).api(),
+
+            },
+        };
+    }
 };
 
 // A helpful class for listening to windows opening and closing.
@@ -146,11 +194,9 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
     handleEvent(event) {
         console.log("recipients change handle event with event: ");
         console.log(event);
-        var tab = event.target.ownerDocument.defaultView.activeTab;
-        console.log("Tab is ");
-        console.log(tab);
-        console.log(tab.id);
-        recipientsChangeWindowListener.emit("recipients-changed", tab.id);
+        var win = event.target.view;
+        console.log(win);
+        recipientsChangeWindowListener.emit("recipients-changed", 'FIXME-tabid');
     }
 
     add(callback) {
@@ -164,7 +210,6 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
                 onLoadWindow: function(window) {
                     console.log("Loaded window of messengercompose for recipients change");
                     recipientsChangeWindowListener.detectRecipientsChange(window);
-                    //TODO: fetch language changed item and attach to it's event.
                     // let toolbox = window.document.getElementById("mail-toolbox");
                     // toolbox.addEventListener("click", recipientsChangeWindowListener.handleEvent);
                 },

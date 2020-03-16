@@ -1,17 +1,18 @@
 /**
  * Migrations and process to migrate.
 */
+export function apply(AutomaticDictionary){
 
 AutomaticDictionary.Migrations = {
     // Upgrades plugin data to current release version
-    migrate: function(){
+    migrate: async function(){
         // Get current migrations applied
         var pref_key = this.PREFERENCE_SCOPE + ".migrations_applied";
 
         var migrations_applied = [];
-        var raw_data = this.prefManager.getCharPref( pref_key );
+        var raw_data = await this.prefManager.getCharPref( pref_key );
         if( raw_data !== "" ){
-            migrations_applied = JSON.parse( raw_data ); 
+            migrations_applied = JSON.parse( raw_data );
         }
 
         // Apply all data migrations required
@@ -28,25 +29,25 @@ AutomaticDictionary.Migrations = {
             if( migrations_applied.indexOf( migration_key ) < 0 ){
                 //apply migration
                 this.logger.info("applying migration "+ migration_key);
-                this.migrations[ migration_key ](this);
+                await this.migrations[ migration_key ](this);
                 migrations_applied.push( migration_key );
                 this.logger.info("migration "+ migration_key + " applied successfully");
             }
         }
-        this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
+        await this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
     },
 
     //Ordered migrations
     migrations: {
         //Key is date
-        "201101010000": function(self){
+        "201101010000": async function(self){
             self.logger.debug("running base migration");
         },
-        "201102130000": function(self){
+        "201102130000": async function(self){
             //Adpat data structure to new one
             // Steps: 1. Load old data. 2. Save as new data
             var prefPath = self.ADDRESS_INFO_PREF;
-            var v = self.prefManager.getCharPref( prefPath );
+            var v = await self.prefManager.getCharPref( prefPath );
             if( v ){
                 try{
                     v = JSON.parse( v );
@@ -58,18 +59,18 @@ AutomaticDictionary.Migrations = {
                 return;
             }
             // Save data as new format!
-            var maxSize = self.prefManager.getIntPref( prefPath + ".maxSize");
+            var maxSize = await self.prefManager.getIntPref( prefPath + ".maxSize");
             var lru = new AutomaticDictionary.Lib.LRUHashV2( v, {
                 size: maxSize
             } );
-            self.prefManager.setCharPref(prefPath, lru.toJSON());
+            await self.prefManager.setCharPref(prefPath, lru.toJSON());
         },
-        "201106032254": function(self){
+        "201106032254": async function(self){
             //Add limit of max_recipients
             var prefPath = self.MAX_RECIPIENTS_KEY;
-            var maxRecipients = self.prefManager.getIntPref( prefPath );
+            var maxRecipients = await self.prefManager.getIntPref( prefPath );
             if( self.isBlank( maxRecipients ) ){
-                self.prefManager.setIntPref( prefPath, 10);
+                await self.prefManager.setIntPref( prefPath, 10);
             }
 
             //Increment max_size of shared_hash param because now we support saving
@@ -77,58 +78,58 @@ AutomaticDictionary.Migrations = {
             // 1 A and 4 CCs generates 6 keys saved. A, A+CCs, CC1, CC2, CC3, CC4
             var factor = 6; // 6 times the current limit
             prefPath = self.ADDRESS_INFO_PREF + ".maxSize";
-            var maxSize = self.prefManager.getIntPref( prefPath );
-            self.prefManager.setIntPref( prefPath, maxSize * factor );
+            var maxSize = await self.prefManager.getIntPref( prefPath );
+            await self.prefManager.setIntPref( prefPath, maxSize * factor );
         },
-        "201210192306": function(self){
+        "201210192306": async function(self){
             //Add limit of max_recipients
-            self.prefManager.setBoolPref( self.ALLOW_HEURISTIC, true);
+            await self.prefManager.setBoolPref( self.ALLOW_HEURISTIC, true);
         },
-        "201211112134": function(self){
-            //Add freq table base data
-            //Tricky trick to overwrite the start method and trigger the freq
-            //update when it's first time called
-            var start = self.start, runned = false;
-            self.start = function(){
-                var start_at = (new Date()).getTime(),
-                    keys = self.data.keys(), key, lang;
-                self.logger.debug("migrating to generate freq_suffix with "+JSON.stringify(keys));
-                for(var i=0;i< keys.length;i++){
-                    key = keys[i];
-                    //Only use single items, exclude grouped ones
-                    //Coma is used to separate values
-                    if(key.indexOf(",") === -1 && key.indexOf("[cc]") === -1){
-                        lang = self.data.get(key);
-                        if(lang){
-                            self.save_heuristic(key,lang);
-                        }
-                    }
+        "201211112134": async function(self){
+          //Create freq table base data from current data already stored.
+
+          // We need self.data to be loaded so we attach to the event "load"
+          var listener = async function(){
+            var start_at = (new Date()).getTime(),
+                keys = await self.data.keys(), key, lang;
+            self.logger.debug("migrating to generate freq_suffix with "+JSON.stringify(keys));
+            for(var i=0;i< keys.length;i++){
+              key = keys[i];
+              //Only use single items, exclude grouped ones
+              //Coma is used to separate values
+              if(key.indexOf(",") === -1 && key.indexOf("[cc]") === -1){
+                lang = await self.data.get(key);
+                if(lang){
+                  self.save_heuristic(key,lang);
                 }
-                //Undo the trick and call start.
-                self.start = start;
-                start.apply(self);
+              }
             }
+            self.removeEventListener('load', listener);
+          };
+          self.addEventListener('load',listener);
         },
-        "201302272039": function(self){
-            //Migrated to restartless
-            self.setDefaults();
-        },
-        "201303021735": function(self){
-            //Added internal stats
-            self.setDefaults();
-        },
-        "201405132246": function(self){
-            //Added notificationLevel
-            self.setDefaults();
-        },
-        "201501011313": function(self){
-            //Added notificationLevel
-            self.setDefaults();
-        },
-        "201501061812": function(self){
+      // Only a setDefaults is needed. No need to set defaults so many times.
+        // "201302272039": async function(self){
+        //     //Migrated to restartless
+        //     await self.setDefaults();
+        // },
+        // "201303021735": async function(self){
+        //     //Added internal stats
+        //     await self.setDefaults();
+        // },
+        // "201405132246": async function(self){
+        //     //Added notificationLevel
+        //     await self.setDefaults();
+        // },
+        // "201501011313": async function(self){
+        //     //Added notificationLevel
+        //     await self.setDefaults();
+        // },
+        "201501061812": async function(self){
             //Added saveLogFile
-            self.setDefaults();
+            await self.setDefaults();
         }
     }
 };
 
+}

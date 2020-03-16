@@ -4,164 +4,84 @@
  *   Features:
  *       * When a set is done, it will be available to all SharedHashes through preferences-service
  *       * To spread the changes we save a version number in another preference field
- * 
+ *
  *   data stored expires by size in a LRU logic.
- * 
+ *
  *  Note: Persistency and Locking has been extracted to separate wrappers:
- *      LockedObject and PersistentObject 
+ *      LockedObject and PersistentObject
  */
-/* 
-TODO: 
-    Use an observer of the preference to avoid having to load the data over and
-    over again to know if somebody has updated it.
-    We need to install an observer using the nsIPrefBranch2 interface.
-*/
-AutomaticDictionary.SharedHash = function( prefPath, options ){
-    options = options || {};
-    this.prefPath = prefPath;
-    this.lockPath = prefPath + ".lock";
-    this.prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefBranch);
-    //Taking into account that we will not init two SharedHashes at the same time
-    this.id = (new Date()).getTime().toString() + Math.floor(Math.random()*1000000);
-    this.logger = options.logger || new AutomaticDictionary.Lib.NullLogger();
+/*
+TODO:
+- Remove everything that does not serve the .get .set
+  - Including locks.
+- Use PersistentObject to store this structure and remove prefManager usage.
 
+*/
+export function apply(AutomaticDictionary) {
+  AutomaticDictionary.SharedHash = function( options ){
+    options = options || {};
+    this.logger = options.logger || new AutomaticDictionary.Lib.NullLogger();
+    this.maxSize = options.maxSize;
     return this;
-}
-AutomaticDictionary.SharedHash.prototype = {
-    id: null,
-    internal_version: 1,
-    prefPath: null,
-    prefManager: null,
-    lockPath: null,
+  }
+  AutomaticDictionary.SharedHash.prototype = {
     data: null,
-    version: null,
     maxSize: null, //Max number of keys.
     //The builder/constructor of the data strucutre (LRU HASH)
-    dataConstructor: AutomaticDictionary.Lib.LRUHashV2, 
+    dataConstructor: AutomaticDictionary.Lib.LRUHashV2,
     expiration_callback: null,
     logger: null,
-    
+
     load: function(){
-        this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
-        this.data = this.readData();
-        this.version = this.readVersion();
+      this.maxSize = this.prefManager.getIntPref( this.prefPath + ".maxSize" );
+      this.data = this.readData();
+      this.version = this.readVersion();
     },
-    readVersion: function(){
-        return this.prefManager.getCharPref( this.prefPath + ".version" );
-    },
-    writeVersion: function( v ){
-        return this.prefManager.setCharPref( this.prefPath + ".version", v);
-    },
-    readData:function(){
-        var v = this.prefManager.getCharPref( this.prefPath );
-        var hash = new this.dataConstructor();
-        if( v ){
-            try{
-                hash.fromJSON( v );
-            }catch(e){
-                //Restore in case it gets wrong status
-                this.logger.error("Failed to load data with " + e.toString() );
-                hash = new this.dataConstructor();
-            }
-        }
-        hash.expiration_callback = this.expiration_callback;
-        //Override max_size
-        hash.max_size = this.maxSize;
-        return hash;
-    },
-    writeData:function(){
-        return this.prefManager.setCharPref(
-            this.prefPath, this.data.toJSON() );
-    },
-    
-    sincronized:function( func, force ){
-        if( force ) this.logger.warn("AutomaticDictionary.SharedHash#sincronized with force");
-        try{
-            this.logger.debug("lock is " + JSON.stringify(
-                this.prefManager.getCharPref( this.lockPath )));
-            var nestedSync = this.gotLock();
-            if( force || nestedSync ||
-                    this.prefManager.getCharPref( this.lockPath ).length == 0  ){
-                this.prefManager.setCharPref( this.lockPath, this.id );
-                this.logger.debug("2 - lock is " +
-                    JSON.stringify(this.prefManager.getCharPref( this.lockPath )));
-                if( force || this.gotLock() ){
-                    this.logger.debug("executing on sync");
-                    func();
-                    if( !nestedSync ){
-                        this.prefManager.setCharPref( this.lockPath, "" ); //Release lock
-                        this.logger.debug("lock released is " +
-                            this.prefManager.getCharPref( this.lockPath ));
-                    }else{
-                        this.logger.debug("nested lock not released");
-                    }
-                    return true;
-                }else{
-                    this.logger.debug("lock is not its own: " +
-                        this.prefManager.getCharPref( this.lockPath ) + " != " + this.id);
+        readData:function(){
+            var v = this.prefManager.getCharPref( this.prefPath );
+            var hash = new this.dataConstructor();
+            if( v ){
+                try{
+                    hash.fromJSON( v );
+                }catch(e){
+                    //Restore in case it gets wrong status
+                    this.logger.error("Failed to load data with " + e.toString() );
+                    hash = new this.dataConstructor();
                 }
-            }else{
-                this.logger.debug("no force neither is empty");
             }
-        }catch(e){
-            this.logger.error("Sincronized failed: " + e.message);
-            this.logger.info("Releasing the lock");
-            this.prefManager.setCharPref( this.lockPath, "" ); //Release the lock
-            throw e;
-        }
-        this.logger.debug("syncronized is false");
-        return false;
-    },
-    
-    gotLock:function(){
-        return this.prefManager.getCharPref( this.lockPath ).toString() == this.id;
-    },
-    
-    /**
-    * Function to try to do an operation in sync but gets tired after n retrires
-    */
-    sincronized_with_patience:function( func, times ){
-        for(var t=0; t<times; t++){
-            if(this.sincronized(func, t == (times-1))) return true;
-            this.logger.debug("SharedHash#sincronized_with_patience it:"+t);
-        }
-        this.logger.error("UNREACHABLE CODE REACHED. Internal error. Logs and debugging can be required.");
-        return false; //It should not reach here never!
-    },
-    
+            hash.expiration_callback = this.expiration_callback;
+            //Override max_size
+            hash.max_size = this.maxSize;
+            return hash;
+        },
+        writeData:function(){
+            return this.prefManager.setCharPref(
+                this.prefPath, this.data.toJSON() );
+        },
+
     set: function(key, value){
-        var next_version = this.id + this.internal_version++;
-        var _this = this;
-        this.sincronized_with_patience(
-            function(){
-                _this.refresh(); //Avoid to ask for sync again
-                _this.data.set(key, value);
-                _this.writeVersion( next_version );
-                _this.writeData();
-                _this.logger.info("AutomaticDictionary.SharedHash("+_this.id+") write data sucess");
-            }, 10 );
+      var _this = this;
+      _this.refresh(); //Avoid to ask for sync again
+      _this.data.set(key, value);
+      _this.writeData();
+      _this.logger.info("AutomaticDictionary.SharedHash("+_this.id+") write data sucess");
     },
 
     get: function(key){
-        this.refresh();
-        return this.data.get(key);
+      this.refresh();
+      return this.data.get(key);
     },
-    //Updates to last version of data
-    refresh:function(){
-        if( this.version != this.readVersion() ){
-            var _this = this;
-            this.sincronized_with_patience(function(){
-                _this.load()
-            }, 10 );
+        //Updates to last version of data
+        refresh:function(){
+          this.load()
+        },
+        size: function(){
+            this.refresh();
+            return this.data.size();
+        },
+        keys: function(){
+            this.refresh();
+            return this.data.keys();
         }
-    },
-    size: function(){
-        this.refresh();
-        return this.data.size();
-    },
-    keys: function(){
-        this.refresh();
-        return this.data.keys();
     }
 }

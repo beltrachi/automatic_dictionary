@@ -3,6 +3,7 @@
  * ComposeWindowStub not attached to any window
  * 
  **/
+export function apply(AutomaticDictionary){
 AutomaticDictionary.ComposeWindowStub = (function( params ){
     this.ad = params.ad;
     this.params = params;
@@ -44,4 +45,6 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindowStub.prototype, {
     
 });
 
-//Register compose window?  Not needed. This compose window doesn't have to detect windows.
+    //Register compose window?  Not needed. This compose window doesn't have to detect windows.
+
+}

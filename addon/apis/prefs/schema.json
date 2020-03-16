@@ -1,0 +1,118 @@
+[
+  {
+    "namespace": "prefs",
+    "functions": [
+      {
+        "name": "getCharPref",
+        "type": "function",
+        "description": "",
+        "async": true,
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "description": "key"
+          },
+          {
+            "name": "fallback",
+            "type": "string",
+            "description": "fallback",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "name": "getIntPref",
+        "type": "function",
+        "description": "",
+        "async": true,
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "description": "key"
+          },
+          {
+            "name": "fallback",
+            "type": "integer",
+            "description": "fallback",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "name": "getBoolPref",
+        "type": "function",
+        "description": "",
+        "async": true,
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "description": "key"
+          },
+          {
+            "name": "fallback",
+            "type": "boolean",
+            "description": "fallback",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "name": "setCharPref",
+        "type": "function",
+        "description": "",
+        "async": true,
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "description": "key"
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "description": "value"
+          }
+        ]
+      },
+      {
+        "name": "setIntPref",
+        "type": "function",
+        "description": "",
+        "async": true,
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "description": "key"
+          },
+          {
+            "name": "value",
+            "type": "integer",
+            "description": "value"
+          }
+        ]
+      },
+      {
+        "name": "setBoolPref",
+        "type": "function",
+        "description": "",
+        "async": true,
+        "parameters": [
+          {
+            "name": "key",
+            "type": "string",
+            "description": "key"
+          },
+          {
+            "name": "value",
+            "type": "boolean",
+            "description": "value"
+          }
+        ]
+      }
+    ]
+  }
+]

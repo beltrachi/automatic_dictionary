@@ -1,5 +1,4 @@
-if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
-
+export function apply(AutomaticDictionary){
 var mail_composer = function(){}
 
 mail_composer.prototype = {
@@ -49,3 +48,4 @@ mail_composer.prototype = {
 AutomaticDictionary.Lib.MailComposer = new mail_composer();
 
 
+}

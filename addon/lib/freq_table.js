@@ -1,3 +1,4 @@
+export function apply(AutomaticDictionary){
 AutomaticDictionary.Lib.FreqTable = function(){
     //Nodes by key
     this.nodes = {};
@@ -195,4 +196,4 @@ AutomaticDictionary.Lib.FreqTableNode.prototype = {
         return p;
     }
 }
-
+}

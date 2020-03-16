@@ -3,6 +3,7 @@
  *  and promote their usage.
  **/
 //Constructor
+export function apply(AutomaticDictionary){
 AutomaticDictionary.Plugins.Promotions = function(ad){
     this.init(ad);
 }; 
@@ -15,8 +16,6 @@ AutomaticDictionary.Plugins.Promotions.init = function(ad){
 AutomaticDictionary.extend( 
     AutomaticDictionary.Plugins.Promotions.prototype,
     AutomaticDictionary.Plugins.PluginBase.prototype);
-
-Components.utils.import("resource://gre/modules/AddonManager.jsm");
 
 //TODO: move code to plugin_base
 AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
@@ -51,7 +50,7 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
             _this.shutdown();
         });
         
-        this.getAddon();
+        this.addon = { reviewURL: "FIXME" };
     },
     
     log:function(msg){
@@ -243,14 +242,8 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.Promotions.prototype,
                     tabParams: {contentPage: url} 
                 });
         }
-    },
-    
-    getAddon:function(){
-        var _this = this;
-        AddonManager.getAddonByID(this.ad.id, function(addon){
-            _this.addon = addon;
-        });
     }
 });
 
 AutomaticDictionary.enabled_plugins.push(AutomaticDictionary.Plugins.Promotions);
+}

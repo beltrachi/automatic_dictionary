@@ -1,3 +1,4 @@
+export function apply(AutomaticDictionary) {
 //A component can be shutten down unregistering from what had done
 AutomaticDictionary.Lib.Shutdownable = {
     shutdown_chain: [],
@@ -24,4 +25,4 @@ AutomaticDictionary.Lib.Shutdownable = {
     
 }
 
-
+}

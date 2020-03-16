@@ -1,5 +1,6 @@
 //This is a stub plugin for testing purposes and to see the minimal
 //interface required.
+export function apply(AutomaticDictionary){
 
 //Constructor
 AutomaticDictionary.Plugins.PluginBase = function(ad){
@@ -23,3 +24,5 @@ AutomaticDictionary.extend( AutomaticDictionary.Plugins.PluginBase.prototype, {
 });
 
 AutomaticDictionary.enabled_plugins.push(AutomaticDictionary.Plugins.PluginBase);
+
+}

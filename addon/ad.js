@@ -1,3 +1,4 @@
+console.log("AD IS HERE");
 /**
     Implementation comments:
 
@@ -12,14 +13,13 @@ Listener to:
     I DIDNT FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
 
 */
-var EXPORTED_SYMBOLS = ['AutomaticDictionary', "BOOTSTRAP_REASONS"];
+//var EXPORTED_SYMBOLS = ['AutomaticDictionary'];
 
-var Ci = Components.interfaces;
-var Cc = Components.classes;
-var Cu = Components.utils;
-var Cr = Components.results;
+//var Cu = Components.utils;
+//var Cr = Components.results;
 
-var AutomaticDictionary = this.AutomaticDictionary || {};
+let AutomaticDictionary = {};
+
 AutomaticDictionary.Plugins = {};
 
 AutomaticDictionary.enabled_plugins = [];
@@ -40,66 +40,74 @@ AutomaticDictionary.extend = function (destination,source) {
 //window to compose mails
 AutomaticDictionary.window_managers = [];
 
-var global = this;
-var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                       .getService(Components.interfaces.mozIJSSubScriptLoader); 
-var resources = [
-    "chrome://automatic_dictionary/content/version.js",
-    "chrome://automatic_dictionary/content/lib.js",
-    "chrome://automatic_dictionary/content/lib/sorted_set.js",
-    "chrome://automatic_dictionary/content/lib/lru_hash_v2.js",
-    "chrome://automatic_dictionary/content/lib/shared_hash.js",
-    "chrome://automatic_dictionary/content/lib/persistent_object.js",
-    "chrome://automatic_dictionary/content/lib/locked_object.js",
-    "chrome://automatic_dictionary/content/lib/pair_counter.js",
-    "chrome://automatic_dictionary/content/lib/freq_table.js",
-    "chrome://automatic_dictionary/content/lib/freq_suffix.js",
-    "chrome://automatic_dictionary/content/lib/shutdownable.js",
-    "chrome://automatic_dictionary/content/lib/logger.js",
-    "chrome://automatic_dictionary/content/lib/event_dispatcher.js",
-    "chrome://automatic_dictionary/content/lib/file_writer.js",
-    "chrome://automatic_dictionary/content/lib/mail_composer.js",
-    "chrome://automatic_dictionary/content/ad/migrations.js",
+// Ugly thing to reduce changes needed on code.
+import * as version from './version.js';
+version.apply(AutomaticDictionary);
+import * as lib from './lib.js';
+lib.apply(AutomaticDictionary);
+import * as sorted_set from './lib/sorted_set.js';
+sorted_set.apply(AutomaticDictionary);
+import * as lru_hash_v2 from './lib/lru_hash_v2.js';
+lru_hash_v2.apply(AutomaticDictionary);
+import * as shared_hash from './lib/shared_hash.js';
+shared_hash.apply(AutomaticDictionary);
+import * as persistent_object from './lib/persistent_object.js';
+persistent_object.apply(AutomaticDictionary);
+// import * as locked_object from './lib/locked_object.js';
+// locked_object.apply(AutomaticDictionary);
+import * as pair_counter from './lib/pair_counter.js';
+pair_counter.apply(AutomaticDictionary);
+import * as freq_table from './lib/freq_table.js';
+freq_table.apply(AutomaticDictionary);
+import * as freq_suffix from './lib/freq_suffix.js';
+freq_suffix.apply(AutomaticDictionary);
+import * as shutdownable from './lib/shutdownable.js';
+shutdownable.apply(AutomaticDictionary);
+import * as logger from './lib/logger.js';
+logger.apply(AutomaticDictionary);
+import * as event_dispatcher from './lib/event_dispatcher.js';
+event_dispatcher.apply(AutomaticDictionary);
+// import * as file_writer from './lib/file_writer.js';
+// file_writer.apply(AutomaticDictionary);
+import * as mail_composer from './lib/mail_composer.js';
+mail_composer.apply(AutomaticDictionary);
+import * as migrations from './ad/migrations.js';
+migrations.apply(AutomaticDictionary);
+import * as compose_window from './ad/compose_window.js';
+compose_window.apply(AutomaticDictionary);
+import * as compose_window_stub from './ad/compose_window_stub.js';
+compose_window_stub.apply(AutomaticDictionary);
+// import * as conversations_compose_window from './ad/conversations_compose_window.js';
+// conversations_compose_window.apply(AutomaticDictionary);
+import * as plugin_base from './ad/plugins/plugin_base.js';
+plugin_base.apply(AutomaticDictionary);
+import * as promotions from './ad/plugins/promotions.js';
+promotions.apply(AutomaticDictionary);
 
-    "chrome://automatic_dictionary/content/ad/compose_window.js",
-    "chrome://automatic_dictionary/content/ad/compose_window_stub.js",
-    "chrome://automatic_dictionary/content/ad/conversations_compose_window.js",
+// Cu.import("resource://gre/modules/Log.jsm");
 
-    "chrome://automatic_dictionary/content/ad/plugins/plugin_base.js",
-    "chrome://automatic_dictionary/content/ad/plugins/promotions.js",
-];
+// let log = Log.repository.getLogger("AutomaticDictionary");
+// log.level = Log.Level.Debug;
+// // A console appender logs to the browser console.
+// log.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
+// // A dump appender logs to stdout.
+// log.addAppender(new Log.DumpAppender(new Log.BasicFormatter()));
 
-for( var idx in resources){
-    var url = resources[idx];
-    loader.loadSubScript(url);
-}
+// Cu.import("resource://gre/modules/FileUtils.jsm");
+// Cu.import("resource://gre/modules/Services.jsm");
+// Cu.import("resource://gre/modules/AppConstants.jsm");
 
-Cu.import("resource:///modules/StringBundle.js");
+// var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
 
-Cu.import("resource://gre/modules/Log.jsm");
-
-let log = Log.repository.getLogger("AutomaticDictionary");
-log.level = Log.Level.Debug;
-// A console appender logs to the browser console.
-log.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-// A dump appender logs to stdout.
-log.addAppender(new Log.DumpAppender(new Log.BasicFormatter()));
-
-Cu.import("resource://gre/modules/FileUtils.jsm");
-Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://gre/modules/AppConstants.jsm");
-
-var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
-
-AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
-AutomaticDictionary.log_writer.write("Log file writer started");
-AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
-    log.info(msg);
-    AutomaticDictionary.log_writer.write(msg);
+// AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
+// AutomaticDictionary.log_writer.write("Log file writer started");
+AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
+    console.info(msg);
+    //AutomaticDictionary.log_writer.write(msg);
 });
 AutomaticDictionary.logger.warn("Logger started");
-AutomaticDictionary.logger.warn("Thunderbird version is "+ AppConstants.MOZ_APP_VERSION);
-AutomaticDictionary.logger.filepath = file.path;
+//AutomaticDictionary.logger.warn("Thunderbird version is "+ AppConstants.MOZ_APP_VERSION);
+// AutomaticDictionary.logger.filepath = file.path;
 AutomaticDictionary.logger.addFilter(
     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
         (function(){
@@ -110,47 +118,51 @@ AutomaticDictionary.logger.addFilter(
         })()));
 
 AutomaticDictionary.logException = function( e ){
-    AutomaticDictionary.logger.error( e.toString() );
-    if(e.stack){
-        AutomaticDictionary.logger.error( e.stack.toString() );
+    try {
+        AutomaticDictionary.logger.error( e.toString() );
+        if(e.stack){
+            AutomaticDictionary.logger.error( e.stack.toString() );
+        }
+    }catch(e){
+        console.error(e);
     }
 };
 
-AutomaticDictionary.initWindow = function(window, loaded){
-    var idx, cw, load_listener;
-    loaded = (loaded === true); //bool cast. loaded default is false
-    this.logger.debug("Called initWindow");
+// AutomaticDictionary.initWindow = function(window, loaded){
+//     var idx, cw, load_listener;
+//     loaded = (loaded === true); //bool cast. loaded default is false
+//     this.logger.debug("Called initWindow");
 
-    if(!loaded && window.document.readyState != "complete"){
-        //Attach onload
-        load_listener = function(){
-            window.removeEventListener("load", load_listener );
-            AutomaticDictionary.initWindow( window, true);
-        };
-        window.addEventListener("load", load_listener );
-    }else{
-        if(window.document.location.toString() == "chrome://messenger/content/messenger.xul"){
-            this.logger.debug("Main window detected");
-            AutomaticDictionary.main_window = window;
-        }
+//     if(!loaded && window.document.readyState != "complete"){
+//         //Attach onload
+//         load_listener = function(){
+//             window.removeEventListener("load", load_listener );
+//             AutomaticDictionary.initWindow( window, true);
+//         };
+//         window.addEventListener("load", load_listener );
+//     }else{
+//         if(window.document.location.toString() == "chrome://messenger/content/messenger.xul"){
+//             this.logger.debug("Main window detected");
+//             AutomaticDictionary.main_window = window;
+//         }
 
-        try{
-            for(idx in AutomaticDictionary.window_managers){
-                cw = AutomaticDictionary.window_managers[idx];
-                if( cw.canManageWindow(window)){
-                      var ad = new AutomaticDictionary.Class({
-                        compose_window_builder: cw,
-                        window: window
-                    });
-                    return ad; //stop loop
-                }
-            }
-        }catch(e){
-            this.logger.error("CREATION FAILED");
-            AutomaticDictionary.logException(e);
-        }
-    }
-};
+//         try{
+//             for(idx in AutomaticDictionary.window_managers){
+//                 cw = AutomaticDictionary.window_managers[idx];
+//                 if( cw.canManageWindow(window)){
+//                       var ad = new AutomaticDictionary.Class({
+//                         compose_window_builder: cw,
+//                         window: window
+//                     });
+//                     return ad; //stop loop
+//                 }
+//             }
+//         }catch(e){
+//             this.logger.error("CREATION FAILED");
+//             AutomaticDictionary.logException(e);
+//         }
+//     }
+// };
 AutomaticDictionary.conversations_windows = [];
 //Triggered when a conversations is deteccted
 AutomaticDictionary.conversationsDetected = function(){
@@ -179,65 +191,57 @@ AutomaticDictionary.Class = function(options){
     AutomaticDictionary.instances.push(this); //Possible memmory leak!
     options = options || {};
     this.window = options.window;
-    this.thunderbirdVersion = AppConstants.MOZ_APP_VERSION;
+//    this.thunderbirdVersion = AppConstants.MOZ_APP_VERSION;
     var start = (new Date()).getTime(), _this = this;
     this.logger.debug("ad: init");
 
     this.initPlugins();
 
-    this.running = true;
-    this.prefManager = this.getPrefManagerWrapper();
+  this.running = true;
+  var _this = this;
+    this.getPrefManagerWrapperAsync().then(function(pm){
+        _this.prefManager = pm;
+        //Version migrations upgrade check
+      _this.migrate().then(function(){
+        _this.logLevel().then(function(level){
+          AutomaticDictionary.logger.setLevel(level);
+        });
+        _this.prefManager.getBoolPref(_this.SAVE_LOG_FILE).then(function(value){
+          //AutomaticDictionary.log_writer.enabled = value;
+        });
 
-    //Version migrations upgrade check
-    this.migrate();
 
-    AutomaticDictionary.logger.setLevel(this.logLevel());
-    AutomaticDictionary.log_writer.enabled =
-        this.prefManager.getBoolPref(this.SAVE_LOG_FILE);
+        var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
+        _this.compose_window = new cw_builder(
+          {
+            ad: _this,
+            name: _this.name,
+            logo_url: _this.logo_url,
+            notification_time: _this.notification_time,
+            logger: _this.logger
+          }
+        );
 
+        _this.storage = _this.getSimpleStorage(_this.prefManager, _this.pref_prefix);
+        //Heuristic init
+        _this.logger.info("before initialize data");
+        _this.initializeData();
+        _this.setListeners();
+        _this.initialized = true;
+        _this.initFreqSuffix();
 
-    var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
-    this.compose_window = new cw_builder(
-        {
-            ad: this,
-            name: this.name,
-            logo_url: this.logo_url,
-            notification_time: this.notification_time,
-            logger: this.logger
-        }
-    );
+        // Count the number of times it has been initialized.
+        _this.storage.inc('stats.usages');
+
+        _this.start();
+        //Useful hook for plugins and so on
+        _this.dispatchEvent({type:"load"});
+      }).catch(console.error);
+    }).catch(console.error);
+
 
     this.iter = 0; //ObserveRecipients execution counter
-    this.data = new AutomaticDictionary.SharedHash( this.ADDRESS_INFO_PREF, {logger: this.logger} );
-    this.setListeners();
-    this.initialized = true;
 
-    this.storage = this.getSimpleStorage(this.prefManager,this.pref_prefix);
-    //Heuristic init
-    this.initFreqSuffix();
-
-    // Count the number of times it has been initialized.
-    this.storage.inc('stats.usages');
-
-    this.start();
-
-    //Show warning when loaded
-    try{
-        var onwindowload = function (event){
-            _this.window.removeEventListener("load", onwindowload, false); //remove listener, no longer needed
-            _this.dispatchEvent({type:"window-load"});
-        };
-        this.window.addEventListener("load", onwindowload ,false);
-        //In case window is already loaded
-        if(this.window.document.readyState == "complete"){
-            onwindowload();
-        }
-    }catch(e){
-        AutomaticDictionary.logException(e);
-    }
-
-    //Useful hook for plugins and so on
-    this.dispatchEvent({type:"load"});
     return this;
 }
 
@@ -245,7 +249,7 @@ AutomaticDictionary.Class.prototype = {
     
     id: "automatic_dictionary_extension@jordi_beltran.net",
     //Constants
-    ADDRESS_INFO_PREF:"extensions.automatic_dictionary.addressesInfo",
+    ADDRESS_INFO_KEY:"addressesInfo",
     PREFERENCE_SCOPE: "extensions.automatic_dictionary",
     MAX_RECIPIENTS_KEY:"extensions.automatic_dictionary.maxRecipients",
     ALLOW_HEURISTIC:"extensions.automatic_dictionary.allowHeuristic",
@@ -281,7 +285,7 @@ AutomaticDictionary.Class.prototype = {
     //Retries till ifce gets ready
     max_deduce_language_retries: 10,
     
-    logo_url: "chrome://automatic_dictionary/content/logo.png",
+    logo_url: "chrome://automatic_dictionary/logo.png",
 
     logger: AutomaticDictionary.logger,
     
@@ -331,80 +335,85 @@ AutomaticDictionary.Class.prototype = {
         this.running = true;
     },
     //TODO: move this to another file
-    getPrefManagerWrapper:function(){
-        var pm = Components.classes["@mozilla.org/preferences-service;1"]
-            .getService(Components.interfaces.nsIPrefBranch);
-        var defaults = this.defaults;
-        var _this = this;
-        var orDefault = function(k,func){
-            try{
-                return func();
-            }catch(e){
-                _this.logger.debug("Returning default for "+k);
-                return defaults[k];
-            }
-        };
-        var getType = function(val,key){
-            if((typeof val)== "undefined"){
-                //Set type to default type
-                val = defaults[key];
-            }
-            var map = {
-                "boolean":"Bool",
-                "number":"Int",
-                "string":"Char"
-            };
-            var res = map[(typeof val)] || "Char"; //Char by default
-            _this.logger.debug("getType for "+key+" is "+res );
-            return res;
+  getPrefManagerWrapperAsync: async function(){
+    var pm = browser.prefs;
+    var defaults = this.defaults;
+    var _this = this;
+    var logger = console;
+    var orDefault = async function(k,func){
+      var value = await func();
+      if(value == null){
+        value = defaults[k];
+      }
+      return value;
+    };
+    var getType = function(val,key){
+      if((typeof val)== "undefined"){
+        //Set type to default type
+        val = defaults[key];
+      }
+      var map = {
+        "boolean":"Bool",
+        "number":"Int",
+        "string":"Char"
+      };
+      var res = map[(typeof val)] || "Char"; //Char by default
+      logger.debug("getType for "+key+" is "+res );
+      return res;
+    }
+    var ifce = {
+      instance: pm,
+      //Direct and unsecure
+      set: async function(key,val){
+        return await pm["set"+getType(val,key)+"Pref"](key,val);
+      },
+      //We give value to discover type
+      get: async function(key,val){
+        logger.info("get char pref");
+        logger.info(key);
+        logger.info(val);
+        val = val || defaults[key];
+        if (typeof(val) == "undefined"){
+          return await pm["get"+getType(val,key)+"Pref"](key);
+        }else{
+          return await pm["get"+getType(val,key)+"Pref"](key,val);
         }
-        
-        var ifce = {
-            instance: pm,
-            //Direct and unsecure
-            set:function(key,val){
-                pm["set"+getType(val,key)+"Pref"](key,val);
-            },
-            //We give value to discover type
-            get:function(key,val){
-                return pm["get"+getType(val,key)+"Pref"](key,val);
-            },
-            get_or_raise:function(key,val){
-                return pm["get"+getType(val,key)+"Pref"](key);
-            },
-            //getters with fallback to defaults
-            getCharPref:function(k){
-                return orDefault(k, function(){return pm.getCharPref(k)});
-            },
-            getIntPref:function(k){
-                return orDefault(k, function(){return pm.getIntPref(k)});
-            },
-            getBoolPref:function(k){
-                return orDefault(k, function(){return pm.getBoolPref(k)});
-            },
-            
-            setCharPref: function(k,v){
-                return pm.setCharPref(k,v);
-            },
-            setIntPref: function(k,v){
-                return pm.setIntPref(k,v)
-            },
-            setBoolPref: function(k,v){
-                return pm.setBoolPref(k,v);
-            },
-            inc: function(key, delta){
-                AutomaticDictionary.logger.debug("increasing "+key);
-                delta = delta || 1;
-                var v = ifce.getIntPref(key);
-                v = (1 * (v||0)) + delta;
-                var res = pm.setIntPref(key,v);
-                AutomaticDictionary.logger.debug("up to "+ v);
-                return res;
-            }
-        };
-        return ifce;
-    },
-    //Returns a simple key value store for any type of data.
+      },
+      get_or_raise: async function(key,val){
+        return await pm["get"+getType(val,key)+"Pref"](key);
+      },
+      //getters with fallback to defaults
+      getCharPref:async function(k){
+        return await orDefault(k, async function(){return await pm.getCharPref(k)});
+      },
+      getIntPref: async function(k){
+        return await orDefault(k, async function(){return await pm.getIntPref(k)});
+      },
+      getBoolPref: async function(k){
+        return await orDefault(k, async function(){return await pm.getBoolPref(k)});
+      },
+      setCharPref: async function(k,v){
+        return await pm.setCharPref(k,v);
+      },
+      setIntPref: async function(k,v){
+        return await pm.setIntPref(k,v)
+      },
+      setBoolPref: async function(k,v){
+        return await pm.setBoolPref(k,v);
+      },
+      inc: async function(key, delta){
+        logger.debug("increasing "+key);
+        delta = delta || 1;
+        var v = await ifce.getIntPref(key);
+        v = (1 * (v||0)) + delta;
+        var res = await pm.setIntPref(key,v);
+        logger.debug("up to "+ v);
+        return res;
+      }
+    };
+    return ifce;
+  },
+  //Returns a simple key value store for any type of data.
     //TODO: Migrate prefManager storage to Storage or File
     getSimpleStorage: function(pm, prefix){
         var _this = this;
@@ -433,9 +442,27 @@ AutomaticDictionary.Class.prototype = {
         };
         return ifce;
     },
-    
+  initializeData: async function(){
+    var _this = this;
+    var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
+      this.ADDRESS_INFO_KEY,
+      this.storage,
+      {
+        read:["get", "keys", "pairs", "size"],
+        write:["set"],
+        serializer: "toJSON",
+        loader:"fromJSON",
+        logger: this.logger
+      },
+      function(){
+        return new AutomaticDictionary.Lib.LRUHashV2({}, {logger: _this.logger});
+      }
+    );
+    this.data = persistent_wrapper;
+    console.log(this.data);
+  },
     initFreqSuffix: function(){
-        //Build the object that will manage the storage and locking for the object
+        //Build the object that will manage the storage for the object
         var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
             this.FREQ_TABLE_KEY,
             this.storage,
@@ -449,16 +476,7 @@ AutomaticDictionary.Class.prototype = {
                 return new AutomaticDictionary.Lib.FreqSuffix();
             }
         );
-        this.freq_suffix = new AutomaticDictionary.Lib.LockedObject(
-            this.FREQ_TABLE_KEY,
-            this.storage,
-            {
-                non_locking:["get","pairs"],
-                locking:["add","remove"],
-                reload: "reload"
-            },
-            persistent_wrapper
-        );
+        this.freq_suffix = persistent_wrapper;
         var _this = this;
         this.data.expiration_callback = function(pair){
             _this.remove_heuristic(pair[0],pair[1]);
@@ -479,15 +497,15 @@ AutomaticDictionary.Class.prototype = {
         .....
     */
     
-    languageChanged: function(){
+    languageChanged: async function(){
         if( !this.running ) return;
         this.logger.debug("languageChanged call");
-        var current_lang = this.getCurrentLang();
-        var tos = this.getRecipients();
-        var ccs = this.getRecipients("cc");
-        this.logger.debug("tos are "+ tos.toSource());
-        this.logger.debug("ccss are "+ ccs.toSource());
-        var maxRecipients = this.getMaxRecipients();
+        var current_lang = await this.getCurrentLang();
+        var tos = await this.getRecipients();
+        var ccs = await this.getRecipients("cc");
+      this.logger.debug("tos are "+ tos.toString());
+      this.logger.debug("ccss are "+ ccs.toString());
+        var maxRecipients = await this.getMaxRecipients();
         if( tos.length + ccs.length > maxRecipients ){
             this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
             this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
@@ -543,12 +561,12 @@ AutomaticDictionary.Class.prototype = {
     },
 
     // @param recipients [Hash] with "to" and "cc" keys
-    saveRecipientsToStructures: function(recipients, lang, stats, options){
+    saveRecipientsToStructures: async function(recipients, lang, stats, options){
         options = options || {};
         var key = this.getKeyForRecipients(recipients);
         var is_single = !recipients.cc && recipients.to.length == 1;
         var force = options.force;
-        var old = this.data.get(key);
+        var old = await this.data.get(key);
 
         if( this.isBlank(old) || force ){
             if( !this.isBlank(old) && is_single){
@@ -580,6 +598,10 @@ AutomaticDictionary.Class.prototype = {
     isBlank: function( value ){
         return ((typeof value) == "undefined" || value === "" ||value === null);
     },
+
+  inspect: function (values){
+    return JSON.stringify(values);
+  },
     
     save_heuristic: function(recipient, lang){
         this.logger.debug("saving heuristic for "+ recipient + " to "+ lang);
@@ -607,18 +629,18 @@ AutomaticDictionary.Class.prototype = {
                 are from diferent languages.
          3. TO (one by one): The recipients alone in order of appearence.
     */
-    deduceLanguage: function( opt ){
+    deduceLanguage: async function( opt ){
         var self = this;
         if(!opt) opt = {};
 
-        if( !this.canSpellCheck() ){
+      if( ! (await this.canSpellCheck()) ){
             //TODO: notify user when spellcheck while you type is disabled.
             if( this.running && (!opt.count || opt.count < 10)){
                 this.logger.info("Deferring deduceLanguage because spellchecker"+
                                  " is not ready");
                 opt.count = opt.count || 0;
                 opt.count += 1;
-                this.window.setTimeout(function(){ self.deduceLanguage(opt) },300);
+                setTimeout(function(){ self.deduceLanguage(opt) },300);
             }else{
                 this.logger.warn("spellchecker is not enabled or not running");
             }
@@ -631,7 +653,7 @@ AutomaticDictionary.Class.prototype = {
             return;
         }
 
-        var recipients = this.getRecipients();
+        var recipients = await this.getRecipients();
         if( !this.running || recipients.length == 0 || this.last_lang_discarded ){
             // we stop deducing when last_lang_discarded because it means that
             // the user setted a language but we did not store because it was bigger
@@ -640,7 +662,7 @@ AutomaticDictionary.Class.prototype = {
         }
         var lang = null, method = this.METHODS.REMEMBER, i;
         // TO all and CC all
-        var ccs = this.getRecipients("cc");
+        var ccs = await this.getRecipients("cc");
         var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
         this.logger.debug("Deducing language for: " + toandcc_key);
         lang = this.getLangFor( toandcc_key );
@@ -679,7 +701,7 @@ AutomaticDictionary.Class.prototype = {
         
         this.logger.debug("Language found: "+ lang);
         
-        if(!lang && this.allowHeuristic()){
+        if(!lang && await this.allowHeuristic()){
             lang = this.heuristic_guess(recipients);
             if(lang){
                 method = this.METHODS.GUESS;
@@ -693,11 +715,11 @@ AutomaticDictionary.Class.prototype = {
             this.last_lang == lang;
         if( nothing_changed ){
             //test that the last lang is the same as the one setted on the dictionary.
-            if( this.isBlank(lang) || this.getCurrentLang() == lang){
+          if( this.isBlank(lang) || (await this.getCurrentLang()) == lang){
                 this.logger.debug("deduceLanguage detects that nothing changed or lang is null");
                 return;
             }else{
-                this.logger.debug("Detected changes on langs (from-to): "+ [this.getCurrentLang(), lang].toSource());
+              this.logger.debug("Detected changes on langs (from-to): "+ this.inspect([await this.getCurrentLang(), lang]));
             }
         }
 
@@ -719,7 +741,7 @@ AutomaticDictionary.Class.prototype = {
                         "(retry: " +this.deduce_language_retries_counter + " with delay "+
                         this.deduce_language_retry_delay+" )");
                     var _this = this;
-                    this.deduce_language_retry = this.window.setTimeout(function(){
+                    this.deduce_language_retry = setTimeout(function(){
                         _this.logger.info("Relaunching deduceLanguage");
                         _this.deduce_language_retry = null;
                         _this.deduceLanguage({is_retry:true});
@@ -764,21 +786,13 @@ AutomaticDictionary.Class.prototype = {
     },
   
     setCurrentLang: function( target ){
-        var fake_event = {
-            target: {
-                value: target
-            },
-            stopPropagation: function(){}
-        };
         //Temporary disable language change detection that we trigger ourself
-        this.running = false;
+      this.logger.info("setCurrentLang "+target);
+      this.running = false;
         try{
             if( this.compose_window.changeLanguage ){
                 this.logger.debug("calling compose_window.changeLanguage");
-                this.compose_window.changeLanguage( fake_event );
-            }else if( this.window.ChangeLanguage ){
-                this.logger.debug("calling window.changeLanguage");
-                this.window.ChangeLanguage( fake_event );
+                this.compose_window.changeLanguage(target);
             }else{
                 this.logger.error("No way to change language");
                 this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
@@ -796,16 +810,10 @@ AutomaticDictionary.Class.prototype = {
         return this.prefManager.getCharPref("spellchecker.dictionary");
     },
 
-    canSpellCheck:function(){
-        var is = this.window.gSpellChecker.canSpellCheck && this.isSpellCheckerEnabled();
-        return is;
-    },
+  canSpellCheck:function(){
+    return browser.compose_ext.canSpellCheck();
+  },
 
-    isSpellCheckerEnabled:function(){
-        var is = this.window.gSpellChecker.enabled;
-        return is;
-    },
-  
     getLangFor: function( addr ){
         return this.data.get(addr);
     },
@@ -839,13 +847,15 @@ AutomaticDictionary.Class.prototype = {
     },
 
     //Translation (i18n) helper functions
-    t: function( key ){
-        return this.getStrBundle().getString(key);
-    },
-    
-    ft: function(key, values){
-        return this.getStrBundle().getFormattedString(key, values);
-    },
+  t: function( key ){
+    console.log(["t", key]);
+    return browser.i18n.getMessage(key);
+  },
+
+  ft: function(key, values){
+    console.log(["ft", key, values]);
+    return browser.i18n.getMessage(key, values);
+  },
 
     //Log function
     log:function( msg ){
@@ -867,8 +877,8 @@ AutomaticDictionary.Class.prototype = {
         return this.prefManager.get(this.LOG_LEVEL);
     },
     
-    counterFor:function(key){
-        var ret = this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
+    counterFor: async function(key){
+        var ret = await this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
         this.logger.debug("CunterFor "+key+ " is "+ret);
         return ret;
     },
@@ -881,17 +891,17 @@ AutomaticDictionary.Class.prototype = {
         this.logger.debug("Shutdown instance call");
         this.dispatchEvent({type:"shutdown"});
         this.compose_window.shutdown();
-        AutomaticDictionary.log_writer.close();
+        //AutomaticDictionary.log_writer.close();
     },
 
     //It sets default values in case they are not setted
-    setDefaults:function(){
+    setDefaults: async function(){
         var v;
         //set all default values
         for(var k in this.defaults){
             try{
                 this.logger.debug("Value for "+k+ " is ");
-                v = this.prefManager.get_or_raise(k,this.defaults[k]);
+                v = await this.prefManager.get_or_raise(k,this.defaults[k]);
                 this.logger.debug(v);
             }catch(e){
                 // a get on a non existing key raises an exception.
@@ -899,7 +909,7 @@ AutomaticDictionary.Class.prototype = {
             }
             if(v === null || typeof(v) == 'undefined'){
                 this.logger.debug("setting default for "+k);
-                this.prefManager.set(k,this.defaults[k]);
+                await this.prefManager.set(k,this.defaults[k]);
             }
         }
     },
@@ -930,3 +940,5 @@ AutomaticDictionary.Class.prototype = {
 
 AutomaticDictionary.extend( AutomaticDictionary.Class.prototype, AutomaticDictionary.EventDispatcher);
 AutomaticDictionary.extend(AutomaticDictionary.Class.prototype, AutomaticDictionary.Migrations);
+
+export { AutomaticDictionary };

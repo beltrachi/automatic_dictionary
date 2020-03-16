@@ -1,9 +1,9 @@
-if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
 // An pair counter is a counter that takes into account how many times a 
 // key has been related to a value. It's targeted to be O(1) on insert and update
 // but O(n) on create.
 // 
 // @param assignments an array with [key,value,counter] or null
+export function apply(AutomaticDictionary) {
 AutomaticDictionary.Lib.PairCounter = function(assignments){
     this.data = {};
     assignments = assignments || [];
@@ -51,4 +51,4 @@ AutomaticDictionary.Lib.PairCounter.prototype = {
         return out;
     }
 };
-
+}

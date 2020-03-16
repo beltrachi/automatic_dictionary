@@ -1,6 +1,4 @@
-if( !AutomaticDictionary.Lib ) throw "AutomaticDictionary.Lib required";
-if( !AutomaticDictionary.Lib.PairCounter ) throw "AutomaticDictionary.Lib.PairCounter required";
-if( !AutomaticDictionary.Lib.FreqTable ) throw "AutomaticDictionary.Lib.FreqTable required";
+export function apply(AutomaticDictionary) {
 /*
  *  A FreqSuffix is a structure that can store a mapping of
  *  string => value
@@ -186,3 +184,4 @@ AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
         if(leaf) func(leaf);
     }
 };
+}
