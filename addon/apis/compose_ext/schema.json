@@ -51,7 +51,13 @@
         "type": "function",
         "description": "Returns spellchecker enabled and available",
         "async": true,
-        "parameters": []
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer",
+            "description": "tabId of the tab"
+          }
+        ]
       },
       {
         "name": "showNotification",

@@ -1,9 +1,5 @@
 import { AutomaticDictionary } from "./ad.js";
 
-console.log('Background script loaded.');
-
-console.log("HI HI HI");
-
 browser.windows.onCreated.addListener(function(window){
     console.log("window created");
     try {
@@ -16,4 +12,4 @@ browser.windows.onCreated.addListener(function(window){
     }
 });
 
-console.log("HO HO HO");
+console.log('Background script loaded.');

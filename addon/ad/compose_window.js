@@ -37,7 +37,7 @@ AutomaticDictionary.ComposeWindow = (function( params ){
     this.params = params;
     this.shutdown_chain = [];
     this.logger = params.logger;
-    this.window = this.ad.window;
+  this.window = this.ad.window;
 });
 
 AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
@@ -104,33 +104,49 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
 
   getCurrentLang: async function(){
     // TODO: use tab id!
-        var lang = await browser.compose_ext.getCurrentLanguage(42)
-        console.log(lang);
-        this.logger.info("document attribute says current lang is "+lang);
-        return lang;
-    },
+    var lang = await browser.compose_ext.getCurrentLanguage(await this.getTabId());
+    console.log(lang);
+    this.logger.info("document attribute says current lang is "+lang);
+    return lang;
+  },
+
+  getTabId: async function(){
+    if (this.tabId) return this.tabId
+    var window = await browser.windows.get(this.window.id, {populate: true});
+    console.log(window);
+    this.tabId = window.tabs[0].id;
+    return this.tabId;
+  },
 
     recipients: async function( recipientType ){
       recipientType = recipientType || "to";
-      var windows = await browser.windows.getAll({populate: true, windowTypes: ['messageCompose']});
-      console.log(windows);
-      var tabs = windows[0].tabs;
-      console.log(tabs);
-      var details = await browser.compose.getComposeDetails(tabs[0].id);
+      var tabId = await this.getTabId();
+      var details = await browser.compose.getComposeDetails(tabId);
       console.log(details);
       var value = details[recipientType];
       if (typeof(value) == "string"){
         value = [value]
       }
-      // TODO: normalize recipients to email alone.
-      return value;
+      return this.normalizeRecipients(value);
     },
 
+  // Remove everything but the email because its the canonical part.
+  normalizeRecipients: function(list){
+    var out = [];
+    for(var i = 0, size = list.length; i < size ; i++){
+      var item = list[i];
+      out.push(this.extractEmails(item)[0]);
+    }
+    return out;
+  },
+  extractEmails: function ( text ){
+    return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi);
+  },
     // TODO: maybe this has to go aside in another interface? with showLabel?
-  showMessage: function( str, options ){
+  showMessage: async function( str, options ){
     this.logger.info("Sowing message: "+str);
     browser.compose_ext.showNotification(
-      42,
+      await this.getTabId(),
       str,
       {
         logo_url: this.params.logo_url,
@@ -139,10 +155,10 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     );
   },
 
-  changeLabel: function( str ){
+  changeLabel: async function( str ){
     this.logger.info("Changing label to: "+str);
     browser.compose_ext.showNotification(
-      42, //TODO
+      await this.getTabId(),
       str,
       {
         logo_url: this.params.logo_url,
@@ -150,8 +166,11 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
       }
     );
   },
-  changeLanguage: function(lang){
-    browser.compose_ext.setSpellCheckerLanguage(42, lang);
+  changeLanguage: async function(lang){
+    browser.compose_ext.setSpellCheckerLanguage(await this.getTabId(), lang);
+  },
+  canSpellCheck: async function(){
+    return await browser.compose_ext.canSpellCheck(await this.getTabId());
   }
 });
 

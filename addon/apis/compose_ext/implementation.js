@@ -9,7 +9,12 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 // This is the important part. It implements the functions and events defined in schema.json.
 // The variable must have the same name you've been using so far, "myapi" in this case.
 var compose_ext = class extends ExtensionCommon.ExtensionAPI {
-    getAPI(context) {
+  getAPI(context) {
+    let { extension } = context;
+    let { tabManager } = extension;
+    async function getTabWindow(tabId){
+      return (await tabManager.get(tabId)).nativeTab;
+    }
         return {
             // Again, this key must have the same name.
             compose_ext: {
@@ -20,18 +25,17 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
                 },
 
                 getCurrentLanguage: async function(tabId) {
-                    // todo: use tabId
-                    return Services.wm.getMostRecentWindow("msgcompose").document.documentElement.getAttribute("lang");
+                  return (await getTabWindow(tabId)).document.documentElement.getAttribute("lang");
                 },
 
-                canSpellCheck: async function() {
+                canSpellCheck: async function(tabId) {
                   // todo: use tabId
-                  var window = Services.wm.getMostRecentWindow("msgcompose");
+                  var window = await getTabWindow(tabId);
                   return window.gSpellChecker.canSpellCheck && window.gSpellChecker.enabled;
                 },
 
               setSpellCheckerLanguage: async function(tabId, lang) {
-                var window = Services.wm.getMostRecentWindow("msgcompose");
+                var window = await getTabWindow(tabId);
                 var fake_event = {
                   target: {
                     value: lang
@@ -43,7 +47,7 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
 
               showNotification: async function(tabId, string, options){
                 options = options || {};
-                var window = Services.wm.getMostRecentWindow("msgcompose");
+                var window = await getTabWindow(tabId);
                 var notification_value = "show-message";
                 //FIXME: DRY this code with changeLabel
                 let nb = window.gNotification.notificationbox;
