@@ -108,11 +108,11 @@
     "description": "notificationLevel.label"
   },
   "notificationLevel.description": {
-    "message": "El nivel de las notificaciones que se te mostrarán. &quot;Información&quot;\nte informará de todo lo que haga, como cambiar el diccionario o deducir un\nidioma (valor por defecto). &quot;Error&quot; te informará solo cuando algo\nhaya ido mal.",
+    "message": "El nivel de las notificaciones que se te mostrarán. 'Información'\nte informará de todo lo que haga, como cambiar el diccionario o deducir un\nidioma (valor por defecto). 'Error' te informará solo cuando algo\nhaya ido mal.",
     "description": "notificationLevel.description"
   },
   "notificationLevel.recommendation": {
-    "message": "Ponlo en &quot;Advertencia&quot;\nsi no quieres que te moleste mucho y solo te avise de cosas importantes.",
+    "message": "Ponlo en 'Advertencia'\nsi no quieres que te moleste mucho y solo te avise de cosas importantes.",
     "description": "notificationLevel.recommendation"
   },
   "notificationLevel.info": {
@@ -136,7 +136,7 @@
     "description": "logLevel.description"
   },
   "logLevel.recommendation": {
-    "message": "Usa &quot;warning&quot; si solo quieres que\nse registre cuando algo no va bien.",
+    "message": "Usa 'warning' si solo quieres que\nse registre cuando algo no va bien.",
     "description": "logLevel.recommendation"
   },
   "logLevel.debug": {

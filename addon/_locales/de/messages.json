@@ -108,11 +108,11 @@
     "description": "notificationLevel.label"
   },
   "notificationLevel.description": {
-    "message": "Die Stufe für Benachrichtigungen, die das Add-on anzeigt. &quot;Information&quot; wird alle Aktionen \ndes Add-ons anzeigen, beispielsweise das Ändern von Wörterbüchern oder das Erkennen neuer Sprachen. \n&quot;Fehler&quot; wird nur benachrichtigen, wenn ein Problem auftritt.",
+    "message": "Die Stufe für Benachrichtigungen, die das Add-on anzeigt. 'Information' wird alle Aktionen \ndes Add-ons anzeigen, beispielsweise das Ändern von Wörterbüchern oder das Erkennen neuer Sprachen. \n'Fehler' wird nur benachrichtigen, wenn ein Problem auftritt.",
     "description": "notificationLevel.description"
   },
   "notificationLevel.recommendation": {
-    "message": "Setze es auf &quot;Warnung&quot;, wenn du nicht allzu oft gestört werden möchtest.",
+    "message": "Setze es auf 'Warnung', wenn du nicht allzu oft gestört werden möchtest.",
     "description": "notificationLevel.recommendation"
   },
   "notificationLevel.info": {
@@ -136,7 +136,7 @@
     "description": "logLevel.description"
   },
   "logLevel.recommendation": {
-    "message": "Setze es auf &quot;Warnung&quot;, um nur aufzuzeichnen, wenn etwas nicht funktioniert.",
+    "message": "Setze es auf 'Warnung', um nur aufzuzeichnen, wenn etwas nicht funktioniert.",
     "description": "logLevel.recommendation"
   },
   "logLevel.debug": {

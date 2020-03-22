@@ -108,11 +108,11 @@
     "description": "notificationLevel.label"
   },
   "notificationLevel.description": {
-    "message": "El nivell de les notificacions que vols veure. &quot;Informació&quot;\n(valor per defecte) t'informarà de tot el que faci, com canviar de diccionari\no deduir un idioma. &quot;Error&quot; t'informarà només quan alguna cosa vagi\nmalament.",
+    "message": "El nivell de les notificacions que vols veure. 'Informació'\n(valor per defecte) t'informarà de tot el que faci, com canviar de diccionari\no deduir un idioma. 'Error' t'informarà només quan alguna cosa vagi\nmalament.",
     "description": "notificationLevel.description"
   },
   "notificationLevel.recommendation": {
-    "message": "Selecciona &quot;Advertència&quot; si\nno vols que se't molesti molt i només t'avisi de les coses importants.",
+    "message": "Selecciona 'Advertència' si\nno vols que se't molesti molt i només t'avisi de les coses importants.",
     "description": "notificationLevel.recommendation"
   },
   "notificationLevel.info": {
@@ -136,7 +136,7 @@
     "description": "logLevel.description"
   },
   "logLevel.recommendation": {
-    "message": "Utilitza &quot;warning&quot; si només vols que\nes registri quan alguna cosa no va bé.",
+    "message": "Utilitza 'warning' si només vols que\nes registri quan alguna cosa no va bé.",
     "description": "logLevel.recommendation"
   },
   "logLevel.debug": {

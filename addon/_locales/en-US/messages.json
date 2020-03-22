@@ -108,11 +108,11 @@
     "description": "notificationLevel.label"
   },
   "notificationLevel.description": {
-    "message": "The level you want the plugin to show notifications. &quot;Info&quot; will tell you everything it does, like change dictionary or detect new languages (default). &quot;Error&quot; will only show you when something goes wrong.",
+    "message": "The level you want the plugin to show notifications. 'Info' will tell you everything it does, like change dictionary or detect new languages (default). 'Error' will only show you when something goes wrong.",
     "description": "notificationLevel.description"
   },
   "notificationLevel.recommendation": {
-    "message": "Set it to &quot;Warning&quot; if you don't want to be bothered too much.",
+    "message": "Set it to 'Warning' if you don't want to be bothered too much.",
     "description": "notificationLevel.recommendation"
   },
   "notificationLevel.info": {
@@ -136,7 +136,7 @@
     "description": "logLevel.description"
   },
   "logLevel.recommendation": {
-    "message": "Set it to &quot;Warning&quot; to log only when something is not working well.",
+    "message": "Set it to 'Warning' to log only when something is not working well.",
     "description": "logLevel.recommendation"
   },
   "logLevel.debug": {
