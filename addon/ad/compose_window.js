@@ -33,10 +33,10 @@
  **/
 export function apply(AutomaticDictionary){
 AutomaticDictionary.ComposeWindow = (function( params ){
-    this.ad = params.ad;
-    this.params = params;
-    this.shutdown_chain = [];
-    this.logger = params.logger;
+  this.ad = params.ad;
+  this.params = params;
+  this.shutdown_chain = [];
+  this.logger = params.logger;
   this.window = this.ad.window;
 });
 
@@ -60,9 +60,9 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     },
 
     setListeners:function(){
-        var _this = this;
-        //capture language change event
-      browser.compose_ext.onLanguageChange.addListener(async function (tabId, language){
+      var _this = this;
+      //capture language change event
+      this.addListener(browser.compose_ext.onLanguageChange,async function (tabId, language){
         try{
           console.log("onLanguageChange param is following");
           console.log([tabId, language]);
@@ -74,20 +74,20 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         }catch(e){
           console.error(e);
         }
+      });
+      this.addListener(browser.compose_ext.onRecipientsChange, async function (tabId){
+        console.log("Listener has received event. Recipients changed?!?");
+        console.log(tabId);
+        if (tabId != await _this.getTabId()) {
+          console.log("Ignoring tab id, mine is "+ (await _this.getTabId()));
+          return;
+        }
+        _this.waitAnd(function(){
+          _this.ad.deduceLanguage();
         });
-        browser.compose_ext.onRecipientsChange.addListener(async function (tabId){
-            console.log("Listener has received event. Recipients changed?!?");
-          console.log(tabId);
-          if (tabId != await _this.getTabId()) {
-            console.log("Ignoring tab id, mine is "+ (await _this.getTabId()));
-            return;
-          }
-            _this.waitAnd(function(){
-                _this.ad.deduceLanguage();
-            });
-        });
+      });
 
-      browser.windows.onFocusChanged.addListener(function(windowId) {
+      this.addListener(browser.windows.onFocusChanged, function(windowId) {
         console.log("Focus changed, window id is ", windowId);
         if (_this.window.id != windowId){
           console.log("Ignoring onFocusChanged because different windowId");
@@ -98,13 +98,12 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
           _this.ad.deduceLanguage();
         });
       });
-      // TODO: add shutdown chain to remove event listeners.
 
-        window.automatic_dictionary_initialized = true;
-        this.shutdown_chain.push(function(){
-            window.automatic_dictionary_initialized = false;
-        });
-        this.logger.debug("events registered");
+      window.automatic_dictionary_initialized = true;
+      this.shutdown_chain.push(function(){
+        window.automatic_dictionary_initialized = false;
+      });
+      this.logger.debug("events registered");
     },
 
     prepareWindow:function(window){
@@ -128,17 +127,17 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     return this.tabId;
   },
 
-    recipients: async function( recipientType ){
-      recipientType = recipientType || "to";
-      var tabId = await this.getTabId();
-      var details = await browser.compose.getComposeDetails(tabId);
-      console.log(details);
-      var value = details[recipientType];
-      if (typeof(value) == "string"){
-        value = [value]
-      }
-      return this.normalizeRecipients(value);
-    },
+  recipients: async function( recipientType ){
+    recipientType = recipientType || "to";
+    var tabId = await this.getTabId();
+    var details = await browser.compose.getComposeDetails(tabId);
+    console.log(details);
+    var value = details[recipientType];
+    if (typeof(value) == "string"){
+      value = [value]
+    }
+    return this.normalizeRecipients(value);
+  },
 
   // Remove everything but the email because its the canonical part.
   normalizeRecipients: function(list){

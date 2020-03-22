@@ -127,41 +127,6 @@ AutomaticDictionary.logException = function( e ){
   }
 };
 
-// AutomaticDictionary.initWindow = function(window, loaded){
-//     var idx, cw, load_listener;
-//     loaded = (loaded === true); //bool cast. loaded default is false
-//     this.logger.debug("Called initWindow");
-
-//     if(!loaded && window.document.readyState != "complete"){
-//         //Attach onload
-//         load_listener = function(){
-//             window.removeEventListener("load", load_listener );
-//             AutomaticDictionary.initWindow( window, true);
-//         };
-//         window.addEventListener("load", load_listener );
-//     }else{
-//         if(window.document.location.toString() == "chrome://messenger/content/messenger.xul"){
-//             this.logger.debug("Main window detected");
-//             AutomaticDictionary.main_window = window;
-//         }
-
-//         try{
-//             for(idx in AutomaticDictionary.window_managers){
-//                 cw = AutomaticDictionary.window_managers[idx];
-//                 if( cw.canManageWindow(window)){
-//                       var ad = new AutomaticDictionary.Class({
-//                         compose_window_builder: cw,
-//                         window: window
-//                     });
-//                     return ad; //stop loop
-//                 }
-//             }
-//         }catch(e){
-//             this.logger.error("CREATION FAILED");
-//             AutomaticDictionary.logException(e);
-//         }
-//     }
-// };
 AutomaticDictionary.conversations_windows = [];
 //Triggered when a conversations is deteccted
 AutomaticDictionary.conversationsDetected = function(){
@@ -209,6 +174,14 @@ AutomaticDictionary.Class = function(options){
         //AutomaticDictionary.log_writer.enabled = value;
       });
 
+      browser.windows.onRemoved.addListener(function(windowId){
+        if (_this.window.id != windowId){
+          console.log("Not this window closed");
+          return;
+        }
+        console.log("Shutting down ad on this window");
+        _this.shutdown();
+      });
 
       var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
       _this.compose_window = new cw_builder(
@@ -899,6 +872,7 @@ AutomaticDictionary.Class.prototype = {
   },
 
   shutdown:function(){
+    this.stop();
     this.logger.debug("Shutdown instance call");
     this.dispatchEvent({type:"shutdown"});
     this.compose_window.shutdown();
