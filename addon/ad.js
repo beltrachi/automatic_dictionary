@@ -530,23 +530,23 @@ AutomaticDictionary.Class.prototype = {
       //The user has set the language for the recipients
       //We update the assignment of language for those recipients
       //We overwrite it if it's alone but not if it has CCs
-      this.saveRecipientsToStructures({to:tos}, current_lang, stats, {force: tos.length > 1 || ccs.length == 0});
+      await this.saveRecipientsToStructures({to:tos}, current_lang, stats, {force: tos.length > 1 || ccs.length == 0});
       if (tos.length > 1){
         for( var i in tos ){
           // Save the lang only if it has no lang setted!
-          this.saveRecipientsToStructures({to:[tos[i]]}, current_lang, stats);
+          await this.saveRecipientsToStructures({to:[tos[i]]}, current_lang, stats);
         }
       }
     }
     // Save a lang for tos and ccs
     if( ccs.length > 0 ){
       this.logger.debug("Enter cond 2");
-      this.saveRecipientsToStructures({to:tos, cc:ccs}, current_lang, stats, {force:true});
+      await this.saveRecipientsToStructures({to:tos, cc:ccs}, current_lang, stats, {force:true});
 
       // Add recipients alone if they are undefined
       var curr = null;
       for( var i = 0; i< ccs.length; i++ ){
-        this.saveRecipientsToStructures({to:[ccs[i]]}, current_lang, stats);
+        await this.saveRecipientsToStructures({to:[ccs[i]]}, current_lang, stats);
       }
     }
     if( stats.saved_recipients > 0 ){

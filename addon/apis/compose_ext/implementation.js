@@ -11,7 +11,7 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var compose_ext = class extends ExtensionCommon.ExtensionAPI {
   getAPI(context) {
     let { extension } = context;
-    let { tabManager } = extension;
+    let { tabManager, windowManager } = extension;
     async function getTabWindow(tabId){
       return (await tabManager.get(tabId)).nativeTab;
     }
@@ -74,32 +74,38 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
                 // An event. Most of this is boilerplate you don't need to worry about, just copy it.
                 onLanguageChange: new ExtensionCommon.EventManager({
                     context,
-                    name: "myapi.onLanguageChange",
+                    name: "compose_ext.onLanguageChange",
                     // In this function we add listeners for any events we want to listen to, and return a
                     // function that removes those listeners. To have the event fire in your extension,
                     // call fire.async.
                     register(fire) {
-                        function callback(event, language) {
-                            return fire.async(language);
-                        }
+                      function callback(event_name, event, language) {
+                        let win = windowManager.wrapWindow(event.target.ownerGlobal);
+                        var tab = tabManager.convert(win.activeTab.nativeTab);
+                        return fire.async(tab.id, language);
+                      }
 
-                        windowListener.add(callback);
-                        return function() {
-                            windowListener.remove(callback);
-                        };
+                      windowListener.add(callback);
+                      return function() {
+                        windowListener.remove(callback);
+                      };
                     },
                 }).api(),
 
                 onRecipientsChange: new ExtensionCommon.EventManager({
                     context,
-                    name: "myapi.onRecipientsChange",
+                    name: "compose_ext.onRecipientsChange",
                     // In this function we add listeners for any events we want to listen to, and return a
                     // function that removes those listeners. To have the event fire in your extension,
                     // call fire.async.
                     register(fire) {
-                        function callback(event, language) {
-                            return fire.async(language);
-                        }
+                      function callback(event_name, event) {
+                        console.log("AQUI ESTA");
+                        console.log(event);
+                        let win = windowManager.wrapWindow(event.target.ownerGlobal);
+                        var tab = tabManager.convert(win.activeTab.nativeTab);
+                        return fire.async(tab.id);
+                      }
 
                         recipientsChangeWindowListener.add(callback);
                         return function() {
@@ -126,12 +132,11 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
         this.callbackCount = 0;
     }
 
-    handleEvent(event) {
-        console.log("handle event with event: ");
-        console.log(event);
-        // TODO: fetch which language is it.
-        windowListener.emit("language-changed", 'es');
-    }
+  handleEvent(event) {
+    // TODO: fetch tabId
+    var lang = event.target.getAttribute('lang');
+    windowListener.emit("language-changed", event, lang);
+  }
 
     add(callback) {
         this.on("language-changed", callback);
@@ -176,11 +181,7 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
         var langObserver = new window.MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type == "attributes" && mutation.attributeName == "lang") {
-                    console.log("Lang attr mutation received");
-                    // Todo: get which language it is!
-                    console.log("Mutation is ");
-                    console.log(mutation);
-                    windowListener.handleEvent(mutation.target.getAttribute('lang'));
+                  windowListener.handleEvent(mutation);
                 }
             });
         });
@@ -195,13 +196,11 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
         this.callbackCount = 0;
     }
 
-    handleEvent(event) {
-        console.log("recipients change handle event with event: ");
-        console.log(event);
-        var win = event.target.view;
-        console.log(win);
-        recipientsChangeWindowListener.emit("recipients-changed", 'FIXME-tabid');
-    }
+  handleEvent(event) {
+    console.log("recipients change handle event with event: ");
+    console.log(event);
+    recipientsChangeWindowListener.emit("recipients-changed", event);
+  }
 
     add(callback) {
         this.on("recipients-changed", callback);

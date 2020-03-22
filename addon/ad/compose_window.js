@@ -62,33 +62,43 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     setListeners:function(){
         var _this = this;
         //capture language change event
-      browser.compose_ext.onLanguageChange.addListener(function (param){
+      browser.compose_ext.onLanguageChange.addListener(async function (tabId, language){
         try{
-            console.log("onLanguageChange param is following");
-          console.log(param);
+          console.log("onLanguageChange param is following");
+          console.log([tabId, language]);
+          if (tabId != await _this.getTabId()) {
+            console.log("Ignoring tab id, mine is "+ (await _this.getTabId()));
+            return;
+          }
           _this.ad.languageChanged();
         }catch(e){
           console.error(e);
         }
         });
-        browser.compose_ext.onRecipientsChange.addListener(function (tabId){
+        browser.compose_ext.onRecipientsChange.addListener(async function (tabId){
             console.log("Listener has received event. Recipients changed?!?");
-            console.log(tabId);
+          console.log(tabId);
+          if (tabId != await _this.getTabId()) {
+            console.log("Ignoring tab id, mine is "+ (await _this.getTabId()));
+            return;
+          }
             _this.waitAnd(function(){
                 _this.ad.deduceLanguage();
             });
         });
 
-        browser.windows.onFocusChanged.addListener(function(windowId) {
-            console.log("Focus changed, window id is ", windowId);
-            if (_this.window.id != windowId){
-                return
-            }
+      browser.windows.onFocusChanged.addListener(function(windowId) {
+        console.log("Focus changed, window id is ", windowId);
+        if (_this.window.id != windowId){
+          console.log("Ignoring onFocusChanged because different windowId");
+          return
+        }
 
-            _this.waitAnd(function(){
-                _this.ad.deduceLanguage();
-            });
+        _this.waitAnd(function(){
+          _this.ad.deduceLanguage();
         });
+      });
+      // TODO: add shutdown chain to remove event listeners.
 
         window.automatic_dictionary_initialized = true;
         this.shutdown_chain.push(function(){
