@@ -164,16 +164,20 @@ AutomaticDictionary.Class = function(options){
   this.running = true;
   var _this = this;
   this.getPrefManagerWrapperAsync().then(function(pm){
+    console.log("prefmanagerasync in func");
     _this.prefManager = pm;
     //Version migrations upgrade check
     _this.migrate().then(function(){
+      console.log("in migrate func");
       _this.logLevel().then(function(level){
         //TODO enable this! AutomaticDictionary.logger.setLevel(level);
       });
+      console.log("Ix");
       _this.prefManager.getBoolPref(_this.SAVE_LOG_FILE).then(function(value){
         //AutomaticDictionary.log_writer.enabled = value;
       });
 
+      console.log("Ix");
       browser.windows.onRemoved.addListener(function(windowId){
         if (_this.window.id != windowId){
           console.log("Not this window closed");
@@ -194,14 +198,17 @@ AutomaticDictionary.Class = function(options){
           window: window
         }
       );
+      console.log("Ix");
 
       _this.storage = _this.getSimpleStorage(_this.prefManager, _this.pref_prefix);
       //Heuristic init
       _this.logger.info("before initialize data");
       _this.initializeData();
+      console.log("Ix");
       _this.setListeners();
       _this.initialized = true;
       _this.initFreqSuffix();
+      console.log("Ix");
 
       // Count the number of times it has been initialized.
       _this.storage.inc('stats.usages');
@@ -308,10 +315,13 @@ AutomaticDictionary.Class.prototype = {
   },
   //TODO: move this to another file
   getPrefManagerWrapperAsync: async function(){
+    console.log("X");
     var pm = browser.prefs;
+    console.log("X");
     var defaults = this.defaults;
     var _this = this;
     var logger = console;
+    console.log("X");
     var orDefault = async function(k,func){
       try{
         var value = await func();
@@ -337,6 +347,7 @@ AutomaticDictionary.Class.prototype = {
       logger.debug("getType for "+key+" is "+res );
       return res;
     }
+    console.log("X");
     var ifce = {
       instance: pm,
       //Direct and unsecure
@@ -387,6 +398,7 @@ AutomaticDictionary.Class.prototype = {
         return res;
       }
     };
+    console.log("X");
     return ifce;
   },
   //Returns a simple key value store for any type of data.

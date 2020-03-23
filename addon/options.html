@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <style>
+      form{
+          font-size: 12px;
+      }
+      .hidden_js_string{
+          display: none;
+      }
+      .info{
+          padding-left: 2em;
+      }
+      .info p{
+          font-size: 0.9em;
+      }
+      </style>
+  </head>
+
+  <body>
+    <form>
+      <!-- little hack: hidden tags to have translated mailToDev strings -->
+      <p class="hidden_js_string" id="mailToDev_subject"
+         data-i18n="mailToDev.subject"></p>
+      <p class="hidden_js_string" id="mailToDev_body"
+         data-i18n="mailToDev.body"></p>
+
+      <div class="prefoptions">
+        <div>
+          <label for="input_allowPromotions" data-i18n="allowPromotions.label"></label>
+          <input type="checkbox" data-preference="extensions.automatic_dictionary.allowPromotions" id="input_allowPromotions">
+        </div>
+        <div class="info">
+          <p data-i18n="allowPromotions.info"></p>
+          <p data-i18n="allowPromotions.recommendation"></p>
+        </div>
+
+        <div>
+          <label for="input_notificationLevel" data-i18n="notificationLevel.label"></label>
+          <select data-preference="extensions.automatic_dictionary.notificationLevel">
+            <option value="info" data-i18n="notificationLevel.info"/>
+            <option value="warn" data-i18n="notificationLevel.warn"/>
+            <option value="error" data-i18n="notificationLevel.error"/>
+          </select>
+        </div>
+        <div class="info">
+          <p data-i18n="notificationLevel.description"></p>
+          <p data-i18n="notificationLevel.recommendation"></p>
+        </div>
+        <div>
+          <label for="input_logLevel" data-i18n="logLevel.label"></label>
+          <select data-preference="extensions.automatic_dictionary.logLevel">
+            <option value="debug" data-i18n="logLevel.debug"/>
+            <option value="info" data-i18n="logLevel.info"/>
+            <option value="warn" data-i18n="logLevel.warn"/>
+            <option value="error" data-i18n="logLevel.error"/>
+          </select>
+        </div>
+        <div class="info">
+          <p data-i18n="logLevel.description"></p>
+          <p data-i18n="logLevel.recommendation"></p>
+        </div>
+        <div>
+          <label for="input_saveLogFile" data-i18n="saveLogFile.label"></label>
+          <input type="checkbox" data-preference="extensions.automatic_dictionary.saveLogFile" id="input_saveLogFile">
+        </div>
+        <div class="info">
+          <p data-i18n="saveLogFile.description"></p>
+          <p data-i18n="saveLogFile.recommendation"></p>
+        </div>
+        <p class="info">
+          <input type="button" data-i18n="mailToDev.label" onclick="sendLogToDeveloper(this)"></button>
+        </p>
+        <div class="info">
+          <p data-i18n="mailToDev.description"></p>
+        </div>
+        <h2 class="intro advanced" data-i18n="introduction.text"></h2>
+        <div>
+          <label for="input_maxRecipients" data-i18n="maxSize.label"></label>
+          <input type="text" data-preference="extensions.automatic_dictionary.addressesInfo.maxSize" id="input_maxSize" maxlength="7" size="7" onchange="AutomaticDictionary.check_int_range(this,100,99999)"/>
+        </div>
+        <div class="info">
+          <p data-i18n="maxSize.info"></p>
+          <p data-i18n="maxSize.recommendation"></p>
+        </div>
+        <div>
+          <label for="input_maxRecipients" data-i18n="maxRecipients.label"></label>
+          <input type="text" data-preference="extensions.automatic_dictionary.maxRecipients" id="input_maxRecipients" maxlength="4" size="5" onchange="AutomaticDictionary.check_int_range(this,1,9999)"/>
+        </div>
+        <div class="info">
+          <p data-i18n="maxRecipients.info"></p>
+          <p data-i18n="maxRecipients.recommendation"></p>
+        </div>
+        <div>
+          <input type="button" data-i18n="savePreferences.button" onclick=""></button>
+        </div>
+    </form>
+    <script src="options.js" type="module"></script>
+  </body>
+</html>

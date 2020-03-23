@@ -182,5 +182,9 @@
   "mailToDev.subject": {
     "message": "AutomaticDictionary log report",
     "description": "mailToDev.subject"
+  },
+  "savePreferences.button": {
+    "message": "Guardar",
+    "description": "Save preferences button"
   }
 }

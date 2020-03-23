@@ -25,8 +25,8 @@ AutomaticDictionary.EventDispatcher = {
     },
     dispatchEvent: function ( event ) {
         if(this.logger) {
-            this.logger.debug("dispatching event ");
-            this.logger.debug(event);
+          this.logger.debug("dispatching event ");
+          this.logger.debug(JSON.stringify(event));
         }
         var listenerArray = this.event_listeners[ event.type ];
         var list;

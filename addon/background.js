@@ -1,5 +1,8 @@
 import { AutomaticDictionary } from "./ad.js";
 
+// Trigger migrations
+var initial_ad = AutomaticDictionary.Class()
+
 browser.windows.onCreated.addListener(function(window){
     console.log("window created");
     try {
