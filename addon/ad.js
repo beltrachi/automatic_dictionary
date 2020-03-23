@@ -166,6 +166,7 @@ AutomaticDictionary.Class = function(options){
   this.getPrefManagerWrapperAsync().then(function(pm){
     console.log("prefmanagerasync in func");
     _this.prefManager = pm;
+    _this.storage = _this.getStorage();
     //Version migrations upgrade check
     _this.migrate().then(function(){
       console.log("in migrate func");
@@ -173,7 +174,7 @@ AutomaticDictionary.Class = function(options){
         //TODO enable this! AutomaticDictionary.logger.setLevel(level);
       });
       console.log("Ix");
-      _this.prefManager.getBoolPref(_this.SAVE_LOG_FILE).then(function(value){
+      _this.storage.get(_this.SAVE_LOG_FILE).then(function(value){
         //AutomaticDictionary.log_writer.enabled = value;
       });
 
@@ -187,7 +188,7 @@ AutomaticDictionary.Class = function(options){
         _this.shutdown();
       });
 
-      var cw_builder = options.compose_window_builder || AutomaticDictionary.ComposeWindow;
+      var cw_builder = options.compose_window_builder;
       _this.compose_window = new cw_builder(
         {
           ad: _this,
@@ -200,7 +201,6 @@ AutomaticDictionary.Class = function(options){
       );
       console.log("Ix");
 
-      _this.storage = _this.getSimpleStorage(_this.prefManager, _this.pref_prefix);
       //Heuristic init
       _this.logger.info("before initialize data");
       _this.initializeData();
@@ -267,41 +267,27 @@ AutomaticDictionary.Class.prototype = {
   logo_url: browser.runtime.getURL("logo.png"),
 
   logger: AutomaticDictionary.logger,
-  
-  defaults: (function(prefix){
-    var list = {
-      "addressesInfo": "",
-      "addressesInfo.version": "",
-      "addressesInfo.lock": "",
-      "addressesInfo.maxSize": 200,
-      "migrations_applied": "",
-      
-      "maxRecipients": 10,
-      "allowHeuristic": true,
-      "freqTableData": "",
-      "freqTableData.version": "",
-      "freqTableData.lock": "",
-      
-      "first_visit": "",
-      "last_session": "",
-      "session_number": "",
-      "visitor_id": "",
 
-      "allowPromotions": true,
-      "notificationLevel": 'info', // or "warn" or "error"
-      "logLevel":"debug",
-      "saveLogFile":"true",
-      "stats.usages": 0
-    };
-    var out = {};
-    //Add prefix
-    for(var k in list){
-      out[prefix+k]=list[k];
-    }
-    return out;
-  })("extensions.automatic_dictionary."),
-  
-  
+  defaults: {
+    "addressesInfo": "",
+    "addressesInfo.version": "",
+    "addressesInfo.lock": "",
+    "addressesInfo.maxSize": 200,
+    "migrations_applied": "",
+
+    "maxRecipients": 10,
+    "allowHeuristic": true,
+    "freqTableData": "",
+    "freqTableData.version": "",
+    "freqTableData.lock": "",
+
+    "allowPromotions": true,
+    "notificationLevel": 'info', // or "warn" or "error"
+    "logLevel":"debug",
+    "saveLogFile":"true",
+    "stats.usages": 0
+  },
+
   stop: function(){
     if( !this.running ) return; //Already stopped
     this.logger.debug("ad: stop");
@@ -322,21 +308,24 @@ AutomaticDictionary.Class.prototype = {
     var _this = this;
     var logger = console;
     console.log("X");
+    var prefix = "extensions.automatic_dictionary."
     var orDefault = async function(k,func){
+      var full_key = prefix + k;
       try{
         var value = await func();
         if(value == null){
-          value = defaults[k];
+          console.log("key was null and we return defaults "+k);
+          value = defaults[full_key];
         }
       }catch(e){
-        value = defaults[k];
+        value = defaults[full_key];
       }
       return value;
     };
     var getType = function(val,key){
       if((typeof val)== "undefined"){
         //Set type to default type
-        val = defaults[key];
+        val = defaults[prefix + key];
       }
       var map = {
         "boolean":"Bool",
@@ -359,7 +348,7 @@ AutomaticDictionary.Class.prototype = {
         logger.info("get char pref");
         logger.info(key);
         logger.info(val);
-        val = val || defaults[key];
+        val = val || defaults[prefix + key];
         if (typeof(val) == "undefined"){
           return await pm["get"+getType(val,key)+"Pref"](key);
         }else{
@@ -425,6 +414,32 @@ AutomaticDictionary.Class.prototype = {
         delta = delta || 1;
         var res = ifce.set(key,(1 * ifce.get(key)) + (delta));
         _this.logger.debug("up to "+ ifce.get(key));
+        return res;
+      }
+    };
+    return ifce;
+  },
+  getStorage: function(){
+    var storage = browser.storage.local;
+    var _this = this;
+    var ifce = {
+      set: function(key, value){
+        var data = {};
+        data[key] = value;
+        console.log("Setting key: "+key);
+        console.log(value);
+        return storage.set(data);
+      },
+      get: async function(key){
+        console.log("reading key " + key);
+        var data = await storage.get(key);
+        return data[key];
+      },
+      inc: async function(key, delta){
+        _this.logger.debug("increasing "+key);
+        delta = delta || 1;
+        var res = await ifce.set(key, (1 * await ifce.get(key)) + delta);
+        _this.logger.debug("up to "+ await ifce.get(key));
         return res;
       }
     };
@@ -798,10 +813,7 @@ AutomaticDictionary.Class.prototype = {
 
   //Take care as this language is globally set.
   getCurrentLang: function(){
-    if(this.compose_window.getCurrentLang){
-      return this.compose_window.getCurrentLang();
-    }
-    return this.prefManager.getCharPref("spellchecker.dictionary");
+    return this.compose_window.getCurrentLang();
   },
 
   canSpellCheck:function(){
@@ -857,24 +869,24 @@ AutomaticDictionary.Class.prototype = {
   },
   
   getMaxRecipients: function(){
-    return this.prefManager.getIntPref( this.pref_prefix + this.MAX_RECIPIENTS_KEY );
+    return this.storage.get( this.MAX_RECIPIENTS_KEY );
   },
   
   allowHeuristic: async function(){
-    var value = await this.prefManager.getBoolPref(this.pref_prefix + this.ALLOW_HEURISTIC)
+    var value = await this.storage.get(this.ALLOW_HEURISTIC)
     console.log(["allowHeuristics", value]);
     return value;
   },
   
   notificationLevel: function(){
-    return this.prefManager.get(this.pref_prefix + this.NOTIFICATION_LEVEL);
+    return this.storage.get(this.NOTIFICATION_LEVEL);
   },
   logLevel: function(){
-    return this.prefManager.get(this.pref_prefix + this.LOG_LEVEL);
+    return this.storage.get(this.LOG_LEVEL);
   },
   
   counterFor: async function(key){
-    var ret = await this.prefManager.getIntPref(this.pref_prefix + "stats." + key);
+    var ret = await this.storage.get("stats." + key);
     this.logger.debug("CunterFor "+key+ " is "+ret);
     return ret;
   },
@@ -898,7 +910,7 @@ AutomaticDictionary.Class.prototype = {
     for(var k in this.defaults){
       try{
         this.logger.debug("Value for "+k+ " is ");
-        v = await this.prefManager.get_or_raise(k,this.defaults[k]);
+        v = await this.storage.get(k);
         this.logger.debug(v);
       }catch(e){
         // a get on a non existing key raises an exception.
@@ -906,11 +918,11 @@ AutomaticDictionary.Class.prototype = {
       }
       if(v === null || typeof(v) == 'undefined'){
         this.logger.debug("setting default for "+k);
-        await this.prefManager.set(k,this.defaults[k]);
+        await this.storage.set(k,this.defaults[k]);
       }
     }
   },
-  
+
   initPlugins: function(){
     var list = AutomaticDictionary.enabled_plugins;
     for(var x=0; x< list.length; x++){
@@ -927,11 +939,11 @@ AutomaticDictionary.Class.prototype = {
 
   //Wrappers to set preferences without managing prefixes
   getPref:function(key){
-    return this.prefManager.get(this.pref_prefix + key);
+    return this.storage.get(key);
   },
 
   setPref:function(key, value){
-    return this.prefManager.set(this.pref_prefix + key, value);
+    return this.storage.set(key, value);
   }
 };
 

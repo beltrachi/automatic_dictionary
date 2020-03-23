@@ -4,16 +4,10 @@
 export function apply(AutomaticDictionary){
 
   AutomaticDictionary.Migrations = {
+    pref_key: "migrations_applied",
     // Upgrades plugin data to current release version
     migrate: async function(){
-      // Get current migrations applied
-      var pref_key = this.pref_prefix + "migrations_applied";
-
-      var migrations_applied = [];
-      var raw_data = await this.prefManager.getCharPref( pref_key );
-      if( raw_data !== "" ){
-        migrations_applied = JSON.parse( raw_data );
-      }
+      var migrations_applied = await this.getMigrationsApplied();
 
       // Apply all data migrations required
       // Get ordered migrations (by key size)
@@ -34,9 +28,37 @@ export function apply(AutomaticDictionary){
           this.logger.info("migration "+ migration_key + " applied successfully");
         }
       }
-      await this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
+      await this.updateApplied(migrations_applied);
+    },
+    getMigrationsApplied: async function(){
+      var data = await this.storage.get('migrations_applied');
+      if (typeof(data) == "undefined"){
+        // Fallback to legacy storage
+        console.log("fallback");
+        data = [];
+        var pref_key = this.getPrefKey();
+        var raw_data = await this.prefManager.getCharPref( pref_key );
+        if( raw_data !== "" ){
+          data = JSON.parse( raw_data );
+        }
+      }
+      try{
+        console.log(data);
+        data = JSON.parse(data)
+        console.log(data);
+      }catch(e){}
+      return data;
     },
 
+    updateApplied: async function(migrations_applied){
+      var pref_key = this.getPrefKey();
+      await this.prefManager.setCharPref( pref_key, JSON.stringify( migrations_applied ) );
+      await this.storage.set('migrations_applied', migrations_applied);
+    },
+
+    getPrefKey: function(){
+       return this.pref_prefix + this.pref_key;
+    },
     //Ordered migrations
     migrations: {
       //Key is date
@@ -132,6 +154,27 @@ export function apply(AutomaticDictionary){
       "202003161545": async function(self){
         //Added saveLogFile
         await self.setDefaults();
+      },
+      // Migrate pref to storage API
+      "202003231651": async function(self){
+        var keys_to_parse_json = [
+          "migrations_applied"
+        ];
+        for(var k in self.defaults){
+          console.log("migrating key "+k);
+          var v = self.defaults[k];
+          try {
+            v = await self.prefManager.get(k, self.defaults[k]);
+          }catch(e){
+            console.warn(e);
+          }
+          var clean_key = /^extensions\.automatic_dictionary\.(.*)$/.exec(k)[1];
+          if(keys_to_parse_json.includes(clean_key)){
+            v = JSON.parse(v);
+          }
+          console.log(["setting", clean_key, v]);
+          await self.storage.set(clean_key, v);
+        }
       }
     }
   };

@@ -75,9 +75,9 @@
     "message": "Die maximale Anzahl der gespeicherten Verbindungen aus Empfänger oder Empfänger-Gruppe \nund Wörterbuch-Sprache. Wenn der Speicher die maximale Größe erreicht, werden die ältesten \nund am wenigsten genutzten Daten gelöscht, um Platz für neue Verbindungen zu schaffen.",
     "description": "maxSize.info"
   },
-  "maxSize.recomendation": {
+  "maxSize.recommendation": {
     "message": "Empfohlener Wert: 1200.",
-    "description": "maxSize.recomendation"
+    "description": "maxSize.recommendation"
   },
   "maxRecipients.label": {
     "message": "Maximal zu bearbeitende Empfänger pro E-Mail:",
@@ -87,9 +87,9 @@
     "message": "Hat eine E-Mail mehr als diese Anzahl Empfänger, wird keine Sprache für sie gespeichert \n(Summe aus AN und CC). Sinnvoll, um die Verarbeitung von Massen-Mails zu verhindern.",
     "description": "maxRecipients.info"
   },
-  "maxRecipients.recomendation": {
+  "maxRecipients.recommendation": {
     "message": "Empfohlener Wert: 10.",
-    "description": "maxRecipients.recomendation"
+    "description": "maxRecipients.recommendation"
   },
   "allowPromotions.label": {
     "message": "Wege vorschlagen, um das Add-on zu verbreiten:",
@@ -99,9 +99,9 @@
     "message": "Wir werden Wege vorschlagen, um das Add-on zu verbreiten. Dazu gehören Teilen mit den Freunden, \nSchreiben einer Bewertung oder Fragen über Verbesserungsvorschläge für das Add-on.",
     "description": "allowPromotions.info"
   },
-  "allowPromotions.recomendation": {
+  "allowPromotions.recommendation": {
     "message": "",
-    "description": "allowPromotions.recomendation"
+    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Benachrichtigungs-Stufe:",
@@ -163,9 +163,9 @@
     "message": "Alle Protokolldaten, die von diesem Add-on generiert werden, werden in eine Datei geschrieben, die später \nan den Entwickler gesendet werden kann, um Probleme zu beheben. Thunderbird nach Änderung neustarten, um \nÄnderungen zu übernehmen.",
     "description": "saveLogFile.info"
   },
-  "saveLogFile.recomendation": {
+  "saveLogFile.recommendation": {
     "message": "",
-    "description": "saveLogFile.recomendation"
+    "description": "saveLogFile.recommendation"
   },
   "mailToDev.label": {
     "message": "Protokoll an Entwickler senden",

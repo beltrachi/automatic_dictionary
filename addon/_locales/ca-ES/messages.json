@@ -75,9 +75,9 @@
     "message": "El màxim nombre d'associacions entre un destinatari o un grup de destinataris\ni un idioma de diccionari. Quan l'emmagatzemament arriba al màxim, la dada més\nantiga o menys usada s'elimina per deixar lloc per les noves dades.\n(Conegut com LRU).",
     "description": "maxSize.info"
   },
-  "maxSize.recomendation": {
+  "maxSize.recommendation": {
     "message": "Valor recomanat: 1200.",
-    "description": "maxSize.recomendation"
+    "description": "maxSize.recommendation"
   },
   "maxRecipients.label": {
     "message": "Màxims destinataris per correu:",
@@ -87,9 +87,9 @@
     "message": "Quan un correu supera el màxim de destinataris (sumant destinataris directes i\n'en còpia') no es guardarà l'idioma per aquells recipients. Útil per evitar\nprocessar emails massius.",
     "description": "maxRecipients.info"
   },
-  "maxRecipients.recomendation": {
+  "maxRecipients.recommendation": {
     "message": "Valor recomanat: 10.",
-    "description": "maxRecipients.recomendation"
+    "description": "maxRecipients.recommendation"
   },
   "allowPromotions.label": {
     "message": "Permetre suggerir maneres de promocionar aquest\nplugin:",
@@ -99,9 +99,9 @@
     "message": "Intentarem suggerir-te maneres d'ajudar-nos a promocionar aquest plugin, com\ncompartint-lo amb els companys o escrivint-ne una valoració.",
     "description": "allowPromotions.info"
   },
-  "allowPromotions.recomendation": {
+  "allowPromotions.recommendation": {
     "message": "",
-    "description": "allowPromotions.recomendation"
+    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Nivell de notificació:",
@@ -163,9 +163,9 @@
     "message": "Escriu tots els missatges generats per la extensió en un fitxer que\npodrà ser enviat posteriorment al desenvolupador per detectar problemes.\nReinicia Thunderbird si canvies aquest paràmetre perquè tingui efecte.",
     "description": "saveLogFile.info"
   },
-  "saveLogFile.recomendation": {
+  "saveLogFile.recommendation": {
     "message": "",
-    "description": "saveLogFile.recomendation"
+    "description": "saveLogFile.recommendation"
   },
   "mailToDev.label": {
     "message": "Enviar registe al desenvolupador",

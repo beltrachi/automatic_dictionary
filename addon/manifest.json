@@ -20,7 +20,7 @@
         "page": "background.html"
     },
 
-  "permissions": [ "compose"],
+  "permissions": [ "compose", "storage" ],
     "experiment_apis": {
         "prefs": {
             "schema": "apis/prefs/schema.json",

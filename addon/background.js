@@ -1,7 +1,11 @@
 import { AutomaticDictionary } from "./ad.js";
 
 // Trigger migrations
-var initial_ad = AutomaticDictionary.Class()
+var initial_ad = new AutomaticDictionary.Class(
+  {
+    compose_window_builder: AutomaticDictionary.ComposeWindowStub
+  }
+);
 
 browser.windows.onCreated.addListener(function(window){
     console.log("window created");

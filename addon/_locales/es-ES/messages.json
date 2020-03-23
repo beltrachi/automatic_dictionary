@@ -75,9 +75,9 @@
     "message": "El numero máximo de asociaciones entre un destinatario o grupo de destinatarios\ny un idioma de diccionario. Cuándo el almacenamiento llega a este máximo, el dato\nmas antiguo o menos usado se elimina para dejar sitio a los datos nuevos.\n(Conocido como LRU)",
     "description": "maxSize.info"
   },
-  "maxSize.recomendation": {
+  "maxSize.recommendation": {
     "message": "Valor recomendado: 1200.",
-    "description": "maxSize.recomendation"
+    "description": "maxSize.recommendation"
   },
   "maxRecipients.label": {
     "message": "Máximos destinatarios por correo:",
@@ -87,9 +87,9 @@
     "message": "Cuando un correo supera el máximo de destinatarios (sumando destinatarios\ndirectos y 'en copia') no se guardará el idioma para aquellos destinatarios.\nÚtil para evitar procesar correos masivos.",
     "description": "maxRecipients.info"
   },
-  "maxRecipients.recomendation": {
+  "maxRecipients.recommendation": {
     "message": "Valor recomendado: 10.",
-    "description": "maxRecipients.recomendation"
+    "description": "maxRecipients.recommendation"
   },
   "allowPromotions.label": {
     "message": "Permitir sugerir maneras de promocionar este\nplugin:",
@@ -99,9 +99,9 @@
     "message": "Intentaremos sugerirte maneras de ayudarnos a\npromover este plugin, como compartir con tus compañeros o escribiendo una\nvaloración.",
     "description": "allowPromotions.info"
   },
-  "allowPromotions.recomendation": {
+  "allowPromotions.recommendation": {
     "message": "",
-    "description": "allowPromotions.recomendation"
+    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Nivel de notificaciones:",
@@ -163,9 +163,9 @@
     "message": "Escribe todos los mensajes generados por la extensión en un fichero que\npodrá ser enviado posteriormente al desarrollador para detectar problemas.\nReinicia Thunderbird si cambias este parámetro para que surja efecto.",
     "description": "saveLogFile.info"
   },
-  "saveLogFile.recomendation": {
+  "saveLogFile.recommendation": {
     "message": "",
-    "description": "saveLogFile.recomendation"
+    "description": "saveLogFile.recommendation"
   },
   "mailToDev.label": {
     "message": "Enviar fichero al desarrollador",
