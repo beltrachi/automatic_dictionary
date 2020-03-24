@@ -7,4 +7,7 @@ echo "Executing before build step..."
 ./update_version.sh
 
 echo "Generating $APP_NAME.xpi..."
-zip -r $APP_NAME.xpi addon/*
+rm $APP_NAME.xpi || true
+cd addon
+zip -r ../$APP_NAME.xpi *
+cd ..
