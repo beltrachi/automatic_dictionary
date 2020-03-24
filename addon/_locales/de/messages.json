@@ -154,33 +154,5 @@
   "logLevel.error": {
     "message": "Fehler",
     "description": "logLevel.error"
-  },
-  "saveLogFile.label": {
-    "message": "Protokoll in Datei speichern:",
-    "description": "saveLogFile.label"
-  },
-  "saveLogFile.info": {
-    "message": "Alle Protokolldaten, die von diesem Add-on generiert werden, werden in eine Datei geschrieben, die später \nan den Entwickler gesendet werden kann, um Probleme zu beheben. Thunderbird nach Änderung neustarten, um \nÄnderungen zu übernehmen.",
-    "description": "saveLogFile.info"
-  },
-  "saveLogFile.recommendation": {
-    "message": "",
-    "description": "saveLogFile.recommendation"
-  },
-  "mailToDev.label": {
-    "message": "Protokoll an Entwickler senden",
-    "description": "mailToDev.label"
-  },
-  "mailToDev.description": {
-    "message": "Es wird eine E-Mail mit der Protokoll-Datei \nerstellt, aber nicht gesendet. Du kannst den Inhalt überprüfen und dann selbst senden.",
-    "description": "mailToDev.description"
-  },
-  "mailToDev.body": {
-    "message": "Diese E-Mail enthält ein anonymisiertes Protokoll deiner Aktionen, \ndas es dem Entwickler ermöglicht, Probleme zu erkennen.\n\nBESCHREIBE DAS PROBLEM ODER DEN FEHLER HIER\nhttps://github.com/beltrachi/automatic_dictionary/issues/new\nund füge den Link hier hinzu.\n\nDu kannst den Protokoll-Inhalt durch Doppelklicken des Anhangs überprüfen.\n",
-    "description": "mailToDev.body"
-  },
-  "mailToDev.subject": {
-    "message": "Automatic Dictionary Fehlerprotokoll",
-    "description": "mailToDev.subject"
   }
 }

@@ -24,12 +24,6 @@
 
   <body>
     <form id="form">
-      <!-- little hack: hidden tags to have translated mailToDev strings -->
-      <p class="hidden_js_string" id="mailToDev_subject"
-         data-i18n="mailToDev.subject"></p>
-      <p class="hidden_js_string" id="mailToDev_body"
-         data-i18n="mailToDev.body"></p>
-
       <div class="prefoptions">
         <div>
           <label for="input_allowPromotions" data-i18n="allowPromotions.label"></label>
@@ -64,20 +58,6 @@
         <div class="info">
           <p data-i18n="logLevel.description"></p>
           <p data-i18n="logLevel.recommendation"></p>
-        </div>
-        <div>
-          <label for="input_saveLogFile" data-i18n="saveLogFile.label"></label>
-          <input type="checkbox" data-preference="saveLogFile" id="input_saveLogFile">
-        </div>
-        <div class="info">
-          <p data-i18n="saveLogFile.description"></p>
-          <p data-i18n="saveLogFile.recommendation"></p>
-        </div>
-        <p class="info">
-          <input type="button" data-i18n="mailToDev.label" onclick="sendLogToDeveloper(this)"></button>
-        </p>
-        <div class="info">
-          <p data-i18n="mailToDev.description"></p>
         </div>
         <h2 class="intro advanced" data-i18n="introduction.text"></h2>
         <div>

@@ -51,25 +51,9 @@ With the following information:
  * The plugins you have installed. You can do a screenshot of the addons page and send it to me.
  * A list of steps to reproduce the bug.
  * Tell me what it does and what would you expect.
- * Error console lessages. That usually is in "Tools" > "Developer tools" > "Error console".
+ * Error console messages. That usually is in "Tools" > "Developer tools" > "Error console".
 
-If the plugin does something you did not expect it will be helpful if you send us the logs of the plugin (as described in the next section)
-
-### Sending logs
-
-You can send me a detailed description of which steps to reproduce your bug with the plugin logs attached.
-
-Steps to activate the plugin logs:
-
-1. Go to preferences of the plugin (in Thunderbird > Addons > Automatic Dictionary > Preferences)
-2. Activate "Save log to file"
-3. Set Log level to "Debug"
-4. Restart thunderbird
-5. Reproduce the case that do not work.
-6. Close Thunderbird and open it again.
-7. Go to Automatic Dictionary preferences and click on "Send log to developer"
-
-After that, you should disable the "Save to log file" and set Log level back to "Warning".
+If the plugin does something you did not expect it will be helpful if you send us the logs of the plugin (as described in the next section).
 
 ## Contributors
 
@@ -91,6 +75,6 @@ When we release a new version of the plugin we do:
 6. Commit all changes.
 7. Create tag with git.
 8. Push all changes.
-9. Go to Mozilla addon page and upload new version.
+9. Go to Mozilla addons page and upload new version.
 
 Then you have to wait till they approve it.

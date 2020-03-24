@@ -154,33 +154,5 @@
   "logLevel.error": {
     "message": "Error",
     "description": "logLevel.error"
-  },
-  "saveLogFile.label": {
-    "message": "Guardar log en fitxer:",
-    "description": "saveLogFile.label"
-  },
-  "saveLogFile.info": {
-    "message": "Escriu tots els missatges generats per la extensió en un fitxer que\npodrà ser enviat posteriorment al desenvolupador per detectar problemes.\nReinicia Thunderbird si canvies aquest paràmetre perquè tingui efecte.",
-    "description": "saveLogFile.info"
-  },
-  "saveLogFile.recommendation": {
-    "message": "",
-    "description": "saveLogFile.recommendation"
-  },
-  "mailToDev.label": {
-    "message": "Enviar registe al desenvolupador",
-    "description": "mailToDev.label"
-  },
-  "mailToDev.description": {
-    "message": "Prepara un email amb el registre\nperò no l'envia. Podràs revisar el fitxer abans d'enviar-lo.",
-    "description": "mailToDev.description"
-  },
-  "mailToDev.body": {
-    "message": "Aquest correu conté un registre anonimitzat\nde la teva activitat que permetrà al desenvolupador investigar qualsevol\ncomportament inesperat.\n\nDESCRIU EL PROBLEMA AQUI o crea un issue aquí:\nhttps://github.com/beltrachi/automatic_dictionary/issues/new\ni afegeix l'enllaç aquí.\n\nPots inspeccionar el contingut del registre que estas a punt d'enviar fent\ndoble click a la zona de fitxers adjunts.",
-    "description": "mailToDev.body"
-  },
-  "mailToDev.subject": {
-    "message": "AutomaticDictionary log report",
-    "description": "mailToDev.subject"
   }
 }

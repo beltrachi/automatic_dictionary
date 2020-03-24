@@ -66,8 +66,6 @@ import * as logger from './lib/logger.js';
 logger.apply(AutomaticDictionary);
 import * as event_dispatcher from './lib/event_dispatcher.js';
 event_dispatcher.apply(AutomaticDictionary);
-// import * as file_writer from './lib/file_writer.js';
-// file_writer.apply(AutomaticDictionary);
 import * as mail_composer from './lib/mail_composer.js';
 mail_composer.apply(AutomaticDictionary);
 import * as migrations from './ad/migrations.js';
@@ -171,13 +169,8 @@ AutomaticDictionary.Class = function(options){
     _this.migrate().then(function(){
       console.log("in migrate func");
       _this.logLevel().then(function(level){
-        //TODO enable this! AutomaticDictionary.logger.setLevel(level);
+        AutomaticDictionary.logger.setLevel(level);
       });
-      console.log("Ix");
-      _this.storage.get(_this.SAVE_LOG_FILE).then(function(value){
-        //AutomaticDictionary.log_writer.enabled = value;
-      });
-
       console.log("Ix");
       browser.windows.onRemoved.addListener(function(windowId){
         if (_this.window.id != windowId){
@@ -234,7 +227,6 @@ AutomaticDictionary.Class.prototype = {
   ALLOW_HEURISTIC:"allowHeuristic",
   NOTIFICATION_LEVEL:"notificationLevel",
   LOG_LEVEL:"logLevel",
-  SAVE_LOG_FILE:"saveLogFile",
 
   METHODS:{
     REMEMBER:"remember",
@@ -284,7 +276,6 @@ AutomaticDictionary.Class.prototype = {
     "allowPromotions": true,
     "notificationLevel": 'info', // or "warn" or "error"
     "logLevel":"debug",
-    "saveLogFile":"true",
     "stats.usages": 0
   },
 

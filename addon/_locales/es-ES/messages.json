@@ -155,34 +155,6 @@
     "message": "Error",
     "description": "logLevel.error"
   },
-  "saveLogFile.label": {
-    "message": "Guardar log en fichero:",
-    "description": "saveLogFile.label"
-  },
-  "saveLogFile.info": {
-    "message": "Escribe todos los mensajes generados por la extensión en un fichero que\npodrá ser enviado posteriormente al desarrollador para detectar problemas.\nReinicia Thunderbird si cambias este parámetro para que surja efecto.",
-    "description": "saveLogFile.info"
-  },
-  "saveLogFile.recommendation": {
-    "message": "",
-    "description": "saveLogFile.recommendation"
-  },
-  "mailToDev.label": {
-    "message": "Enviar fichero al desarrollador",
-    "description": "mailToDev.label"
-  },
-  "mailToDev.description": {
-    "message": "Prepara un email con el registro pero no lo\nenvía. Podrás revisar el fichero antes de enviarlo.",
-    "description": "mailToDev.description"
-  },
-  "mailToDev.body": {
-    "message": "Este correo contiene un registro anonimizado de tu\nactividad que permitirá al desarrollador investigar cualquier comportamiento\nextraño.\n\nDESCRIBE EL PROBLEMA AQUÍ o crea un issue aquí:\nhttps://github.com/beltrachi/automatic_dictionary/issues/new\ny pon un enlace del issue aquí.\n\nPuedes inspeccionar el contenido del registro que vas a enviar haciendo doble\nclick en la zona de ficheros adjuntos",
-    "description": "mailToDev.body"
-  },
-  "mailToDev.subject": {
-    "message": "AutomaticDictionary log report",
-    "description": "mailToDev.subject"
-  },
   "savePreferences.button": {
     "message": "Guardar",
     "description": "Save preferences button"
