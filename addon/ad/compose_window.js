@@ -104,6 +104,10 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
         window.automatic_dictionary_initialized = false;
       });
       this.logger.debug("events registered");
+      this.ad.addEventListener('shutdown', function(){
+        console.log("shutting down compose window");
+        _this.shutdown();
+      });
     },
 
     prepareWindow:function(window){

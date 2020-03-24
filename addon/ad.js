@@ -1,22 +1,3 @@
-/**
-   Implementation comments:
-
-   * To support various compose windows we share the data hash between instances
-   of ad, through the preferences service with SharedHash
-
-   Listener to:
-   Event "Onchange of the dictionary button":
-   -> save the language for the current recipients
-   Event "Changed recipients list":
-   -> deduce language for this recipients
-   I DIDNT FIND ANY WAY TO GET THE EVENT. It will be kept as observer.
-
-*/
-//var EXPORTED_SYMBOLS = ['AutomaticDictionary'];
-
-//var Cu = Components.utils;
-//var Cr = Components.results;
-
 let AutomaticDictionary = {};
 
 AutomaticDictionary.Plugins = {};
@@ -81,38 +62,10 @@ plugin_base.apply(AutomaticDictionary);
 import * as promotions from './ad/plugins/promotions.js';
 promotions.apply(AutomaticDictionary);
 
-// Cu.import("resource://gre/modules/Log.jsm");
-
-// let log = Log.repository.getLogger("AutomaticDictionary");
-// log.level = Log.Level.Debug;
-// // A console appender logs to the browser console.
-// log.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-// // A dump appender logs to stdout.
-// log.addAppender(new Log.DumpAppender(new Log.BasicFormatter()));
-
-// Cu.import("resource://gre/modules/FileUtils.jsm");
-// Cu.import("resource://gre/modules/Services.jsm");
-// Cu.import("resource://gre/modules/AppConstants.jsm");
-
-// var file = FileUtils.getFile("ProfD", ["automatic_dictionary.log"]);
-
-// AutomaticDictionary.log_writer = new AutomaticDictionary.Lib.FileWriter(file.path);
-// AutomaticDictionary.log_writer.write("Log file writer started");
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
   console.info(msg);
-  //AutomaticDictionary.log_writer.write(msg);
 });
 AutomaticDictionary.logger.warn("Logger started");
-//AutomaticDictionary.logger.warn("Thunderbird version is "+ AppConstants.MOZ_APP_VERSION);
-// AutomaticDictionary.logger.filepath = file.path;
-// AutomaticDictionary.logger.addFilter(
-//     AutomaticDictionary.Lib.LoggerObfuscator(/([^\s"';\:]+@)([\w-.]+)/g,
-//         (function(){
-//             var seq = 0;
-//             return function(match){
-//                 return "masked-email-"+(seq++)+"@domain";
-//             }
-//         })()));
 
 AutomaticDictionary.logException = function( e ){
   try {
@@ -149,15 +102,16 @@ AutomaticDictionary.shutdown = function(){
 AutomaticDictionary.instances = [];
 
 AutomaticDictionary.Class = function(options){
-  //TODO: destroy instances when windows closed, dont keep all in mem!
-  AutomaticDictionary.instances.push(this); //Possible memmory leak!
-  options = options || {};
-  this.window = options.window;
-  //    this.thunderbirdVersion = AppConstants.MOZ_APP_VERSION;
-  var start = (new Date()).getTime(), _this = this;
-  this.logger.debug("ad: init");
+    //TODO: destroy instances when windows closed, dont keep all in mem!
+    AutomaticDictionary.instances.push(this); //Possible memmory leak!
+    options = options || {};
+    this.window = options.window;
+    //    this.thunderbirdVersion = AppConstants.MOZ_APP_VERSION;
+    var start = (new Date()).getTime(), _this = this;
+    this.logger.debug("ad: init");
 
-  this.initPlugins();
+    this.initPlugins();
+    this.shutdown_chain = [];
 
   this.running = true;
   var _this = this;
@@ -172,15 +126,16 @@ AutomaticDictionary.Class = function(options){
         AutomaticDictionary.logger.setLevel(level);
       });
       console.log("Ix");
-      browser.windows.onRemoved.addListener(function(windowId){
-        if (_this.window.id != windowId){
-          console.log("Not this window closed");
-          return;
-        }
-        console.log("Shutting down ad on this window");
-        _this.shutdown();
-      });
-
+      if ( _this.window ) {
+        browser.windows.onRemoved.addListener(function(windowId){
+          if (_this.window.id != windowId){
+            console.log("Not this window closed");
+            return;
+          }
+          console.log("Shutting down ad on this window");
+          _this.shutdown();
+        });
+      }
       var cw_builder = options.compose_window_builder;
       _this.compose_window = new cw_builder(
         {
@@ -205,7 +160,7 @@ AutomaticDictionary.Class = function(options){
 
       // Count the number of times it has been initialized.
       _this.storage.inc('stats.usages');
-
+      _this.setShutdown();
       _this.start();
       //Useful hook for plugins and so on
       _this.dispatchEvent({type:"load"});
@@ -292,9 +247,7 @@ AutomaticDictionary.Class.prototype = {
   },
   //TODO: move this to another file
   getPrefManagerWrapperAsync: async function(){
-    console.log("X");
     var pm = browser.prefs;
-    console.log("X");
     var defaults = this.defaults;
     var _this = this;
     var logger = console;
@@ -392,7 +345,7 @@ AutomaticDictionary.Class.prototype = {
       get: function(key){
         var data=null;
         //When data is not initialized, it raises an error.
-        try{ 
+        try{
           data = pm.getCharPref( prefix + key );
           if( data != ""){
             data = JSON.parse(data);
@@ -437,6 +390,10 @@ AutomaticDictionary.Class.prototype = {
     return ifce;
   },
   initializeData: async function(){
+    if (AutomaticDictionary.address_data){
+      this.data = AutomaticDictionary.address_data;
+      return;
+    }
     var _this = this;
     var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
       this.ADDRESS_INFO_KEY,
@@ -453,9 +410,14 @@ AutomaticDictionary.Class.prototype = {
       }
     );
     this.data = persistent_wrapper;
+    AutomaticDictionary.address_data = this.data;
     console.log(this.data);
   },
   initFreqSuffix: function(){
+    if (AutomaticDictionary.freq_suffix){
+      this.freq_suffix = AutomaticDictionary.freq_suffix;
+      return;
+    }
     //Build the object that will manage the storage for the object
     var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
       this.FREQ_TABLE_KEY,
@@ -475,6 +437,7 @@ AutomaticDictionary.Class.prototype = {
     this.data.expiration_callback = function(pair){
       _this.remove_heuristic(pair[0],pair[1]);
     }
+    AutomaticDictionary.freq_suffix = this.freq_suffix;
   },
 
   //Called when the user changes the language of the dictionary (event based func)
@@ -886,12 +849,13 @@ AutomaticDictionary.Class.prototype = {
     return Services.vc.compare(this.thunderbirdVersion, version) !== -1;
   },
 
-  shutdown:function(){
-    this.stop();
-    this.logger.debug("Shutdown instance call");
-    this.dispatchEvent({type:"shutdown"});
-    this.compose_window.shutdown();
-    //AutomaticDictionary.log_writer.close();
+  setShutdown:function(){
+    var _this = this;
+    this.shutdown_chain.push(function(){
+      _this.stop();
+      _this.logger.debug("Shutdown instance call");
+      _this.dispatchEvent({type:"shutdown"});
+    });
   },
 
   //It sets default values in case they are not setted
@@ -938,7 +902,14 @@ AutomaticDictionary.Class.prototype = {
   }
 };
 
-AutomaticDictionary.extend( AutomaticDictionary.Class.prototype, AutomaticDictionary.EventDispatcher);
-AutomaticDictionary.extend(AutomaticDictionary.Class.prototype, AutomaticDictionary.Migrations);
+AutomaticDictionary.extend(AutomaticDictionary.Class.prototype,
+                           AutomaticDictionary.EventDispatcher);
+
+AutomaticDictionary.extend(AutomaticDictionary.Class.prototype,
+                           AutomaticDictionary.Migrations);
+
+AutomaticDictionary.extend(AutomaticDictionary.Class.prototype,
+                           AutomaticDictionary.Lib.Shutdownable);
+
 
 export { AutomaticDictionary };
