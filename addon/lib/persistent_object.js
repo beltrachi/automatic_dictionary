@@ -69,8 +69,7 @@ export function apply(AutomaticDictionary) {
       }
       return o;
     }
-
-    buildAsync().then(function(o){
+    var objReady = buildAsync().then(function(o){
       obj = o
     });
 
@@ -82,7 +81,8 @@ export function apply(AutomaticDictionary) {
       //Double function to deattach the tmp from the loop.
       //http://stackoverflow.com/questions/750486/javascript-closure-inside-loops-simple-practical-example
       ifce[tmp] = (function(method){
-        return function(){
+        return async function(){
+          await objReady;
           return obj[method].apply(obj, arguments);
         }
       })(tmp);

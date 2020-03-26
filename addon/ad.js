@@ -219,8 +219,8 @@ AutomaticDictionary.Class.prototype = {
     "addressesInfo": "",
     "addressesInfo.version": "",
     "addressesInfo.lock": "",
-    "addressesInfo.maxSize": 200,
-    "migrations_applied": "",
+    "addressesInfo.maxSize": 200, //TODO: change to 1200 after removing old migrations
+    "migrations_applied": [],
 
     "maxRecipients": 10,
     "allowHeuristic": true,
@@ -252,7 +252,7 @@ AutomaticDictionary.Class.prototype = {
     var _this = this;
     var logger = console;
     console.log("X");
-    var prefix = "extensions.automatic_dictionary."
+    var prefix = this.pref_prefix;
     var orDefault = async function(k,func){
       var full_key = prefix + k;
       try{
@@ -303,14 +303,14 @@ AutomaticDictionary.Class.prototype = {
         return await pm["get"+getType(val,key)+"Pref"](key);
       },
       //getters with fallback to defaults
-      getCharPref:async function(k){
-        return await orDefault(k, async function(){return await pm.getCharPref(k)});
+      getCharPref:async function(k,v){
+        return await orDefault(k, async function(){return await pm.getCharPref(k,v)});
       },
-      getIntPref: async function(k){
-        return await orDefault(k, async function(){return await pm.getIntPref(k)});
+      getIntPref: async function(k,v){
+        return await orDefault(k, async function(){return await pm.getIntPref(k,v)});
       },
-      getBoolPref: async function(k){
-        return await orDefault(k, async function(){return await pm.getBoolPref(k)});
+      getBoolPref: async function(k,v){
+        return await orDefault(k, async function(){return await pm.getBoolPref(k,v)});
       },
       setCharPref: async function(k,v){
         return await pm.setCharPref(k,v);
@@ -562,14 +562,14 @@ AutomaticDictionary.Class.prototype = {
     return JSON.stringify(values);
   },
   
-  save_heuristic: function(recipient, lang){
+  save_heuristic: async function(recipient, lang){
     this.logger.debug("saving heuristic for "+ recipient + " to "+ lang);
     var parts = recipient.split("@");
     if( parts[1] ){
-      this.freq_suffix.add(parts[1], lang);
+      await this.freq_suffix.add(parts[1], lang);
     }
     console.info("after adding heuristic:");
-    console.info(this.freq_suffix.pairs());
+    console.info(await this.freq_suffix.pairs());
   },
   
   remove_heuristic: function(recipient, lang){
@@ -626,7 +626,7 @@ AutomaticDictionary.Class.prototype = {
     var ccs = await this.getRecipients("cc");
     var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
     this.logger.debug("Deducing language for: " + toandcc_key);
-    lang = this.getLangFor( toandcc_key );
+    lang = await this.getLangFor( toandcc_key );
 
     if( !lang ){
       this.logger.debug("Check for the TO's together")
@@ -634,7 +634,7 @@ AutomaticDictionary.Class.prototype = {
       // Check if all them have a specific language. We want them ordered to maximize hits
       // Clone array and sort it
       var alltogether_key = this.stringifyRecipientsGroup( recipients );
-      lang = this.getLangFor( alltogether_key );
+      lang = await this.getLangFor( alltogether_key );
     }
     
     if( !lang ){
@@ -643,7 +643,7 @@ AutomaticDictionary.Class.prototype = {
       // It returns the first recipient that has a language.
       // That is useful but maybe it's not the most convenient way.
       for( var idx in recipients ){
-        lang = this.getLangFor( recipients[idx] );
+        lang = await this.getLangFor( recipients[idx] );
         if( lang ){
           break;
         }
@@ -653,7 +653,7 @@ AutomaticDictionary.Class.prototype = {
     if( !lang ){
       this.logger.debug("Check for the ccs one by one");
       for(i in ccs){
-        lang = this.getLangFor( ccs[i] );
+        lang = await this.getLangFor( ccs[i] );
         if( lang ){
           break;
         }
@@ -664,7 +664,7 @@ AutomaticDictionary.Class.prototype = {
     
     if(!lang && await this.allowHeuristic()){
       this.logger.info("trying to get by heuristics");
-      lang = this.heuristic_guess(recipients);
+      lang = await this.heuristic_guess(recipients);
       if(lang){
         method = this.METHODS.GUESS;
         this.logger.debug("Heuristic says: "+ lang);
@@ -721,16 +721,16 @@ AutomaticDictionary.Class.prototype = {
   },
 
   //Tries to guess by other recipients domains
-  heuristic_guess: function(recipients){
+  heuristic_guess: async function(recipients){
     var recipient, parts, rightside, lang,
         freq_table = new AutomaticDictionary.Lib.FreqTable();
     console.log("freq suffix status");
-    console.log(this.freq_suffix.pairs());
+    console.log(await this.freq_suffix.pairs());
     for(var i=0; i < recipients.length; i++){
       recipient = recipients[i];
       parts = recipient.split("@");
       rightside = parts[parts.length-1];
-      lang = this.freq_suffix.get(rightside,true);
+      lang = await this.freq_suffix.get(rightside,true);
       if( lang ){
         freq_table.add(lang);
       }

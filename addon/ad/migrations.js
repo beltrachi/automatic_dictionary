@@ -31,17 +31,24 @@ export function apply(AutomaticDictionary){
       await this.updateApplied(migrations_applied);
     },
     getMigrationsApplied: async function(){
-      var data = await this.storage.get('migrations_applied');
-      if (typeof(data) == "undefined"){
+      var data = [];
+      try {
+        data = await this.storage.get(this.pref_key);
+      }catch(e){
+        console.error(e);
+      }
+      console.log(data);
+      if (data == [] || typeof(data) == "undefined"){
         // Fallback to legacy storage
         console.log("fallback");
         data = [];
         var pref_key = this.getPrefKey();
-        var raw_data = await this.prefManager.getCharPref( pref_key );
+        var raw_data = await this.prefManager.getCharPref( pref_key , "[]");
         if( raw_data !== "" ){
           data = JSON.parse( raw_data );
         }
       }
+
       try{
         console.log(data);
         data = JSON.parse(data)
@@ -68,7 +75,7 @@ export function apply(AutomaticDictionary){
       "201102130000": async function(self){
         //Adpat data structure to new one
         // Steps: 1. Load old data. 2. Save as new data
-        var prefPath = self.pref_prefix + self.ADDRESS_INFO_PREF;
+        var prefPath = self.pref_prefix + self.ADDRESS_INFO_KEY;
         var v = await self.prefManager.getCharPref( prefPath );
         if( v ){
           try{
@@ -99,7 +106,7 @@ export function apply(AutomaticDictionary){
         //The CCs so 200 can be really low. Should be 1000 at least. A mail with
         // 1 A and 4 CCs generates 6 keys saved. A, A+CCs, CC1, CC2, CC3, CC4
         var factor = 6; // 6 times the current limit
-        prefPath = self.pref_prefix + self.ADDRESS_INFO_PREF + ".maxSize";
+        prefPath = self.pref_prefix + self.ADDRESS_INFO_KEY + ".maxSize";
         var maxSize = await self.prefManager.getIntPref( prefPath );
         await self.prefManager.setIntPref( prefPath, maxSize * factor );
       },
@@ -157,23 +164,23 @@ export function apply(AutomaticDictionary){
       },
       // Migrate pref to storage API
       "202003231651": async function(self){
-        var keys_to_parse_json = [
+        var keys_to_skip = [
+          // migrations_applied will be migrated by global updateApplied
           "migrations_applied"
         ];
         for(var k in self.defaults){
           console.log("migrating key "+k);
           var v = self.defaults[k];
           try {
-            v = await self.prefManager.get(k, self.defaults[k]);
+            v = await self.prefManager.get(self.pref_prefix + k, self.defaults[k]);
           }catch(e){
             console.warn(e);
           }
-          var clean_key = /^extensions\.automatic_dictionary\.(.*)$/.exec(k)[1];
-          if(keys_to_parse_json.includes(clean_key)){
-            v = JSON.parse(v);
+          if(keys_to_skip.includes(k)){
+            continue;
           }
-          console.log(["setting", clean_key, v]);
-          await self.storage.set(clean_key, v);
+          console.log(["setting", k, v]);
+          await self.storage.set(k, v);
         }
       }
     }
