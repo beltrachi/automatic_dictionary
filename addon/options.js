@@ -1,6 +1,9 @@
 function isButton(node){
   return node.nodeName == "INPUT" && node.type.toLocaleUpperCase() == "BUTTON"
 }
+function isCheckbox(node){
+  return node.nodeName == "INPUT" && node.type.toLocaleUpperCase() == "CHECKBOX"
+}
 
 // Localize texts
 for (const node of document.querySelectorAll('[data-i18n]')) {
@@ -27,7 +30,11 @@ async function setNode(node){
     option.selected = true;
     break;
   case "INPUT":
-    node.value = value;
+    if(isCheckbox(node)){
+      node.checked = value;
+    }else{
+      node.value = value;
+    }
     break;
   default:
     console.error("Unknown node type " + node.nodeName);
@@ -41,6 +48,7 @@ for (const node of document.querySelectorAll('[data-preference]')) {
 
 function setValue(key, value){
   var data = {};
+  console.log(["Setting value", key, value]);
   data[key] = value;
   return browser.storage.local.set(data);
 }
@@ -53,6 +61,9 @@ function saveChanges(){
     var value = item.value;
     if (isButton(item)) {
       continue;
+    }
+    if (isCheckbox(item)){
+      value = item.checked;
     }
     setValue(key, value);
   }
