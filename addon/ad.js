@@ -6,14 +6,7 @@ AutomaticDictionary.enabled_plugins = [];
 
 //Helper function to copy prototypes
 AutomaticDictionary.extend = function (destination,source) {
-  if( source == {} || !source ){
-    if (AutomaticDictionary.logger){
-      AutomaticDictionary.logger.warn("Extension with empty source.");
-    }
-  }
-  for (var property in source)
-    destination[property] = source[property];
-  return destination;
+  return Object.assign(destination, source);
 }
 
 //Window managers are objects that attach to the windows that have the compose
@@ -59,8 +52,8 @@ compose_window_stub.apply(AutomaticDictionary);
 // conversations_compose_window.apply(AutomaticDictionary);
 import * as plugin_base from './ad/plugins/plugin_base.js';
 plugin_base.apply(AutomaticDictionary);
-import * as promotions from './ad/plugins/promotions.js';
-promotions.apply(AutomaticDictionary);
+// import * as promotions from './ad/plugins/promotions.js';
+// promotions.apply(AutomaticDictionary);
 
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
   console.info(msg);
@@ -102,16 +95,14 @@ AutomaticDictionary.shutdown = function(){
 AutomaticDictionary.instances = [];
 
 AutomaticDictionary.Class = function(options){
-    //TODO: destroy instances when windows closed, dont keep all in mem!
-    AutomaticDictionary.instances.push(this); //Possible memmory leak!
-    options = options || {};
-    this.window = options.window;
-    //    this.thunderbirdVersion = AppConstants.MOZ_APP_VERSION;
-    var start = (new Date()).getTime(), _this = this;
-    this.logger.debug("ad: init");
+  AutomaticDictionary.instances.push(this);
+  options = options || {};
+  this.window = options.window;
+  var start = (new Date()).getTime(), _this = this;
+  this.logger.debug("ad: init");
 
-    this.initPlugins();
-    this.shutdown_chain = [];
+  this.initPlugins();
+  this.shutdown_chain = [];
 
   this.running = true;
   var _this = this;
@@ -142,7 +133,7 @@ AutomaticDictionary.Class = function(options){
           ad: _this,
           name: _this.name,
           logo_url: _this.logo_url,
-          notification_time: _this.notification_time,
+          notification_time: _this.notification_time_ms,
           logger: _this.logger,
           window: window
         }
@@ -174,7 +165,6 @@ AutomaticDictionary.Class = function(options){
 }
 
 AutomaticDictionary.Class.prototype = {
-  
   id: "automatic_dictionary_extension@jordi_beltran.net",
   //Constants
   ADDRESS_INFO_KEY:"addressesInfo",
@@ -187,30 +177,25 @@ AutomaticDictionary.Class.prototype = {
     REMEMBER:"remember",
     GUESS:"guess"
   },
-  
+
   FREQ_TABLE_KEY:"freqTableData",
-  
-  POLLING_DELAY: 3000, //Miliseconds
-  
   pref_prefix: "extensions.automatic_dictionary.",
 
   //Attributes
   initialized: false,
   running: false, //Stopped
   data: null,
-  last_timeout: null, //Timer object of the next poll
-  instance_number: -1,
   prefManager: null,
   last_toandcc_key: null,
   name: "AutomaticDictionary",
-  notification_time: 4000,
-  
+  notification_time_ms: 4000,
+
   deduce_language_retries_counter: 0,
   deduce_language_retry_delay: 200,
   deduce_language_retry: null,
   //Retries till ifce gets ready
   max_deduce_language_retries: 10,
-  
+
   logo_url: browser.runtime.getURL("logo.png"),
 
   logger: AutomaticDictionary.logger,
@@ -230,7 +215,7 @@ AutomaticDictionary.Class.prototype = {
 
     "allowPromotions": true,
     "notificationLevel": 'info', // or "warn" or "error"
-    "logLevel":"debug",
+"logLevel":"debug",
     "stats.usages": 0
   },
 
@@ -239,13 +224,12 @@ AutomaticDictionary.Class.prototype = {
     this.logger.debug("ad: stop");
     this.running = false;
   },
-  
+
   start: function(){
     if( this.running ) return; //Already started
     this.logger.debug("ad: start");
     this.running = true;
   },
-  //TODO: move this to another file
   getPrefManagerWrapperAsync: async function(){
     var pm = browser.prefs;
     var defaults = this.defaults;
@@ -334,35 +318,6 @@ AutomaticDictionary.Class.prototype = {
     console.log("X");
     return ifce;
   },
-  //Returns a simple key value store for any type of data.
-  //TODO: Migrate prefManager storage to Storage or File
-  getSimpleStorage: function(pm, prefix){
-    var _this = this;
-    var ifce = {
-      set: function(key, value){
-        return pm.setCharPref( prefix + key, JSON.stringify(value) );
-      },
-      get: function(key){
-        var data=null;
-        //When data is not initialized, it raises an error.
-        try{
-          data = pm.getCharPref( prefix + key );
-          if( data != ""){
-            data = JSON.parse(data);
-          }
-        }catch(e){}
-        return data;
-      },
-      inc: function(key, delta){
-        _this.logger.debug("increasing "+key);
-        delta = delta || 1;
-        var res = ifce.set(key,(1 * ifce.get(key)) + (delta));
-        _this.logger.debug("up to "+ ifce.get(key));
-        return res;
-      }
-    };
-    return ifce;
-  },
   getStorage: function(){
     var storage = browser.storage.local;
     var _this = this;
@@ -444,19 +399,18 @@ AutomaticDictionary.Class.prototype = {
   /*
     Repensar el comportament, ja que quan assignes dict i tens ccs posats, potser no vols
     setejera els tos sols sino només en el cas de que tinguis aquells CCs!!
-    
+
     Per tant quan assignis als TOs, si també tens CCs, només assignaras als TOs si no tenien valor..
-    
+
     si ccs.size > 0
     only_set_if_no_value = true
     fi
-    
     .....
   */
   
   languageChanged: async function(){
     this.logger.debug("languageChanged call");
-    
+
     if( !this.running ) return;
     this.logger.debug("languageChanged call and running");
     var current_lang = await this.getCurrentLang();
@@ -561,7 +515,7 @@ AutomaticDictionary.Class.prototype = {
   inspect: function (values){
     return JSON.stringify(values);
   },
-  
+
   save_heuristic: async function(recipient, lang){
     this.logger.debug("saving heuristic for "+ recipient + " to "+ lang);
     var parts = recipient.split("@");
@@ -777,33 +731,26 @@ AutomaticDictionary.Class.prototype = {
   getLangFor: function( addr ){
     return this.data.get(addr);
   },
-  
+
   getRecipients: function( recipientType ){
     return this.compose_window.recipients(recipientType);
   },
-  
+
   setListeners: function(){
     return this.compose_window.setListeners();
   },
 
-  changeLabel: function(level, str){
+  changeLabel: async function(level, str){
     var arr = ["info","warn","error"];
     // level is equal or higher than configured level
-    if( arr.indexOf(level) >= arr.indexOf(this.notificationLevel()) ){
+    if( arr.indexOf(level) >= arr.indexOf(await this.notificationLevel()) ){
       return this.compose_window.changeLabel( str );
     }
   },
-  
+
   //To show messages to the user
   showMessage:function( str, options ){
     return this.compose_window.showMessage(str, options);
-  },
-
-  getStrBundle: function(){
-    if(!this.string_bundle){
-      this.string_bundle = new StringBundle("chrome://automatic_dictionary/locale/strings.properties");
-    }
-    return this.string_bundle;
   },
 
   //Translation (i18n) helper functions
@@ -817,36 +764,27 @@ AutomaticDictionary.Class.prototype = {
     return browser.i18n.getMessage(key, values);
   },
 
-  //Log function
-  log:function( msg ){
-    this.logger.debug( msg );
-  },
-  
   getMaxRecipients: function(){
     return this.storage.get( this.MAX_RECIPIENTS_KEY );
   },
-  
+
   allowHeuristic: async function(){
     var value = await this.storage.get(this.ALLOW_HEURISTIC)
     console.log(["allowHeuristics", value]);
     return value;
   },
-  
+
   notificationLevel: function(){
     return this.storage.get(this.NOTIFICATION_LEVEL);
   },
   logLevel: function(){
     return this.storage.get(this.LOG_LEVEL);
   },
-  
+
   counterFor: async function(key){
     var ret = await this.storage.get("stats." + key);
     this.logger.debug("CunterFor "+key+ " is "+ret);
     return ret;
-  },
-
-  thunderbirdVersionGreaterOrEq:function(version){
-    return Services.vc.compare(this.thunderbirdVersion, version) !== -1;
   },
 
   setShutdown:function(){
