@@ -35,12 +35,11 @@ export function apply(AutomaticDictionary){
       try {
         data = await this.storage.get(this.pref_key);
       }catch(e){
-        console.error(e);
+        this.logger.error(e);
       }
-      console.log(data);
       if (data == [] || typeof(data) == "undefined"){
         // Fallback to legacy storage
-        console.log("fallback");
+        this.logger.debug("Reading migrations from prefs");
         data = [];
         var pref_key = this.getPrefKey();
         var raw_data = await this.prefManager.getCharPref( pref_key , "[]");
@@ -50,9 +49,7 @@ export function apply(AutomaticDictionary){
       }
 
       try{
-        console.log(data);
         data = JSON.parse(data)
-        console.log(data);
       }catch(e){}
       return data;
     },
@@ -169,21 +166,17 @@ export function apply(AutomaticDictionary){
           "migrations_applied"
         ];
         for(var k in self.defaults){
-          console.log("migrating key "+k);
           var v = null;
           try {
             v = await self.prefManager.get(self.pref_prefix + k);
-          }catch(e){
-            console.warn(e);
-          }
+          }catch(e){}
           if(keys_to_skip.includes(k)){
             continue;
           }
           if(typeof(v) == "undefined" || v == null){
-            console.log("Value is empty, nothing to migrate");
+            self.logger.debug("Value for "+k+" is empty, nothing to migrate");
             continue;
           }
-          console.log(["setting", k, v]);
           await self.storage.set(k, v);
         }
       }

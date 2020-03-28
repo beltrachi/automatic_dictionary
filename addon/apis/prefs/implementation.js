@@ -17,8 +17,6 @@ var prefs = class extends ExtensionCommon.ExtensionAPI {
       // Again, this key must have the same name.
       prefs: {
         getCharPref: async function(k,v){
-          console.log("getcharpref with "+k);
-          console.log(v);
           return pm.getCharPref(k,v);
         },
         getIntPref: async function(k,v){

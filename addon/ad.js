@@ -107,23 +107,20 @@ AutomaticDictionary.Class = function(options){
   this.running = true;
   var _this = this;
   this.getPrefManagerWrapperAsync().then(function(pm){
-    console.log("prefmanagerasync in func");
     _this.prefManager = pm;
     _this.storage = _this.getStorage();
     //Version migrations upgrade check
     _this.migrate().then(function(){
-      console.log("in migrate func");
       _this.logLevel().then(function(level){
         AutomaticDictionary.logger.setLevel(level);
       });
-      console.log("Ix");
       if ( _this.window ) {
         browser.windows.onRemoved.addListener(function(windowId){
           if (_this.window.id != windowId){
-            console.log("Not this window closed");
+            _this.logger.debug("Not this window closed");
             return;
           }
-          console.log("Shutting down ad on this window");
+          _this.logger.debug("Shutting down ad on this window");
           _this.shutdown();
         });
       }
@@ -138,16 +135,12 @@ AutomaticDictionary.Class = function(options){
           window: window
         }
       );
-      console.log("Ix");
-
       //Heuristic init
       _this.logger.info("before initialize data");
       _this.initializeData();
-      console.log("Ix");
       _this.setListeners();
       _this.initialized = true;
       _this.initFreqSuffix();
-      console.log("Ix");
 
       // Count the number of times it has been initialized.
       _this.storage.inc('stats.usages');
@@ -235,14 +228,13 @@ AutomaticDictionary.Class.prototype = {
     var defaults = this.defaults;
     var _this = this;
     var logger = console;
-    console.log("X");
     var prefix = this.pref_prefix;
     var orDefault = async function(k,func){
       var full_key = prefix + k;
       try{
         var value = await func();
         if(value == null){
-          console.log("key was null and we return defaults "+k);
+          _this.logger.debug("key was null and we return defaults "+k);
           value = defaults[full_key];
         }
       }catch(e){
@@ -264,7 +256,6 @@ AutomaticDictionary.Class.prototype = {
       logger.debug("getType for "+key+" is "+res );
       return res;
     }
-    console.log("X");
     var ifce = {
       instance: pm,
       //Direct and unsecure
@@ -315,7 +306,6 @@ AutomaticDictionary.Class.prototype = {
         return res;
       }
     };
-    console.log("X");
     return ifce;
   },
   getStorage: function(){
@@ -325,12 +315,11 @@ AutomaticDictionary.Class.prototype = {
       set: function(key, value){
         var data = {};
         data[key] = value;
-        console.log("Setting key: "+key);
-        console.log(value);
+        _this.logger.debug("Setting key: "+key);
+        _this.logger.debug(value);
         return storage.set(data);
       },
       get: async function(key){
-        console.log("reading key " + key);
         var data = await storage.get(key);
         return data[key];
       },
@@ -366,7 +355,6 @@ AutomaticDictionary.Class.prototype = {
     );
     this.data = persistent_wrapper;
     AutomaticDictionary.address_data = this.data;
-    console.log(this.data);
   },
   initFreqSuffix: function(){
     if (AutomaticDictionary.freq_suffix){
@@ -522,8 +510,7 @@ AutomaticDictionary.Class.prototype = {
     if( parts[1] ){
       await this.freq_suffix.add(parts[1], lang);
     }
-    console.info("after adding heuristic:");
-    console.info(await this.freq_suffix.pairs());
+    await this.freq_suffix.pairs();
   },
   
   remove_heuristic: function(recipient, lang){
@@ -678,8 +665,6 @@ AutomaticDictionary.Class.prototype = {
   heuristic_guess: async function(recipients){
     var recipient, parts, rightside, lang,
         freq_table = new AutomaticDictionary.Lib.FreqTable();
-    console.log("freq suffix status");
-    console.log(await this.freq_suffix.pairs());
     for(var i=0; i < recipients.length; i++){
       recipient = recipients[i];
       parts = recipient.split("@");
@@ -755,12 +740,10 @@ AutomaticDictionary.Class.prototype = {
 
   //Translation (i18n) helper functions
   t: function( key ){
-    console.log(["t", key]);
     return browser.i18n.getMessage(key);
   },
 
   ft: function(key, values){
-    console.log(["ft", key, values]);
     return browser.i18n.getMessage(key, values);
   },
 
@@ -770,7 +753,6 @@ AutomaticDictionary.Class.prototype = {
 
   allowHeuristic: async function(){
     var value = await this.storage.get(this.ALLOW_HEURISTIC)
-    console.log(["allowHeuristics", value]);
     return value;
   },
 

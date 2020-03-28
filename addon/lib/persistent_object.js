@@ -51,7 +51,6 @@ export function apply(AutomaticDictionary) {
     var ifce = {}, obj, tmp, i;
 
     function getData(){
-      console.log(["persistent params are: ",params]);
       return params.storage.get(params.key);
     }
 
@@ -63,7 +62,6 @@ export function apply(AutomaticDictionary) {
     async function buildAsync(){
       var o = constructor();
       var data = await getData();
-      console.log(["persistent data is: ", data]);
       if( data ){
         o[params.options.loader](data);
       }

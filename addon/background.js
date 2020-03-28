@@ -15,8 +15,8 @@ browser.windows.onCreated.addListener(function(window){
             window: window
         });
     }catch(e){
-        console.log(e);
+        console.error(e);
     }
 });
 
-console.log('Background script loaded.');
+console.debug('Background script loaded.');

@@ -53,140 +53,138 @@ export function apply(AutomaticDictionary) {
  *  serialize the hash as a string, and store an integer.    
  **/
 
-AutomaticDictionary.Lib.FreqSuffix = function( values, options ){
+  AutomaticDictionary.Lib.FreqSuffix = function( values, options ){
     values = values || [];
     this.node_class = AutomaticDictionary.Lib.FreqSuffix.TreeNode;
     this.initialize( values, options );
-}
+  }
 
-AutomaticDictionary.Lib.FreqSuffix.prototype = {
+  AutomaticDictionary.Lib.FreqSuffix.prototype = {
     max_size: null,
     split_char: ".",
     pair_counter: null,
-    
+
     initialize: function(values, options){
-        this.options = options;
-        this.root = new this.node_class("");
-        this.root.nodes[""] = this.root;
-        this.pair_counter = new AutomaticDictionary.Lib.PairCounter();
-        var tmp;
-        if(values){
-            for(var i = 0; i < values.length;i++){
-                tmp = values[i];
-                this.add(tmp[0], tmp[1]);
-            }
+      this.options = options;
+      this.root = new this.node_class("");
+      this.root.nodes[""] = this.root;
+      this.pair_counter = new AutomaticDictionary.Lib.PairCounter();
+      var tmp;
+      if(values){
+        for(var i = 0; i < values.length;i++){
+          tmp = values[i];
+          this.add(tmp[0], tmp[1]);
         }
+      }
     },
-    
+
     add: function(string, value){
-        var parts = this.slice(string);
-        this.root.add(parts, value);
-        this.pair_counter.add(string,value);
+      var parts = this.slice(string);
+      this.root.add(parts, value);
+      this.pair_counter.add(string,value);
     },
     remove: function(string, value){
-        var parts = this.slice(string);
-        this.root.remove(parts, value);
-        this.pair_counter.remove(string,value);
+      var parts = this.slice(string);
+      this.root.remove(parts, value);
+      this.pair_counter.remove(string,value);
     },
-    // @param deep: (optional) search by suffix when true. 
+    // @param deep: (optional) search by suffix when true.
     get: function(string, deep){
-        deep = (deep === true); //False by default.
-        var parts = this.slice(string), res = null;
-        while( parts.length > 0 ){
-            res = this.root.get(parts.slice(0)); //slice trick to clone the array
-            if(res || !deep){ //When not deep, return first result.
-                return res;
-            }else{
-                parts.pop();
-            }
+      deep = (deep === true); //False by default.
+      var parts = this.slice(string), res = null;
+      while( parts.length > 0 ){
+        res = this.root.get(parts.slice(0)); //slice trick to clone the array
+        if(res || !deep){ //When not deep, return first result.
+          return res;
+        }else{
+          parts.pop();
         }
-        return res;
+      }
+      return res;
     },
     slice: function(str){
-        return str.split(this.split_char).reverse();
+      return str.split(this.split_char).reverse();
     },
     toJSON: function(){
-        return JSON.stringify(this.pair_counter.pairsWithCounter());
+      return JSON.stringify(this.pair_counter.pairsWithCounter());
     },
     fromJSON: function(pairs_with_counter){
       pairs_with_counter = JSON.parse(pairs_with_counter);
       if (typeof(pairs_with_counter) == "string"){
-        console.warn("double serialization for freq suffix");
         pairs_with_counter = JSON.parse(pairs_with_counter);
       }
-      console.log(["parsed are", pairs_with_counter]);
-        this.initialize();
-        var i, j, value;
-        for(i=0; i < pairs_with_counter.length;i++){
-            value = pairs_with_counter[i];
-            for(j=0;j<value[2];j++){
-                this.add(value[0],value[1]);
-            }
+      this.initialize();
+      var i, j, value;
+      for(i=0; i < pairs_with_counter.length;i++){
+        value = pairs_with_counter[i];
+        for(j=0;j<value[2];j++){
+          this.add(value[0],value[1]);
         }
+      }
     },
     //Return an array of arrays with [key,value,counter]
     pairs:function(){
-        return this.pair_counter.pairsWithCounter();
+      return this.pair_counter.pairsWithCounter();
     }
-};
-AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
-    this.key = key; 
+  };
+  AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
+    this.key = key;
     this.values = new AutomaticDictionary.Lib.FreqTable();
     this.nodes = {};
     this.node_type = AutomaticDictionary.Lib.FreqSuffix.TreeNode;
-};
-AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
+  };
+  AutomaticDictionary.Lib.FreqSuffix.TreeNode.prototype = {
     // list is an array of prefix parts already splitted
     add: function(list, value){
-        this.navigateThrough(list, function(node){
-            node.values.add(value);
-        });
+      this.navigateThrough(list, function(node){
+        node.values.add(value);
+      });
     },
     remove: function(list, value){
-        this.navigateThrough(list, function(node){
-            node.values.remove(value);
-        });
+      this.navigateThrough(list, function(node){
+        node.values.remove(value);
+      });
     },
     get: function(list){
-        var result;
-        this.navigateTo(list, function(node){
-            result = node.values.getFirst();
-        });
-        return result;
+      var result;
+      this.navigateTo(list, function(node){
+        result = node.values.getFirst();
+      });
+      return result;
     },
     //Runs func on each node. Force create by default
     // Returns null when reaches a dead end (cannot walk to the leaf)
     navigateThrough: function(list, func, forceCreate){
-        var node,
-            forced = (forceCreate !== false),
-            item = list[0];
-        if(list.length > 0 ){
-            node = this.nodes[item];
-            if( !node && forced ){
-                node = new this.node_type(item);
-                this.nodes[item] = node;
-            }
-            if( node ){
-                list.shift();
-                node.navigateThrough(list, func, forced);
-            }else{
-                //node not found, so what?
-                func(null);
-            }
+      var node,
+          forced = (forceCreate !== false),
+          item = list[0];
+      if(list.length > 0 ){
+        node = this.nodes[item];
+        if( !node && forced ){
+          node = new this.node_type(item);
+          this.nodes[item] = node;
         }
-        func(this);
+        if( node ){
+          list.shift();
+          node.navigateThrough(list, func, forced);
+        }else{
+          //node not found, so what?
+          func(null);
+        }
+      }
+      func(this);
     },
     navigateTo: function( list, func){
-        //We know we reach leaf first so save it
-        var leaf, reached = false;
-        this.navigateThrough(list, function(node){
-            if(!reached){
-                reached = true;
-                leaf = node;
-            }
-        }, false);
-        //Notice we do not call func unless node found.
-        if(leaf) func(leaf);
+      //We know we reach leaf first so save it
+      var leaf, reached = false;
+      this.navigateThrough(list, function(node){
+        if(!reached){
+          reached = true;
+          leaf = node;
+        }
+      }, false);
+      //Notice we do not call func unless node found.
+      if(leaf) func(leaf);
     }
-};
+  };
 }

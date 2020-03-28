@@ -48,7 +48,6 @@ for (const node of document.querySelectorAll('[data-preference]')) {
 
 function setValue(key, value){
   var data = {};
-  console.log(["Setting value", key, value]);
   data[key] = value;
   return browser.storage.local.set(data);
 }
