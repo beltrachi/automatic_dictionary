@@ -64,22 +64,18 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
       //capture language change event
       this.addListener(browser.compose_ext.onLanguageChange,async function (tabId, language){
         try{
-          console.log("onLanguageChange param is following");
-          console.log([tabId, language]);
           if (tabId != await _this.getTabId()) {
-            console.log("Ignoring tab id, mine is "+ (await _this.getTabId()));
+            _this.logger.debug("Ignoring tab id, mine is "+ (await _this.getTabId()));
             return;
           }
           _this.ad.languageChanged();
         }catch(e){
-          console.error(e);
+          _this.logger.error(e);
         }
       });
       this.addListener(browser.compose_ext.onRecipientsChange, async function (tabId){
-        console.log("Listener has received event. Recipients changed?!?");
-        console.log(tabId);
         if (tabId != await _this.getTabId()) {
-          console.log("Ignoring tab id, mine is "+ (await _this.getTabId()));
+          _this.logger.debug("Ignoring tab id, mine is "+ (await _this.getTabId()));
           return;
         }
         _this.waitAnd(function(){
@@ -88,9 +84,8 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
       });
 
       this.addListener(browser.windows.onFocusChanged, function(windowId) {
-        console.log("Focus changed, window id is ", windowId);
         if (_this.window.id != windowId){
-          console.log("Ignoring onFocusChanged because different windowId");
+          _this.logger.debug("Ignoring onFocusChanged because different windowId");
           return
         }
 
@@ -105,7 +100,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
       });
       this.logger.debug("events registered");
       this.ad.addEventListener('shutdown', function(){
-        console.log("shutting down compose window");
+        _this.logger.debug("shutting down compose window");
         _this.shutdown();
       });
     },
@@ -118,15 +113,13 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
   getCurrentLang: async function(){
     // TODO: use tab id!
     var lang = await browser.compose_ext.getCurrentLanguage(await this.getTabId());
-    console.log(lang);
-    this.logger.info("document attribute says current lang is "+lang);
+    this.logger.debug("Current lang is "+lang);
     return lang;
   },
 
   getTabId: async function(){
     if (this.tabId) return this.tabId
     var window = await browser.windows.get(this.window.id, {populate: true});
-    console.log(window);
     this.tabId = window.tabs[0].id;
     return this.tabId;
   },
@@ -135,12 +128,20 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     recipientType = recipientType || "to";
     var tabId = await this.getTabId();
     var details = await browser.compose.getComposeDetails(tabId);
-    console.log(details);
-    var value = details[recipientType];
-    if (typeof(value) == "string"){
-      value = [value]
+    var recipients = details[recipientType];
+    if (typeof(recipients) == "string"){
+      // Cast to array
+      recipients = [recipients]
     }
-    return this.normalizeRecipients(value);
+    // Array of String or ComposeRecipients
+    if(typeof(recipients[0]) == "string"){
+      // Normalize recipients only when its raw string.
+      recipients = this.normalizeRecipients(recipients);
+    }else{
+      // ComposeRecipients
+      recipients = await this.getEmailFromRecipients(recipients);
+    }
+    return recipients;
   },
 
   // Remove everything but the email because its the canonical part.
@@ -148,12 +149,36 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     var out = [];
     for(var i = 0, size = list.length; i < size ; i++){
       var item = list[i];
-      out.push(this.extractEmails(item)[0]);
+      try{
+        out.push(this.extractEmails(item)[0]);
+      }catch(e){
+        // Normalization could not find an email, lets use it as is.
+        out.push(item);
+      }
     }
     return out;
   },
   extractEmails: function ( text ){
     return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi);
+  },
+
+  getEmailFromRecipients: async function(recipients) {
+    var out = [];
+    for(var i = 0, size = recipients.length; i < size ; i++){
+      var recipient = recipients[i];
+      switch(recipient.type){
+      case "contact":
+        var contact = await browser.contacts.get(recipient.id);
+        out.push(contact.properties.PrimaryEmail);
+        break;
+      case "mailingList":
+        var list = await browser.mailingLists.get(recipient.id);
+        // Mailing list does not have an email so we try to get its name.
+        out.push(list.properties.name);
+        break;
+      }
+    }
+    return out;
   },
     // TODO: maybe this has to go aside in another interface? with showLabel?
   showMessage: async function( str, options ){
