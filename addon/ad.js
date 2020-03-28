@@ -219,7 +219,7 @@ AutomaticDictionary.Class.prototype = {
     "addressesInfo": "",
     "addressesInfo.version": "",
     "addressesInfo.lock": "",
-    "addressesInfo.maxSize": 200, //TODO: change to 1200 after removing old migrations
+    "addressesInfo.maxSize": 1200,
     "migrations_applied": [],
 
     "maxRecipients": 10,
