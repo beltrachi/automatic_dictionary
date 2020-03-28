@@ -130,7 +130,6 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
   }
 
   handleEvent(event) {
-    // TODO: fetch tabId
     var lang = event.target.getAttribute('lang');
     windowListener.emit("language-changed", event, lang);
   }
@@ -140,7 +139,7 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
     this.callbackCount++;
 
     if (this.callbackCount == 1) {
-      ExtensionSupport.registerWindowListener("windowListener", {
+      ExtensionSupport.registerWindowListener("compose_ext-windowListener", {
         //TODO: set composer url.
         chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
         onLoadWindow: function(window) {
@@ -155,14 +154,8 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
     this.callbackCount--;
 
     if (this.callbackCount == 0) {
-      for (let window of ExtensionSupport.openWindows) {
-        //TODO: remove event listeners from all windows
-        // if (window.location.href == "chrome://messenger/content/messenger.xul") {
-        //   let toolbox = window.document.getElementById("mail-toolbox");
-        // toolbox.removeEventListener("click", this.handleEvent);
-      }
+      ExtensionSupport.unregisterWindowListener("compose_ext-windowListener");
     }
-    ExtensionSupport.unregisterWindowListener("windowListener");
   }
 
   subscribeLanguageChangeEvents(window) {
@@ -199,7 +192,6 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
 
     if (this.callbackCount == 1) {
       ExtensionSupport.registerWindowListener("recipientsChangeWindowListener", {
-        //TODO: set composer url.
         chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
         onLoadWindow: function(window) {
           recipientsChangeWindowListener.detectRecipientsChange(window);
@@ -213,21 +205,15 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
     this.callbackCount--;
 
     if (this.callbackCount == 0) {
-      for (let window of ExtensionSupport.openWindows) {
-        //TODO: remove event listeners from all windows
-        // if (window.location.href == "chrome://messenger/content/messenger.xul") {
-        //   let toolbox = window.document.getElementById("mail-toolbox");
-        // toolbox.removeEventListener("click", this.handleEvent);
-      }
+      ExtensionSupport.unregisterWindowListener("recipientsChangeWindowListener");
     }
-    ExtensionSupport.unregisterWindowListener("recipientsChangeWindowListener");
   }
 
   detectRecipientsChange(window) {
     window.document.getElementById('recipientsContainer').addEventListener('change', function(event) {
       recipientsChangeWindowListener.handleEvent(event);
     });
-    // Workaround to at least calculate which language is correct.
+
     window.document.getElementById('msgSubject').addEventListener('focus', function(event) {
       recipientsChangeWindowListener.handleEvent(event);
     });
