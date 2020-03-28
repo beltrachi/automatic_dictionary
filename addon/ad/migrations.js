@@ -170,13 +170,17 @@ export function apply(AutomaticDictionary){
         ];
         for(var k in self.defaults){
           console.log("migrating key "+k);
-          var v = self.defaults[k];
+          var v = null;
           try {
-            v = await self.prefManager.get(self.pref_prefix + k, self.defaults[k]);
+            v = await self.prefManager.get(self.pref_prefix + k);
           }catch(e){
             console.warn(e);
           }
           if(keys_to_skip.includes(k)){
+            continue;
+          }
+          if(typeof(v) == "undefined" || v == null){
+            console.log("Value is empty, nothing to migrate");
             continue;
           }
           console.log(["setting", k, v]);
