@@ -154,5 +154,9 @@
   "logLevel.error": {
     "message": "Error",
     "description": "logLevel.error"
+  },
+  "savePreferences.button": {
+    "message": "Guardar",
+    "description": "Save preferences button"
   }
 }
