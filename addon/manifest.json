@@ -1,54 +1,54 @@
 {
-    "manifest_version": 2,
-    "applications": {
-        "gecko": {
-            "id": "automatic_dictionary_extension@jordi_beltran.net",
-            "strict_min_version": "74.0"
-        }
-    },
-    "name": "Automatic Dictionary",
-    "description": "Extension that remembers the language of the email when composing.",
-    "version": "2.0.0",
-    "default_locale": "en",
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "automatic_dictionary_extension@jordi_beltran.net",
+      "strict_min_version": "74.0"
+    }
+  },
+  "name": "Automatic Dictionary",
+  "description": "Extension that remembers the language of the email when composing.",
+  "version": "2.0.0",
+  "default_locale": "en",
 
   "options_ui": {
     //"browser_style": true,
     "page": "options.html"
   },
 
-    "background": {
-        "page": "background.html"
-    },
+  "background": {
+    "page": "background.html"
+  },
 
-  "permissions": [ "compose", "storage" ],
-    "experiment_apis": {
-        "prefs": {
-            "schema": "apis/prefs/schema.json",
-            "parent": {
-                "scopes": [
-                    "addon_parent"
-                ],
-                "paths": [
-                    [
-                        "prefs"
-                    ]
-                ],
-                "script": "apis/prefs/implementation.js"
-            }
-        },
-        "compose_ext": {
-            "schema": "apis/compose_ext/schema.json",
-            "parent": {
-                "scopes": [
-                    "addon_parent"
-                ],
-                "paths": [
-                    [
-                        "compose_ext"
-                    ]
-                ],
-                "script": "apis/compose_ext/implementation.js"
-            }
-        }
+  "permissions": [ "compose", "storage", "addressBooks" ],
+  "experiment_apis": {
+    "prefs": {
+      "schema": "apis/prefs/schema.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "prefs"
+          ]
+        ],
+        "script": "apis/prefs/implementation.js"
+      }
+    },
+    "compose_ext": {
+      "schema": "apis/compose_ext/schema.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "compose_ext"
+          ]
+        ],
+        "script": "apis/compose_ext/implementation.js"
+      }
     }
+  }
 }
