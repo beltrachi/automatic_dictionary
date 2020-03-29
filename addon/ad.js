@@ -22,8 +22,6 @@ import * as sorted_set from './lib/sorted_set.js';
 sorted_set.apply(AutomaticDictionary);
 import * as lru_hash_v2 from './lib/lru_hash_v2.js';
 lru_hash_v2.apply(AutomaticDictionary);
-import * as shared_hash from './lib/shared_hash.js';
-shared_hash.apply(AutomaticDictionary);
 import * as persistent_object from './lib/persistent_object.js';
 persistent_object.apply(AutomaticDictionary);
 import * as pair_counter from './lib/pair_counter.js';
@@ -191,16 +189,12 @@ AutomaticDictionary.Class.prototype = {
 
   defaults: {
     "addressesInfo": "",
-    "addressesInfo.version": "",
-    "addressesInfo.lock": "",
     "addressesInfo.maxSize": 1200,
     "migrations_applied": [],
 
     "maxRecipients": 10,
     "allowHeuristic": true,
     "freqTableData": "",
-    "freqTableData.version": "",
-    "freqTableData.lock": "",
 
     "allowPromotions": true,
     "notificationLevel": 'info', // or "warn" or "error"
