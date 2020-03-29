@@ -1,3 +1,10 @@
+=== 2.0.0
+
+* Migrated to MailExtension
+* Drop support for conversations
+* Broken compatibility with TB < 74
+* Removed unit test, only integration tests are working.
+
 === 1.12.0
 
 * Fix support for Thunderbird 68-69 (Broken compatibility with TB60)
