@@ -21,6 +21,7 @@ describe "AutomaticDictionary integration tests" do
     end
   end
 
+  # @return boolean false when command fails
   def run(command)
     logger.debug(command)
     system(command) || raise("Command failed: #{command}")
@@ -65,7 +66,9 @@ describe "AutomaticDictionary integration tests" do
   let(:interactor) { Interactor.client }
   let(:log_file) { "#{profile_path}/automatic_dictionary.log" }
   let(:thunderbird_version) do
-    Gem::Version.new(`thunderbird --version`.chomp.match(/\d+\.\d+/)[0])
+    version = `thunderbird --version`.chomp
+    logger.info("Thunderbird version: #{version}")
+    Gem::Version.new(version.match(/\d+\.\d+/)[0])
   end
   before do
     # Update build to lastest
