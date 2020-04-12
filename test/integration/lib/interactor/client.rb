@@ -28,6 +28,10 @@ module Interactor
       Clicker.click_on(wait_for_text(text))
     end
 
+    def click_on_position(position)
+      Clicker.click_on(position)
+    end
+
     def create_screenshot
       Snapshooter.create_screenshot
     end

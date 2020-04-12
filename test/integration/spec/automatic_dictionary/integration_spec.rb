@@ -109,12 +109,22 @@ describe "AutomaticDictionary integration tests" do
     end
 
     begin
-      if thunderbird_version >= Gem::Version.new('64')
+      if thunderbird_version >= Gem::Version.new('76')
+        sleep 3
+        # To enable the extension we need to click on the hamburguer menu.
+        # As the hamburguer menu has no keyboard shortcut nor readable label,
+        # we have to guess its position based on something we can read, the
+        # Events label.
+        interactor.wait_for_text('Events')
+        events_position = interactor.text_position('Events')
+        # Click 50 pixels on the left of Events label.
+        interactor.click_on_position([events_position.first - 50, events_position.last])
+        interactor.click_on_text('Automatic Dictionary added')
+        interactor.wait_for_text('Enable')
+        interactor.hit_key('Alt+e')
+      else
         # Popup asking to enable our plugin.
         sleep 1
-
-        filepath = interactor.create_screenshot
-        ImageUploader.new.upload(filepath) rescue nil # Not upload when offline
 
         begin
           interactor.wait_for_text('Enable')
@@ -122,16 +132,7 @@ describe "AutomaticDictionary integration tests" do
         rescue
           logger.warn("Enable extension popup not found")
         end
-      elsif thunderbird_version >= Gem::Version.new('60')
-        # Enable plugins on Thunderbird 60 and below
-        1.times do
-          interactor.click_on_text('Install Add-on')
-          interactor.click_on_text('Allow this installation')
-          interactor.click_on_text('Continue')
-        end
       end
-    rescue => e
-      logger.error("Failed to enable plugins: #{e}. Maybe TB < 60?")
     end
 
     # Focus on the account
