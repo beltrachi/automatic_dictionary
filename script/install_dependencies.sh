@@ -27,5 +27,5 @@ cd $PREV_PATH
 cd test/integration/
 rbenv install -s `cat .ruby-version`
 gem install bundler -v "~> 1.17"
-bundle install
+bundle install -j 3
 ruby -v
