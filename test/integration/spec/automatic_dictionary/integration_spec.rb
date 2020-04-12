@@ -77,21 +77,6 @@ describe "AutomaticDictionary integration tests" do
     prepare_profile(profile_path)
     install_extension('automatic_dictionary.xpi', profile_path)
 
-    # Change interface font to be easier to read for tesseract
-    run("mkdir #{profile_path}/chrome")
-    File.open("#{profile_path}/chrome/userChrome.css", "w") do |css|
-      css.write '
-* {
-  font-family: Tahoma, Geneva, sans-serif !important;
-}'
-    end
-    # Tune extensions tabs too.
-    File.open("#{profile_path}/chrome/userContent.css", "w") do |css|
-      css.write '
-* {
-  font-family: Tahoma, Geneva, sans-serif !important;
-}'
-    end
     run("touch #{log_file}")
     run("tail -f #{log_file} &")
     run("thunderbird --profile #{profile_path} --no-remote &")
