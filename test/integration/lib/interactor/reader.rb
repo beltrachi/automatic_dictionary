@@ -3,10 +3,12 @@ require 'tempfile'
 require 'rtesseract'
 require 'benchmark'
 require 'logger'
+require 'rubygems/text'
 
 module Interactor
   class Reader
     include Shared
+    include Gem::Text
 
     attr_accessor :screenshot, :resize_ratio
 
@@ -98,7 +100,7 @@ module Interactor
       # words match the list of target words.
       needle = target_words.first
       readed_words.each_with_index.map do |word, index|
-        if word.word == needle
+        if equal_words?(word.word, needle)
           # We did find the first word, lets see if following words
           # match the target.
           word_chain(target_words, readed_words, index)
@@ -112,9 +114,10 @@ module Interactor
       target_words.each_with_index.inject([]) do |acc, (word, target_index)|
         if target_index == target_words.size - 1
           # Last word, we only need to match the first part
-          return unless readed_words[index].word.start_with? word
+          part = readed_words[index].word.split(/\s/).first
+          return unless equal_words?(part, word)
         else
-          return if readed_words[index].word != word
+          return if !equal_words?(readed_words[index].word, word)
         end
         index+=1
         acc << readed_words[index-1]
@@ -123,6 +126,16 @@ module Interactor
 
     def fix_ratio(position)
       position.map { |point| point / resize_ratio }
+    end
+
+    def equal_words?(word, other_word)
+      return true if word == other_word
+      size_ratio = word.size / other_word.size.to_f
+      return false if !(size_ratio).between?(0.9, 1.1)
+
+      distance = levenshtein_distance(word, other_word)
+      # True when changes needed are only 20% the other_word we are looking for.
+      return ( distance / other_word.size.to_f ) < 0.20
     end
   end
 end
