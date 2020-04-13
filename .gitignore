@@ -1,2 +1,4 @@
 test/integration/vendor
 test/tmp
+test/integration/coverage
+node_modules

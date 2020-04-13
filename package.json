@@ -1,0 +1,28 @@
+{
+  "name": "automatic_dictionary",
+  "version": "1.0.0",
+  "description": "<a href=\"https://codeclimate.com/github/beltrachi/automatic_dictionary\"><img src=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/gpa.svg\" /></a> <a href=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/coverage\"><img src=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/coverage.svg\" /></a>",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "esm": "^3.2.25"
+  },
+  "devDependencies": {
+    "jest": "^25.3.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beltrachi/automatic_dictionary.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/beltrachi/automatic_dictionary/issues"
+  },
+  "homepage": "https://github.com/beltrachi/automatic_dictionary#readme"
+}

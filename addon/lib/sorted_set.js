@@ -19,6 +19,8 @@ SortedSet
     Costs:
         * All operations are O(logn) or better, except toArray O(n)
         */
+import { LoggerStub } from './logger_stub.js';
+
 export function apply(AutomaticDictionary) {
     AutomaticDictionary.Lib.SortedSet = function( options ){
         options = options || {};
@@ -26,7 +28,7 @@ export function apply(AutomaticDictionary) {
         var first = null;
         var last = null;
         var nodes = {};
-        var logger = options["logger"] || AutomaticDictionary.Lib.LoggerStub;
+        var logger = options["logger"] || LoggerStub;
         return {
             // O(logn)
             contains: function( elem ){
