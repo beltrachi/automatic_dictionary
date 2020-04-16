@@ -1,9 +1,10 @@
 sudo: required
 dist: trusty
+language: node_js
 services:
   - docker
 script:
-#  - ./test.sh
+  - ./test.sh
   - ./script/docker_integration_test.sh
 
 env:
