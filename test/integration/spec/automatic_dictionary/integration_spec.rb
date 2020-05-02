@@ -224,7 +224,7 @@ describe "AutomaticDictionary integration tests" do
     if thunderbird_version >= Gem::Version.new('73')
       interactor.hit_key('Alt+t p a', delay: 0.15)
       sleep 2
-      interactor.click_on_text('Extension that remembers')
+      interactor.click_on_text('Automatic Dictionary')
       sleep 1
       interactor.click_on_text('Preferences')
     elsif thunderbird_version >= Gem::Version.new('68')
