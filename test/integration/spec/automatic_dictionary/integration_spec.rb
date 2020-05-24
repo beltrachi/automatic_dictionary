@@ -28,11 +28,7 @@ describe "AutomaticDictionary integration tests" do
   end
 
   let(:profile_base) do
-    if thunderbird_version >= Gem::Version.new('66')
-      'test/integration/fixtures/test-profile-tb-66.tar.gz'
-    else
-      'test/integration/fixtures/test-profile.tar.gz'
-    end
+    'test/integration/fixtures/test-profile.tar.gz'
   end
 
   def prepare_profile(path)
