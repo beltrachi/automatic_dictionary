@@ -10,7 +10,7 @@ module Interactor
     include Shared
     include Gem::Text
 
-    attr_accessor :screenshot, :resize_ratio
+    attr_accessor :resize_ratio
 
     def initialize(options = {})
       self.resize_ratio = options[:resize_ratio] || 4
@@ -63,12 +63,12 @@ module Interactor
       end
     end
 
-    def screenshot
-      @screenshot ||= Interactor::Snapshooter.create_screenshot
+    def create_screenshot
+      Interactor::Snapshooter.create_screenshot
     end
 
     def readed_words
-      file = screenshot
+      file = create_screenshot
       file = prepare_image_to_read(file)
       words = RTesseract::Box.new(file, lang: 'eng', processor: "none").words
       words.map!{|word| Word.new(word) }
