@@ -13,7 +13,13 @@ module Interactor
     attr_accessor :resize_ratio
 
     def initialize(options = {})
-      self.resize_ratio = options[:resize_ratio] || 4
+      self.resize_ratio = options[:resize_ratio] || 2
+    end
+
+    # Captures screen and memoizes it.
+    # You can capture screen (its fast), and then read it later.
+    def capture_screen
+      create_screenshot
     end
 
     def text_position(text)
@@ -64,7 +70,7 @@ module Interactor
     end
 
     def create_screenshot
-      Interactor::Snapshooter.create_screenshot
+      @screenshot ||= Interactor::Snapshooter.create_screenshot
     end
 
     def readed_words
