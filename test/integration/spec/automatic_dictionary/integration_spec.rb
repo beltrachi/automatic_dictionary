@@ -43,6 +43,10 @@ describe "AutomaticDictionary integration tests" do
     run(install)
   end
 
+  def in_main_window?
+    interactor.current_window_title.start_with?('Inbox')
+  end
+
   around do |example|
     begin
       example.run
@@ -66,6 +70,7 @@ describe "AutomaticDictionary integration tests" do
     logger.info("Thunderbird version: #{version}")
     Gem::Version.new(version.match(/\d+\.\d+/)[0])
   end
+
   before do
     # Update build to lastest
     run("cd #{root} ; ./build.sh")
@@ -77,16 +82,12 @@ describe "AutomaticDictionary integration tests" do
     run("tail -f #{log_file} &")
     run("thunderbird --profile #{profile_path} --no-remote &")
 
-    sleep 5
+    sleep 4
 
     # Escape any wizard on start
-    if thunderbird_version >= Gem::Version.new('64')
+    while !in_main_window? do
+      sleep 1
       interactor.hit_key('Escape')
-    else
-      5.times do
-        sleep 1
-        interactor.hit_key('Escape')
-      end
     end
 
     begin
@@ -116,19 +117,13 @@ describe "AutomaticDictionary integration tests" do
       end
     end
 
-    # Focus on the account
-    begin
-      interactor.click_on_text('test@mail.com')
-    rescue
-      logger.error("Can't click on test@mail.com, let's see if we can go on")
-    end
-
     sleep 1
   end
 
   after do |example|
     if example.exception != nil
       if ENV['LOCAL_DEBUG'] == "1"
+        puts example.exception
         require 'byebug'
         byebug
       else
@@ -142,22 +137,33 @@ describe "AutomaticDictionary integration tests" do
   def on_composer(to: nil, subject: nil, body: nil)
     interactor.hit_key('Control+n')
     sleep 2
+    unless interactor.current_window_title.include?("Write:")
+      raise "Compose was not opened"
+    end
+
     interactor.input_text(to) if to
     interactor.hit_key('Tab')
-    if thunderbird_version >= Gem::Version.new('73')
-      # On tb>73 we need two tabs to jump to subject because
-      # first tab only confirms email.
-      interactor.hit_key('Tab')
-    end
+
+    # On tb>73 we need two tabs to jump to subject because
+    # first tab only confirms email.
+    interactor.hit_key('Tab')
+
     interactor.input_text(subject) if subject
     interactor.hit_key('Tab')
     interactor.input_text(body) if body
 
     yield
 
+    close_composer
+  end
+
+  def close_composer
     # Close window without saving draft
     interactor.hit_key('Ctrl+w')
-    interactor.hit_key('Alt+n')
+    unless in_main_window?
+      # Compose window is asking to save the message.
+      interactor.hit_key('Alt+n')
+    end
 
     # for TB 60
     if interactor.current_window_title.include? "Save Message"
@@ -217,30 +223,16 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    if thunderbird_version >= Gem::Version.new('73')
-      interactor.hit_key('Alt+t p a', delay: 0.15)
-      sleep 2
-      interactor.click_on_text('Automatic Dictionary')
+    interactor.hit_key('Alt+t p a', delay: 0.15)
+    sleep 2
+    if thunderbird_version >= Gem::Version.new('76')
+      # 76 does not show extensions right away, we need to click on "Extensions" left tabs.
+      interactor.click_on_text('Extensions')
       sleep 1
-      interactor.click_on_text('Preferences')
-    elsif thunderbird_version >= Gem::Version.new('68')
-      interactor.hit_key('Alt+t p a', delay: 0.15)
-    else
-      interactor.hit_key('Alt+t a', delay: 0.15)
-      sleep 2
-
-      begin
-        interactor.click_on_text('Extensions')
-        sleep 1
-        sleep 1
-        interactor.click_on_text('Preferences')
-      rescue
-        # Sometimes the today pane makes the left menu of addons tab
-        # hide the words "Extensions" etc.
-        # The workaround since TB 60 is to go to addon preferences via menu.
-        interactor.hit_key('Alt+t p a', delay: 0.15)
-      end
     end
+    interactor.click_on_text('Automatic Dictionary')
+    sleep 1
+    interactor.click_on_text('Preferences')
     sleep 5
     interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')
     interactor.wait_for_text('1200')
