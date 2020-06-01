@@ -92,7 +92,15 @@ AutomaticDictionary.Class = function(options){
   AutomaticDictionary.instances.push(this);
   options = options || {};
   this.window = options.window;
-  var start = (new Date()).getTime(), _this = this;
+  var _this = this;
+  this.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
+    console.info(msg);
+  });
+  if( this.window && this.window.id ){
+    this.logger.addFilter(function(msg) {
+      return "WindowId=" + _this.window.id + " " + msg;
+    });
+  }
   this.logger.debug("ad: init");
 
   this.initPlugins();
@@ -107,6 +115,7 @@ AutomaticDictionary.Class = function(options){
     _this.migrate().then(function(){
       _this.logLevel().then(function(level){
         AutomaticDictionary.logger.setLevel(level);
+        _this.logger.setLevel(level);
       });
       if ( _this.window ) {
         browser.windows.onRemoved.addListener(function(windowId){
@@ -142,6 +151,8 @@ AutomaticDictionary.Class = function(options){
       _this.start();
       //Useful hook for plugins and so on
       _this.dispatchEvent({type:"load"});
+      // Set right language, for reply scenarios.
+      _this.deduceLanguage();
     }).catch(console.error);
   }).catch(console.error);
 
