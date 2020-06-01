@@ -48,21 +48,21 @@ module Interactor
     end
 
     def wait_for_text(text)
+      # TODO: refactor this!
       logger.info "wait_for_text #{text}"
-      reader = Reader.new
-      (1 + retries).times do |attempt|
-        sleep_if_faster_than(delay) do
-          # As reader can take up to 40s, to read a screen, we can't
-          # capture the screen shot on each retry because that can be
-          # too late. Best way would be to reuse the same reader while
-          # increasing size. (Reader memoizes the screenshot)
-          # FIXME: BUT THEN IT'S NOT WAIT FOR TEXT ANY MORE!
-          reader.resize_ratio = 2 + attempt * 2
-          position = reader.text_position(text)
-          if position
-            logger.info "Position found for #{text} at attempt number #{attempt}"
-            return position
-          end
+      readers = (1 + retries).times.map { |attemt| Reader.new }
+      threads = readers.each_with_index.map do |reader, idx|
+        Thread.new do
+          sleep delay * idx
+          reader.capture_screen
+        end
+      end
+      readers.each_with_index do |reader, attempt|
+        threads[attempt].join # Make sure thread has captured screen.
+        position = reader.text_position(text)
+        if position
+          logger.info "Position found for #{text} at attempt number #{attempt}"
+          return position
         end
       end
       fail TextNotFound.new("Text '#{text}' not found")
