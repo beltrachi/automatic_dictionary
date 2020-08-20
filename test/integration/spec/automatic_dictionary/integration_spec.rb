@@ -47,6 +47,15 @@ describe "AutomaticDictionary integration tests" do
     interactor.current_window_title.start_with?('Inbox')
   end
 
+  def wait_for_main_window
+    5.times do
+      return if in_main_window?
+      sleep 1
+      yield
+    end
+    raise "Main window not found"
+  end
+
   around do |example|
     begin
       example.run
@@ -85,7 +94,7 @@ describe "AutomaticDictionary integration tests" do
     sleep 4
 
     # Escape any wizard on start
-    while !in_main_window? do
+    wait_for_main_window do
       sleep 1
       interactor.hit_key('Escape')
     end
