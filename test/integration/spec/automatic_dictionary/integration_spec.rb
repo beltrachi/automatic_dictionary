@@ -139,7 +139,7 @@ describe "AutomaticDictionary integration tests" do
         log_and_fail(example.exception)
       end
     end
-    run("pkill thunderbird")
+    run("pkill -f thunderbird")
     run("pkill tail")
   end
 
