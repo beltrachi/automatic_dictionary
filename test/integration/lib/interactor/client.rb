@@ -59,10 +59,14 @@ module Interactor
       end
       readers.each_with_index do |reader, attempt|
         threads[attempt].join # Make sure thread has captured screen.
-        position = reader.text_position(text)
-        if position
-          logger.info "Position found for #{text} at attempt number #{attempt}"
-          return position
+        2.times do
+          position = reader.text_position(text)
+          if position
+            logger.info "Position found for #{text} at attempt number #{attempt}"
+            return position
+          end
+          # Increase zoom
+          reader.resize_ratio *= 2
         end
       end
       fail TextNotFound.new("Text '#{text}' not found")
