@@ -44,16 +44,18 @@ describe "AutomaticDictionary integration tests" do
   end
 
   def in_main_window?
-    interactor.current_window_title.start_with?('Inbox')
+    title = interactor.current_window_title
+    title.start_with?('Inbox') || title.start_with?('Home')
   end
 
   def wait_for_main_window
     5.times do
       return if in_main_window?
+
       sleep 1
       yield
     end
-    raise "Main window not found"
+    raise 'Main window not found'
   end
 
   around do |example|
