@@ -6,7 +6,5 @@ script:
 
 env:
   - THUNDERBIRD_VERSION=beta
-  - THUNDERBIRD_VERSION=stable
-jobs:
-  allow_failures:
-    - env: THUNDERBIRD_VERSION=stable
+  # Supported versions
+  - THUNDERBIRD_VERSION=78.1.1
