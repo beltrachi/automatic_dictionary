@@ -2,12 +2,10 @@
 
 set -ex
 
-BETA_URL="https://download.mozilla.org/?product=thunderbird-beta-latest&os=linux64&lang=en-US"
-STABLE_URL="https://download.mozilla.org/?product=thunderbird-68.0-SSL&os=linux64&lang=en-US"
-
 if [ "$THUNDERBIRD_VERSION" == "beta" ]; then
-    PACKAGE_URL=$BETA_URL
+    PACKAGE_URL="https://download.mozilla.org/?product=thunderbird-beta-latest&os=linux64&lang=en-US"
 else
+    STABLE_URL="https://download.mozilla.org/?product=thunderbird-${THUNDERBIRD_VERSION}-SSL&os=linux64&lang=en-US"
     PACKAGE_URL=$STABLE_URL
 fi
 
