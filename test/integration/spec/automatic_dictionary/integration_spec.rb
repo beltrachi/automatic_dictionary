@@ -240,7 +240,7 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'works :_D' do
-    on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi')  do
+    on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi') do
       # Open a window without closing the other
       on_composer(to: 'es@es.es', subject:'Un asunto') do
         change_spellchecker_language('spa')
