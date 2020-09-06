@@ -58,6 +58,19 @@ describe "AutomaticDictionary integration tests" do
     raise 'Main window not found'
   end
 
+  def window_title_include?(text)
+    interactor.current_window_title.include?(text)
+  end
+
+  def wait_for_window(title_part)
+    10.times do
+      return if window_title_include?(title_part)
+
+      sleep 1
+    end
+    raise "Window including #{title_part} not found"
+  end
+
   around do |example|
     begin
       example.run
@@ -82,6 +95,20 @@ describe "AutomaticDictionary integration tests" do
     Gem::Version.new(version.match(/\d+\.\d+/)[0])
   end
 
+  # Some mouse interactions need two clicks (who knows why!?)
+  # To make it more manageable we pass the block to this method
+  def retry_once
+    attempt ||= 1
+    yield
+  rescue StandardError
+    if attempt < 2
+      attempt += 1
+      logger.warn("Retrying block once: #{caller[1]}")
+      retry
+    end
+    raise
+  end
+
   before do
     # Update build to lastest
     run("cd #{root} ; ./build.sh")
@@ -95,11 +122,10 @@ describe "AutomaticDictionary integration tests" do
 
     sleep 4
 
-    # Escape any wizard on start
-    wait_for_main_window do
-      sleep 1
-      interactor.hit_key('Escape')
-    end
+    wait_for_window('System Integration')
+
+    interactor.hit_key('Escape')
+    interactor.hit_key('Escape')
 
     begin
       if thunderbird_version >= Gem::Version.new('76')
@@ -108,11 +134,13 @@ describe "AutomaticDictionary integration tests" do
         # As the hamburguer menu has no keyboard shortcut nor readable label,
         # we have to guess its position based on something we can read, the
         # Events label.
-        interactor.wait_for_text('Events')
-        events_position = interactor.text_position('Events')
-        # Click 50 pixels on the left of Events label.
-        interactor.click_on_position([events_position.first - 50, events_position.last])
-        interactor.click_on_text('Automatic Dictionary added')
+        retry_once do
+          interactor.wait_for_text('Events')
+          events_position = interactor.text_position('Events')
+          # Click 50 pixels on the left of Events label.
+          interactor.click_on_position([events_position.first - 50, events_position.last])
+          interactor.click_on_text('Automatic Dictionary added')
+        end
         interactor.wait_for_text('Enable')
         interactor.hit_key('Alt+e')
       else
@@ -127,6 +155,10 @@ describe "AutomaticDictionary integration tests" do
         end
       end
     end
+    sleep 1
+    interactor.hit_key('Escape')
+    sleep 1
+    interactor.hit_key('Escape')
 
     sleep 1
   end
@@ -148,7 +180,7 @@ describe "AutomaticDictionary integration tests" do
   def on_composer(to: nil, subject: nil, body: nil)
     interactor.hit_key('Control+n')
     sleep 2
-    unless interactor.current_window_title.include?("Write:")
+    unless window_title_include?('Write:')
       raise "Compose was not opened"
     end
 
