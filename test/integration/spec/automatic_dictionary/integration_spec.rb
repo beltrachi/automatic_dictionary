@@ -242,8 +242,10 @@ describe "AutomaticDictionary integration tests" do
       sleep 1
     end
     interactor.click_on_text('Automatic Dictionary')
-    sleep 1
-    interactor.click_on_text('Preferences')
+    # We want to click on preferences but as there is another word "preferences" on the
+    # screen, we need to specify some context too. Luckly the center of "Details | Preferences"
+    # falls in the preferences button because the word is bigger.
+    interactor.click_on_text('Details Preferences')
     sleep 5
     interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')
     interactor.wait_for_text('1200')
