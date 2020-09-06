@@ -1,5 +1,5 @@
 # Container to run functional tests of the extension.
-FROM ubuntu:16.04
+FROM ruby:2.5.1
 
 # Configurable container argument
 ARG THUNDERBIRD_VERSION=stable

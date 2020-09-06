@@ -10,9 +10,7 @@ else
 fi
 
 # Using latest to have latest dependencies
-sudo apt-get install -y software-properties-common python-software-properties
-sudo add-apt-repository -y ppa:mozillateam/thunderbird-next
-sudo apt-get update
+sudo apt-get install -y software-properties-common
 apt-get install -y `apt-cache depends thunderbird | awk '/Depends:/{print$2}'`
 curl -L $PACKAGE_URL -o thunderbird.tar.bz2
 tar -xvf thunderbird.tar.bz2 -C /tmp/
