@@ -10,7 +10,7 @@
     "esm": "^3.2.25"
   },
   "devDependencies": {
-    "jest": "^26.4.2"
+    "jest": "^26.5.0"
   },
   "scripts": {
     "test": "jest"
