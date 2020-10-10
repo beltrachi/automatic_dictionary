@@ -711,7 +711,7 @@ AutomaticDictionary.Class.prototype = {
   },
 
   canSpellCheck:function(){
-    return this.compose_window.canSpellCheck();
+    return this.compose_window && this.compose_window.canSpellCheck();
   },
 
   getLangFor: function( addr ){
