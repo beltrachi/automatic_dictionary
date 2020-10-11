@@ -3,19 +3,6 @@
     "namespace": "compose_ext",
     "functions": [
       {
-        "name": "sayHello",
-        "type": "function",
-        "description": "Says hello to the user.",
-        "async": true,
-        "parameters": [
-          {
-            "name": "name",
-            "type": "string",
-            "description": "Who to say hello to."
-          }
-        ]
-      },
-      {
         "name": "getCurrentLanguage",
         "type": "function",
         "description": "Returns spellchecker language on that tab",

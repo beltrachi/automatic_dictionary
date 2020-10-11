@@ -19,11 +19,6 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
       // Again, this key must have the same name.
       compose_ext: {
 
-        // A function.
-        sayHello: async function(name) {
-          Services.wm.getMostRecentWindow("mail:3pane").alert("Hello " + name + "!");
-        },
-
         getCurrentLanguage: async function(tabId) {
           return (await getTabWindow(tabId)).document.documentElement.getAttribute("lang");
         },
