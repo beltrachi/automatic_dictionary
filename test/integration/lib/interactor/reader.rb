@@ -49,7 +49,11 @@ module Interactor
       attr_accessor :word, :x_start, :y_start, :x_end, :y_end
 
       def initialize(params)
-        params.each {|k,v| public_send("#{k}=", v) }
+        self.word = params[:word]
+        self.x_start = params[:x_start]
+        self.x_end = params[:x_end]
+        self.y_start = params[:y_start]
+        self.y_end = params[:y_end]
       end
 
       def +(other)
@@ -76,7 +80,7 @@ module Interactor
     def readed_words
       file = create_screenshot
       file = prepare_image_to_read(file)
-      words = RTesseract::Box.new(file, lang: 'eng', processor: "none").words
+      words = RTesseract.new(file, lang: 'eng').to_box
       words.map!{|word| Word.new(word) }
       logger.debug("Words: #{words.map(&:word)}")
       words
