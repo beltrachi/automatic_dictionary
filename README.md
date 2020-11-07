@@ -1,6 +1,8 @@
 <a href="https://codeclimate.com/github/beltrachi/automatic_dictionary"><img src="https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/gpa.svg" /></a>
 <a href="https://codeclimate.com/github/beltrachi/automatic_dictionary/coverage"><img src="https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/coverage.svg" /></a>
 
+__Please note: This project is in maintenance mode. Only critical bugs will be fixed, but no new features will be implemented.__
+
 #  Automatic Dictionary extension for Thunderbird
 
 ![Logo](addon/logo.png)
