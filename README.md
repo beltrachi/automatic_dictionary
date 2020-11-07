@@ -3,7 +3,7 @@
 
 #  Automatic Dictionary extension for Thunderbird
 
-![Logo](https://raw.githubusercontent.com/beltrachi/automatic_dictionary/master/chrome/content/logo.png)
+![Logo](addon/logo.png)
 
 This is the source code of the Automatic dictionary plugin:
 https://addons.thunderbird.net/en-US/thunderbird/addon/automatic-dictionary-switching/
