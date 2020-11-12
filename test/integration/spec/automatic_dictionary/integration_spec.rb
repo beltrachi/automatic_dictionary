@@ -122,8 +122,6 @@ describe "AutomaticDictionary integration tests" do
 
     sleep 4
 
-    wait_for_window('System Integration')
-
     interactor.hit_key('Escape')
     interactor.hit_key('Escape')
 
@@ -263,6 +261,17 @@ describe "AutomaticDictionary integration tests" do
       change_spellchecker_language('spa')
       wait_for_label('Discarded to save language preferences as there are too much recipients')
     end
+
+    # Reply
+
+    on_composer(to: 'alice <test@test.com>', subject:'Un asunto') do
+      change_spellchecker_language('spa')
+      wait_for_label('Saved es-ES as default')
+    end
+
+    interactor.click_on_text('This is a test email')
+    interactor.hit_key('Control+r')
+    wait_for_label('Remembered es-ES')
   end
 
   it 'preferences window' do
