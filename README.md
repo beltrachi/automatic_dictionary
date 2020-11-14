@@ -55,7 +55,7 @@ With the following information:
  * Tell me what it does and what would you expect.
  * Error console messages. That usually is in "Tools" > "Developer tools" > "Error console".
 
-If the plugin does something you did not expect it will be helpful if you send us the logs of the plugin (as described in the next section).
+If the plugin does something you did not expect it will be helpful if you send us the logs of the plugin.
 
 ## Contributors
 
