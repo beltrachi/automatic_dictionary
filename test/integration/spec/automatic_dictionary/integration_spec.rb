@@ -264,7 +264,8 @@ describe "AutomaticDictionary integration tests" do
 
     # Reply
 
-    on_composer(to: 'alice <test@test.com>', subject:'Un asunto') do
+    on_composer(to: 'alice <test@test.com>', subject: 'Un asunto') do
+      sleep 1 # We delayed the language detection 1s to fix issue #62
       change_spellchecker_language('spa')
       wait_for_label('Saved es-ES as default')
     end

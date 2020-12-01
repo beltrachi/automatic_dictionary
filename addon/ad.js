@@ -152,7 +152,7 @@ AutomaticDictionary.Class = function(options){
       //Useful hook for plugins and so on
       _this.dispatchEvent({type:"load"});
       // Set right language, for reply scenarios.
-      _this.deduceLanguage();
+      setTimeout(function(){ _this.deduceLanguage(); },1000);
     }).catch(console.error);
   }).catch(console.error);
 
