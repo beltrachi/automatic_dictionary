@@ -97,12 +97,12 @@ describe "AutomaticDictionary integration tests" do
 
   # Some mouse interactions need two clicks (who knows why!?)
   # To make it more manageable we pass the block to this method
-  def retry_once
-    attempt ||= 1
+  def rescue_and_retry(max_attempts)
+    attempts ||= 1
     yield
   rescue StandardError
-    if attempt < 2
-      attempt += 1
+    if attempts < max_attempts
+      attempts += 1
       logger.warn("Retrying block once: #{caller[1]}")
       retry
     end
@@ -132,7 +132,7 @@ describe "AutomaticDictionary integration tests" do
         # As the hamburguer menu has no keyboard shortcut nor readable label,
         # we have to guess its position based on something we can read, the
         # Events label.
-        retry_once do
+        rescue_and_retry(2) do
           interactor.wait_for_text('Events')
           events_position = interactor.text_position('Events')
           # Click 50 pixels on the left of Events label.
@@ -265,7 +265,6 @@ describe "AutomaticDictionary integration tests" do
     # Reply
 
     on_composer(to: 'alice <test@test.com>', subject: 'Un asunto') do
-      sleep 1 # We delayed the language detection 1s to fix issue #62
       change_spellchecker_language('spa')
       wait_for_label('Saved es-ES as default')
     end
