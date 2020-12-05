@@ -10,6 +10,6 @@ export DEBUG=1
 sed -i 's/\s*"logLevel":.*/"logLevel":"debug",/g' addon/ad.js
 
 cd test/integration/
-bundle install
+bundle install -j 3
 bundle exec rspec spec/automatic_dictionary
 bundle exec rspec spec/lib
