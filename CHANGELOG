@@ -1,4 +1,8 @@
 
+=== 2.0.3
+
+* Fix reply emails on windows, now confirmed by beta testers (2nd attempt) (issue #62)
+
 === 2.0.2
 
 * Fix support on replying emails (issue #62)
