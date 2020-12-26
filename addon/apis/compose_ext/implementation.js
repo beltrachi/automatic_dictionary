@@ -45,7 +45,7 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
           var window = await getTabWindow(tabId);
           var notification_value = "show-message";
           //FIXME: DRY this code with changeLabel
-          let nb = window.gNotification.notificationbox;
+          let nb = (window.gNotification && window.gNotification.notificationbox) || window.gComposeNotification;
           var n = nb.getNotificationWithValue(notification_value);
           if(n) {
             n.label = string;
