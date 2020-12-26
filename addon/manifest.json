@@ -8,7 +8,7 @@
   },
   "name": "Automatic Dictionary",
   "description": "Extension that remembers the language of the email when composing.",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "default_locale": "en",
 
   "options_ui": {

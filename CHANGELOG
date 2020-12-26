@@ -1,4 +1,8 @@
 
+=== 2.0.4
+
+* Fix compatibility with Thunderbird 85 beta
+
 === 2.0.3
 
 * Fix reply emails on windows, now confirmed by beta testers (2nd attempt) (issue #62)
