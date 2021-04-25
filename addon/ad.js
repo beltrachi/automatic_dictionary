@@ -132,7 +132,7 @@ AutomaticDictionary.Class = function(options){
         {
           ad: _this,
           name: _this.name,
-          logo_url: _this.logo_url,
+          logo_url: browser.runtime.getURL(_this.logo_image),
           notification_time: _this.notification_time_ms,
           logger: _this.logger,
           window: window
@@ -194,7 +194,7 @@ AutomaticDictionary.Class.prototype = {
   //Retries till ifce gets ready
   max_deduce_language_retries: 10,
 
-  logo_url: browser.runtime.getURL("logo.png"),
+  logo_image: "logo.png",
 
   logger: AutomaticDictionary.logger,
 
