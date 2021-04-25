@@ -1,7 +1,6 @@
 //Test SortedSet
 
-const { esmImport } = require('../utils.js');
-const { apply }  = esmImport("./../addon/lib/sorted_set.js");
+import { apply } from "./../../addon/lib/sorted_set";
 
 var AutomaticDictionary = { Lib: {} };
 apply(AutomaticDictionary);

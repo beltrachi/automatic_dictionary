@@ -3,17 +3,15 @@
   "version": "1.0.0",
   "description": "<a href=\"https://codeclimate.com/github/beltrachi/automatic_dictionary\"><img src=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/gpa.svg\" /></a> <a href=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/coverage\"><img src=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/coverage.svg\" /></a>",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "test": "test"
-  },
-  "dependencies": {
-    "esm": "^3.2.25"
   },
   "devDependencies": {
     "jest": "^26.6.3"
   },
   "scripts": {
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "repository": {
     "type": "git",
