@@ -1,24 +1,24 @@
 /*
  * The main purpose of this is to allow to work on other windows besides compose, like
  * conversations compose extension.
- * 
- * 
+ *
+ *
  * Interface of any compose_window implementation:
- *   
+ *
  *   // type: can be "TO", "CC" or "BCC"
  *   // returns an array with the recipients
  *   recipients( type )
- *   
+ *
  *   // It registers the listeners for:
  *   //
  *   //    start and stop, when windows loses focus, etc.
- *   //    
+ *   //
  *   //    for dictionary change
- *   //    
+ *   //
  *   //    for recipients changed
  *   //
  *   setListeners( ad_object )
- *   
+ *
  *   // Shows a message to the user by some seconds.
  *   setLabel( message )
  **/

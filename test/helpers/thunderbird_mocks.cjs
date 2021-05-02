@@ -246,14 +246,19 @@ let Log = {
 }
 
 pref_data = {};
-var _get = async function(k){
+var _get = async function(k, fallback){
+    k = k.toString();
     var v = pref_data[k];
-
-    console.debug("asking for "+k + " and gets "+v);
+    if (typeof(v) == "undefined") {
+        if( typeof(fallback) == "undefined"){
+            throw "Undefined key "+k+" in store"
+        }
+        v = fallback;
+    }
     return v;
 };
 var _set = async function(k,v){
-    console.debug("seting "+k+" the value "+v);
+    k = k.toString();
     pref_data[k] = v;
 };
 
@@ -269,15 +274,31 @@ let prefs = {
 };
 
 local_storage = {
-    get: _get,
-    set: _set
+    get: async function(k, fallback){
+        k = k.toString();
+        var v = pref_data[k];
+        if (typeof(v) == "undefined") { v = fallback };
+        var hash = {};
+        hash[k] = v ;
+        return hash;
+    },
+    set: async function(pair){
+        for (var key in pair){
+            pref_data[key] = pair[key]
+        }
+    }
 }
 
 let browser = {
+    compose: {
+        getComposeDetails: function(tabId){
+            return {};
+        }
+    },
     prefs: prefs,
     storage: { local: local_storage },
-    i18n: { 
-        getMessage: function(){ return "getMessage answer" } 
+    i18n: {
+        getMessage: function(key){ return key }
     },
     runtime: { getURL: function(){} },
     windows: { onRemoved: { addListener: function(){} } }

@@ -88,12 +88,13 @@ AutomaticDictionary.shutdown = function(){
 //To unload observers
 AutomaticDictionary.instances = [];
 
-AutomaticDictionary.Class = function(options){
+AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
+  callback = callback || function(){};
   AutomaticDictionary.instances.push(this);
   options = options || {};
   this.window = options.window;
   var _this = this;
-  this.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
+  this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function(msg){
     console.info(msg);
   });
   if( this.window && this.window.id ){
@@ -152,14 +153,11 @@ AutomaticDictionary.Class = function(options){
       //Useful hook for plugins and so on
       _this.dispatchEvent({type:"load"});
       // Set right language, for reply scenarios.
-      setTimeout(function(){ _this.deduceLanguage(); },1000);
-    }).catch(console.error);
+      if(deduce_on_load) { setTimeout(function(){ _this.deduceLanguage(); },1000); }
+    }).then(() => callback(_this)).catch(console.error);
   }).catch(console.error);
 
-
   this.iter = 0; //ObserveRecipients execution counter
-
-  return this;
 }
 
 AutomaticDictionary.Class.prototype = {
@@ -396,7 +394,7 @@ AutomaticDictionary.Class.prototype = {
     fi
     .....
   */
-  
+
   languageChanged: async function(){
     this.logger.debug("languageChanged call");
 
@@ -410,7 +408,7 @@ AutomaticDictionary.Class.prototype = {
     var maxRecipients = await this.getMaxRecipients();
     if( tos.length + ccs.length > maxRecipients ){
       this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
-      this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
+      await this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
       this.last_lang_discarded = current_lang;
       return;
     }
@@ -455,7 +453,7 @@ AutomaticDictionary.Class.prototype = {
       this.logger.debug("Enter cond 3");
 
       this.logger.debug("saved recipients are: " + stats.saved_recipients);
-      this.changeLabel("info",
+      await this.changeLabel("info",
                        this.ft( "savedForRecipients",
                                 [ current_lang, stats.saved_recipients ] )
                       );
@@ -513,7 +511,7 @@ AutomaticDictionary.Class.prototype = {
     }
     await this.freq_suffix.pairs();
   },
-  
+
   remove_heuristic: function(recipient, lang){
     this.logger.debug("removing heuristic for "+ recipient + " to "+ lang);
     var parts = recipient.split("@");
@@ -524,8 +522,8 @@ AutomaticDictionary.Class.prototype = {
   // Updates the interface with the lang deduced from the recipients
   /*
     How we search the lang:
-    1. TO (all) & CC (all): The recipients in "To" and the ones in "CC". 
-    In cases where you change the language when someone in the CC 
+    1. TO (all) & CC (all): The recipients in "To" and the ones in "CC".
+    In cases where you change the language when someone in the CC
     does not understand it.
     2. TO (all): The recipients in "To" all together.
     This allows to recover specific language when the recipients
@@ -538,7 +536,7 @@ AutomaticDictionary.Class.prototype = {
 
     if( ! (await this.canSpellCheck()) ){
       //TODO: notify user when spellcheck while you type is disabled.
-      if( this.running && (!opt.count || opt.count < 10)){
+      if( this.running && (!opt.count || opt.count < 1)){
         this.logger.info("Deferring deduceLanguage because spellchecker"+
                          " is not ready");
         opt.count = opt.count || 0;
@@ -578,7 +576,7 @@ AutomaticDictionary.Class.prototype = {
       var alltogether_key = this.stringifyRecipientsGroup( recipients );
       lang = await this.getLangFor( alltogether_key );
     }
-    
+
     if( !lang ){
       this.logger.debug("Check for the TOs one by one");
       // TO one by one
@@ -591,7 +589,7 @@ AutomaticDictionary.Class.prototype = {
         }
       }
     }
-    
+
     if( !lang ){
       this.logger.debug("Check for the ccs one by one");
       for(i in ccs){
@@ -601,9 +599,9 @@ AutomaticDictionary.Class.prototype = {
         }
       }
     }
-    
+
     this.logger.debug("Language found: "+ lang);
-    
+
     if(!lang && await this.allowHeuristic()){
       this.logger.info("trying to get by heuristics");
       lang = await this.heuristic_guess(recipients);
@@ -614,8 +612,8 @@ AutomaticDictionary.Class.prototype = {
     }
 
     // Rule: when you detect a language and you detected it last time,
-    // Set it again if it's not the current. (Support multi compose windows) 
-    var nothing_changed = this.last_toandcc_key == toandcc_key && 
+    // Set it again if it's not the current. (Support multi compose windows)
+    var nothing_changed = this.last_toandcc_key == toandcc_key &&
         this.last_lang == lang;
     if( nothing_changed ){
       //test that the last lang is the same as the one setted on the dictionary.
@@ -631,9 +629,9 @@ AutomaticDictionary.Class.prototype = {
     this.last_toandcc_key = toandcc_key;
     if(lang){
       try{
-        this.setCurrentLang( lang );
+        await this.setCurrentLang( lang );
         if( !nothing_changed ){
-          this.changeLabel("info", this.ft("deducedLang."+method, [lang]))
+          await this.changeLabel("info", this.ft("deducedLang."+method, [lang]))
         }
       }catch( e ){
         AutomaticDictionary.logException(e);
@@ -641,7 +639,7 @@ AutomaticDictionary.Class.prototype = {
         if( this.deduce_language_retries_counter < this.max_deduce_language_retries ){
           // The interface may not be ready. Leave it a retry.
           this.deduce_language_retries_counter++
-          this.logger.info("Recovering from exception on deduceLanguage " + 
+          this.logger.info("Recovering from exception on deduceLanguage " +
                            "(retry: " +this.deduce_language_retries_counter + " with delay "+
                            this.deduce_language_retry_delay+" )");
           var _this = this;
@@ -652,13 +650,13 @@ AutomaticDictionary.Class.prototype = {
           }, this.deduce_language_retry_delay);
           return;
         }else{
-          this.changeLabel("error", this.ft("errorSettingSpellLanguage", [lang] ));
+          await this.changeLabel("error", this.ft("errorSettingSpellLanguage", [lang] ));
           throw e;
         }
       }
       this.deduce_language_retries_counter = 0;
     }else{
-      this.changeLabel("info", this.t( "noLangForRecipients" ));
+      await this.changeLabel("info", this.t( "noLangForRecipients" ));
     }
   },
 
@@ -677,7 +675,7 @@ AutomaticDictionary.Class.prototype = {
     }
     return freq_table.getFirst();
   },
-  
+
   // It returns a string representing the array of recipients not caring about the order
   stringifyRecipientsGroup: function( arr ){
     var sorted = [];
@@ -687,18 +685,18 @@ AutomaticDictionary.Class.prototype = {
     sorted.sort();
     return sorted.toString();
   },
-  
-  setCurrentLang: function( target ){
+
+  setCurrentLang: async function( target ){
     //Temporary disable language change detection that we trigger ourself
     this.logger.info("setCurrentLang "+target);
     this.running = false;
     try{
       if( this.compose_window.changeLanguage ){
         this.logger.debug("calling compose_window.changeLanguage");
-        this.compose_window.changeLanguage(target);
+        await this.compose_window.changeLanguage(target);
       }else{
         this.logger.error("No way to change language");
-        this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
+        await this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
       }
     }finally{
       this.running = true;
@@ -710,8 +708,8 @@ AutomaticDictionary.Class.prototype = {
     return this.compose_window.getCurrentLang();
   },
 
-  canSpellCheck:function(){
-    return this.compose_window && this.compose_window.canSpellCheck();
+  canSpellCheck:async function(){
+    return this.compose_window && await this.compose_window.canSpellCheck();
   },
 
   getLangFor: function( addr ){
@@ -731,6 +729,8 @@ AutomaticDictionary.Class.prototype = {
     // level is equal or higher than configured level
     if( arr.indexOf(level) >= arr.indexOf(await this.notificationLevel()) ){
       return this.compose_window.changeLabel( str );
+    }else{
+      this.logger.debug('notification level too high for: '+str)
     }
   },
 
