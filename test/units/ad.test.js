@@ -192,16 +192,7 @@ test('TOs priorization', async (done) => {
     });
 });
 
-
-
-(function(){
-    load("helpers/ad_test_helper.js");
-    //The load path is from the call
-    load("../chrome/content/ad.js");
-
-
-
-    /*
+/*
 
          4. [Conditionals] We have already setted the "TO-A", "TO-A & CC-B" and "TO-B".
             We set the recipients to be: TO-A && CC-B to another lang. The new
@@ -209,54 +200,65 @@ test('TOs priorization', async (done) => {
             already setted.
     */
 
-    (function(){
-        test_setup();
-        var adi = ad_instance();
+test('Do not overwrite individuals language when its a group language', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'debug',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        // Store first the preference for each recipient
+        let status = { recipients: {}, lang: null }
+        mock_compose_window(compose_window, status)
 
         //Prepare scenario
-        mock_recipients( adi, {"to":["A"]} );
-        call_language_changed( adi, "toA-lang");
-        mock_recipients( adi, {"to":["A"],"cc":["B"]} );
-        call_language_changed( adi, "toAccB-lang");
-        mock_recipients( adi, {"to":["B"]} );
-        call_language_changed( adi, "toB-lang");
+        status.recipients = { "to": ["A"] };
+        status.lang = "toA-lang";
+        await ad.languageChanged();
+        status.recipients = { "to": ["A"], "cc": ["B"] };
+        status.lang = "toAccB-lang";
+        await ad.languageChanged();
+        status.recipients = { "to": ["B"] };
+        status.lang = "toB-lang";
+        await ad.languageChanged();
 
         //Scenario ready
-
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-
-        mock_recipients( adi, {"to":["A"],"cc":["B"]} );
-        call_language_changed( adi, "new-toAccB-lang");
+        status.recipients = { "to": ["A"], "cc": ["B"] };
+        status.lang = "new-toAccB-lang";
+        await ad.languageChanged();
         //Language is setted
-        adi.deduceLanguage();
-        assert.equal( 1, setted_langs.length);
-        assert.equal( "new-toAccB-lang", setted_langs[0]);
+        await ad.deduceLanguage();
+        expect(status.lang).toBe("new-toAccB-lang");
 
         //Check it has not affected the others
-        mock_recipients( adi, {"to":["A"]} );
-        adi.deduceLanguage();
-        assert.equal( 2, setted_langs.length);
-        assert.equal( "toA-lang", setted_langs[1]);
+        status.recipients = { "to": ["A"] };
+        await ad.deduceLanguage();
+        expect(status.lang).toBe("toA-lang");
 
-        mock_recipients( adi, {"to":["B"]} );
-        adi.deduceLanguage();
-        assert.equal( 3, setted_langs.length);
-        assert.equal( "toB-lang", setted_langs[2]);
+        status.recipients = { "to": ["B"] };
+        await ad.deduceLanguage();
+        expect(status.lang).toBe("toB-lang");
 
         // Setting lang to a group does not update the ones alone
-        mock_recipients( adi, {"to":["A","B"]} );
-        call_language_changed( adi, "toA-toB-lang");
+        status.recipients = { "to": ["A", "B"] };
+        status.lang = "toA-toB-lang";
+        await ad.languageChanged();
 
-        mock_recipients( adi, {"to":["A"]})
-        adi.deduceLanguage();
-        assert.equal( 4, setted_langs.length);
-        assert.equal( "toA-lang", setted_langs[setted_langs.length -1]);
-    })();
+        status.recipients = { "to": ["A"] };
+        await ad.deduceLanguage();
+        expect(status.lang).toBe("toA-lang");
+        done(); return;
+    })
+});
+
+
+(function(){
+    load("helpers/ad_test_helper.js");
+    //The load path is from the call
+    load("../chrome/content/ad.js");
+
 
     /*        call_language_changed( adi, "toB-lang");
 
