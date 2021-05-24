@@ -309,67 +309,73 @@ test('Max recipients assignment', async (done) => {
         status.lang = 'other';
         await ad.deduceLanguage();
         expect(status.lang).toBe("andromeda");
-        done(); return;
+        done();
     });
 
 });
+
+/*
+
+    6. We only call to changeLabel when something has changed to not bother
+    the user too much.
+
+*/
+test('Minimize notifications', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'warn',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        let status = { recipients: {}, lang: null }
+        mock_compose_window(compose_window, status)
+
+        //Prepare scenario
+        status.recipients = { "to": ["foo"], "cc": ["bar"] };
+
+        await ad.deduceLanguage();
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(1)
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('noLangForRecipients')
+
+        await ad.deduceLanguage();
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(1)
+
+        status.recipients = { "to": ["foo"] };
+        await ad.deduceLanguage();
+        await ad.deduceLanguage();
+
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(2)
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('noLangForRecipients')
+
+        status.lang = 'foobar';
+        await ad.languageChanged();
+
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(3)
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
+
+        await ad.deduceLanguage();
+        //We do not expect a new label because is the same lang as we were using
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(3)
+
+        //If it has changed it will update the lang but not notifying anybody
+        //as this is what he has setted before. This happens when more than one
+        //ad instance is open
+        status.lang = 'other';
+        await ad.deduceLanguage();
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(3)
+        expect(status.lang).toBe('foobar');
+        done();
+    });
+});
+
 
 (function(){
     load("helpers/ad_test_helper.js");
     //The load path is from the call
     load("../chrome/content/ad.js");
 
-
-    /*
-
-         6. We only call to changeLabel when something has changed to not bother
-            the user too much.
-
-    */
-    (function(){
-        test_setup();
-        var adi = ad_instance();
-
-        //Prepare scenario
-        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        var labels = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-        adi.changeLabel = function(level, str){ labels.push( str );}
-
-        adi.deduceLanguage();
-        assert.equal( 1, labels.length);
-
-        adi.deduceLanguage();
-        logger.debug(labels);
-        assert.equal( 1, labels.length);
-
-        mock_recipients( adi, {"to":["foo"]} );
-        adi.deduceLanguage();
-        adi.deduceLanguage();
-
-        assert.equal( 2, labels.length);
-        call_language_changed( adi, "foobar");
-
-        assert.equal( 3, labels.length);
-
-        adi.deduceLanguage();
-        //We do not expect a new label because is the same lang as we were using
-        assert.equal( 3, labels.length);
-
-        //If it has changed it will update the lang but not notifying anybody
-        //as this is what he has setted before. This happens when more than one
-        //ad instance is open
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-        assert.equal( 3, labels.length);
-        assert.equal( "foobar", dictionary_object.dictionary);
-
-    })();
 
     /*
 
@@ -394,10 +400,10 @@ test('Max recipients assignment', async (done) => {
         Components.savedPrefs[adi.ALLOW_HEURISTIC] = true;
 
         //Prepare scenario - mocking
-        mock_recipients( adi, {
+        status.recipients ={
             "to":["foo"],
             "cc":["bar"]
-            } );
+            } ;
         // Collect setted languages on the interface
         var setted_langs = [];
         var labels = [];
@@ -417,7 +423,7 @@ test('Max recipients assignment', async (done) => {
         logger.debug(labels);
         assert.equal( 1, labels.length);
 
-        mock_recipients( adi, {"to":["foo@bar.dom"]} );
+        status.recipients = {"to":["foo@bar.dom"]} ;
         adi.deduceLanguage();
         adi.deduceLanguage();
 
@@ -430,7 +436,7 @@ test('Max recipients assignment', async (done) => {
         adi.deduceLanguage();
         assert.equal( 3, labels.length);
 
-        mock_recipients( adi, {"to":["abc@bar.dom"]} );
+        status.recipients = {"to":["abc@bar.dom"]} ;
 
         adi.deduceLanguage();
 
@@ -444,8 +450,8 @@ test('Max recipients assignment', async (done) => {
         assert.contains("bar.dom", Components.savedPrefs["extensions.automatic_dictionary.freqTableData"]);
 
         //Check that the expired key is removed form the freq_suffix too
-        mock_recipients( adi, {
-            "to":["abc2@bar2.dom","abc2@bar3.dom","abc2@bar4.dom","abc2@bar5.dom"]} );
+        status.recipients ={
+            "to":["abc2@bar2.dom","abc2@bar3.dom","abc2@bar4.dom","abc2@bar5.dom"]};
         call_language_changed( adi, "foobar-x");
 
         //Max size is 5 but there is a key of all TOs composed which is the fifth position
@@ -459,7 +465,7 @@ test('Max recipients assignment', async (done) => {
 
         //When we change preference, unregiser from freq_suffix the old pref
         // and set the new one. In this case we change the abc2@bar2.com preference
-        mock_recipients( adi, {"to":["abc2@bar2.dom"]} );
+        status.recipients = {"to":["abc2@bar2.dom"]} ;
         call_language_changed( adi, "foobar-changed");
 
         adi.deduceLanguage();
@@ -481,16 +487,16 @@ test('Max recipients assignment', async (done) => {
             ], adi2.freq_suffix.pairs());
 
         //Test that on various recipients it ponderates the language.
-        mock_recipients( adi, {"to":["abc2@bar2.dom2"]} );
+        status.recipients = {"to":["abc2@bar2.dom2"]} ;
         call_language_changed( adi, "dom2lang");
 
-        mock_recipients( adi, {
+        status.recipients ={
             "to":[
                 "abc3@bar2.dom",
                 "abc2@bar3.dom2",
                 "abc2@bar4.dom2",
                 "abc2@bar5.dom2"
-            ]} );
+            ]};
 
         adi.deduceLanguage();
         assert.equal("dom2lang", setted_langs[setted_langs.length -1]);
@@ -511,7 +517,7 @@ test('Max recipients assignment', async (done) => {
         var adi = ad_instance();
 
         //Prepare scenario
-        mock_recipients( adi, {"to":["a@a.com"]} );
+        status.recipients = {"to":["a@a.com"]} ;
         call_language_changed( adi, "lang-a");
 
         //Scenario ready
@@ -523,17 +529,17 @@ test('Max recipients assignment', async (done) => {
             setted_langs.push( lang );
         }
 
-        mock_recipients( adi, {"to":["a@a.com","b@b.com"]} );
+        status.recipients = {"to":["a@a.com","b@b.com"]} ;
         //Language is setted
         adi.deduceLanguage();
         assert.equal( 1, setted_langs.length);
         assert.equal( "lang-a", setted_langs[0]);
 
         // When we have a cc recipient with known data, we can deduce it
-        mock_recipients( adi, {
+        status.recipients ={
             "to":["c@c.com"],
             "cc":["a@a.com"]
-        } );
+        };
         adi.deduceLanguage();
         assert.equal( 2, setted_langs.length);
         assert.equal( "lang-a", setted_langs[1]);
