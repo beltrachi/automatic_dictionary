@@ -245,7 +245,7 @@ let Log = {
     DumpAppender: function(){}
 }
 
-pref_data = {};
+var pref_data = {};
 var _get = async function(k, fallback){
     k = k.toString();
     var v = pref_data[k];
@@ -301,7 +301,9 @@ let browser = {
         getMessage: function(key){ return key }
     },
     runtime: { getURL: function(){} },
-    windows: { onRemoved: { addListener: function(){} } }
+    windows: { onRemoved: { addListener: function(){} } },
+    _flushStorage: function(){ pref_data = {} },
+    _dumpStorage: function() { return pref_data }
 }
 
 module.exports = { browser: browser, window: window}

@@ -21,6 +21,10 @@ function mock_compose_window(compose_window, options){
     compose_window.canSpellCheck = jest.fn(async function(){ return options.spellchecker_enabled });
 }
 
+beforeEach(async () => {
+    browser._flushStorage();
+})
+
 test('Initial boot', async (done) => {
     /**
      * Just check that it can boot from empty data.
