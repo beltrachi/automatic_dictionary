@@ -12,7 +12,7 @@ function mock_compose_window(compose_window, options){
 
     compose_window.recipients = jest.fn(function(type){
         type = type || 'to';
-        return options.recipients[type];
+        return options.recipients[type] || [];
     });
     compose_window.changeLabel = jest.fn();
     compose_window.showMessage = jest.fn();
@@ -153,6 +153,46 @@ test('Tos and ccs', async (done) => {
 });
 
 
+/*
+    3. We have two TO's saved with diferent langs, we set them as the current
+    recipients and check that the lang used is the one from the first recipient.
+
+*/
+test('TOs priorization', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'debug',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+        // Store first the preference for each recipient
+        let status = { recipients: { "to": ["catalan"] }, lang: null }
+        mock_compose_window(compose_window, status)
+
+        status.lang = 'ca'
+        await ad.languageChanged();
+
+        status.recipients = { "to": ["spanish"] };
+        status.lang = 'es';
+        await ad.languageChanged();
+
+        // Scenario is ready
+
+        status.recipients = { "to": ["spanish", "catalan"] };
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('es')
+
+        status.recipients = { "to": ["catalan", "spanish"] };
+
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('ca')
+
+        done();
+    });
+});
+
+
 
 (function(){
     load("helpers/ad_test_helper.js");
@@ -160,46 +200,6 @@ test('Tos and ccs', async (done) => {
     load("../chrome/content/ad.js");
 
 
-    /*
-
-         3. We have two TO's saved with diferent langs, we set them as the current
-            recipients and check that the lang used is the one from the first recipient.
-
-    */
-    (function(){
-        test_setup();
-        var adi = ad_instance();
-
-        //Prepare scenario
-
-        mock_recipients( adi, {"to":["catalan"]} );
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-        call_language_changed( adi, "ca");
-        mock_recipients( adi, {"to":["spanish"]} );
-        call_language_changed( adi, "es");
-
-        // Scenario is ready
-
-        mock_recipients( adi, {"to":["spanish","catalan"]} );
-
-        adi.deduceLanguage();
-
-        assert.equal( 1, setted_langs.length);
-        assert.equal( "es", setted_langs[0]);
-
-        mock_recipients( adi, {"to":["catalan","spanish"]} );
-
-        adi.deduceLanguage();
-
-        assert.equal( 2, setted_langs.length);
-        assert.equal( "ca", setted_langs[1]);
-
-    })();
 
     /*
 
