@@ -4,7 +4,7 @@
 
 import { AutomaticDictionary } from './../../addon/ad';
 
-import {jest} from '@jest/globals'
+import { jest } from '@jest/globals'
 
 
 function mock_compose_window(compose_window, options){
@@ -115,133 +115,50 @@ test('Internal methods?', async (done) => {
     });
 });
 
+/*
+
+    2. We have an empty hash and we set a "TO" and a "CC". We set the dict,
+    and check that it has been setted to the TO, to the CC alone, and the pair TO-CC.
+
+*/
+test('Tos and ccs', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        let status = { recipients: { "to": ["foo"], "cc": ["bar"] }, lang: null }
+        mock_compose_window(compose_window, status)
+
+        //Change the lang and it gets stored
+        status.lang = 'foolang';
+        await ad.languageChanged();
+
+        // Setting individuals only will assign foolang too
+        status.recipients = { "to": ["foo"] };
+        status.lang = 'other';
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('foolang');
+
+        status.recipients = { "to": ["bar"] };
+        status.lang = 'other';
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('foolang');
+
+        done();
+    })
+});
+
+
+
 (function(){
     load("helpers/ad_test_helper.js");
     //The load path is from the call
     load("../chrome/content/ad.js");
 
-
-    (function(){
-        test_setup();
-        var adi = ad_instance();
-        var labels = [];
-        adi.changeLabel = function(level, str){ labels.push( str );}
-        //Test internal methods
-        assert.equal("aa,ab,bb",adi.stringifyRecipientsGroup(["aa","bb","ab"]));
-
-        assert.contains('.', AutomaticDictionary.version);
-
-        //Prepare scenario
-        mock_recipients( adi, {"to":["foo"],"cc":[]} );
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-        adi.deduceLanguage();
-
-        assert.equal( 0, setted_langs.length);
-        assert.equal( "", Components.savedPrefs[adi.ADDRESS_INFO_PREF] );
-
-        //Change the lang!
-        call_language_changed( adi, "foolang");
-
-        adi.deduceLanguage();
-
-        assert.equal( 0, setted_langs.length);
-
-        //Somewhere the lang is changed but you go back here and
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-
-        assert.equal( 1, setted_langs.length);
-        assert.equal( "foolang", setted_langs[0]);
-
-        //Set stopped.
-        adi.stop();
-        //Deduce language is aborted despite we change dict
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-        assert.equal( 1, setted_langs.length);
-
-        //When spellcheck disabled or stopped, do nothing
-        adi.start();
-        window.gSpellChecker.enabled = false;
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-        assert.equal( 1, setted_langs.length);
-        window.gSpellChecker.enabled = true;
-        window.gSpellChecker.canSpellCheck= false;
-
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-        assert.equal( 1, setted_langs.length);
-
-        //Enable again and everything ok.
-        window.gSpellChecker.canSpellCheck= true;
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-        assert.equal( 2, setted_langs.length);
-        assert.equal( "foolang", setted_langs[setted_langs.length -1]);
-        assert.equal( 2, labels.length);
-
-        //test notificationLevel error
-        adi.prefManager.set(adi.NOTIFICATION_LEVEL,"error");
-        dictionary_object.dictionary = "other";
-        adi.deduceLanguage();
-
-        assert.equal( 2, labels.length);
-        assert.equal( 3, setted_langs.length);
-        assert.equal( "foolang", setted_langs[setted_langs.length -1]);
-        //Restore
-        adi.prefManager.set(adi.NOTIFICATION_LEVEL,"info");
-    })();
-
-    /*
-
-         2. We have an empty hash and we set a "TO" and a "CC". We set the dict,
-            and check that it has been setted to the TO, to the CC alone, and the pair TO-CC.
-
-    */
-    (function(){
-        test_setup();
-        var adi = ad_instance();
-
-        //Prepare scenario
-        mock_recipients( adi, {"to":["foo"],"cc":["bar"]} );
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-        adi.deduceLanguage();
-
-        assert.equal( 0, setted_langs.length);
-        assert.equal( "", Components.savedPrefs[adi.ADDRESS_INFO_PREF] );
-
-        //Change the lang and it gets stored
-        call_language_changed( adi, "foolang");
-
-        dictionary_object.dictionary = "other";
-
-        adi.deduceLanguage();
-
-        assert.equal( 1, setted_langs.length);
-        assert.equal( "foolang", setted_langs[0]);
-
-        mock_recipients( adi, {"to":["foo"]} );
-        adi.deduceLanguage();
-        assert.equal( 2, setted_langs.length);
-        assert.equal( "foolang", setted_langs[setted_langs.length -1]);
-
-        mock_recipients( adi, {"to":["bar"]} );
-        adi.deduceLanguage();
-        assert.equal( 3, setted_langs.length);
-        assert.equal( "foolang", setted_langs[setted_langs.length -1]);
-
-    })();
 
     /*
 
