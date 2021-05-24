@@ -336,10 +336,6 @@ AutomaticDictionary.Class.prototype = {
     return ifce;
   },
   initializeData: async function(){
-    if (AutomaticDictionary.address_data){
-      this.data = AutomaticDictionary.address_data;
-      return;
-    }
     var _this = this;
     var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
       this.ADDRESS_INFO_KEY,
@@ -356,13 +352,8 @@ AutomaticDictionary.Class.prototype = {
       }
     );
     this.data = persistent_wrapper;
-    AutomaticDictionary.address_data = this.data;
   },
   initFreqSuffix: function(){
-    if (AutomaticDictionary.freq_suffix){
-      this.freq_suffix = AutomaticDictionary.freq_suffix;
-      return;
-    }
     //Build the object that will manage the storage for the object
     var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
       this.FREQ_TABLE_KEY,
@@ -382,7 +373,6 @@ AutomaticDictionary.Class.prototype = {
     this.data.expiration_callback = function(pair){
       _this.remove_heuristic(pair[0],pair[1]);
     }
-    AutomaticDictionary.freq_suffix = this.freq_suffix;
   },
 
   //Called when the user changes the language of the dictionary (event based func)
