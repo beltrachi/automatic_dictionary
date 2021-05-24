@@ -29,11 +29,12 @@ test('Initial boot', async (done) => {
     /**
      * Just check that it can boot from empty data.
     */
-    AutomaticDictionary.Class.prototype.deduceLanguage = done;
     var ad = new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub
-    });
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, () => done() );
 });
 
 test('Internal methods?', async (done) => {
@@ -45,7 +46,8 @@ test('Internal methods?', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'error'
+        logLevel: 'error',
+        deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
@@ -110,8 +112,7 @@ test('Internal methods?', async (done) => {
         await ad.prefManager.set(ad.NOTIFICATION_LEVEL,"info");
 
         done(); return;
-
-    }, false);
+    });
 });
 
 (function(){

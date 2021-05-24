@@ -90,8 +90,11 @@ AutomaticDictionary.instances = [];
 
 AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
   callback = callback || function(){};
-  AutomaticDictionary.instances.push(this);
   options = options || {};
+  if( typeof(options.deduceOnLoad) == "undefined") options.deduceOnLoad = true;
+
+  AutomaticDictionary.instances.push(this);
+
   this.window = options.window;
   var _this = this;
   this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function(msg){
@@ -153,7 +156,7 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
       //Useful hook for plugins and so on
       _this.dispatchEvent({type:"load"});
       // Set right language, for reply scenarios.
-      if(deduce_on_load) { setTimeout(function(){ _this.deduceLanguage(); },1000); }
+      if(options.deduceOnLoad) { setTimeout(function(){ _this.deduceLanguage(); },1000); }
     }).then(() => callback(_this)).catch(console.error);
   }).catch(console.error);
 
