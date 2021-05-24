@@ -162,7 +162,7 @@ test('TOs priorization', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'debug',
+        logLevel: 'warn',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -194,17 +194,17 @@ test('TOs priorization', async (done) => {
 
 /*
 
-         4. [Conditionals] We have already setted the "TO-A", "TO-A & CC-B" and "TO-B".
-            We set the recipients to be: TO-A && CC-B to another lang. The new
-            lang is saved to "TO-A & CC-B" but not to "TO-A" nor "TO-B" as they're
-            already setted.
-    */
+    4. [Conditionals] We have already setted the "TO-A", "TO-A & CC-B" and "TO-B".
+    We set the recipients to be: TO-A && CC-B to another lang. The new
+    lang is saved to "TO-A & CC-B" but not to "TO-A" nor "TO-B" as they're
+    already setted.
+*/
 
 test('Do not overwrite individuals language when its a group language', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'debug',
+        logLevel: 'warn',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -253,67 +253,72 @@ test('Do not overwrite individuals language when its a group language', async (d
     })
 });
 
+/*
+    5. Limit the max CCs or TOs management to a number to avoid loading
+    the hash with useless data or too much processing of useless data.
+    The max would be a configuration parameter (migrations! :) )
+
+*/
+test('Max recipients assignment', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'warn',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        // Store first the preference for each recipient
+        let status = { recipients: {}, lang: null }
+        mock_compose_window(compose_window, status)
+
+        //Prepare scenario
+        status.recipients = { "to": ["A"] };
+        status.lang = "toA-lang";
+        await ad.languageChanged();
+
+        //Prepare scenario
+        var current_limit = 10;
+        var recipients = { "to": [] };
+        for (var i = 0; i < current_limit; i++) {
+            recipients.to.push("recipient" + i);
+        }
+
+        status.recipients = recipients;
+        status.lang = "ca_es";
+        await ad.languageChanged();
+
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('ca_es');
+
+        //More than maxRecipients is discarded
+        recipients.to.push("toomuch");
+
+        status.lang = 'foobar';
+        await ad.languageChanged();
+        // We do not want to update the current lang because
+        // the user has manually changed the lang and do not
+        // want it to be reverted.
+        expect(status.lang).toBe('foobar');
+
+        // When the recipients goes lower the limit
+        recipients.to.pop();
+        status.lang = 'andromeda';
+        await ad.languageChanged();
+
+        status.lang = 'other';
+        await ad.deduceLanguage();
+        expect(status.lang).toBe("andromeda");
+        done(); return;
+    });
+
+});
 
 (function(){
     load("helpers/ad_test_helper.js");
     //The load path is from the call
     load("../chrome/content/ad.js");
 
-
-    /*        call_language_changed( adi, "toB-lang");
-
-
-         5. Limit the max CCs or TOs management to a number to avoid loading
-            the hash with useless data or too much processing of useless data.
-            The max would be a configuration parameter (migrations! :) )
-
-    */
-
-    (function(){
-        test_setup();
-        var adi = ad_instance();
-
-        //Prepare scenario
-        var current_limit = 10;
-        var recipients = {"to":[]};
-        for( var i = 0; i < current_limit; i ++ ){
-            recipients.to.push("recipient"+i);
-        }
-
-        mock_recipients( adi, recipients );
-        call_language_changed( adi, "ca_es");
-
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-
-        adi.deduceLanguage();
-        assert.equal( 1, setted_langs.length);
-        assert.equal("ca_es", setted_langs[0]);
-
-        //More than maxRecipients is discarded
-        recipients.to.push("toomuch");
-
-        mock_recipients( adi, recipients );
-        call_language_changed( adi, "foobar");
-
-        adi.deduceLanguage();
-        // We do not want to update the current lang because
-        // the user has manually changed the lang and do not
-        // want it to be reverted.
-        assert.equal( 1, setted_langs.length);
-
-        // When the recipients goes lower the limit
-        recipients.to.pop();
-        call_language_changed( adi, "andromeda");
-        dictionary_object.dictionary = 'unknown';
-        //It restores the new one
-        adi.deduceLanguage();
-        assert.equal("andromeda", setted_langs[setted_langs.length-1]);
-    })();
 
     /*
 

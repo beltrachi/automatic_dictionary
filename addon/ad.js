@@ -49,7 +49,7 @@ plugin_base.apply(AutomaticDictionary);
 // import * as promotions from './ad/plugins/promotions.js';
 // promotions.apply(AutomaticDictionary);
 
-AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
+AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
   console.info(msg);
 });
 AutomaticDictionary.logger.debug("Logger started");
@@ -562,6 +562,7 @@ AutomaticDictionary.Class.prototype = {
       // we stop deducing when last_lang_discarded because it means that
       // the user setted a language but we did not store because it was bigger
       // than MaxRecipients
+      this.logger.debug("Last lang discarded for too much recipients")
       return;
     }
     var lang = null, method = this.METHODS.REMEMBER, i;
