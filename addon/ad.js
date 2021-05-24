@@ -210,7 +210,7 @@ AutomaticDictionary.Class.prototype = {
 
     "allowPromotions": true,
     "notificationLevel": 'info', // or "warn" or "error"
-    "logLevel":"info",
+    "logLevel":"warn",
     "stats.usages": 0
   },
 
