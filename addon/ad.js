@@ -52,7 +52,7 @@ plugin_base.apply(AutomaticDictionary);
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('debug', function(msg){
   console.info(msg);
 });
-AutomaticDictionary.logger.warn("Logger started");
+AutomaticDictionary.logger.debug("Logger started");
 
 AutomaticDictionary.logException = function( e ){
   try {
