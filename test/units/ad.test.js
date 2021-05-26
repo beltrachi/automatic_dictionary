@@ -370,138 +370,119 @@ test('Minimize notifications', async (done) => {
     });
 });
 
+/*
+    8. Test using heuristics
+*/
+test('Heuristics', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'warn',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+        // Overwrite max_size of data hash
+        let lruHash = await ad.data._object();
+        lruHash.max_size = 5;
+
+        let status = { recipients: {}, lang: null }
+        mock_compose_window(compose_window, status)
+
+        //Prepare scenario
+        status.recipients = {
+            "to": ["foo"],
+            "cc": ["bar"]
+        };
+
+        await ad.deduceLanguage();
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('noLangForRecipients')
+
+        status.recipients = { "to": ["foo@bar.dom"] };
+        status.lang = 'foobar';
+        await ad.languageChanged();
+
+        status.recipients = { "to": ["abc@bar.dom"] };
+        await ad.deduceLanguage();
+
+        expect(status.lang).toBe('foobar');
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('deducedLang.guess')
+        //Test it's saved
+        expect(await ad.freq_suffix.pairs()).toStrictEqual(
+            [["bar.dom", "foobar", 1]],
+        );
+
+        //Check that the expired key is removed form the freq_suffix too
+        status.recipients = {
+            "to": ["abc2@bar2.dom", "abc2@bar3.dom", "abc2@bar4.dom", "abc2@bar5.dom"]
+        };
+        status.lang = "foobar-x";
+        await ad.languageChanged();
+        // TODO: OMG CURRENT IMPLEMENTATION DOES NOT HAVE MAX SIZE! :S only users that
+        // migrated from initial versions :facepalm: FIX IT
+
+        //Max size is 5 but there is a key of all TOs composed which is the fifth position
+        expect(await ad.freq_suffix.pairs()).toStrictEqual(
+            [
+                ["bar2.dom", "foobar-x", 1], ["bar3.dom", "foobar-x", 1],
+                ["bar4.dom", "foobar-x", 1], ["bar5.dom", "foobar-x", 1]
+            ]
+        );
+
+        //When we change preference, unregiser from freq_suffix the old pref
+        // and set the new one. In this case we change the abc2@bar2.com preference
+        status.recipients = { "to": ["abc2@bar2.dom"] };
+        status.lang = "foobar-changed";
+        await ad.languageChanged();
+
+        await ad.deduceLanguage();
+
+        expect(await ad.freq_suffix.pairs()).toStrictEqual(
+            [
+            ["bar3.dom", "foobar-x", 1],
+            ["bar4.dom", "foobar-x", 1],
+            ["bar5.dom", "foobar-x", 1],
+            ["bar2.dom", "foobar-changed", 1],
+        ]);
+
+        //Test its saved on storage
+        expect((await browser.storage.local.get('freqTableData')).freqTableData).toStrictEqual(
+            JSON.stringify(
+                [
+                    ["bar3.dom", "foobar-x", 1],
+                    ["bar4.dom", "foobar-x", 1],
+                    ["bar5.dom", "foobar-x", 1],
+                    ["bar2.dom", "foobar-changed", 1],
+                ]
+            )
+        );
+
+        //Test that on various recipients it ponderates the language.
+        status.recipients = { "to": ["abc2@bar2.dom2"] };
+        status.lang = 'dom2lang';
+        await ad.languageChanged()
+
+        status.recipients = {
+            "to": [
+                "abc3@bar2.dom",
+                "abc2@bar3.dom2",
+                "abc2@bar4.dom2",
+                "abc2@bar5.dom2"
+            ]
+        };
+
+        await ad.deduceLanguage();
+        expect(status.lang).toBe("dom2lang");
+        done();
+    });
+
+});
+
 
 (function(){
     load("helpers/ad_test_helper.js");
     //The load path is from the call
     load("../chrome/content/ad.js");
 
-
-    /*
-
-         8. Test using heuristics
-
-    */
-    (function(){
-        test_setup();
-
-        //Test migration. We store
-        Components.savedPrefs["extensions.automatic_dictionary.addressesInfo"]=
-            "{\"hash\":{\"oldfoo@mydom\":\"foobar\",\"foo[cc]foo2\":\"foobar2\"}," +
-            "\"options\":{\"sorted_keys\":[\"oldfoo@mydom\",\"foo[cc]foo2\"],\"size\":5}}";
-        Components.savedPrefs["extensions.automatic_dictionary.migrations_applied"]= "[\"201102130000\",\"201106032254\"]";
-        Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.version"]="1234";
-        Components.savedPrefs["extensions.automatic_dictionary.addressesInfo.maxSize"]=5;
-
-        var adi = ad_instance();
-
-        assert.equalJSON([["mydom","foobar",1]], adi.freq_suffix.pairs());
-
-        Components.savedPrefs[adi.ALLOW_HEURISTIC] = true;
-
-        //Prepare scenario - mocking
-        status.recipients ={
-            "to":["foo"],
-            "cc":["bar"]
-            } ;
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        var labels = [];
-        adi.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-        adi.changeLabel = function(level, str){
-            labels.push( str );
-        }
-
-        adi.deduceLanguage();
-        assert.equal( 1, labels.length);
-
-        //No change
-        adi.deduceLanguage();
-        logger.debug(labels);
-        assert.equal( 1, labels.length);
-
-        status.recipients = {"to":["foo@bar.dom"]} ;
-        adi.deduceLanguage();
-        adi.deduceLanguage();
-
-        assert.equal( 2, labels.length);
-
-        call_language_changed( adi, "foobar");
-
-        assert.equal( 3, labels.length);
-
-        adi.deduceLanguage();
-        assert.equal( 3, labels.length);
-
-        status.recipients = {"to":["abc@bar.dom"]} ;
-
-        adi.deduceLanguage();
-
-        assert.equal( 4, labels.length);
-        assert.equal("foobar", setted_langs[0]);
-
-        //Test it's saved
-        assert.equalJSON(
-            [["mydom","foobar",1],["bar.dom","foobar",1]],
-            adi.freq_suffix.pairs());
-        assert.contains("bar.dom", Components.savedPrefs["extensions.automatic_dictionary.freqTableData"]);
-
-        //Check that the expired key is removed form the freq_suffix too
-        status.recipients ={
-            "to":["abc2@bar2.dom","abc2@bar3.dom","abc2@bar4.dom","abc2@bar5.dom"]};
-        call_language_changed( adi, "foobar-x");
-
-        //Max size is 5 but there is a key of all TOs composed which is the fifth position
-        assert.equalJSON(
-            [
-                ["bar2.dom","foobar-x",1],["bar3.dom","foobar-x",1],
-                ["bar4.dom","foobar-x",1],["bar5.dom","foobar-x",1]
-            ],
-            adi.freq_suffix.pairs()
-        );
-
-        //When we change preference, unregiser from freq_suffix the old pref
-        // and set the new one. In this case we change the abc2@bar2.com preference
-        status.recipients = {"to":["abc2@bar2.dom"]} ;
-        call_language_changed( adi, "foobar-changed");
-
-        adi.deduceLanguage();
-
-        assert.equalJSON([
-                ["bar3.dom","foobar-x",1],
-                ["bar4.dom","foobar-x",1],
-                ["bar5.dom","foobar-x",1],
-                ["bar2.dom","foobar-changed",1],
-            ], adi.freq_suffix.pairs());
-
-        //Test its saved on storage
-        var adi2 = ad_instance();
-        assert.equalJSON([
-                ["bar3.dom","foobar-x",1],
-                ["bar4.dom","foobar-x",1],
-                ["bar5.dom","foobar-x",1],
-                ["bar2.dom","foobar-changed",1],
-            ], adi2.freq_suffix.pairs());
-
-        //Test that on various recipients it ponderates the language.
-        status.recipients = {"to":["abc2@bar2.dom2"]} ;
-        call_language_changed( adi, "dom2lang");
-
-        status.recipients ={
-            "to":[
-                "abc3@bar2.dom",
-                "abc2@bar3.dom2",
-                "abc2@bar4.dom2",
-                "abc2@bar5.dom2"
-            ]};
-
-        adi.deduceLanguage();
-        assert.equal("dom2lang", setted_langs[setted_langs.length -1]);
-
-    })();
 
 
     /*
@@ -524,14 +505,14 @@ test('Minimize notifications', async (done) => {
 
         // Collect setted languages on the interface
         var setted_langs = [];
-        adi.setCurrentLang = function(lang){
+        ad.setCurrentLang = function(lang){
             dictionary_object.dictionary = lang;
             setted_langs.push( lang );
         }
 
         status.recipients = {"to":["a@a.com","b@b.com"]} ;
         //Language is setted
-        adi.deduceLanguage();
+        ad.deduceLanguage();
         assert.equal( 1, setted_langs.length);
         assert.equal( "lang-a", setted_langs[0]);
 
@@ -540,7 +521,7 @@ test('Minimize notifications', async (done) => {
             "to":["c@c.com"],
             "cc":["a@a.com"]
         };
-        adi.deduceLanguage();
+        ad.deduceLanguage();
         assert.equal( 2, setted_langs.length);
         assert.equal( "lang-a", setted_langs[1]);
 
