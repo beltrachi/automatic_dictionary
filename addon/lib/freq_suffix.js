@@ -2,33 +2,33 @@ export function apply(AutomaticDictionary) {
 /*
  *  A FreqSuffix is a structure that can store a mapping of
  *  string => value
- *  
+ *
  *  and splits string into sufixes by a split char.
- *  
+ *
  *  The structure can be asked by a suffix of the string to know which value
  *  is more frequent.
- *  
+ *
  *  Example:
- *  
+ *
  *  obj = new AutomaticDictionary.Lib.FreqSuffix({})
  *  obj.set("foo.bar","X");
  *  obj.set("abc.bar","X");
  *  obj.set("xyz.bar","Y");
- *  
- *  obj.get("bar") 
+ *
+ *  obj.get("bar")
  *  => "X"
- *  obj.get("xyz.bar") 
+ *  obj.get("xyz.bar")
  *  => "Y"
- *  
- *  
+ *
+ *
  *  === Implementation
- *  
+ *
  *  It's implemented with a tree that on each node it stores the accumulated
  *  frequencies of each language.
- *  
+ *
  *  As we want the most frequent language, it keeps the languages sorted in
  *  descendant order so we get the first.
- *  
+ *
  *  FreqSuffix (is a tree)
  *      - root (TreeNode)
  *          - nodes (child nodes)
@@ -36,21 +36,21 @@ export function apply(AutomaticDictionary) {
  *              - nodes
  *              - first
  *              - last
- *  
+ *
  *  Drawbacks:
  *      Building the structure is too slow. 1k inserts lasts 1 sec on tests
- *      
- *      
+ *
+ *
  *  === Store and load structure
- *  
- *  To save and retrieve this structure, we cannot extract it easily from the 
+ *
+ *  To save and retrieve this structure, we cannot extract it easily from the
  *  frequency tables, so we hace to store it aside.
  *  So we need a structure to store the adds in an array or something.
- *  
+ *
  *  With this data we'll be able to reconstruct the structure.
- *  
+ *
  *  it's a key => value times counter. To achieve that we can use a hack and
- *  serialize the hash as a string, and store an integer.    
+ *  serialize the hash as a string, and store an integer.
  **/
 
   AutomaticDictionary.Lib.FreqSuffix = function( values, options ){

@@ -3,7 +3,7 @@
  *
  * The changes are detected because an update method is called.
  *
- * The storage is delegated to a storage object which accepts the #set and #get 
+ * The storage is delegated to a storage object which accepts the #set and #get
  * methods and strings as value and key.
  **/
 
@@ -12,7 +12,7 @@
  *  @storeKey the string that identifies the data on the storage.
  *  @storage an object with set(string key, string value) and get(string key):string
  *  @options is a hash with the keys:
- *      "read" and "write": 
+ *      "read" and "write":
  *          each one with an array of methods that can be called. (Proxy methods)
  *      "serializer": the method of the instance that dumps the data to string.
  *      "loader": the instance method that loads the serialized string inside the object.
@@ -99,6 +99,7 @@ export function apply(AutomaticDictionary) {
         };
       })(tmp);
     }
+    ifce._object = async function(){ await objReady; return obj; }
     return ifce;
   };
 }

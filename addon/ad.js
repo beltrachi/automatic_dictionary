@@ -341,7 +341,7 @@ AutomaticDictionary.Class.prototype = {
       this.ADDRESS_INFO_KEY,
       this.storage,
       {
-        read:["get", "keys", "pairs", "size"],
+        read:["get", "keys", "pairs", "size","setExpirationCallback"],
         write:["set"],
         serializer: "toJSON",
         loader:"fromJSON",
@@ -370,9 +370,11 @@ AutomaticDictionary.Class.prototype = {
     );
     this.freq_suffix = persistent_wrapper;
     var _this = this;
-    this.data.expiration_callback = function(pair){
-      _this.remove_heuristic(pair[0],pair[1]);
-    }
+    this.data.setExpirationCallback(function(pair){
+      if (_this.keyIsSingle(pair[0])){
+        _this.remove_heuristic(pair[0],pair[1]);
+      }
+    });
   },
 
   //Called when the user changes the language of the dictionary (event based func)
@@ -485,6 +487,18 @@ AutomaticDictionary.Class.prototype = {
       key += "[cc]" + this.stringifyRecipientsGroup( recipients.cc );
     }
     return key;
+  },
+
+  // True when the key represents a single email
+  keyIsSingle: function(key){
+    let parts = key.split('[cc]');
+    let tos_size = parts[0].split(',').length;
+    let ccs_empty = parts.length == 1 || parts[1] == ""
+
+    if(tos_size == 1 && ccs_empty){
+      return true;
+    }
+    return false;
   },
 
   // True when the value is something we consider nonData

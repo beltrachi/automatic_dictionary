@@ -52,6 +52,8 @@ export function apply(AutomaticDictionary) {
         this.sk_remove_key( key_to_expire );
         if(this.expiration_callback){
           this.expiration_callback([key_to_expire,value_to_expire]);
+        }else{
+          this.logger.warn('expiration_callback is undefined!');
         }
       }
     },
@@ -67,6 +69,9 @@ export function apply(AutomaticDictionary) {
     },
     keys: function(){
       return this.sorted_keys.toArray();
+    },
+    setExpirationCallback: function(callback){
+      this.expiration_callback = callback;
     },
     // O(n)
     sk_update_key: function(key){
