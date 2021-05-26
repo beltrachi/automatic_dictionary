@@ -1,3 +1,4 @@
+import { LoggerStub } from './logger_stub.js';
 
 export function apply(AutomaticDictionary) {
   AutomaticDictionary.Lib.LRUHashV2 = function( hash, options ){
@@ -13,7 +14,7 @@ export function apply(AutomaticDictionary) {
 
     //Initializes data with them.
     initialize: function( hash, options ){
-      this.logger = (options && options["logger"]) || AutomaticDictionary.Lib.LoggerStub;
+      this.logger = (options && options["logger"]) || LoggerStub;
       options = options || {};
       this.max_size = options.size || null;
       this.sorted_keys = AutomaticDictionary.Lib.SortedSet();
@@ -90,9 +91,12 @@ export function apply(AutomaticDictionary) {
     // O(n)
     // Deprecated: we need an eval to recover it and eval is not safe Use toJSON instead
     serialize: function(){
-      var out = this.hash.toSource();
+      var out = JSON.stringify(this.hash);
       out += ",";
-      out += { "sorted_keys": this.sorted_keys.toArray(), "size": this.max_size }.toSource();
+      out += JSON.stringify({
+        "sorted_keys": this.sorted_keys.toArray(),
+        "size": this.max_size
+      });
       return "new AutomaticDictionary.Lib.LRUHashV2(" + out + ")";
     },
     /* Retruns a JSON with data to recover the object
