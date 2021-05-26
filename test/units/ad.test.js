@@ -477,54 +477,47 @@ test('Heuristics', async (done) => {
 
 });
 
+/*
 
-(function(){
-    load("helpers/ad_test_helper.js");
-    //The load path is from the call
-    load("../chrome/content/ad.js");
+    9. Check when we set an unknown recipient and a known CC recipient. It should
+    set/guess the lang setted for the other. The same when settting 2 TOs and one is
+    known and the other not. It should use the known one.
 
+*/
 
+test('when only data is on CC recipients', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'warn',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
 
-    /*
-
-         9. Check when we set an unknown recipient and a known CC recipient. It should
-            set/guess the lang setted for the other. The same when settting 2 TOs and one is
-            known and the other not. It should use the known one.
-
-    */
-
-    (function(){
-        test_setup();
-        var adi = ad_instance();
+        let status = { recipients: {}, lang: null }
+        mock_compose_window(compose_window, status)
 
         //Prepare scenario
-        status.recipients = {"to":["a@a.com"]} ;
-        call_language_changed( adi, "lang-a");
-
+        status.recipients = { "to": ["a@a.com"] };
+        status.lang = "lang-a";
+        await ad.languageChanged();
         //Scenario ready
 
-        // Collect setted languages on the interface
-        var setted_langs = [];
-        ad.setCurrentLang = function(lang){
-            dictionary_object.dictionary = lang;
-            setted_langs.push( lang );
-        }
-
-        status.recipients = {"to":["a@a.com","b@b.com"]} ;
+        status.recipients = { "to": ["a@a.com", "b@b.com"] };
+        status.lang = 'other'
         //Language is setted
-        ad.deduceLanguage();
-        assert.equal( 1, setted_langs.length);
-        assert.equal( "lang-a", setted_langs[0]);
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('lang-a')
 
         // When we have a cc recipient with known data, we can deduce it
-        status.recipients ={
-            "to":["c@c.com"],
-            "cc":["a@a.com"]
+        status.recipients = {
+            "to": ["c@c.com"],
+            "cc": ["a@a.com"]
         };
-        ad.deduceLanguage();
-        assert.equal( 2, setted_langs.length);
-        assert.equal( "lang-a", setted_langs[1]);
+        status.lang = 'other'
 
-    })();
-
-}); // This func is not executed, never.
+        await ad.deduceLanguage();
+        expect(status.lang).toBe('lang-a')
+        done();
+    })
+});
