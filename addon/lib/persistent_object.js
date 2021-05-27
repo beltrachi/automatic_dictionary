@@ -48,7 +48,17 @@ export function apply(AutomaticDictionary) {
       constructor: constructor,
       storage: storage
     };
-    var ifce = {}, obj, tmp, i;
+    var ifce = {
+      reload: async function(){
+        buildAsync().then(function(o){
+          obj = o
+        });
+      },
+      _object: async function(){
+        await objReady; return obj;
+      }
+    }
+    var obj, tmp, i;
 
     function getData(){
       return params.storage.get(params.key);
@@ -99,7 +109,6 @@ export function apply(AutomaticDictionary) {
         };
       })(tmp);
     }
-    ifce._object = async function(){ await objReady; return obj; }
     return ifce;
   };
 }

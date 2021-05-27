@@ -6,7 +6,6 @@ apply(AutomaticDictionary);
 import { apply as sorted_set_apply } from "./../../addon/lib/sorted_set";
 sorted_set_apply(AutomaticDictionary);
 
-
 test('LRU hash', () => {
     var constructor = AutomaticDictionary.Lib.LRUHashV2;
     var bm_options = { soft: true };
