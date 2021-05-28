@@ -1,3 +1,5 @@
+import { Shutdownable } from "./../lib/shutdownable";
+
 /*
  * The main purpose of this is to allow to work on other windows besides compose, like
  * conversations compose extension.
@@ -42,13 +44,13 @@ AutomaticDictionary.ComposeWindow = (function( params ){
 
 AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
     //We can manage the messengercompose window.
-    regex = /chrome.*messengercompose\.(xul|xhtml)/
+    const regex = /chrome.*messengercompose\.(xul|xhtml)/
     return regex.test(window.document.location);
 };
 
 AutomaticDictionary.extend(
     AutomaticDictionary.ComposeWindow.prototype,
-    AutomaticDictionary.Lib.Shutdownable);
+    Shutdownable);
 
 AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
 

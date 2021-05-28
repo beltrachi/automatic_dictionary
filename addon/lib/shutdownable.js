@@ -1,6 +1,6 @@
-export function apply(AutomaticDictionary) {
+
 //A component can be shutten down unregistering from what had done
-AutomaticDictionary.Lib.Shutdownable = {
+export const Shutdownable = {
   shutdown_chain: [],
   //Registers and queues unregistering
   setListener: function(target, on, func, useCapture){
@@ -29,4 +29,6 @@ AutomaticDictionary.Lib.Shutdownable = {
   }
 }
 
+export function apply(AutomaticDictionary) {
+  AutomaticDictionary.Lib.Shutdownable = Shutdownable;
 }
