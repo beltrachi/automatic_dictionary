@@ -25,7 +25,8 @@ describe('ComposeWindow', () => {
         window: { id: 'stubbed-window-id' },
         addEventListener: jest.fn()
       },
-      logger: LoggerStub
+      logger: LoggerStub,
+      logo_url: 'stubbed-logo-url'
     });
   };
   var eventEmitterFactory = function(){
@@ -39,7 +40,8 @@ describe('ComposeWindow', () => {
   beforeEach(() => {
     browser.compose_ext = {
       onLanguageChange: eventEmitterFactory(),
-      onRecipientsChange: eventEmitterFactory()
+      onRecipientsChange: eventEmitterFactory(),
+      showNotification: jest.fn()
     };
     browser.windows.onFocusChanged = eventEmitterFactory();
     browser.windows.get = jest.fn().mockResolvedValue({
@@ -100,5 +102,80 @@ describe('ComposeWindow', () => {
     })
   });
 
+  describe('recipients', () => {
+    describe('when recipients is a single string', () => {
+      it('returns the recipients from that tab', async () => {
+        var details = {'to': 'Joe'}
+        var compose_window = factory();
+        browser.compose.getComposeDetails = jest.fn().mockResolvedValue(details);
+
+        expect(compose_window.recipients()).resolves.toStrictEqual(['Joe']);
+      });
+    })
+
+    describe('when recipients is an array of strings', () => {
+      it('returns the recipients from that tab', async () => {
+        var details = {'to': ['Joe']}
+        var compose_window = factory();
+        browser.compose.getComposeDetails = jest.fn().mockResolvedValue(details);
+
+        expect(compose_window.recipients()).resolves.toStrictEqual(['Joe']);
+      });
+    })
+
+    describe('when recipients is an array of strings that needs to be normalized', () => {
+      it('returns the recipients normalized', async () => {
+        var details = {'to': ['Joe <joe@example.com>', 'Big band! <big.+band@example.com']}
+        var compose_window = factory();
+        browser.compose.getComposeDetails = jest.fn().mockResolvedValue(details);
+
+        expect(compose_window.recipients()).resolves.toStrictEqual(
+          ['joe@example.com','big.+band@example.com']);
+      });
+    })
+
+    describe('when recipients is a compose recipients object', () => {
+      //var composeRecipientsFactory = function()
+      it('returns the recipients from that tab', async () => {
+        var composeDetails = {
+          to: [
+            { type: 'contact', id: 'contact-recipient-id'},
+            { type: 'mailingList', id: 'mailing-list-recipient-id'}
+          ]
+        }
+        browser.compose.getComposeDetails = jest.fn().mockResolvedValue(composeDetails);
+        browser.contacts.get = jest.fn().mockResolvedValue({
+          properties: { PrimaryEmail: 'contact-email@example.com'}
+        })
+        browser.mailingLists.get = jest.fn().mockResolvedValue({
+          properties: { name: 'mailinglist-email@example.com'}
+        });
+        var compose_window = factory();
+
+        expect(await compose_window.recipients()).toStrictEqual(
+          ["contact-email@example.com", "mailinglist-email@example.com"]);
+
+        expect(browser.compose.getComposeDetails).toHaveBeenCalledWith('stubbed-tab-id');
+        expect(browser.contacts.get).toHaveBeenCalledWith('contact-recipient-id');
+        expect(browser.mailingLists.get).toHaveBeenCalledWith('mailing-list-recipient-id')
+      });
+    })
+  });
+
+  describe('showMessage', () => {
+    it('forwards to compose_ext', async () => {
+      var compose_window = factory();
+      await compose_window.showMessage('message', {buttons: []})
+
+      expect(browser.compose_ext.showNotification).toHaveBeenCalledWith(
+        'stubbed-tab-id',
+        'message',
+        {
+          logo_url: 'stubbed-logo-url',
+          buttons: []
+        }
+      )
+    })
+  });
 
 })

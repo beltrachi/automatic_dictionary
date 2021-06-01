@@ -295,11 +295,13 @@ let browser = {
             return {};
         }
     },
+    contacts: { get: function(){} },
     prefs: prefs,
     storage: { local: local_storage },
     i18n: {
         getMessage: function(key){ return key }
     },
+    mailingLists: { get: function(){} },
     runtime: { getURL: function(){} },
     windows: { onRemoved: { addListener: function(){} } },
     _flushStorage: function(){ pref_data = {} },

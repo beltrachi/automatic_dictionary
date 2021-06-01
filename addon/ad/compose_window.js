@@ -136,7 +136,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
       recipients = [recipients]
     }
     // Array of String or ComposeRecipients
-    if(typeof(recipients[0]) == "string"){
+    if(recipients.length > 0 && typeof(recipients[0]) == "string"){
       // Normalize recipients only when its raw string.
       recipients = this.normalizeRecipients(recipients);
     }else{
@@ -161,7 +161,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     return out;
   },
   extractEmails: function ( text ){
-    return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi);
+    return text.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi);
   },
 
   getEmailFromRecipients: async function(recipients) {
