@@ -26,7 +26,8 @@ describe('ComposeWindow', () => {
         addEventListener: jest.fn()
       },
       logger: LoggerStub,
-      logo_url: 'stubbed-logo-url'
+      logo_url: 'stubbed-logo-url',
+      notification_time: 4000
     });
   };
   var eventEmitterFactory = function(){
@@ -41,7 +42,9 @@ describe('ComposeWindow', () => {
     browser.compose_ext = {
       onLanguageChange: eventEmitterFactory(),
       onRecipientsChange: eventEmitterFactory(),
-      showNotification: jest.fn()
+      showNotification: jest.fn(),
+      setSpellCheckerLanguage: jest.fn(),
+      canSpellCheck: jest.fn().mockResolvedValue(true)
     };
     browser.windows.onFocusChanged = eventEmitterFactory();
     browser.windows.get = jest.fn().mockResolvedValue({
@@ -178,4 +181,37 @@ describe('ComposeWindow', () => {
     })
   });
 
+  describe('changeLabel', () => {
+    it('forwards to compose_ext', async () => {
+      var compose_window = factory();
+      await compose_window.changeLabel('message')
+
+      expect(browser.compose_ext.showNotification).toHaveBeenCalledWith(
+        'stubbed-tab-id',
+        'message',
+        {
+          logo_url: 'stubbed-logo-url',
+          notification_time: 4000
+        }
+      )
+    })
+  });
+
+  describe('changeLanguage', () => {
+    it('sets spellchecker language via compose_ext', async () => {
+      var compose_window = factory();
+      await compose_window.changeLanguage('en')
+
+      expect(browser.compose_ext.setSpellCheckerLanguage).toHaveBeenCalledWith('stubbed-tab-id', 'en')
+    })
+  })
+
+  describe('canSpellCheck', () => {
+    it('returns true when spellchecker is available', async () => {
+      var compose_window = factory();
+      expect(await compose_window.canSpellCheck()).toBe(true)
+
+      expect(browser.compose_ext.canSpellCheck).toHaveBeenCalledWith('stubbed-tab-id')
+    })
+  })
 })
