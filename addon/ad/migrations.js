@@ -179,7 +179,11 @@ export function apply(AutomaticDictionary){
           }
           await self.storage.set(k, v);
         }
-      }
+      },
+      "202106051955": async function(self){
+        //Added saveLogFile
+        await self.setDefaults();
+      },
     }
   };
 
