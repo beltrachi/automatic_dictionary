@@ -12,7 +12,6 @@
   "default_locale": "en",
 
   "options_ui": {
-    //"browser_style": true,
     "page": "options.html"
   },
 
