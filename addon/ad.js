@@ -30,8 +30,8 @@ import * as freq_table from './lib/freq_table.js';
 freq_table.apply(AutomaticDictionary);
 import * as freq_suffix from './lib/freq_suffix.js';
 freq_suffix.apply(AutomaticDictionary);
-import * as shutdownable from './lib/shutdownable.js';
-shutdownable.apply(AutomaticDictionary);
+import { apply as apply_shutdownable } from './lib/shutdownable.js';
+apply_shutdownable(AutomaticDictionary);
 import * as logger from './lib/logger.js';
 logger.apply(AutomaticDictionary);
 import * as event_dispatcher from './lib/event_dispatcher.js';
@@ -676,6 +676,7 @@ AutomaticDictionary.Class.prototype = {
       recipient = recipients[i];
       parts = recipient.split("@");
       rightside = parts[parts.length-1];
+      this.logger.debug("Looking for heuristic for "+rightside);
       lang = await this.freq_suffix.get(rightside,true);
       if( lang ){
         freq_table.add(lang);
