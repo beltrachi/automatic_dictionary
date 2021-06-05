@@ -1,4 +1,4 @@
-import { Shutdownable } from "./../lib/shutdownable";
+import { Shutdownable } from "./../lib/shutdownable.js";
 
 /*
  * The main purpose of this is to allow to work on other windows besides compose, like
