@@ -133,8 +133,7 @@ describe "AutomaticDictionary integration tests" do
         # we have to guess its position based on something we can read, the
         # Events label.
         rescue_and_retry(2) do
-          interactor.wait_for_text('Events')
-          events_position = interactor.text_position('Events')
+          events_position = interactor.wait_for_text('Events')
           # Click 50 pixels on the left of Events label.
           interactor.click_on_position([events_position.first - 50, events_position.last])
           interactor.click_on_text('Automatic Dictionary added')
