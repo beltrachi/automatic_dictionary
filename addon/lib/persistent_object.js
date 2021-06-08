@@ -64,9 +64,9 @@ export function apply(AutomaticDictionary) {
       return params.storage.get(params.key);
     }
 
-    function setData(){
+    async function setData(){
       var v = obj[params.options.serializer]();
-      return params.storage.set(params.key,v);
+      return await params.storage.set(params.key,v);
     }
 
     async function buildAsync(){

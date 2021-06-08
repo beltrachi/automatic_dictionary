@@ -321,7 +321,7 @@ AutomaticDictionary.Class.prototype = {
     var storage = browser.storage.local;
     var _this = this;
     var ifce = {
-      set: function(key, value){
+      set: async function(key, value){
         var data = {};
         data[key] = value;
         _this.logger.debug("Setting key: "+key);
@@ -476,14 +476,14 @@ AutomaticDictionary.Class.prototype = {
 
     if( this.isBlank(old) || force ){
       if( !this.isBlank(old) && is_single){
-        this.remove_heuristic(key, old);
+        await this.remove_heuristic(key, old);
       }
 
       // Store it!
-      this.data.set(key, lang);
+      await this.data.set(key, lang);
 
       if( is_single ){
-        this.save_heuristic(key, lang);
+        await this.save_heuristic(key, lang);
         stats.individuals++;
       }else{
         stats.groups++;
@@ -530,11 +530,11 @@ AutomaticDictionary.Class.prototype = {
     await this.freq_suffix.pairs();
   },
 
-  remove_heuristic: function(recipient, lang){
+  remove_heuristic: async function(recipient, lang){
     this.logger.debug("removing heuristic for "+ recipient + " to "+ lang);
     var parts = recipient.split("@");
     if( parts[1] ){
-      this.freq_suffix.remove(parts[1], lang);
+      await this.freq_suffix.remove(parts[1], lang);
     }
   },
   // Updates the interface with the lang deduced from the recipients
@@ -809,6 +809,7 @@ AutomaticDictionary.Class.prototype = {
         v = await this.storage.get(k);
         this.logger.debug(v);
       }catch(e){
+        this.logger.warn(e)
         // a get on a non existing key raises an exception.
         v = null;
       }
