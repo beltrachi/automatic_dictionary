@@ -93,6 +93,13 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
   options = options || {};
   if( typeof(options.deduceOnLoad) == "undefined") options.deduceOnLoad = true;
 
+  if(AutomaticDictionary.instances[AutomaticDictionary.instances.length - 1]){
+    // Singleton on data structures
+    var instance = AutomaticDictionary.instances[0]
+    this.data = instance.data;
+    this.freq_suffix = instance.freq_suffix;
+  }
+
   AutomaticDictionary.instances.push(this);
 
   this.window = options.window;
@@ -336,6 +343,7 @@ AutomaticDictionary.Class.prototype = {
     return ifce;
   },
   initializeData: async function(){
+    if(this.data) return;
     var _this = this;
     var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
       this.ADDRESS_INFO_KEY,
@@ -354,6 +362,7 @@ AutomaticDictionary.Class.prototype = {
     this.data = persistent_wrapper;
   },
   initFreqSuffix: function(){
+    if (this.freq_suffix) return;
     //Build the object that will manage the storage for the object
     var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
       this.FREQ_TABLE_KEY,

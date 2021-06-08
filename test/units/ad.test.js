@@ -23,6 +23,7 @@ function mock_compose_window(compose_window, options){
 
 beforeEach(async () => {
     browser._flushStorage();
+    AutomaticDictionary.instances = [];
 })
 
 test('Initial boot', async (done) => {
