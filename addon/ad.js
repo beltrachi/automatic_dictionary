@@ -326,7 +326,9 @@ AutomaticDictionary.Class.prototype = {
         data[key] = value;
         _this.logger.debug("Setting key: "+key);
         _this.logger.debug(value);
-        return storage.set(data);
+        return storage.set(data).catch(error => {
+          _this.logger.error(error);
+        });
       },
       get: async function(key){
         var data = await storage.get(key);
