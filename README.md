@@ -10,7 +10,7 @@ __Please note: This project is in maintenance mode. Only critical bugs will be f
 This is the source code of the Automatic dictionary plugin:
 https://addons.thunderbird.net/en-US/thunderbird/addon/automatic-dictionary-switching/
 
-[![Build Status](https://api.travis-ci.org/beltrachi/automatic_dictionary.svg)](https://travis-ci.org/beltrachi/automatic_dictionary)
+[![Build Status](https://circleci.com/gh/beltrachi/automatic_dictionary.svg?style=shield)](https://app.circleci.com/pipelines/github/beltrachi/automatic_dictionary)
 
 ## Target
 
