@@ -2,25 +2,31 @@ version: 2.1
 
 jobs:
   unit-tests:
-    parameters:
-      version:
-        type: string
     docker:
       - image: cimg/node:12.18
-    environment:
-      THUNDERBIRD_VERSION: << parameters.version >>
     steps:
       - checkout
       - run: node --version
       - run: npm install
-      - setup_remote_docker
       - run: ./test.sh
+  integration-tests:
+    docker:
+      - image: cimg/base:stable
+    parameters:
+      version:
+        type: string
+    environment:
+      THUNDERBIRD_VERSION: << parameters.version >>
+    steps:
+      - checkout
+      - setup_remote_docker
       - run: ./script/docker_integration_test.sh
 
 workflows:
   main:
     jobs:
-      - unit-tests:
+      - unit-tests
+      - integration-tests:
           version: "78.1.1"
-      - unit-tests:
+      - integration-tests:
           version: "beta"
