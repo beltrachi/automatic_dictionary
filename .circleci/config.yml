@@ -23,10 +23,19 @@ jobs:
       - run: ./script/docker_integration_test.sh
 
 workflows:
-  main:
+  main: &main_workflow
     jobs:
       - unit-tests
       - integration-tests:
           version: "78.1.1"
       - integration-tests:
           version: "beta"
+  weekly:
+    <<: *main_workflow
+    triggers:
+      - schedule:
+          cron: "0 0 * * 1"
+          filters:
+            branches:
+              only:
+                - master
