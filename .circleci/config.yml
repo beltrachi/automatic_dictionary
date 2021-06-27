@@ -27,10 +27,10 @@ workflows:
     jobs:
       - unit-tests
       - integration-tests:
-          name: "latest"
+          name: "latest thunderbird"
           version: "latest"
       - integration-tests:
-          name: "beta-latest"
+          name: "latest thunderbird beta"
           version: "beta-latest"
   weekly:
     <<: *main_workflow
