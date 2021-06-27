@@ -522,3 +522,34 @@ test('when only data is on CC recipients', async (done) => {
         done();
     })
 });
+
+test('migration to fix freq-suffix data', async (done) => {
+    // Setup previous freq-suffix data
+    const freq_suffix_previous_data = {
+        freqTableData: JSON.stringify(
+            [
+                ["removed-example.es", "es", -3],
+                ["example.es", "es", 1],
+                ["example.com", "en", 1],
+                ["bad-example.es[cc]real-me.com", "es", -1],
+            ]
+        )
+    }
+    await browser.storage.local.set(freq_suffix_previous_data)
+
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'warn',
+        deduceOnLoad: false
+    }, async (ad) => {
+        const pairs = await ad.freq_suffix.pairs();
+        expect(pairs).toStrictEqual(
+            [
+                ["example.es", "es", 1],
+                ["example.com", "en", 1]
+            ]
+        )
+        done();
+    });
+});

@@ -181,8 +181,38 @@ export function apply(AutomaticDictionary){
         }
       },
       "202106051955": async function(self){
-        //Added saveLogFile
         await self.setDefaults();
+      },
+      "202106271139": async function(self){
+        // Fix freq-suffix counters data. We need to remove negative values.
+        // Negative values exist because of 2 reasons:
+        // - When we removed a key from the LRU, we substracted 1 from the
+        //   recipients counter domain (example.com with value of 4 would become example.com with 3).
+        //   BUT we were not removing the key when it reached 0. This was fixed but we need to clean stored data.
+        // - When a combined recipient was removed from the LRU hash, it was also removed
+        //   from the pair counter structure, but we never sent combined recipients in the first place
+        //   so it was substracting from unexisting keys. This creates the key with negative
+        //   values.
+
+        var raw_data = await self.storage.get(self.FREQ_TABLE_KEY)
+        if (!raw_data) return;
+
+        var data = JSON.parse(raw_data);
+
+        // Data is an array of [key(recipient), value(lang), counter]
+        self.logger.debug(data);
+        var result = [];
+        for (let i = 0; i < data.length; i++) {
+          const element = data[i];
+          const counter = element[2];
+          if (counter < 1){
+            continue; // Discarding this element.
+          }
+          result.push(data[i]);
+        }
+        var migrated_data = JSON.stringify(result);
+        self.logger.debug('migrated data: '+migrated_data);
+        await self.storage.set(self.FREQ_TABLE_KEY, migrated_data);
       },
     }
   };
