@@ -357,8 +357,11 @@ AutomaticDictionary.Class.prototype = {
         loader:"fromJSON",
         logger: this.logger
       },
-      function(){
-        return new AutomaticDictionary.Lib.LRUHashV2({}, {logger: _this.logger});
+      async function(){
+        return new AutomaticDictionary.Lib.LRUHashV2({}, {
+          logger: _this.logger,
+          size: await _this.storage.get('addressesInfo.maxSize')
+        });
       }
     );
     this.data = persistent_wrapper;

@@ -71,6 +71,8 @@ export function apply(AutomaticDictionary) {
 
     async function buildAsync(){
       var o = constructor();
+      if(o.then) o = await o; // Detect async constructor
+
       var data = await getData();
       if( data ){
         o[params.options.loader](data);

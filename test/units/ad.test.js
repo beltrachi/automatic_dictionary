@@ -33,9 +33,14 @@ test('Initial boot', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'error',
+        logLevel: 'warn',
         deduceOnLoad: false
-    }, () => done() );
+    }, async (ad) => {
+        let lruHash = await ad.data._object();
+        expect(lruHash.max_size).toBe(1200)
+
+        done()
+    });
 });
 
 test('Internal methods?', async (done) => {
@@ -553,3 +558,41 @@ test('migration to fix freq-suffix data', async (done) => {
         done();
     });
 });
+
+test('LRU max size is read from config', async (done) => {
+    // Setup previous freq-suffix data
+    const max_size_value = { "addressesInfo.maxSize": 1234 }
+    await browser.storage.local.set(max_size_value)
+
+    new Promise((resolve, reject) => {
+        new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            logLevel: 'warn',
+            deduceOnLoad: false
+        }, async (ad) => {
+            let lruHash = await ad.data._object();
+            expect(lruHash.max_size).toBe(1234)
+            await ad.data.set('foo@bar.com', 'es')
+            resolve()
+        });
+    }).then( async () => {
+        // Flush memoized data structures
+        AutomaticDictionary.instances = [];
+
+        const max_size_value = { "addressesInfo.maxSize": 222 }
+        await browser.storage.local.set(max_size_value)
+
+        new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            logLevel: 'warn',
+            deduceOnLoad: false
+        }, async (ad) => {
+            let lruHash = await ad.data._object();
+            expect(lruHash.max_size).toBe(222)
+
+            done();
+        });
+    });
+ });

@@ -16,7 +16,7 @@ export function apply(AutomaticDictionary) {
     initialize: function( hash, options ){
       this.logger = (options && options["logger"]) || LoggerStub;
       options = options || {};
-      this.max_size = options.size || null;
+      if(options.size) this.max_size = options.size;
       this.sorted_keys = AutomaticDictionary.Lib.SortedSet();
       var key_base = [];
       if( options["sorted_keys"] ){
@@ -110,8 +110,7 @@ export function apply(AutomaticDictionary) {
       return JSON.stringify( {
         hash: this.hash,
         options: {
-          sorted_keys: this.sorted_keys.toArray(),
-          size: this.max_size
+          sorted_keys: this.sorted_keys.toArray()
         }
       } );
     },
