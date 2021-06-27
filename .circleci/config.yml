@@ -27,9 +27,11 @@ workflows:
     jobs:
       - unit-tests
       - integration-tests:
-          version: "78.1.1"
+          name: "latest"
+          version: "latest"
       - integration-tests:
-          version: "beta"
+          name: "beta-latest"
+          version: "beta-latest"
   weekly:
     <<: *main_workflow
     triggers:

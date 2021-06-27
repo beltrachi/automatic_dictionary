@@ -2,12 +2,8 @@
 
 set -ex
 
-if [ "$THUNDERBIRD_VERSION" == "beta" ]; then
-    PACKAGE_URL="https://download.mozilla.org/?product=thunderbird-beta-latest&os=linux64&lang=en-US"
-else
-    STABLE_URL="https://download.mozilla.org/?product=thunderbird-${THUNDERBIRD_VERSION}-SSL&os=linux64&lang=en-US"
-    PACKAGE_URL=$STABLE_URL
-fi
+# URL returns the right file for "beta-latest" or "latest", or even a specific version "78.11.0"
+PACKAGE_URL="https://download.mozilla.org/?product=thunderbird-${THUNDERBIRD_VERSION}-SSL&os=linux64&lang=en-US"
 
 # Using latest to have latest dependencies
 sudo apt-get install -y software-properties-common
