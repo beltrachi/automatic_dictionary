@@ -24,8 +24,8 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
         },
 
         canSpellCheck: async function(tabId) {
-          // todo: use tabId
           var window = await getTabWindow(tabId);
+          if(Services.appinfo.version > '89.0') return true;
           return window.gSpellChecker && window.gSpellChecker.canSpellCheck && window.gSpellChecker.enabled;
         },
 
