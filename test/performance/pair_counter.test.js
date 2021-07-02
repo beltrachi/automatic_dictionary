@@ -1,5 +1,3 @@
-
-
 import { apply } from "./../../addon/lib/pair_counter";
 
 import { benchmark } from '../helpers/ad_test_helper.js'
