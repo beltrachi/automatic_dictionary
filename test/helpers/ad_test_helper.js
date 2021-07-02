@@ -13,3 +13,17 @@ export function mockComposeWindow(compose_window, options){
     compose_window.getCurrentLang = jest.fn(function(){ return options.lang });
     compose_window.canSpellCheck = jest.fn(async function(){ return options.spellchecker_enabled });
 }
+
+export async function benchmark( milis, func){
+    var start = Date.now();
+
+    await func();
+    var elapsed = (Date.now() - start);
+    if( elapsed > milis ){
+        var msg = "Benchmark failed: elapsed "+elapsed+" ms (max was "+milis+")";
+        if (func.name){
+            msg = func.name + ": " + msg
+        }
+        throw msg;
+    }
+}
