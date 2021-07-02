@@ -1,3 +1,3 @@
 #!/bin/bash
 
-npm run test
+npm run test -- -w=1
