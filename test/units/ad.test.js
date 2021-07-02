@@ -4,22 +4,7 @@
 
 import { AutomaticDictionary } from './../../addon/ad';
 
-import { jest } from '@jest/globals'
-
-
-function mock_compose_window(compose_window, options){
-    options.spellchecker_enabled = options.spellchecker_enabled || true
-
-    compose_window.recipients = jest.fn(function(type){
-        type = type || 'to';
-        return options.recipients[type] || [];
-    });
-    compose_window.changeLabel = jest.fn();
-    compose_window.showMessage = jest.fn();
-    compose_window.changeLanguage = jest.fn(function(lang){ options.lang = lang; });
-    compose_window.getCurrentLang = jest.fn(function(){ return options.lang });
-    compose_window.canSpellCheck = jest.fn(async function(){ return options.spellchecker_enabled });
-}
+import { mockComposeWindow } from '../helpers/ad_test_helper.js'
 
 beforeEach(async () => {
     browser._flushStorage();
@@ -58,7 +43,7 @@ test('Internal methods?', async (done) => {
         let compose_window = ad.compose_window;
 
         let status = {recipients: {"to":["foo"],"cc":[]}, lang: null}
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Test internal methods
         expect(ad.stringifyRecipientsGroup(["aa","bb","ab"])).toBe("aa,ab,bb");
@@ -137,7 +122,7 @@ test('Tos and ccs', async (done) => {
         let compose_window = ad.compose_window;
 
         let status = { recipients: { "to": ["foo"], "cc": ["bar"] }, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Change the lang and it gets stored
         status.lang = 'foolang';
@@ -174,7 +159,7 @@ test('TOs priorization', async (done) => {
         let compose_window = ad.compose_window;
         // Store first the preference for each recipient
         let status = { recipients: { "to": ["catalan"] }, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         status.lang = 'ca'
         await ad.languageChanged();
@@ -217,7 +202,7 @@ test('Do not overwrite individuals language when its a group language', async (d
 
         // Store first the preference for each recipient
         let status = { recipients: {}, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Prepare scenario
         status.recipients = { "to": ["A"] };
@@ -276,7 +261,7 @@ test('Max recipients assignment', async (done) => {
 
         // Store first the preference for each recipient
         let status = { recipients: {}, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Prepare scenario
         status.recipients = { "to": ["A"] };
@@ -336,7 +321,7 @@ test('Minimize notifications', async (done) => {
         let compose_window = ad.compose_window;
 
         let status = { recipients: {}, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Prepare scenario
         status.recipients = { "to": ["foo"], "cc": ["bar"] };
@@ -392,7 +377,7 @@ test('Heuristics', async (done) => {
         lruHash.max_size = 5;
 
         let status = { recipients: {}, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Prepare scenario
         status.recipients = {
@@ -501,7 +486,7 @@ test('when only data is on CC recipients', async (done) => {
         let compose_window = ad.compose_window;
 
         let status = { recipients: {}, lang: null }
-        mock_compose_window(compose_window, status)
+        mockComposeWindow(compose_window, status)
 
         //Prepare scenario
         status.recipients = { "to": ["a@a.com"] };
