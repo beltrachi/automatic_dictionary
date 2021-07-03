@@ -182,19 +182,6 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
     }
     return out;
   },
-    // TODO: maybe this has to go aside in another interface? with showLabel?
-  showMessage: async function( str, options ){
-    this.logger.info("Sowing message: "+str);
-    browser.compose_ext.showNotification(
-      await this.getTabId(),
-      str,
-      {
-        logo_url: this.params.logo_url,
-        buttons: options.buttons
-      }
-    );
-  },
-
   changeLabel: async function( str ){
     this.logger.info("Changing label to: "+str);
     browser.compose_ext.showNotification(

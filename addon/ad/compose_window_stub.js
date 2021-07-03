@@ -38,9 +38,6 @@ AutomaticDictionary.extend( AutomaticDictionary.ComposeWindowStub.prototype, {
         return [];
     },
 
-    // TODO: maybe this has to go aside in another interface? with showLabel?
-    showMessage: function( str, options ){},
-
     changeLabel: function( str ){}
 
 });

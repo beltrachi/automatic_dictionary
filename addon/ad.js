@@ -754,11 +754,6 @@ AutomaticDictionary.Class.prototype = {
     }
   },
 
-  //To show messages to the user
-  showMessage:function( str, options ){
-    return this.compose_window.showMessage(str, options);
-  },
-
   //Translation (i18n) helper functions
   t: function( key ){
     return browser.i18n.getMessage(key);
@@ -782,12 +777,6 @@ AutomaticDictionary.Class.prototype = {
   },
   logLevel: function(){
     return this.storage.get(this.LOG_LEVEL);
-  },
-
-  counterFor: async function(key){
-    var ret = await this.storage.get("stats." + key);
-    this.logger.debug("CunterFor "+key+ " is "+ret);
-    return ret;
   },
 
   setShutdown:function(){
@@ -832,15 +821,6 @@ AutomaticDictionary.Class.prototype = {
       }
     }
     this.dispatchEvent({type:"plugins-initialized"});
-  },
-
-  //Wrappers to set preferences without managing prefixes
-  getPref:function(key){
-    return this.storage.get(key);
-  },
-
-  setPref:function(key, value){
-    return this.storage.set(key, value);
   }
 };
 

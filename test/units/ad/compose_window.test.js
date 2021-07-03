@@ -165,22 +165,6 @@ describe('ComposeWindow', () => {
     })
   });
 
-  describe('showMessage', () => {
-    it('forwards to compose_ext', async () => {
-      var compose_window = factory();
-      await compose_window.showMessage('message', {buttons: []})
-
-      expect(browser.compose_ext.showNotification).toHaveBeenCalledWith(
-        'stubbed-tab-id',
-        'message',
-        {
-          logo_url: 'stubbed-logo-url',
-          buttons: []
-        }
-      )
-    })
-  });
-
   describe('changeLabel', () => {
     it('forwards to compose_ext', async () => {
       var compose_window = factory();
