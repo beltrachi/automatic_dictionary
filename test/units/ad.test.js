@@ -4,6 +4,8 @@
 
 import { AutomaticDictionary } from './../../addon/ad';
 
+import { jest } from '@jest/globals'
+
 import { mockComposeWindow } from '../helpers/ad_test_helper.js'
 
 beforeEach(async () => {
@@ -24,6 +26,20 @@ test('Initial boot', async (done) => {
         let lruHash = await ad.data._object();
         expect(lruHash.max_size).toBe(1200)
 
+        done()
+    });
+});
+
+test('Shutdown shuts down existing instances', async (done) => {
+    var ad = new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'warn',
+        deduceOnLoad: false
+    }, async (ad) => {
+        ad.dispatchEvent = jest.fn();
+        AutomaticDictionary.shutdown();
+        expect(ad.dispatchEvent).toHaveBeenCalledWith({type:'shutdown'})
         done()
     });
 });
