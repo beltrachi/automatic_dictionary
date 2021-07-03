@@ -1,11 +1,11 @@
 /*
  * Compose window that works with conversations compose windows
- *  
+ *
  * Conversations are xhtml documents attached to the main window.
- * 
+ *
  * To detect when the window is waken up we monkypatch a method of Converstations.
- * 
- * 
+ *
+ *
  * Look at compose_window.js for more info about compose windows in AD.
  **/
 
@@ -15,7 +15,7 @@
  *    name: plugin name
  *    logo_url: url of the plugin logo
  *    notification_time: time to show notifications in ms
- *    
+ *
  **/
 var mozISpellCheckingEngine = Components.interfaces.mozISpellCheckingEngine;
 var nsISupportsString = Components.interfaces.nsISupportsString;
@@ -45,10 +45,10 @@ AutomaticDictionary.extend(
     AutomaticDictionary.ComposeWindow.prototype
     );
 //We extend with extra functionality
-AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.prototype, 
-{    
+AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.prototype,
+{
     name: "ConversationsComposeWindow",
-    
+
     setListeners:function(){
         var window = this.ad.window;
         if( window && !window.automatic_dictionary_initialized ){
@@ -101,9 +101,9 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
             }
 
             this.listenToSpellCheckingCommands(window);
-            
+
             this.prepareWindow(AutomaticDictionary.main_window);
-            
+
             this.logger.debug("events seem to be registered");
 
             window.automatic_dictionary_initialized = true;
@@ -112,7 +112,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
             });
         }
     },
-    
+
     recipients:function( recipientType ){
         recipientType = recipientType || "to";
         var recipients;
@@ -126,32 +126,15 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
         this.logger.debug("recipients found: " + recipients.toSource());
         return recipients;
     },
-    
+
     mail_format: /.*<(.*)>/,
-    
+
     // Recieving "foo <bar>" returns "bar"
     cleanEmail:function(str){
         var match = this.mail_format.exec(str);
         return (match && match[1]) || str;
     },
-    
-    // TODO: maybe this has to go aside in another interface? with showLabel?
-    showMessage: function( str, options ){
-        options = options || {};
-        var window = AutomaticDictionary.main_window;
-        var notification_value = "show-message";
-        //FIXME: DRY this code with changeLabel
-        var nb = window.document.getElementById(this.notificationbox_elem_id);
-        var n = nb.getNotificationWithValue(notification_value);
-        if(n) {
-            n.label = str;
-        } else {
-            var buttons = options.buttons || [];
-            var priority = nb.PRIORITY_INFO_HIGH;
-            n = nb.appendNotification(str, notification_value, this.params.logo_url, priority, buttons);
-        }
-    },
-    
+
     changeLabel: function( str ){
         var window = AutomaticDictionary.main_window;
         this.logger.debug("Writting to label: " + str);
@@ -163,7 +146,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
         }
         var nb = window.document.getElementById(this.notificationbox_elem_id);
         var n = nb.getNotificationWithValue('change-label');
-        str = this.params.name + ": " + str;  
+        str = this.params.name + ": " + str;
         if(n) {
             n.label = str;
         } else {
@@ -175,7 +158,7 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
             nb.removeNotification( n );
         }, this.params.notification_time);
     },
-    
+
     //Copy&edit from ./mail/components/compose/content/MsgComposeCommands.js
     changeLanguage: function (event){
         var editor = this.ad.window.getActiveEditor();
@@ -188,18 +171,18 @@ AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.proto
                 _this.logger.debug("No mInlineSpellChecker or empty")
                 return;
             }
-            
+
             var spellchecker = this.mInlineSpellChecker.spellChecker;
             spellchecker.SetCurrentDictionary(name);
             this.mInlineSpellChecker.spellCheckRange(null); // causes recheck
         };
-        
+
         try{
             InlineSpellCheckerUI.selectDictionaryByName( event.target.value );
         }catch(e){
             AutomaticDictionary.logException(e);
         }
-    }    
+    }
 });
 
 //Register compose window
