@@ -46,8 +46,6 @@ compose_window_stub.apply(AutomaticDictionary);
 // conversations_compose_window.apply(AutomaticDictionary);
 import * as plugin_base from './ad/plugins/plugin_base.js';
 plugin_base.apply(AutomaticDictionary);
-// import * as promotions from './ad/plugins/promotions.js';
-// promotions.apply(AutomaticDictionary);
 
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
   console.info(msg);
@@ -215,7 +213,6 @@ AutomaticDictionary.Class.prototype = {
     "allowHeuristic": true,
     "freqTableData": "",
 
-    "allowPromotions": true,
     "notificationLevel": 'info', // or "warn" or "error"
     "logLevel":"warn",
     "stats.usages": 0

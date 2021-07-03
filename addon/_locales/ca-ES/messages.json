@@ -39,30 +39,6 @@
     "message": "M\\u00e9s informaci\\u00f3",
     "description": "MoreInfo"
   },
-  "PromotionsNotNowButton": {
-    "message": "Ara no",
-    "description": "PromotionsNotNowButton"
-  },
-  "PromotionsNotAnyMoreButton": {
-    "message": "No mostrar m\\u00e9s aix\\u00f2",
-    "description": "PromotionsNotAnyMoreButton"
-  },
-  "PromotionsShareMessage": {
-    "message": "Automatic Dictionary - Perqu\\u00e8 no comparteixes aquest plugin amb els teus? Tothom hauria de disfrutar-ne!",
-    "description": "PromotionsShareMessage"
-  },
-  "PromotionsShareButton": {
-    "message": "Compartir!",
-    "description": "PromotionsShareButton"
-  },
-  "PromotionsReviewButton": {
-    "message": "Valora'l!",
-    "description": "PromotionsReviewButton"
-  },
-  "PromotionsReviewMessage": {
-    "message": "Automatic Dictionary - T'agrada aquest plugin? Ajuda'ns escribint-ne una valoraci\\u00f3!",
-    "description": "PromotionsReviewMessage"
-  },
   "introduction.text": {
     "message": "Paràmetres avançats",
     "description": "introduction.text"
@@ -90,18 +66,6 @@
   "maxRecipients.recommendation": {
     "message": "Valor recomanat: 10.",
     "description": "maxRecipients.recommendation"
-  },
-  "allowPromotions.label": {
-    "message": "Permetre suggerir maneres de promocionar aquest\nplugin:",
-    "description": "allowPromotions.label"
-  },
-  "allowPromotions.info": {
-    "message": "Intentarem suggerir-te maneres d'ajudar-nos a promocionar aquest plugin, com\ncompartint-lo amb els companys o escrivint-ne una valoració.",
-    "description": "allowPromotions.info"
-  },
-  "allowPromotions.recommendation": {
-    "message": "",
-    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Nivell de notificació:",

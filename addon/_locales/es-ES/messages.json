@@ -39,30 +39,6 @@
     "message": "M\\u00e1s informaci\\u00f3n",
     "description": "MoreInfo"
   },
-  "PromotionsNotNowButton": {
-    "message": "Ahora no",
-    "description": "PromotionsNotNowButton"
-  },
-  "PromotionsNotAnyMoreButton": {
-    "message": "No mostrar mas esto",
-    "description": "PromotionsNotAnyMoreButton"
-  },
-  "PromotionsShareMessage": {
-    "message": "Automatic Dictionary - Porque no compartes este plugin con tus seguidores? Todo el mundo tendria que probarlo!",
-    "description": "PromotionsShareMessage"
-  },
-  "PromotionsShareButton": {
-    "message": "Compartir!",
-    "description": "PromotionsShareButton"
-  },
-  "PromotionsReviewButton": {
-    "message": "Quiero valorarlo!",
-    "description": "PromotionsReviewButton"
-  },
-  "PromotionsReviewMessage": {
-    "message": "Automatic Dictionary - Te gusta este plugin? Ayudanos escribiendo una valoraci\\u00f3n!",
-    "description": "PromotionsReviewMessage"
-  },
   "introduction.text": {
     "message": "Parámetros avanzados",
     "description": "introduction.text"
@@ -90,18 +66,6 @@
   "maxRecipients.recommendation": {
     "message": "Valor recomendado: 10.",
     "description": "maxRecipients.recommendation"
-  },
-  "allowPromotions.label": {
-    "message": "Permitir sugerir maneras de promocionar este\nplugin:",
-    "description": "allowPromotions.label"
-  },
-  "allowPromotions.info": {
-    "message": "Intentaremos sugerirte maneras de ayudarnos a\npromover este plugin, como compartir con tus compañeros o escribiendo una\nvaloración.",
-    "description": "allowPromotions.info"
-  },
-  "allowPromotions.recommendation": {
-    "message": "",
-    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Nivel de notificaciones:",

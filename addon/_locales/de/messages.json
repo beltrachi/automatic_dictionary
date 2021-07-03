@@ -39,30 +39,6 @@
     "message": "Weitere Informationen",
     "description": "MoreInfo"
   },
-  "PromotionsNotNowButton": {
-    "message": "Nicht jetzt",
-    "description": "PromotionsNotNowButton"
-  },
-  "PromotionsNotAnyMoreButton": {
-    "message": "Nicht mehr anzeigen",
-    "description": "PromotionsNotAnyMoreButton"
-  },
-  "PromotionsShareMessage": {
-    "message": "Automatic Dictionary - Wie wäre es, das Add-on mit deinen Followern zu teilen? Jeder sollte Spaß daran haben!",
-    "description": "PromotionsShareMessage"
-  },
-  "PromotionsShareButton": {
-    "message": "Jetzt teilen!",
-    "description": "PromotionsShareButton"
-  },
-  "PromotionsReviewButton": {
-    "message": "Bewertung schreiben!",
-    "description": "PromotionsReviewButton"
-  },
-  "PromotionsReviewMessage": {
-    "message": "Automatic Dictionary - Magst du dieses Add-on? Hilf mit, indem du eine Bewertung schreibst!",
-    "description": "PromotionsReviewMessage"
-  },
   "introduction.text": {
     "message": "Erweiterte Einstellungen",
     "description": "introduction.text"
@@ -90,18 +66,6 @@
   "maxRecipients.recommendation": {
     "message": "Empfohlener Wert: 10.",
     "description": "maxRecipients.recommendation"
-  },
-  "allowPromotions.label": {
-    "message": "Wege vorschlagen, um das Add-on zu verbreiten:",
-    "description": "allowPromotions.label"
-  },
-  "allowPromotions.info": {
-    "message": "Wir werden Wege vorschlagen, um das Add-on zu verbreiten. Dazu gehören Teilen mit den Freunden, \nSchreiben einer Bewertung oder Fragen über Verbesserungsvorschläge für das Add-on.",
-    "description": "allowPromotions.info"
-  },
-  "allowPromotions.recommendation": {
-    "message": "",
-    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Benachrichtigungs-Stufe:",

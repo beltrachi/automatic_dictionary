@@ -287,7 +287,7 @@ describe "AutomaticDictionary integration tests" do
     # falls in the preferences button because the word is bigger.
     interactor.click_on_text('Details Preferences')
     sleep 5
-    interactor.wait_for_text('Allow to suggest you ways to promote this plugin:')
+    interactor.wait_for_text('Notification level:')
     interactor.wait_for_text('1200')
   end
 end

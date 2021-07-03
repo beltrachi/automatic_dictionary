@@ -39,30 +39,6 @@
     "message": "More information",
     "description": "MoreInfo"
   },
-  "PromotionsNotNowButton": {
-    "message": "Not now",
-    "description": "PromotionsNotNowButton"
-  },
-  "PromotionsNotAnyMoreButton": {
-    "message": "Never show this again",
-    "description": "PromotionsNotAnyMoreButton"
-  },
-  "PromotionsShareMessage": {
-    "message": "Automatic Dictionary - Why not sharing this plugin with your followers? Everyone shoud enjoy it!",
-    "description": "PromotionsShareMessage"
-  },
-  "PromotionsShareButton": {
-    "message": "Share now!",
-    "description": "PromotionsShareButton"
-  },
-  "PromotionsReviewButton": {
-    "message": "Review it!",
-    "description": "PromotionsReviewButton"
-  },
-  "PromotionsReviewMessage": {
-    "message": "Automatic Dictionary - Do you like this addon? Help it by writing a review!",
-    "description": "PromotionsReviewMessage"
-  },
   "introduction.text": {
     "message": "Advanced parameters",
     "description": "introduction.text"
@@ -90,18 +66,6 @@
   "maxRecipients.recommendation": {
     "message": "Recomended value: 10.",
     "description": "maxRecipients.recommendation"
-  },
-  "allowPromotions.label": {
-    "message": "Allow to suggest you ways to promote this plugin:",
-    "description": "allowPromotions.label"
-  },
-  "allowPromotions.info": {
-    "message": "We'll try to suggest you ways to help us promote this plugin, like sharing with your\nmates or writing a review, or some suggestion to improve it.",
-    "description": "allowPromotions.info"
-  },
-  "allowPromotions.recommendation": {
-    "message": "",
-    "description": "allowPromotions.recommendation"
   },
   "notificationLevel.label": {
     "message": "Notification level:",
