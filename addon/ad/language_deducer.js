@@ -27,19 +27,23 @@ function deductionOrNull(value, method){
 
 LanguageDeducer.prototype = {
   deduce: async function(){
-    var context = {
-      ad: this.ad,
-      recipients: {
-        to: await this.ad.getRecipients(),
-        cc: await this.ad.getRecipients('cc')
-      }
-    };
+    var context = await this.buildContext();
     var deduction = null;
     for(const deducer of this.deducerChain) {
       deduction = await deducer(context);
       if(deduction) break;
     }
     return deduction;
+  },
+
+  buildContext: async function(){
+    return {
+      ad: this.ad,
+      recipients: {
+        to: await this.ad.getRecipients(),
+        cc: await this.ad.getRecipients('cc')
+      }
+    }
   },
 
   rememberByAllRecipients: async function (context) {
