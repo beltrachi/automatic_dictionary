@@ -669,13 +669,7 @@ AutomaticDictionary.Class.prototype = {
     this.logger.info("setCurrentLang "+target);
     this.running = false;
     try{
-      if( this.compose_window.changeLanguage ){
-        this.logger.debug("calling compose_window.changeLanguage");
-        await this.compose_window.changeLanguage(target);
-      }else{
-        this.logger.error("No way to change language");
-        await this.changeLabel("error", this.t("errorNoWayToChangeLanguage") );
-      }
+      await this.compose_window.changeLanguage(target);
     }finally{
       this.running = true;
     }
