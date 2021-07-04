@@ -10,10 +10,10 @@ export const LanguageDeducer = function(ad){
   this.ad = ad;
 
   this.deducerChain = [
-    this.findByAllRecipients,
-    this.findByTos,
-    this.findByAnyTo,
-    this.findByAnyCC,
+    this.rememberByAllRecipients,
+    this.rememberByTos,
+    this.rememberByAnyTo,
+    this.rememberByAnyCC,
     this.guessFromTos
   ]
 }
@@ -42,18 +42,18 @@ LanguageDeducer.prototype = {
     return deduction;
   },
 
-  findByAllRecipients: async function (context) {
+  rememberByAllRecipients: async function (context) {
     const toandcc_key = context.ad.getKeyForRecipients(context.recipients);
     context.ad.logger.debug("Deducing language for: " + toandcc_key);
     const lang = await context.ad.getLangFor(toandcc_key);
     return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
   },
-  findByTos: async function(context){
+  rememberByTos: async function(context){
     const alltogether_key = context.ad.stringifyRecipientsGroup( context.recipients.to );
     const lang = await context.ad.getLangFor( alltogether_key );
     return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
   },
-  findByAnyTo: async function(context){
+  rememberByAnyTo: async function(context){
     var lang = null;
     for( const recipient of context.recipients.to ){
       lang = await context.ad.getLangFor( recipient );
@@ -63,7 +63,7 @@ LanguageDeducer.prototype = {
     }
     return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
   },
-  findByAnyCC: async function(context){
+  rememberByAnyCC: async function(context){
     var lang = null;
     for( const recipient of context.recipients.cc ){
       lang = await context.ad.getLangFor( recipient );
