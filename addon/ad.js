@@ -590,17 +590,8 @@ AutomaticDictionary.Class.prototype = {
 
     var deduction = await this.deducer.deduce();
     lang = (deduction && deduction.language) || null;
-
+    method = (deduction && deduction.method) || null;
     this.logger.debug("Language found: "+ lang);
-
-    if(!lang && await this.allowHeuristic()){
-      this.logger.info("trying to get by heuristics");
-      lang = await this.heuristic_guess(recipients);
-      if(lang){
-        method = this.METHODS.GUESS;
-        this.logger.debug("Heuristic says: "+ lang);
-      }
-    }
 
     // Rule: when you detect a language and you detected it last time,
     // Set it again if it's not the current. (Support multi compose windows)

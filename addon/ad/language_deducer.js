@@ -67,6 +67,12 @@ LanguageDeducer.prototype = {
         }
       }
       return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
+    },
+    async function(context){
+      if(await context.ad.allowHeuristic()){
+        const lang = await context.ad.heuristic_guess(context.recipients.to);
+        return deductionOrNull(lang, context.ad.METHODS.GUESS);
+      }
     }
   ]
 }
