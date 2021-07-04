@@ -47,6 +47,8 @@ compose_window_stub.apply(AutomaticDictionary);
 import * as plugin_base from './ad/plugins/plugin_base.js';
 plugin_base.apply(AutomaticDictionary);
 
+import { LanguageDeducer } from './ad/language_deducer.js';
+
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
   console.info(msg);
 });
@@ -117,6 +119,7 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
 
   this.running = true;
   var _this = this;
+  this.deducer = new LanguageDeducer(this);
   this.getPrefManagerWrapperAsync().then(function(pm){
     _this.prefManager = pm;
     _this.storage = _this.getStorage();
@@ -584,40 +587,9 @@ AutomaticDictionary.Class.prototype = {
     // TO all and CC all
     var ccs = await this.getRecipients("cc");
     var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
-    this.logger.debug("Deducing language for: " + toandcc_key);
-    lang = await this.getLangFor( toandcc_key );
 
-    if( !lang ){
-      this.logger.debug("Check for the TO's together")
-      // TO all
-      // Check if all them have a specific language. We want them ordered to maximize hits
-      // Clone array and sort it
-      var alltogether_key = this.stringifyRecipientsGroup( recipients );
-      lang = await this.getLangFor( alltogether_key );
-    }
-
-    if( !lang ){
-      this.logger.debug("Check for the TOs one by one");
-      // TO one by one
-      // It returns the first recipient that has a language.
-      // That is useful but maybe it's not the most convenient way.
-      for( var idx in recipients ){
-        lang = await this.getLangFor( recipients[idx] );
-        if( lang ){
-          break;
-        }
-      }
-    }
-
-    if( !lang ){
-      this.logger.debug("Check for the ccs one by one");
-      for(i in ccs){
-        lang = await this.getLangFor( ccs[i] );
-        if( lang ){
-          break;
-        }
-      }
-    }
+    var deduction = await this.deducer.deduce();
+    lang = (deduction && deduction.language) || null;
 
     this.logger.debug("Language found: "+ lang);
 
