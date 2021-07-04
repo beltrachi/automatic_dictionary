@@ -1,7 +1,7 @@
 export function apply(AutomaticDictionary){
 // Adds event listener pattern to the object.
 /*
- * Usage: AutomaticDictionary.extend( myclass, EventDispatcher );
+ * Usage: Object.assign( myclass, EventDispatcher );
  **/
 // Based on https://github.com/mrdoob/eventdispatcher.js
   AutomaticDictionary.EventDispatcher = {

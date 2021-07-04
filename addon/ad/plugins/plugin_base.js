@@ -5,18 +5,18 @@ export function apply(AutomaticDictionary){
 //Constructor
 AutomaticDictionary.Plugins.PluginBase = function(ad){
     this.init(ad);
-}; 
+};
 
 //Method called by AD
 AutomaticDictionary.Plugins.PluginBase.init = function(ad){
     new AutomaticDictionary.Plugins.PluginBase(ad);
 }
 
-AutomaticDictionary.extend( 
+Object.assign(
     AutomaticDictionary.Plugins.PluginBase.prototype,
     AutomaticDictionary.Lib.Shutdownable);
 
-AutomaticDictionary.extend( AutomaticDictionary.Plugins.PluginBase.prototype, {
+Object.assign( AutomaticDictionary.Plugins.PluginBase.prototype, {
     //Called on ad boot
     init:function(ad){
         this.ad = ad;
