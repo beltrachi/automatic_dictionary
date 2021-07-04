@@ -192,12 +192,6 @@ AutomaticDictionary.Class.prototype = {
   name: "AutomaticDictionary",
   notification_time_ms: 4000,
 
-  deduce_language_retries_counter: 0,
-  deduce_language_retry_delay: 200,
-  deduce_language_retry: null,
-  //Retries till ifce gets ready
-  max_deduce_language_retries: 10,
-
   logo_image: "logo.png",
 
   logger: AutomaticDictionary.logger,
@@ -449,9 +443,9 @@ AutomaticDictionary.Class.prototype = {
       }
     }
     if( stats.saved_recipients > 0 ){
-      if(this.deduce_language_retry){
-        this.deduce_language_retry.stop();
-        this.deduce_language_retry = null;
+      if(this.deferredDeduceLanguage){
+        this.deferredDeduceLanguage.stop();
+        this.deferredDeduceLanguage = null;
       }
       this.last_lang = current_lang;
       this.logger.debug("Enter cond 3");
@@ -536,35 +530,16 @@ AutomaticDictionary.Class.prototype = {
     }
   },
   // Updates the interface with the lang deduced from the recipients
-  /*
-    How we search the lang:
-    1. TO (all) & CC (all): The recipients in "To" and the ones in "CC".
-    In cases where you change the language when someone in the CC
-    does not understand it.
-    2. TO (all): The recipients in "To" all together.
-    This allows to recover specific language when the recipients
-    are from diferent languages.
-    3. TO (one by one): The recipients alone in order of appearence.
-  */
   deduceLanguage: async function( opt ){
     var self = this;
     if(!opt) opt = {};
 
-    if( ! (await this.canSpellCheck()) ){
-      //TODO: notify user when spellcheck while you type is disabled.
-      if( this.running && (!opt.count || opt.count < 1)){
-        this.logger.info("Deferring deduceLanguage because spellchecker"+
-                         " is not ready");
-        opt.count = opt.count || 0;
-        opt.count += 1;
-        setTimeout(function(){ self.deduceLanguage(opt) },300);
-      }else{
-        this.logger.warn("spellchecker is not enabled or not running");
-      }
+    if( !(await this.canSpellCheck()) ){
+      this.deferDeduceLanguage(opt);
       return;
     }
 
-    if( !opt.is_retry && this.deduce_language_retry ){
+    if( this.deferredDeduceLanguage ){
       this.logger.info("Cancelled a deduceLanguage call as there is a retry waiting...");
       // There is a retry queued. Stay quiet and wait for it.
       return;
@@ -578,12 +553,13 @@ AutomaticDictionary.Class.prototype = {
       this.logger.debug("Last lang discarded for too much recipients")
       return;
     }
-    var lang = null, method = this.METHODS.REMEMBER, i;
+    var lang = null, method, i;
     // TO all and CC all
     var ccs = await this.getRecipients("cc");
     var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
 
     var deduction = await this.deducer.deduce();
+
     lang = (deduction && deduction.language) || null;
     method = (deduction && deduction.method) || null;
     this.logger.debug("Language found: "+ lang);
@@ -602,8 +578,6 @@ AutomaticDictionary.Class.prototype = {
       }
     }
 
-    this.last_lang = lang;
-    this.last_toandcc_key = toandcc_key;
     if(lang){
       try{
         await this.setCurrentLang( lang );
@@ -613,27 +587,31 @@ AutomaticDictionary.Class.prototype = {
       }catch( e ){
         AutomaticDictionary.logException(e);
         this.logger.error("Exception message on deduceLanguage is: "+ e.toString());
-        if( this.deduce_language_retries_counter < this.max_deduce_language_retries ){
-          // The interface may not be ready. Leave it a retry.
-          this.deduce_language_retries_counter++
-          this.logger.info("Recovering from exception on deduceLanguage " +
-                           "(retry: " +this.deduce_language_retries_counter + " with delay "+
-                           this.deduce_language_retry_delay+" )");
-          var _this = this;
-          this.deduce_language_retry = setTimeout(function(){
-            _this.logger.info("Relaunching deduceLanguage");
-            _this.deduce_language_retry = null;
-            _this.deduceLanguage({is_retry:true});
-          }, this.deduce_language_retry_delay);
-          return;
-        }else{
-          await this.changeLabel("error", this.ft("errorSettingSpellLanguage", [lang] ));
-          throw e;
-        }
+        return this.deferDeduceLanguage(opt);
       }
-      this.deduce_language_retries_counter = 0;
     }else{
       await this.changeLabel("info", this.t( "noLangForRecipients" ));
+    }
+    this.last_lang = lang;
+    this.last_toandcc_key = toandcc_key;
+  },
+
+  deferDeduceLanguage: function(opt){
+    this.logger.warn('Deferred deduceLanguage');
+    this.logger.warn(this.running);
+    if( this.running ){
+      this.logger.info("Deferring deduceLanguage");
+      opt.count = opt.count || 0;
+      opt.count += 1;
+      const self = this;
+      if(opt.count < 10) {
+        self.deferredDeduceLanguage = setTimeout(function(){
+          self.deferredDeduceLanguage = null;
+          self.deduceLanguage(opt);
+        },300);
+      }
+    }else{
+      this.logger.warn("Spellchecker is not enabled or not running");
     }
   },
 

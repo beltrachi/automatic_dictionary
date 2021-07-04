@@ -377,6 +377,44 @@ test('Minimize notifications', async (done) => {
     });
 });
 
+test('When error on change language', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'debug',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        let status = { recipients: {}, lang: 'en' }
+        mockComposeWindow(compose_window, status)
+
+        //Prepare scenario
+        status.recipients = { "to": ["John"], "cc": [] };
+
+        await ad.languageChanged();
+
+        status.lang = 'es';
+
+        // Mock 3 times raise an error
+        [1,2,3].forEach(element => {
+            compose_window.changeLanguage.mockImplementationOnce(() => {
+                return new Promise(() => {
+                    throw new Error("changeLanguage fake error");
+                });
+            })
+        });
+
+        // Only when language change is successful its shown to the user.
+        compose_window.changeLabel.mockImplementationOnce(() => {
+            expect(status.lang).toBe('en');
+            done();
+        })
+
+        await ad.deduceLanguage();
+    });
+});
+
 /*
     8. Test using heuristics
 */
