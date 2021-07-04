@@ -8,7 +8,7 @@ apply(AutomaticDictionary);
 test('SortedSet performance', async (done) => {
     var ss = AutomaticDictionary.Lib.SortedSet();
 
-    await benchmark(5, function () {
+    await benchmark(20, function () {
         for (var i = 0; i < 1000; i++) {
             ss.push("a" + i);
         }
