@@ -40,12 +40,12 @@ AutomaticDictionary.ConversationsComposeWindow.canManageWindow = function(window
 };
 
 //Inherits instance methods from ComposeWindow
-AutomaticDictionary.extend(
+Object.assign(
     AutomaticDictionary.ConversationsComposeWindow.prototype,
     AutomaticDictionary.ComposeWindow.prototype
     );
 //We extend with extra functionality
-AutomaticDictionary.extend( AutomaticDictionary.ConversationsComposeWindow.prototype,
+Object.assign( AutomaticDictionary.ConversationsComposeWindow.prototype,
 {
     name: "ConversationsComposeWindow",
 

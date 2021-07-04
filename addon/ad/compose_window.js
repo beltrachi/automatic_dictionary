@@ -48,11 +48,11 @@ AutomaticDictionary.ComposeWindow.canManageWindow = function(window){
     return regex.test(window.document.location);
 };
 
-AutomaticDictionary.extend(
+Object.assign(
     AutomaticDictionary.ComposeWindow.prototype,
     Shutdownable);
 
-AutomaticDictionary.extend( AutomaticDictionary.ComposeWindow.prototype, {
+Object.assign( AutomaticDictionary.ComposeWindow.prototype, {
 
     name: "ComposeWindow",
     logger: null,

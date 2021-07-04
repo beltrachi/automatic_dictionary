@@ -9,10 +9,6 @@ var AutomaticDictionary = {
   Lib: {},
   window_managers: []
 };
-//Helper function to copy prototypes
-AutomaticDictionary.extend = function (destination,source) {
-  return Object.assign(destination, source);
-}
 
 apply(AutomaticDictionary);
 

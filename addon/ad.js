@@ -4,11 +4,6 @@ AutomaticDictionary.Plugins = {};
 
 AutomaticDictionary.enabled_plugins = [];
 
-//Helper function to copy prototypes
-AutomaticDictionary.extend = function (destination,source) {
-  return Object.assign(destination, source);
-}
-
 //Window managers are objects that attach to the windows that have the compose
 //window to compose mails
 AutomaticDictionary.window_managers = [];
@@ -787,13 +782,13 @@ AutomaticDictionary.Class.prototype = {
   }
 };
 
-AutomaticDictionary.extend(AutomaticDictionary.Class.prototype,
+Object.assign(AutomaticDictionary.Class.prototype,
                            AutomaticDictionary.EventDispatcher);
 
-AutomaticDictionary.extend(AutomaticDictionary.Class.prototype,
+Object.assign(AutomaticDictionary.Class.prototype,
                            AutomaticDictionary.Migrations);
 
-AutomaticDictionary.extend(AutomaticDictionary.Class.prototype,
+Object.assign(AutomaticDictionary.Class.prototype,
                            AutomaticDictionary.Lib.Shutdownable);
 
 

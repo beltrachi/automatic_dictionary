@@ -15,11 +15,11 @@ AutomaticDictionary.ComposeWindowStub.canManageWindow = function(window){
     return false;
 };
 
-AutomaticDictionary.extend(
+Object.assign(
     AutomaticDictionary.ComposeWindowStub.prototype,
     AutomaticDictionary.Lib.Shutdownable);
 
-AutomaticDictionary.extend( AutomaticDictionary.ComposeWindowStub.prototype, {
+Object.assign( AutomaticDictionary.ComposeWindowStub.prototype, {
 
     notificationbox_elem_id: "automatic_dictionary_notification",
 
