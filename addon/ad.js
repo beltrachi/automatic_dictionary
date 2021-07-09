@@ -121,6 +121,7 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
     //Version migrations upgrade check
     _this.migrate().then(function(){
       _this.logLevel().then(function(level){
+        level = options.logLevel || level;
         AutomaticDictionary.logger.setLevel(level);
         _this.logger.setLevel(level);
       });
