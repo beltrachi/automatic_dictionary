@@ -609,9 +609,11 @@ AutomaticDictionary.Class.prototype = {
           self.deferredDeduceLanguage = null;
           self.deduceLanguage(opt);
         },300);
+      }else{
+        this.logger.error("Stopped retrying deduceLanugage after 10 attempts")
       }
     }else{
-      this.logger.warn("Spellchecker is not enabled or not running");
+      this.logger.warn("Addon is not running so it won't retry deduceLanguage");
     }
   },
 
