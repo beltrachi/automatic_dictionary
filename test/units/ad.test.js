@@ -453,7 +453,7 @@ describe('deduce language when spellchecker is not ready', () => {
 
             compose_window.canSpellCheck.mockResolvedValue(false);
             ad.logger.error = jest.fn( (msg) => {
-                expect(msg).toContain('Stop retrying')
+                expect(msg).toContain('Stopped retrying')
                 done();
             })
             // Only when language change is successful its shown to the user.
@@ -471,7 +471,7 @@ test('Heuristics', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
