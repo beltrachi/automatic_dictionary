@@ -415,6 +415,55 @@ test('When error on change language', async (done) => {
     });
 });
 
+describe('deduce language when spellchecker is not ready', () => {
+    test('it retires and success', async (done) => {
+        new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            logLevel: 'error',
+            deduceOnLoad: false
+        }, async (ad) => {
+            let compose_window = ad.compose_window;
+
+            let status = { recipients: {to: 'foo', cc: 'bar'}, lang: 'en' }
+            mockComposeWindow(compose_window, status)
+
+            compose_window.canSpellCheck.mockResolvedValueOnce(false);
+
+            // Only when language change is successful its shown to the user.
+            compose_window.changeLabel.mockImplementationOnce((text) => {
+                done();
+            })
+
+            await ad.deduceLanguage();
+        });
+    });
+
+    test('after 10 retries, it stops', async (done) => {
+        new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            logLevel: 'error',
+            deduceOnLoad: false
+        }, async (ad) => {
+            let compose_window = ad.compose_window;
+
+            let status = { recipients: {to: 'foo', cc: 'bar'}, lang: 'en' }
+            mockComposeWindow(compose_window, status)
+
+            compose_window.canSpellCheck.mockResolvedValue(false);
+            ad.logger.error = jest.fn( (msg) => {
+                expect(msg).toContain('Stop retrying')
+                done();
+            })
+            // Only when language change is successful its shown to the user.
+
+            await ad.deduceLanguage();
+        });
+    });
+
+})
+
 /*
     8. Test using heuristics
 */
