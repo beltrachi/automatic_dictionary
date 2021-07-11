@@ -1,6 +1,6 @@
 export function apply(AutomaticDictionary){
   AutomaticDictionary.Lib.Logger = function(level, writer_fn){
-    var levels = ["debug","performance","info","warn","error"];
+    var levels = ["debug","performance","info","warn","error","fatal"];
     var log_level_idx = levels.indexOf(level);
     var is_current_level = function( curr ){
       return levels.indexOf( curr ) >= log_level_idx;
@@ -53,6 +53,9 @@ export function apply(AutomaticDictionary){
       error: function(msg){
         this.log( "error", msg );
       },
+      fatal: function(msg){
+        this.log( "fatal", msg );
+      },
       setLevel: function( level ){
         log_level_idx = levels.indexOf(level);
         if( log_level_idx === -1 ){
@@ -97,7 +100,8 @@ export function apply(AutomaticDictionary){
       performance: null_fn,
       info: null_fn,
       warn: null_fn,
-      error: null_fn
+      error: null_fn,
+      fatal: null_fn
     };
   }
 }
