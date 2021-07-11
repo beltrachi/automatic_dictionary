@@ -598,8 +598,6 @@ AutomaticDictionary.Class.prototype = {
   },
 
   deferDeduceLanguage: function(opt){
-    this.logger.warn('Deferred deduceLanguage');
-    this.logger.warn(this.running);
     if( this.running ){
       this.logger.info("Deferring deduceLanguage");
       opt.count = opt.count || 0;
@@ -611,7 +609,7 @@ AutomaticDictionary.Class.prototype = {
           self.deduceLanguage(opt);
         },300);
       }else{
-        this.logger.error("Stopped retrying deduceLanugage after 10 attempts")
+        this.logger.warn("Stopped retrying deduceLanugage after 10 attempts")
       }
     }else{
       this.logger.warn("Addon is not running so it won't retry deduceLanguage");

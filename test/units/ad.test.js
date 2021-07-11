@@ -20,7 +20,7 @@ test('Initial boot', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let lruHash = await ad.data._object();
@@ -34,7 +34,7 @@ test('Shutdown shuts down existing instances', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         ad.dispatchEvent = jest.fn();
@@ -169,7 +169,7 @@ test('TOs priorization', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -211,7 +211,7 @@ test('Do not overwrite individuals language when its a group language', async (d
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -270,7 +270,7 @@ test('Max recipients assignment', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -331,7 +331,7 @@ test('Minimize notifications', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -381,7 +381,7 @@ test('When error on change language', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'debug',
+        logLevel: 'fatal',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -420,7 +420,7 @@ describe('deduce language when spellchecker is not ready', () => {
         new AutomaticDictionary.Class({
             window: window,
             compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-            logLevel: 'error',
+            logLevel: 'fatal',
             deduceOnLoad: false
         }, async (ad) => {
             let compose_window = ad.compose_window;
@@ -443,7 +443,7 @@ describe('deduce language when spellchecker is not ready', () => {
         new AutomaticDictionary.Class({
             window: window,
             compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-            logLevel: 'error',
+            logLevel: 'fatal',
             deduceOnLoad: false
         }, async (ad) => {
             let compose_window = ad.compose_window;
@@ -452,7 +452,7 @@ describe('deduce language when spellchecker is not ready', () => {
             mockComposeWindow(compose_window, status)
 
             compose_window.canSpellCheck.mockResolvedValue(false);
-            ad.logger.error = jest.fn( (msg) => {
+            ad.logger.warn = jest.fn( (msg) => {
                 expect(msg).toContain('Stopped retrying')
                 done();
             })
@@ -583,7 +583,7 @@ test('when only data is on CC recipients', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         let compose_window = ad.compose_window;
@@ -633,7 +633,7 @@ test('migration to fix freq-suffix data', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-        logLevel: 'warn',
+        logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         const pairs = await ad.freq_suffix.pairs();
@@ -656,7 +656,7 @@ test('LRU max size is read from config', async (done) => {
         new AutomaticDictionary.Class({
             window: window,
             compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-            logLevel: 'warn',
+            logLevel: 'error',
             deduceOnLoad: false
         }, async (ad) => {
             let lruHash = await ad.data._object();
@@ -674,7 +674,7 @@ test('LRU max size is read from config', async (done) => {
         new AutomaticDictionary.Class({
             window: window,
             compose_window_builder: AutomaticDictionary.ComposeWindowStub,
-            logLevel: 'warn',
+            logLevel: 'error',
             deduceOnLoad: false
         }, async (ad) => {
             let lruHash = await ad.data._object();
