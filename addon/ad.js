@@ -532,7 +532,6 @@ AutomaticDictionary.Class.prototype = {
   },
   // Updates the interface with the lang deduced from the recipients
   deduceLanguage: async function( opt ){
-    var self = this;
     if(!opt) opt = {};
 
     if( !(await this.canSpellCheck()) ){
@@ -551,10 +550,12 @@ AutomaticDictionary.Class.prototype = {
       // we stop deducing when last_lang_discarded because it means that
       // the user setted a language but we did not store because it was bigger
       // than MaxRecipients
-      this.logger.debug("Last lang discarded for too much recipients")
+      if(this.last_lang_discarded){
+        this.logger.debug("Last lang discarded for too much recipients")
+      }
       return;
     }
-    var lang = null, method, i;
+    var lang = null, method;
     // TO all and CC all
     var ccs = await this.getRecipients("cc");
     var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
@@ -565,21 +566,20 @@ AutomaticDictionary.Class.prototype = {
     method = (deduction && deduction.method) || null;
     this.logger.debug("Language found: "+ lang);
 
-    // Rule: when you detect a language and you detected it last time,
-    // Set it again if it's not the current. (Support multi compose windows)
+    var recipients_changed = this.last_toandcc_key != toandcc_key
     var nothing_changed = this.last_toandcc_key == toandcc_key &&
         this.last_lang == lang;
-    if( nothing_changed ){
-      //test that the last lang is the same as the one setted on the dictionary.
-      if( this.isBlank(lang) || (await this.getCurrentLang()) == lang){
-        this.logger.debug("deduceLanguage detects that nothing changed or lang is null");
+
+    if( !recipients_changed && this.last_lang == lang ){
+      if((await this.getCurrentLang()) == lang){
+        this.logger.debug("deduceLanguage detects that nothing changed");
         return;
       }else{
         this.logger.debug("Detected changes on langs (from-to): "+ this.inspect([await this.getCurrentLang(), lang]));
       }
     }
 
-    if(lang){
+    if(!this.isBlank(lang)){
       try{
         await this.setCurrentLang( lang );
         if( !nothing_changed ){
