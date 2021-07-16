@@ -176,11 +176,6 @@ AutomaticDictionary.Class.prototype = {
   NOTIFICATION_LEVEL:"notificationLevel",
   LOG_LEVEL:"logLevel",
 
-  METHODS:{
-    REMEMBER:"remember",
-    GUESS:"guess"
-  },
-
   FREQ_TABLE_KEY:"freqTableData",
   pref_prefix: "extensions.automatic_dictionary.",
 

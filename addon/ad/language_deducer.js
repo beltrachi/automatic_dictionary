@@ -6,6 +6,11 @@ const Deduction = function(language, method){
   this.method = method;
 }
 
+Deduction.METHODS = {
+  REMEMBER:"remember",
+  GUESS:"guess"
+}
+
 export const LanguageDeducer = function(ad){
   this.ad = ad;
 
@@ -50,12 +55,12 @@ LanguageDeducer.prototype = {
     const toandcc_key = context.ad.getKeyForRecipients(context.recipients);
     context.ad.logger.debug("Deducing language for: " + toandcc_key);
     const lang = await context.ad.getLangFor(toandcc_key);
-    return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
+    return deductionOrNull(lang, Deduction.METHODS.REMEMBER);
   },
   rememberByTos: async function(context){
     const alltogether_key = context.ad.stringifyRecipientsGroup( context.recipients.to );
     const lang = await context.ad.getLangFor( alltogether_key );
-    return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
+    return deductionOrNull(lang, Deduction.METHODS.REMEMBER);
   },
   rememberByAnyTo: async function(context){
     var lang = null;
@@ -65,7 +70,7 @@ LanguageDeducer.prototype = {
         break;
       }
     }
-    return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
+    return deductionOrNull(lang, Deduction.METHODS.REMEMBER);
   },
   rememberByAnyCC: async function(context){
     var lang = null;
@@ -75,12 +80,12 @@ LanguageDeducer.prototype = {
         break;
       }
     }
-    return deductionOrNull(lang, context.ad.METHODS.REMEMBER);
+    return deductionOrNull(lang, Deduction.METHODS.REMEMBER);
   },
   guessFromTos: async function(context){
     if(await context.ad.allowHeuristic()){
       const lang = await context.ad.heuristic_guess(context.recipients.to);
-      return deductionOrNull(lang, context.ad.METHODS.GUESS);
+      return deductionOrNull(lang, Deduction.METHODS.GUESS);
     }
   }
 }
