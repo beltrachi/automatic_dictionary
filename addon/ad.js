@@ -547,6 +547,7 @@ AutomaticDictionary.Class.prototype = {
       if(this.last_lang_discarded){
         this.logger.debug("Last lang discarded for too much recipients")
       }
+      this.dispatchEvent({type:"deduction-completed"});
       return;
     }
     var lang = null, method;
@@ -563,6 +564,7 @@ AutomaticDictionary.Class.prototype = {
     if(!this.contextChangedSinceLast(deduction)){
       if((await this.getCurrentLang()) == lang){
         this.logger.debug("deduceLanguage detects that nothing changed");
+        this.dispatchEvent({type:"deduction-completed"});
         return;
       }else{
         this.logger.debug("Detected changes on langs (from-to): "+ this.inspect([await this.getCurrentLang(), lang]));
@@ -585,6 +587,7 @@ AutomaticDictionary.Class.prototype = {
     }
     this.last_lang = lang;
     this.lastDeduction = deduction;
+    this.dispatchEvent({type:"deduction-completed"});
   },
 
   contextChangedSinceLast(deduction){
