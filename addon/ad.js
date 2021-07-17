@@ -406,9 +406,8 @@ AutomaticDictionary.Class.prototype = {
       this.last_lang_discarded = current_lang;
       return;
     }
-    var toandcc_key = this.getKeyForRecipients({to: tos, cc: ccs});
-
-    if (current_lang == this.last_lang && toandcc_key == this.last_toandcc_key){
+    var context = this.deducer.buildContext();
+    if (current_lang == this.last_lang && this.contextChangedSinceLast(context)){
       this.logger.debug('Same language and recipients as before '+current_lang);
       return;
     }
@@ -585,12 +584,11 @@ AutomaticDictionary.Class.prototype = {
       await this.changeLabel("info", this.t( "noLangForRecipients" ));
     }
     this.last_lang = lang;
-    this.last_toandcc_key = toandcc_key;
     this.lastDeduction = deduction;
   },
 
   contextChangedSinceLast(deduction){
-    if(!this.lastDeduction) return true
+    if(!this.lastDeduction) return true;
 
     const last_key = this.getKeyForRecipients(this.lastDeduction.recipients);
     return last_key != this.getKeyForRecipients(deduction.recipients);
