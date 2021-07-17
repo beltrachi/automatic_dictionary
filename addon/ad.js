@@ -561,11 +561,7 @@ AutomaticDictionary.Class.prototype = {
     method = (deduction && deduction.method) || null;
     this.logger.debug("Language found: "+ lang);
 
-    var recipients_changed = this.last_toandcc_key != toandcc_key
-    var nothing_changed = this.last_toandcc_key == toandcc_key &&
-        this.last_lang == lang;
-
-    if( !recipients_changed && this.last_lang == lang ){
+    if(!this.contextChangedSinceLast(deduction)){
       if((await this.getCurrentLang()) == lang){
         this.logger.debug("deduceLanguage detects that nothing changed");
         return;
@@ -577,7 +573,7 @@ AutomaticDictionary.Class.prototype = {
     if(!this.isBlank(lang)){
       try{
         await this.setCurrentLang( lang );
-        if( !nothing_changed ){
+        if( this.contextChangedSinceLast(deduction) ){
           await this.changeLabel("info", this.ft("deducedLang."+method, [lang]))
         }
       }catch( e ){
@@ -590,6 +586,14 @@ AutomaticDictionary.Class.prototype = {
     }
     this.last_lang = lang;
     this.last_toandcc_key = toandcc_key;
+    this.lastDeduction = deduction;
+  },
+
+  contextChangedSinceLast(deduction){
+    if(!this.lastDeduction) return true
+
+    const last_key = this.getKeyForRecipients(this.lastDeduction.recipients);
+    return last_key != this.getKeyForRecipients(deduction.recipients);
   },
 
   deferDeduceLanguage: function(opt){
