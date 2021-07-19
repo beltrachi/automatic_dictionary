@@ -37,10 +37,6 @@ import * as compose_window from './ad/compose_window.js';
 compose_window.apply(AutomaticDictionary);
 import * as compose_window_stub from './ad/compose_window_stub.js';
 compose_window_stub.apply(AutomaticDictionary);
-// import * as conversations_compose_window from './ad/conversations_compose_window.js';
-// conversations_compose_window.apply(AutomaticDictionary);
-import * as plugin_base from './ad/plugins/plugin_base.js';
-plugin_base.apply(AutomaticDictionary);
 
 import { LanguageDeducer } from './ad/language_deducer.js';
 
