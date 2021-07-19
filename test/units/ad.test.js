@@ -404,12 +404,10 @@ test('When error on change language', async (done) => {
                 });
             })
         });
-
-        // Only when language change is successful its shown to the user.
-        compose_window.changeLabel.mockImplementationOnce(() => {
+        ad.addEventListener('deduction-completed', function(){
             expect(status.lang).toBe('en');
             done();
-        })
+        });
 
         await ad.deduceLanguage();
     });
@@ -430,10 +428,9 @@ describe('deduce language when spellchecker is not ready', () => {
 
             compose_window.canSpellCheck.mockResolvedValueOnce(false);
 
-            // Only when language change is successful its shown to the user.
-            compose_window.changeLabel.mockImplementationOnce((text) => {
+            ad.addEventListener('deduction-completed', function(){
                 done();
-            })
+            });
 
             await ad.deduceLanguage();
         });
@@ -452,11 +449,9 @@ describe('deduce language when spellchecker is not ready', () => {
             mockComposeWindow(compose_window, status)
 
             compose_window.canSpellCheck.mockResolvedValue(false);
-            ad.logger.warn = jest.fn( (msg) => {
-                expect(msg).toContain('Stopped retrying')
+            ad.addEventListener('deduction-failed', function(){
                 done();
-            })
-            // Only when language change is successful its shown to the user.
+            });
 
             await ad.deduceLanguage();
         });

@@ -610,6 +610,7 @@ AutomaticDictionary.Class.prototype = {
         },300);
       }else{
         this.logger.warn("Stopped retrying deduceLanugage after 10 attempts")
+        this.dispatchEvent({type:"deduction-failed"});
       }
     }else{
       this.logger.warn("Addon is not running so it won't retry deduceLanguage");
