@@ -27,8 +27,7 @@ test('Ad overall performance', async (done) => {
             Performance on high data stored
         */
         //Load data in a user usage workflow
-        var size = 500,
-            i,recipients;
+        var size = 500, i;
         var sample_domains = [
             "google.com",
             "gmail.com",
@@ -52,16 +51,14 @@ test('Ad overall performance', async (done) => {
             status.lang = "lang"+(i%8);
             await ad.languageChanged();
         }
-
-        status.recipients = {"to":["username-123@gmail.com"],"cc":[""]};
-        await benchmark(5,
+        status.recipients = {"to":["username-123@gmail.com"], "cc": []};
+        await benchmark(20,
             async function(){
                 status.lang = 'lang3'
                 await ad.languageChanged();
             }
         );
-
-        await benchmark(5,
+        await benchmark(20,
             async function(){
                 await ad.deduceLanguage();
             }

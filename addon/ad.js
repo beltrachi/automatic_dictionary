@@ -403,7 +403,7 @@ AutomaticDictionary.Class.prototype = {
       return;
     }
     var context = this.deducer.buildContext();
-    if (current_lang == this.last_lang && this.contextChangedSinceLast(context)){
+    if (current_lang == this.last_lang && !this.contextChangedSinceLast(context)){
       this.logger.debug('Same language and recipients as before '+current_lang);
       return;
     }
