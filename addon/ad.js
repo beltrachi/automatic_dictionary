@@ -97,10 +97,9 @@ AutomaticDictionary.Class = function(options, callback){
 
     // Count the number of times it has been initialized.
     _this.storage.inc('stats.usages');
-
     _this.dispatchEvent({ type: "load" });
 
-    // Set right language, for reply scenarios.
+    // When replying, set the right language
     if (options.deduceOnLoad) {
       setTimeout(function () { _this.deduceLanguage(); }, 1000);
     }
