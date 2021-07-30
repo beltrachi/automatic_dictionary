@@ -30,6 +30,27 @@ test('Initial boot', async (done) => {
     });
 });
 
+test('All instances share the same data objects', async (done) => {
+    var ad = new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        var other_ad = new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            logLevel: 'error',
+            deduceOnLoad: false
+        }, async (other_ad) => {
+            expect(ad.data).toStrictEqual(other_ad.data)
+            expect(ad.freq_suffix).toStrictEqual(other_ad.freq_suffix)
+
+            done()
+        });
+    });
+});
+
 test('Shutdown shuts down existing instances', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
