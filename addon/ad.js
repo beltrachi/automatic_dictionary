@@ -84,17 +84,10 @@ AutomaticDictionary.Class = function(options, callback){
   this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function(msg){
     console.info(msg);
   });
-  if( this.window && this.window.id ){
-    this.logger.addFilter(function(msg) {
-      return "WindowId=" + _this.window.id + " " + msg;
-    });
-  }
   this.logger.debug("ad: init");
 
   this.running = true;
   var _this = this;
-
-
 
   // Prepare dependencies (storage?)
   _this.prefManager = LegacyPrefManager(browser, _this.defaults, _this.logger, _this.pref_prefix);
