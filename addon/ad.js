@@ -35,6 +35,7 @@ import * as compose_window_stub from './ad/compose_window_stub.js';
 compose_window_stub.apply(AutomaticDictionary);
 
 import { LanguageDeducer } from './ad/language_deducer.js';
+import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
 
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
   console.info(msg);
@@ -100,53 +101,52 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
   this.running = true;
   var _this = this;
   this.deducer = new LanguageDeducer(this);
-  this.getPrefManagerWrapperAsync().then(function(pm){
-    _this.prefManager = pm;
-    _this.storage = _this.getStorage();
-    //Version migrations upgrade check
-    _this.migrate().then(function(){
-      _this.logLevel().then(function(level){
-        level = options.logLevel || level;
-        AutomaticDictionary.logger.setLevel(level);
-        _this.logger.setLevel(level);
-      });
-      if ( _this.window ) {
-        browser.windows.onRemoved.addListener(function(windowId){
-          if (_this.window.id != windowId){
-            _this.logger.debug("Not this window closed");
-            return;
-          }
-          _this.logger.debug("Shutting down ad on this window");
-          _this.shutdown();
-        });
-      }
-      var cw_builder = options.compose_window_builder;
-      _this.compose_window = new cw_builder(
-        {
-          ad: _this,
-          name: _this.name,
-          logo_url: browser.runtime.getURL(_this.logo_image),
-          notification_time: _this.notification_time_ms,
-          logger: _this.logger,
-          window: window
-        }
-      );
-      //Heuristic init
-      _this.logger.info("before initialize data");
-      _this.initializeData();
-      _this.setListeners();
-      _this.initialized = true;
-      _this.initFreqSuffix();
 
-      // Count the number of times it has been initialized.
-      _this.storage.inc('stats.usages');
-      _this.setShutdown();
-      _this.start();
-      _this.dispatchEvent({type:"load"});
-      // Set right language, for reply scenarios.
-      if(options.deduceOnLoad) { setTimeout(function(){ _this.deduceLanguage(); },1000); }
-    }).then(() => callback(_this)).catch(console.error);
-  }).catch(console.error);
+  _this.prefManager = LegacyPrefManager(browser, _this.defaults, _this.logger, _this.pref_prefix);
+  _this.storage = _this.getStorage();
+  //Version migrations upgrade check
+  _this.migrate().then(function () {
+    _this.logLevel().then(function (level) {
+      level = options.logLevel || level;
+      AutomaticDictionary.logger.setLevel(level);
+      _this.logger.setLevel(level);
+    });
+    if (_this.window) {
+      browser.windows.onRemoved.addListener(function (windowId) {
+        if (_this.window.id != windowId) {
+          _this.logger.debug("Not this window closed");
+          return;
+        }
+        _this.logger.debug("Shutting down ad on this window");
+        _this.shutdown();
+      });
+    }
+    var cw_builder = options.compose_window_builder;
+    _this.compose_window = new cw_builder(
+      {
+        ad: _this,
+        name: _this.name,
+        logo_url: browser.runtime.getURL(_this.logo_image),
+        notification_time: _this.notification_time_ms,
+        logger: _this.logger,
+        window: window
+      }
+    );
+    //Heuristic init
+    _this.logger.info("before initialize data");
+    _this.initializeData();
+    _this.setListeners();
+    _this.initialized = true;
+    _this.initFreqSuffix();
+
+    // Count the number of times it has been initialized.
+    _this.storage.inc('stats.usages');
+    _this.setShutdown();
+    _this.start();
+    _this.dispatchEvent({ type: "load" });
+    // Set right language, for reply scenarios.
+    if (options.deduceOnLoad) { setTimeout(function () { _this.deduceLanguage(); }, 1000); }
+  }).then(() => callback(_this)).catch(console.error);
 
   this.iter = 0; //ObserveRecipients execution counter
 }
@@ -200,91 +200,6 @@ AutomaticDictionary.Class.prototype = {
     if( this.running ) return; //Already started
     this.logger.debug("ad: start");
     this.running = true;
-  },
-  getPrefManagerWrapperAsync: async function(){
-    var pm = browser.prefs;
-    var defaults = this.defaults;
-    var _this = this;
-    var logger = this.logger;
-    var prefix = this.pref_prefix;
-    var orDefault = async function(k,func){
-      var full_key = prefix + k;
-      try{
-        var value = await func();
-        if(value == null){
-          _this.logger.debug("key was null and we return defaults "+k);
-          value = defaults[full_key];
-        }
-      }catch(e){
-        value = defaults[full_key];
-      }
-      return value;
-    };
-    var getType = function(val,key){
-      if((typeof val)== "undefined"){
-        //Set type to default type
-        val = defaults[prefix + key];
-      }
-      var map = {
-        "boolean":"Bool",
-        "number":"Int",
-        "string":"Char"
-      };
-      var res = map[(typeof val)] || "Char"; //Char by default
-      logger.debug("getType for "+key+" is "+res );
-      return res;
-    }
-    var ifce = {
-      instance: pm,
-      //Direct and unsecure
-      set: async function(key,val){
-        return await pm["set"+getType(val,key)+"Pref"](key,val);
-      },
-      //We give value to discover type
-      get: async function(key,val){
-        logger.info("get char pref");
-        logger.info(key);
-        logger.info(val);
-        val = val || defaults[prefix + key];
-        if (typeof(val) == "undefined"){
-          return await pm["get"+getType(val,key)+"Pref"](key);
-        }else{
-          return await pm["get"+getType(val,key)+"Pref"](key,val);
-        }
-      },
-      get_or_raise: async function(key,val){
-        return await pm["get"+getType(val,key)+"Pref"](key);
-      },
-      //getters with fallback to defaults
-      getCharPref:async function(k,v){
-        return await orDefault(k, async function(){return await pm.getCharPref(k,v)});
-      },
-      getIntPref: async function(k,v){
-        return await orDefault(k, async function(){return await pm.getIntPref(k,v)});
-      },
-      getBoolPref: async function(k,v){
-        return await orDefault(k, async function(){return await pm.getBoolPref(k,v)});
-      },
-      setCharPref: async function(k,v){
-        return await pm.setCharPref(k,v);
-      },
-      setIntPref: async function(k,v){
-        return await pm.setIntPref(k,v)
-      },
-      setBoolPref: async function(k,v){
-        return await pm.setBoolPref(k,v);
-      },
-      inc: async function(key, delta){
-        logger.debug("increasing "+key);
-        delta = delta || 1;
-        var v = await ifce.getIntPref(key);
-        v = (1 * (v||0)) + delta;
-        var res = await pm.setIntPref(key,v);
-        logger.debug("up to "+ v);
-        return res;
-      }
-    };
-    return ifce;
   },
   getStorage: function(){
     var storage = browser.storage.local;
