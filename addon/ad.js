@@ -80,80 +80,31 @@ AutomaticDictionary.Class = function(options, callback){
   AutomaticDictionary.instances.push(this);
   this.window = options.window;
   this.shutdown_chain = [];
-  var _this = this;
   this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function(msg){
     console.info(msg);
   });
   this.logger.debug("ad: init");
-
   this.running = true;
+
+  this.setupDependencies();
+
   var _this = this;
-
-  // Prepare dependencies (storage?)
-  _this.prefManager = LegacyPrefManager(browser, _this.defaults, _this.logger, _this.pref_prefix);
-  _this.storage = _this.getStorage();
-
-  // Run migrations
-  _this.migrate().then(function () {
-
-    _this.logLevel().then(function (level) {
-      level = options.logLevel || level;
-      AutomaticDictionary.logger.setLevel(level);
-      _this.logger.setLevel(level);
-    });
-
-    // Prepare data structures
-    if(AutomaticDictionary.instances[AutomaticDictionary.instances.length - 1]){
-      // Singleton on data structures
-      var instance = AutomaticDictionary.instances[0]
-      _this.data = instance.data;
-      _this.freq_suffix = instance.freq_suffix;
-    }
-    //Heuristic init
-    _this.logger.info("before initialize data");
-    _this.initializeData();
-    _this.initialized = true;
-    _this.initFreqSuffix();
-
-    // Prepare Services (Deducer, etc)
-    var cw_builder = options.compose_window_builder;
-    _this.compose_window = new cw_builder(
-      {
-        ad: _this,
-        name: _this.name,
-        logo_url: browser.runtime.getURL(_this.logo_image),
-        notification_time: _this.notification_time_ms,
-        logger: _this.logger,
-        window: window
-      }
-    );
-    _this.setListeners();
-    _this.deducer = new LanguageDeducer(_this);
-
-    // Shutdown the addon instance when window is removed.
-    if (_this.window) {
-      browser.windows.onRemoved.addListener(function (windowId) {
-        if (_this.window.id != windowId) {
-          _this.logger.debug("Not this window closed");
-          return;
-        }
-        _this.logger.debug("Shutting down ad on this window");
-        _this.shutdown();
-      });
-    }
+  this.migrate().then(function () {
+    _this.setLogLevelFromConfig(options.logLevel);
+    _this.prepareDataStructures();
+    _this.prepareServices(options.compose_window_builder);
     _this.setShutdown();
 
     // Count the number of times it has been initialized.
     _this.storage.inc('stats.usages');
 
     _this.dispatchEvent({ type: "load" });
-    // End
 
     // Set right language, for reply scenarios.
-    if (options.deduceOnLoad) { setTimeout(function () { _this.deduceLanguage(); }, 1000); }
+    if (options.deduceOnLoad) {
+      setTimeout(function () { _this.deduceLanguage(); }, 1000);
+    }
   }).then(() => callback(_this)).catch(console.error);
-
-  this.iter = 0; //ObserveRecipients execution counter
 }
 
 AutomaticDictionary.Class.prototype = {
@@ -559,6 +510,49 @@ AutomaticDictionary.Class.prototype = {
     }
   },
 
+  setupDependencies: function(){
+    this.prefManager = LegacyPrefManager(browser, this.defaults, this.logger, this.pref_prefix);
+    this.storage = this.getStorage();
+  },
+
+  prepareDataStructures: function(){
+    if(AutomaticDictionary.instances[AutomaticDictionary.instances.length - 1]){
+      // Singleton on data structures
+      var instance = AutomaticDictionary.instances[0]
+      this.data = instance.data;
+      this.freq_suffix = instance.freq_suffix;
+    }
+    this.logger.info("before initialize data");
+    this.initializeData();
+    this.initialized = true;
+    this.initFreqSuffix();
+  },
+
+  prepareServices: function(compose_window_builder){
+    var cw_builder = compose_window_builder;
+    this.compose_window = new cw_builder(
+      {
+        ad: this,
+        name: this.name,
+        logo_url: browser.runtime.getURL(this.logo_image),
+        notification_time: this.notification_time_ms,
+        logger: this.logger,
+        window: window
+      }
+    );
+    this.setListeners();
+    this.deducer = new LanguageDeducer(this);
+  },
+
+  setLogLevelFromConfig: function(optionsLogLevel){
+    var _this = this;
+    this.logLevel().then(function (configurationLogLevel) {
+      const level = optionsLogLevel || configurationLogLevel;
+      AutomaticDictionary.logger.setLevel(level);
+      _this.logger.setLevel(level);
+    });
+  },
+
   //Take care as this language is globally set.
   getCurrentLang: function(){
     return this.compose_window.getCurrentLang();
@@ -615,8 +609,19 @@ AutomaticDictionary.Class.prototype = {
     return this.storage.get(this.LOG_LEVEL);
   },
 
-  setShutdown:function(){
+  setShutdown: function(){
     var _this = this;
+    // Shutdown the addon instance when window is removed.
+    if (this.window) {
+      browser.windows.onRemoved.addListener(function (windowId) {
+        if (_this.window.id != windowId) {
+          _this.logger.debug("Not this window closed");
+          return;
+        }
+        _this.logger.debug("Shutting down ad on this window");
+        _this.shutdown();
+      });
+    }
     this.shutdown_chain.push(function(){
       _this.stop();
       _this.logger.debug("Shutdown instance call");
