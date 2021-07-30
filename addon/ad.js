@@ -52,12 +52,6 @@ AutomaticDictionary.logException = function( e ){
   }
 };
 
-AutomaticDictionary.conversations_windows = [];
-//Triggered when a conversations is deteccted
-AutomaticDictionary.conversationsDetected = function(){
-  AutomaticDictionary.ConversationsComposeWindow.fetchWindowAndInit(AutomaticDictionary.main_window);
-};
-
 //Shuts down all instances
 AutomaticDictionary.shutdown = function(){
   this.logger.debug("Shutdown class call");
