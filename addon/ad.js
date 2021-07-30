@@ -70,21 +70,16 @@ AutomaticDictionary.shutdown = function(){
 //To unload observers
 AutomaticDictionary.instances = [];
 
-AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
+AutomaticDictionary.Class = function(options, callback){
+  // Parameters setup
   callback = callback || function(){};
   options = options || {};
   if( typeof(options.deduceOnLoad) == "undefined") options.deduceOnLoad = true;
 
-  if(AutomaticDictionary.instances[AutomaticDictionary.instances.length - 1]){
-    // Singleton on data structures
-    var instance = AutomaticDictionary.instances[0]
-    this.data = instance.data;
-    this.freq_suffix = instance.freq_suffix;
-  }
-
+  // Basic initialization
   AutomaticDictionary.instances.push(this);
-
   this.window = options.window;
+  this.shutdown_chain = [];
   var _this = this;
   this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function(msg){
     console.info(msg);
@@ -96,31 +91,38 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
   }
   this.logger.debug("ad: init");
 
-  this.shutdown_chain = [];
-
   this.running = true;
   var _this = this;
-  this.deducer = new LanguageDeducer(this);
 
+
+
+  // Prepare dependencies (storage?)
   _this.prefManager = LegacyPrefManager(browser, _this.defaults, _this.logger, _this.pref_prefix);
   _this.storage = _this.getStorage();
-  //Version migrations upgrade check
+
+  // Run migrations
   _this.migrate().then(function () {
+
     _this.logLevel().then(function (level) {
       level = options.logLevel || level;
       AutomaticDictionary.logger.setLevel(level);
       _this.logger.setLevel(level);
     });
-    if (_this.window) {
-      browser.windows.onRemoved.addListener(function (windowId) {
-        if (_this.window.id != windowId) {
-          _this.logger.debug("Not this window closed");
-          return;
-        }
-        _this.logger.debug("Shutting down ad on this window");
-        _this.shutdown();
-      });
+
+    // Prepare data structures
+    if(AutomaticDictionary.instances[AutomaticDictionary.instances.length - 1]){
+      // Singleton on data structures
+      var instance = AutomaticDictionary.instances[0]
+      _this.data = instance.data;
+      _this.freq_suffix = instance.freq_suffix;
     }
+    //Heuristic init
+    _this.logger.info("before initialize data");
+    _this.initializeData();
+    _this.initialized = true;
+    _this.initFreqSuffix();
+
+    // Prepare Services (Deducer, etc)
     var cw_builder = options.compose_window_builder;
     _this.compose_window = new cw_builder(
       {
@@ -132,18 +134,28 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
         window: window
       }
     );
-    //Heuristic init
-    _this.logger.info("before initialize data");
-    _this.initializeData();
     _this.setListeners();
-    _this.initialized = true;
-    _this.initFreqSuffix();
+    _this.deducer = new LanguageDeducer(_this);
+
+    // Shutdown the addon instance when window is removed.
+    if (_this.window) {
+      browser.windows.onRemoved.addListener(function (windowId) {
+        if (_this.window.id != windowId) {
+          _this.logger.debug("Not this window closed");
+          return;
+        }
+        _this.logger.debug("Shutting down ad on this window");
+        _this.shutdown();
+      });
+    }
+    _this.setShutdown();
 
     // Count the number of times it has been initialized.
     _this.storage.inc('stats.usages');
-    _this.setShutdown();
-    _this.start();
+
     _this.dispatchEvent({ type: "load" });
+    // End
+
     // Set right language, for reply scenarios.
     if (options.deduceOnLoad) { setTimeout(function () { _this.deduceLanguage(); }, 1000); }
   }).then(() => callback(_this)).catch(console.error);
