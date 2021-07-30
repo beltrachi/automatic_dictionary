@@ -1,9 +1,5 @@
 let AutomaticDictionary = {};
 
-AutomaticDictionary.Plugins = {};
-
-AutomaticDictionary.enabled_plugins = [];
-
 //Window managers are objects that attach to the windows that have the compose
 //window to compose mails
 AutomaticDictionary.window_managers = [];
@@ -105,7 +101,6 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
   }
   this.logger.debug("ad: init");
 
-  this.initPlugins();
   this.shutdown_chain = [];
 
   this.running = true;
@@ -153,7 +148,6 @@ AutomaticDictionary.Class = function(options, callback, deduce_on_load = true){
       _this.storage.inc('stats.usages');
       _this.setShutdown();
       _this.start();
-      //Useful hook for plugins and so on
       _this.dispatchEvent({type:"load"});
       // Set right language, for reply scenarios.
       if(options.deduceOnLoad) { setTimeout(function(){ _this.deduceLanguage(); },1000); }
@@ -735,20 +729,6 @@ AutomaticDictionary.Class.prototype = {
         await this.storage.set(k,this.defaults[k]);
       }
     }
-  },
-
-  initPlugins: function(){
-    var list = AutomaticDictionary.enabled_plugins;
-    for(var x=0; x< list.length; x++){
-      var plugin = list[x];
-      try{
-        plugin.init(this);
-      }catch(e){
-        this.logger.error("Plugin init error");
-        AutomaticDictionary.logException(e);
-      }
-    }
-    this.dispatchEvent({type:"plugins-initialized"});
   }
 };
 
