@@ -515,7 +515,7 @@ AutomaticDictionary.Class.prototype = {
   },
 
   prepareDataStructures: function(){
-    if(AutomaticDictionary.instances[AutomaticDictionary.instances.length - 1]){
+    if(AutomaticDictionary.instances[0]){
       // Singleton on data structures
       var instance = AutomaticDictionary.instances[0]
       this.data = instance.data;
