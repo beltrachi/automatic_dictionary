@@ -230,19 +230,7 @@ AutomaticDictionary.Class.prototype = {
     });
   },
 
-  //Called when the user changes the language of the dictionary (event based func)
-  /*
-    Repensar el comportament, ja que quan assignes dict i tens ccs posats, potser no vols
-    setejera els tos sols sino només en el cas de que tinguis aquells CCs!!
-
-    Per tant quan assignis als TOs, si també tens CCs, només assignaras als TOs si no tenien valor..
-
-    si ccs.size > 0
-    only_set_if_no_value = true
-    fi
-    .....
-  */
-
+  // Called when the user changes the language of the dictionary
   languageChanged: async function(){
     this.logger.debug("languageChanged call");
 
