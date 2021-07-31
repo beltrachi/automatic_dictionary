@@ -1,13 +1,12 @@
-export function apply(AutomaticDictionary){
-AutomaticDictionary.Lib.FreqTable = function(){
+export const FreqTable = function(){
     //Nodes by key
     this.nodes = {};
     this.first = null; //Bigger counters / more freq
     this.last = null;
-    this.node_type = AutomaticDictionary.Lib.FreqTableNode;
+    this.node_type = FreqTableNode;
 };
 
-AutomaticDictionary.Lib.FreqTable.prototype = {
+FreqTable.prototype = {
     add:function(value){
         //logger.debug("Freq table BEFORE ADD IS "+this.printOrder());
         var node = this.nodes[value];
@@ -92,14 +91,14 @@ AutomaticDictionary.Lib.FreqTable.prototype = {
     }
 };
 //This is a priority queue
-AutomaticDictionary.Lib.FreqTableNode = function(key, count){
+const FreqTableNode = function(key, count){
     this.count = count || 0;
     this.prev = null;
     this.next = null;
     this.key = key;
 };
 
-AutomaticDictionary.Lib.FreqTableNode.prototype = {
+FreqTableNode.prototype = {
     //Increases counter and moves upward if necessary.
     inc: function(){
         var p, aux, _this = this;
@@ -146,7 +145,7 @@ AutomaticDictionary.Lib.FreqTableNode.prototype = {
         if( this.prev ){
             this.prev.next = this.next;
             this.prev = null;
-        }        
+        }
     },
     //The node is setted before this (this.prev is node)
     insertBefore:function(node){
@@ -170,9 +169,9 @@ AutomaticDictionary.Lib.FreqTableNode.prototype = {
     },
     toString:function(){
         return {
-            key: this.key, 
-            count:this.count, 
-            next: this.next, 
+            key: this.key,
+            count:this.count,
+            next: this.next,
             prev:this.prev
         }.toSource();
     },
@@ -195,5 +194,4 @@ AutomaticDictionary.Lib.FreqTableNode.prototype = {
         }
         return p;
     }
-}
 }

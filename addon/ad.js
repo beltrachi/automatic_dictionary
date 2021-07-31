@@ -17,8 +17,9 @@ import * as persistent_object from './lib/persistent_object.js';
 persistent_object.apply(AutomaticDictionary);
 import * as pair_counter from './lib/pair_counter.js';
 pair_counter.apply(AutomaticDictionary);
-import * as freq_table from './lib/freq_table.js';
-freq_table.apply(AutomaticDictionary);
+
+import { FreqTable } from "./lib/freq_table";
+
 import * as freq_suffix from './lib/freq_suffix.js';
 freq_suffix.apply(AutomaticDictionary);
 import { apply as apply_shutdownable } from './lib/shutdownable.js';
@@ -462,7 +463,7 @@ AutomaticDictionary.Class.prototype = {
   //Tries to guess by other recipients domains
   heuristic_guess: async function(recipients){
     var recipient, parts, rightside, lang,
-        freq_table = new AutomaticDictionary.Lib.FreqTable();
+        freq_table = new FreqTable();
     for(var i=0; i < recipients.length; i++){
       recipient = recipients[i];
       parts = recipient.split("@");

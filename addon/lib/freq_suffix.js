@@ -1,3 +1,5 @@
+import { FreqTable } from "./../../addon/lib/freq_table";
+
 export function apply(AutomaticDictionary) {
 /*
  *  A FreqSuffix is a structure that can store a mapping of
@@ -129,7 +131,7 @@ export function apply(AutomaticDictionary) {
   };
   AutomaticDictionary.Lib.FreqSuffix.TreeNode = function(key){
     this.key = key;
-    this.values = new AutomaticDictionary.Lib.FreqTable();
+    this.values = new FreqTable();
     this.nodes = {};
     this.node_type = AutomaticDictionary.Lib.FreqSuffix.TreeNode;
   };

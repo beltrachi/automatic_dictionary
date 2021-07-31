@@ -1,10 +1,7 @@
-var AutomaticDictionary = { Lib: {} };
-
-import { apply as freq_table_apply } from "./../../addon/lib/freq_table";
-freq_table_apply(AutomaticDictionary);
+import { FreqTable } from "./../../addon/lib/freq_table";
 
 test('FreqTable', () => {
-  var ft = new AutomaticDictionary.Lib.FreqTable();
+  var ft = new FreqTable();
   expect(ft.getFirst()).toBeNull();
 
   ft.add("a");

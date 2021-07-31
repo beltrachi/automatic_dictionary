@@ -4,9 +4,6 @@ import { benchmark } from '../helpers/ad_test_helper.js'
 var AutomaticDictionary = { Lib: {} };
 apply(AutomaticDictionary);
 
-import { apply as freq_table_apply } from "./../../addon/lib/freq_table";
-freq_table_apply(AutomaticDictionary);
-
 import { apply as pair_counter_apply } from "./../../addon/lib/pair_counter";
 pair_counter_apply(AutomaticDictionary);
 
