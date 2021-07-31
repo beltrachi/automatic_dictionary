@@ -1,16 +1,10 @@
-import { apply } from "./../../addon/lib/freq_suffix";
+import { FreqSuffix } from "./../../addon/lib/freq_suffix";
 import { benchmark } from '../helpers/ad_test_helper.js'
-
-var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
-
-import { apply as pair_counter_apply } from "./../../addon/lib/pair_counter";
-pair_counter_apply(AutomaticDictionary);
 
 test('FreqSuffix', async (done) => {
 
     var amount = 1000;
-    var obj = new AutomaticDictionary.Lib.FreqSuffix({})
+    var obj = new FreqSuffix({})
     //Realistic write!
     // A distribution of very variable a, not so on b and less on c.
     await benchmark(100, function freq_suffix_test_write(){

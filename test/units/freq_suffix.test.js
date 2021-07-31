@@ -1,13 +1,7 @@
-import { apply } from "./../../addon/lib/freq_suffix";
-
-var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
-
-import { apply as pair_counter_apply } from "./../../addon/lib/pair_counter";
-pair_counter_apply(AutomaticDictionary);
+import { FreqSuffix } from "./../../addon/lib/freq_suffix";
 
 test('FreqSuffix', () => {
-    var obj = new AutomaticDictionary.Lib.FreqSuffix({});
+    var obj = new FreqSuffix({});
     obj.add("foo.com","X");
     obj.add("abc.com","X");
     obj.add("xyz.com","Y");
@@ -51,7 +45,7 @@ test('FreqSuffix', () => {
 
 
     //Builder
-    var obj2 = new AutomaticDictionary.Lib.FreqSuffix([
+    var obj2 = new FreqSuffix([
         ["a1.com","en"],
         ["a2.com","en"],
         ["a3.it","it"]
@@ -64,7 +58,7 @@ test('FreqSuffix', () => {
     //Serialize tests
     var str = obj2.toJSON();
     //reset obj2
-    obj2 = new AutomaticDictionary.Lib.FreqSuffix();
+    obj2 = new FreqSuffix();
 
     obj2.fromJSON(str);
 

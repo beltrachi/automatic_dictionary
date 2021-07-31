@@ -3,8 +3,7 @@
 // but O(n) on create.
 //
 // @param assignments an array with [key,value,counter] or null
-export function apply(AutomaticDictionary) {
-AutomaticDictionary.Lib.PairCounter = function(assignments){
+export const PairCounter = function(assignments){
     this.data = {};
     assignments = assignments || [];
     var aux, i;
@@ -13,7 +12,7 @@ AutomaticDictionary.Lib.PairCounter = function(assignments){
         this.set(aux[0],aux[1],aux[2]);
     }
 };
-AutomaticDictionary.Lib.PairCounter.prototype = {
+PairCounter.prototype = {
     data:{},
     add:function(key, value){
         var k = this.stringifyPair(key,value);
@@ -55,4 +54,3 @@ AutomaticDictionary.Lib.PairCounter.prototype = {
         return out;
     }
 };
-}

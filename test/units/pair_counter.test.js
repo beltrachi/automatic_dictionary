@@ -1,13 +1,9 @@
 
-import { apply } from "./../../addon/lib/pair_counter";
-
-var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
-
+import { PairCounter } from "./../../addon/lib/pair_counter";
 
 test('PairCounter', () => {
     //Test assignmentCounter structure
-    var as = new AutomaticDictionary.Lib.PairCounter();
+    var as = new PairCounter();
 
     as.add("a","b");
     as.add("a","b");
@@ -17,7 +13,7 @@ test('PairCounter', () => {
     expect(as.getFreq("xx","y")).toBe(1)
     expect(as.getFreq("xx","b")).toBe(0)
 
-    var as2 = new AutomaticDictionary.Lib.PairCounter(
+    var as2 = new PairCounter(
         as.pairsWithCounter());
 
     expect(as.getFreq("a","b")).toBe(2)

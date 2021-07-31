@@ -15,13 +15,10 @@ import * as lru_hash_v2 from './lib/lru_hash_v2.js';
 lru_hash_v2.apply(AutomaticDictionary);
 import * as persistent_object from './lib/persistent_object.js';
 persistent_object.apply(AutomaticDictionary);
-import * as pair_counter from './lib/pair_counter.js';
-pair_counter.apply(AutomaticDictionary);
 
 import { FreqTable } from "./lib/freq_table";
+import { FreqSuffix } from "./lib/freq_suffix";
 
-import * as freq_suffix from './lib/freq_suffix.js';
-freq_suffix.apply(AutomaticDictionary);
 import { apply as apply_shutdownable } from './lib/shutdownable.js';
 apply_shutdownable(AutomaticDictionary);
 import * as logger from './lib/logger.js';
@@ -219,7 +216,7 @@ AutomaticDictionary.Class.prototype = {
         loader:"fromJSON"
       },
       function(){
-        return new AutomaticDictionary.Lib.FreqSuffix();
+        return new FreqSuffix();
       }
     );
     this.freq_suffix = persistent_wrapper;
