@@ -15,8 +15,6 @@ import * as lru_hash_v2 from './lib/lru_hash_v2.js';
 lru_hash_v2.apply(AutomaticDictionary);
 
 import { PersistentObject } from './lib/persistent_object.js'
-import { FreqTable } from "./lib/freq_table.js";
-import { FreqSuffix } from "./lib/freq_suffix.js";
 
 import { apply as apply_shutdownable } from './lib/shutdownable.js';
 apply_shutdownable(AutomaticDictionary);
@@ -33,6 +31,7 @@ compose_window_stub.apply(AutomaticDictionary);
 
 import { LanguageDeducer } from './ad/language_deducer.js';
 import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
+import { DomainHeuristic } from './lib/domain_heuristic.js';
 
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
   console.info(msg);
@@ -202,30 +201,6 @@ AutomaticDictionary.Class.prototype = {
     );
     this.data = persistent_wrapper;
   },
-  initFreqSuffix: function(){
-    if (this.freq_suffix) return;
-    //Build the object that will manage the storage for the object
-    var persistent_wrapper = new PersistentObject(
-      this.FREQ_TABLE_KEY,
-      this.storage,
-      {
-        read:["get","pairs"],
-        write:["add","remove"],
-        serializer: "toJSON",
-        loader:"fromJSON"
-      },
-      function(){
-        return new FreqSuffix();
-      }
-    );
-    this.freq_suffix = persistent_wrapper;
-    var _this = this;
-    this.data.setExpirationCallback(function(pair){
-      if (_this.keyIsSingle(pair[0])){
-        _this.remove_heuristic(pair[0],pair[1]);
-      }
-    });
-  },
 
   // Called when the user changes the language of the dictionary
   languageChanged: async function(){
@@ -302,14 +277,14 @@ AutomaticDictionary.Class.prototype = {
 
     if( this.isBlank(old) || force ){
       if( !this.isBlank(old) && is_single){
-        await this.remove_heuristic(key, old);
+        await this.domainHeuristic.removeHeuristic(key, old);
       }
 
       // Store it!
       await this.data.set(key, lang);
 
       if( is_single ){
-        await this.save_heuristic(key, lang);
+        await this.domainHeuristic.saveHeuristic(key, lang);
         stats.individuals++;
       }else{
         stats.groups++;
@@ -326,18 +301,6 @@ AutomaticDictionary.Class.prototype = {
     return key;
   },
 
-  // True when the key represents a single email
-  keyIsSingle: function(key){
-    let parts = key.split('[cc]');
-    let tos_size = parts[0].split(',').length;
-    let ccs_empty = parts.length == 1 || parts[1] == ""
-
-    if(tos_size == 1 && ccs_empty){
-      return true;
-    }
-    return false;
-  },
-
   // True when the value is something we consider nonData
   isBlank: function( value ){
     return ((typeof value) == "undefined" || value === "" ||value === null);
@@ -347,22 +310,6 @@ AutomaticDictionary.Class.prototype = {
     return JSON.stringify(values);
   },
 
-  save_heuristic: async function(recipient, lang){
-    this.logger.debug("saving heuristic for "+ recipient + " to "+ lang);
-    var parts = recipient.split("@");
-    if( parts[1] ){
-      await this.freq_suffix.add(parts[1], lang);
-    }
-    await this.freq_suffix.pairs();
-  },
-
-  remove_heuristic: async function(recipient, lang){
-    this.logger.debug("removing heuristic for "+ recipient + " to "+ lang);
-    var parts = recipient.split("@");
-    if( parts[1] ){
-      await this.freq_suffix.remove(parts[1], lang);
-    }
-  },
   // Updates the interface with the lang deduced from the recipients
   deduceLanguage: async function( opt ){
     if(!opt) opt = {};
@@ -458,19 +405,7 @@ AutomaticDictionary.Class.prototype = {
 
   //Tries to guess by other recipients domains
   heuristic_guess: async function(recipients){
-    var recipient, parts, rightside, lang,
-        freq_table = new FreqTable();
-    for(var i=0; i < recipients.length; i++){
-      recipient = recipients[i];
-      parts = recipient.split("@");
-      rightside = parts[parts.length-1];
-      this.logger.debug("Looking for heuristic for "+rightside);
-      lang = await this.freq_suffix.get(rightside,true);
-      if( lang ){
-        freq_table.add(lang);
-      }
-    }
-    return freq_table.getFirst();
+    return await this.domainHeuristic.heuristicGuess(recipients);
   },
 
   // It returns a string representing the array of recipients not caring about the order
@@ -504,12 +439,16 @@ AutomaticDictionary.Class.prototype = {
       // Singleton on data structures
       var instance = AutomaticDictionary.instances[0]
       this.data = instance.data;
-      this.freq_suffix = instance.freq_suffix;
+      this.domainHeuristic = instance.domainHeuristic;
     }
     this.logger.info("before initialize data");
     this.initializeData();
     this.initialized = true;
-    this.initFreqSuffix();
+    this.domainHeuristic = this.domainHeuristic || new DomainHeuristic(
+      this.storage,
+      this.data,
+      this.logger,
+      this.FREQ_TABLE_KEY)
   },
 
   prepareServices: function(compose_window_builder){

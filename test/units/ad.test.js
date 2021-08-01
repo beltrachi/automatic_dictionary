@@ -44,7 +44,7 @@ test('All instances share the same data objects', async (done) => {
             deduceOnLoad: false
         }, async (other_ad) => {
             expect(ad.data).toStrictEqual(other_ad.data)
-            expect(ad.freq_suffix).toStrictEqual(other_ad.freq_suffix)
+            expect(ad.domainHeuristic).toStrictEqual(other_ad.domainHeuristic)
 
             done()
         });
@@ -517,7 +517,7 @@ test('Heuristics', async (done) => {
         expect(status.lang).toBe('foobar');
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('deducedLang.guess')
         //Test it's saved
-        expect(await ad.freq_suffix.pairs()).toStrictEqual(
+        expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
             [["bar.dom", "foobar", 1]],
         );
 
@@ -531,7 +531,7 @@ test('Heuristics', async (done) => {
         // migrated from initial versions :facepalm: FIX IT
 
         //Max size is 5 but there is a key of all TOs composed which is the fifth position
-        expect(await ad.freq_suffix.pairs()).toStrictEqual(
+        expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
             [
                 ["bar2.dom", "foobar-x", 1], ["bar3.dom", "foobar-x", 1],
                 ["bar4.dom", "foobar-x", 1], ["bar5.dom", "foobar-x", 1]
@@ -546,7 +546,7 @@ test('Heuristics', async (done) => {
 
         await ad.deduceLanguage();
 
-        expect(await ad.freq_suffix.pairs()).toStrictEqual(
+        expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
             [
             ["bar3.dom", "foobar-x", 1],
             ["bar4.dom", "foobar-x", 1],
@@ -652,7 +652,7 @@ test('migration to fix freq-suffix data', async (done) => {
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
-        const pairs = await ad.freq_suffix.pairs();
+        const pairs = await ad.domainHeuristic.freq_suffix.pairs();
         expect(pairs).toStrictEqual(
             [
                 ["example.es", "es", 1],
