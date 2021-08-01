@@ -15,8 +15,8 @@ import * as lru_hash_v2 from './lib/lru_hash_v2.js';
 lru_hash_v2.apply(AutomaticDictionary);
 
 import { PersistentObject } from './lib/persistent_object.js'
-import { FreqTable } from "./lib/freq_table";
-import { FreqSuffix } from "./lib/freq_suffix";
+import { FreqTable } from "./lib/freq_table.js";
+import { FreqSuffix } from "./lib/freq_suffix.js";
 
 import { apply as apply_shutdownable } from './lib/shutdownable.js';
 apply_shutdownable(AutomaticDictionary);

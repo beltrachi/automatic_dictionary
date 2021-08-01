@@ -1,5 +1,5 @@
-import { FreqTable } from "./../../addon/lib/freq_table";
-import { PairCounter } from "./../../addon/lib/pair_counter";
+import { FreqTable } from "./freq_table.js";
+import { PairCounter } from "./pair_counter.js";
 
 /*
  *  A FreqSuffix is a structure that can store a mapping of
