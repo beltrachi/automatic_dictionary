@@ -38,79 +38,77 @@ p = new PersistentObject(
 **/
 
 
-export function apply(AutomaticDictionary) {
-  AutomaticDictionary.Lib.PersistentObject = function(storeKey,storage,options,constructor){
-    //To keep the object clean, all the inner code is kept on this scope and not
-    //on the prototype.
-    var params = {
-      key: storeKey,
-      options: options,
-      constructor: constructor,
-      storage: storage
-    };
-    var ifce = {
-      reload: async function(){
-        buildAsync().then(function(o){
-          obj = o
-        });
-      },
-      _object: async function(){
-        await objReady; return obj;
-      }
-    }
-    var obj, tmp, i;
-
-    function getData(){
-      return params.storage.get(params.key);
-    }
-
-    async function setData(){
-      var v = obj[params.options.serializer]();
-      return await params.storage.set(params.key,v);
-    }
-
-    async function buildAsync(){
-      var o = constructor();
-      if(o.then) o = await o; // Detect async constructor
-
-      var data = await getData();
-      if( data ){
-        o[params.options.loader](data);
-      }
-      return o;
-    }
-    var objReady = buildAsync().then(function(o){
-      obj = o
-    });
-
-    //Proxy methods
-    //
-    // Read methods
-    for(i=0; i < params.options.read.length; i++){
-      tmp = params.options.read[i];
-      //Double function to deattach the tmp from the loop.
-      //http://stackoverflow.com/questions/750486/javascript-closure-inside-loops-simple-practical-example
-      ifce[tmp] = (function(method){
-        return async function(){
-          await objReady;
-          return obj[method].apply(obj, arguments);
-        }
-      })(tmp);
-    }
-
-    //Write methods
-    for(i=0; i < params.options.write.length; i++){
-      tmp = params.options.write[i];
-
-      ifce[tmp] = (function(method){
-        return async function(){
-          var ret = obj[method].apply(obj,arguments);
-          //store change
-          await setData();
-          return ret;
-        };
-      })(tmp);
-    }
-    return ifce;
+export const PersistentObject = function (storeKey, storage, options, constructor) {
+  //To keep the object clean, all the inner code is kept on this scope and not
+  //on the prototype.
+  var params = {
+    key: storeKey,
+    options: options,
+    constructor: constructor,
+    storage: storage
   };
-}
+  var ifce = {
+    reload: async function () {
+      buildAsync().then(function (o) {
+        obj = o
+      });
+    },
+    _object: async function () {
+      await objReady; return obj;
+    }
+  }
+  var obj, tmp, i;
+
+  function getData() {
+    return params.storage.get(params.key);
+  }
+
+  async function setData() {
+    var v = obj[params.options.serializer]();
+    return await params.storage.set(params.key, v);
+  }
+
+  async function buildAsync() {
+    var o = constructor();
+    if (o.then) o = await o; // Detect async constructor
+
+    var data = await getData();
+    if (data) {
+      o[params.options.loader](data);
+    }
+    return o;
+  }
+  var objReady = buildAsync().then(function (o) {
+    obj = o
+  });
+
+  //Proxy methods
+  //
+  // Read methods
+  for (i = 0; i < params.options.read.length; i++) {
+    tmp = params.options.read[i];
+    //Double function to deattach the tmp from the loop.
+    //http://stackoverflow.com/questions/750486/javascript-closure-inside-loops-simple-practical-example
+    ifce[tmp] = (function (method) {
+      return async function () {
+        await objReady;
+        return obj[method].apply(obj, arguments);
+      }
+    })(tmp);
+  }
+
+  //Write methods
+  for (i = 0; i < params.options.write.length; i++) {
+    tmp = params.options.write[i];
+
+    ifce[tmp] = (function (method) {
+      return async function () {
+        var ret = obj[method].apply(obj, arguments);
+        //store change
+        await setData();
+        return ret;
+      };
+    })(tmp);
+  }
+  return ifce;
+};

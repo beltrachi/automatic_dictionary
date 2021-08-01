@@ -1,9 +1,8 @@
 
 import { TestScheduler } from "@jest/core";
-import { apply } from "./../../addon/lib/persistent_object";
+import { PersistentObject } from "./../../addon/lib/persistent_object";
 
 var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
 
 import { apply as apply_logger } from "./../../addon/lib/logger";
 
@@ -64,7 +63,7 @@ test("PersistentObject", async () => {
         };
     });
 
-    var p = new AutomaticDictionary.Lib.PersistentObject(
+    var p = new PersistentObject(
         "my_hash_data",
         store_object,
         {
@@ -107,7 +106,7 @@ test("PersistentObject", async () => {
 
     //Another instance gets the last value stored
 
-    var p2 = new AutomaticDictionary.Lib.PersistentObject(
+    var p2 = new PersistentObject(
         "my_hash_data",
         store_object,
         {

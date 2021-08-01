@@ -13,9 +13,8 @@ import * as sorted_set from './lib/sorted_set.js';
 sorted_set.apply(AutomaticDictionary);
 import * as lru_hash_v2 from './lib/lru_hash_v2.js';
 lru_hash_v2.apply(AutomaticDictionary);
-import * as persistent_object from './lib/persistent_object.js';
-persistent_object.apply(AutomaticDictionary);
 
+import { PersistentObject } from './lib/persistent_object.js'
 import { FreqTable } from "./lib/freq_table";
 import { FreqSuffix } from "./lib/freq_suffix";
 
@@ -184,7 +183,7 @@ AutomaticDictionary.Class.prototype = {
   initializeData: async function(){
     if(this.data) return;
     var _this = this;
-    var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
+    var persistent_wrapper = new PersistentObject(
       this.ADDRESS_INFO_KEY,
       this.storage,
       {
@@ -206,7 +205,7 @@ AutomaticDictionary.Class.prototype = {
   initFreqSuffix: function(){
     if (this.freq_suffix) return;
     //Build the object that will manage the storage for the object
-    var persistent_wrapper = new AutomaticDictionary.Lib.PersistentObject(
+    var persistent_wrapper = new PersistentObject(
       this.FREQ_TABLE_KEY,
       this.storage,
       {
