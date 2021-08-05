@@ -227,20 +227,11 @@ AutomaticDictionary.Class.prototype = {
       return;
     }
     this.last_lang_discarded = false;
-    var stats = {saved_recipients:0, groups:0, individuals:0};
+    var stats = {saved_recipients:0};
+
     await this.saveTos(context, current_lang, stats);
+    await this.saveTosAndCcs(context, current_lang, stats);
 
-    // Save a lang for tos and ccs
-    if( ccs.length > 0 ){
-      this.logger.debug("Enter cond 2");
-      await this.saveRecipientsToStructures({to:tos, cc:ccs}, current_lang, stats, {force:true});
-
-      // Add recipients alone if they are undefined
-      var curr = null;
-      for( var i = 0; i< ccs.length; i++ ){
-        await this.saveRecipientsToStructures({to:[ccs[i]]}, current_lang, stats);
-      }
-    }
     if( stats.saved_recipients > 0 ){
       if(this.deferredDeduceLanguage){
         this.deferredDeduceLanguage.stop();
@@ -279,6 +270,19 @@ AutomaticDictionary.Class.prototype = {
           // Save the lang only if it has no lang setted!
           await this.saveRecipientsToStructures({to:[tos[i]]}, lang, stats);
         }
+      }
+    }
+  },
+  saveTosAndCcs: async function(context, lang, stats){
+    // Save a lang for tos and ccs
+    const ccs = context.recipients.cc;
+    if (ccs.length > 0) {
+      this.logger.debug("Enter cond 2");
+      await this.saveRecipientsToStructures(context.recipients, lang, stats, { force: true });
+
+      // Add recipients alone if they are undefined
+      for (var i = 0; i < ccs.length; i++) {
+        await this.saveRecipientsToStructures({ to: [ccs[i]] }, lang, stats);
       }
     }
   },
