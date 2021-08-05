@@ -400,7 +400,7 @@ AutomaticDictionary.Class.prototype = {
   },
 
   //Tries to guess by other recipients domains
-  heuristic_guess: async function(recipients){
+  heuristicGuess: async function(recipients){
     return await this.domainHeuristic.heuristicGuess(recipients);
   },
 

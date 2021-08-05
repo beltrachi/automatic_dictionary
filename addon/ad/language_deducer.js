@@ -82,7 +82,7 @@ LanguageDeducer.prototype = {
   },
   guessFromTos: async function(context){
     if(await context.ad.allowHeuristic()){
-      const lang = await context.ad.heuristic_guess(context.recipients.to);
+      const lang = await context.ad.heuristicGuess(context.recipients.to);
       return buildDeduction(lang, Deduction.METHODS.GUESS, context);
     }
   }
