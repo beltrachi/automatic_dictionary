@@ -209,10 +209,6 @@ AutomaticDictionary.Class.prototype = {
     if( !this.running ) return;
     this.logger.debug("languageChanged call and running");
     var current_lang = await this.getCurrentLang();
-    var tos = await this.getRecipients();
-    var ccs = await this.getRecipients("cc");
-    this.logger.debug("tos are "+ tos.toString());
-    this.logger.debug("ccss are "+ ccs.toString());
     var maxRecipients = await this.getMaxRecipients();
 
     var context = await this.deducer.buildContext();
