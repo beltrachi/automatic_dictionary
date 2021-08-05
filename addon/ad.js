@@ -271,24 +271,20 @@ AutomaticDictionary.Class.prototype = {
   saveRecipientsToStructures: async function(recipients, lang, stats, options){
     options = options || {};
     var key = this.getKeyForRecipients(recipients);
-    var is_single = !recipients.cc && recipients.to.length == 1;
     var force = options.force;
-    var old = await this.data.get(key);
+    var previous_language = await this.getLangFor(key);
 
-    if( this.isBlank(old) || force ){
-      if( !this.isBlank(old) && is_single){
-        await this.domainHeuristic.removeHeuristic(key, old);
-      }
-
+    if( !previous_language || force ){
       // Store it!
       await this.data.set(key, lang);
+      this.dispatchEvent({
+        type: 'changed-recipient-language-assignment',
+        recipients: recipients,
+        recipients_key: key,
+        previous_language: previous_language,
+        language: lang
+      })
 
-      if( is_single ){
-        await this.domainHeuristic.saveHeuristic(key, lang);
-        stats.individuals++;
-      }else{
-        stats.groups++;
-      }
       stats.saved_recipients++;
     }
   },
@@ -357,7 +353,7 @@ AutomaticDictionary.Class.prototype = {
       }
     }
 
-    if(!this.isBlank(lang)){
+    if(lang){
       try{
         await this.setCurrentLang( lang );
         if( this.contextChangedSinceLast(deduction) ){
@@ -448,7 +444,8 @@ AutomaticDictionary.Class.prototype = {
       this.storage,
       this.data,
       this.logger,
-      this.FREQ_TABLE_KEY)
+      this.FREQ_TABLE_KEY,
+      this)
   },
 
   prepareServices: function(compose_window_builder){
@@ -485,8 +482,11 @@ AutomaticDictionary.Class.prototype = {
     return this.compose_window && await this.compose_window.canSpellCheck();
   },
 
-  getLangFor: function( addr ){
-    return this.data.get(addr);
+  getLangFor: async function( addr ){
+    var value = await this.data.get(addr);
+    if((typeof value) == "undefined" || value === "") value = null;
+
+    return Promise.resolve(value);
   },
 
   getRecipients: function( recipientType ){
