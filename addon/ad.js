@@ -214,32 +214,22 @@ AutomaticDictionary.Class.prototype = {
     this.logger.debug("tos are "+ tos.toString());
     this.logger.debug("ccss are "+ ccs.toString());
     var maxRecipients = await this.getMaxRecipients();
-    if( tos.length + ccs.length > maxRecipients ){
+
+    var context = await this.deducer.buildContext();
+    if( this.tooManyRecipients(context, maxRecipients) ){
       this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
       await this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
       this.last_lang_discarded = current_lang;
       return;
     }
-    var context = this.deducer.buildContext();
     if (current_lang == this.last_lang && !this.contextChangedSinceLast(context)){
       this.logger.debug('Same language and recipients as before '+current_lang);
       return;
     }
     this.last_lang_discarded = false;
     var stats = {saved_recipients:0, groups:0, individuals:0};
-    if( tos.length > 0 ){
-      this.logger.debug("Enter cond 1.x");
-      //The user has set the language for the recipients
-      //We update the assignment of language for those recipients
-      //We overwrite it if it's alone but not if it has CCs
-      await this.saveRecipientsToStructures({to:tos}, current_lang, stats, {force: tos.length > 1 || ccs.length == 0});
-      if (tos.length > 1){
-        for( var i in tos ){
-          // Save the lang only if it has no lang setted!
-          await this.saveRecipientsToStructures({to:[tos[i]]}, current_lang, stats);
-        }
-      }
-    }
+    await this.saveTos(context, current_lang, stats);
+
     // Save a lang for tos and ccs
     if( ccs.length > 0 ){
       this.logger.debug("Enter cond 2");
@@ -267,6 +257,31 @@ AutomaticDictionary.Class.prototype = {
     }
   },
 
+  tooManyRecipients: function(context, maxRecipients){
+    return context.recipients.to.length + context.recipients.cc.length > maxRecipients
+  },
+
+  saveTos: async function(context, lang, stats){
+    const tos = context.recipients.to;
+
+    if( tos.length > 0 ){
+      this.logger.debug("Enter cond 1.x");
+      //The user has set the language for the recipients
+      //We update the assignment of language for those recipients
+      //We overwrite it if it's alone but not if it has CCs
+      const more_than_one = tos.length > 1
+      const empty_cc = context.recipients.cc.length == 0
+      const force = more_than_one || empty_cc;
+      await this.saveRecipientsToStructures({to: tos}, lang, stats,
+        {force: force});
+      if (tos.length > 1){
+        for( var i in tos ){
+          // Save the lang only if it has no lang setted!
+          await this.saveRecipientsToStructures({to:[tos[i]]}, lang, stats);
+        }
+      }
+    }
+  },
   // @param recipients [Hash] with "to" and "cc" keys
   saveRecipientsToStructures: async function(recipients, lang, stats, options){
     options = options || {};
