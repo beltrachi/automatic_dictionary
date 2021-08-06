@@ -511,6 +511,7 @@ test('Heuristics', async (done) => {
         status.lang = 'foobar';
         await ad.languageChanged();
 
+        status.lang = 'other';
         status.recipients = { "to": ["abc@bar.dom"] };
         await ad.deduceLanguage();
 

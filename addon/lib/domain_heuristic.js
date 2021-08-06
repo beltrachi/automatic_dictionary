@@ -49,7 +49,8 @@ DomainHeuristic.prototype = {
   },
 
   isSingle(recipients){
-    return !recipients.cc && recipients.to.length == 1;
+    const empty_cc = !recipients.cc || recipients.cc.length == 0
+    return empty_cc && recipients.to.length == 1;
   },
   saveHeuristic: async function(recipient, lang){
     this.logger.debug("saving heuristic for "+ recipient + " to "+ lang);

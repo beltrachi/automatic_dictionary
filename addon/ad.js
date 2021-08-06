@@ -225,8 +225,9 @@ AutomaticDictionary.Class.prototype = {
     this.last_lang_discarded = false;
     var stats = {saved_recipients:0};
 
-    await this.saveTos(context, current_lang, stats);
-    await this.saveTosAndCcs(context, current_lang, stats);
+    await this.assignLangToFullCombination(context, current_lang, stats);
+    await this.assignLangToFullTo(context, current_lang, stats);
+    await this.assignLangToAllIndividuallyIfNew(context, current_lang, stats);
 
     if( stats.saved_recipients > 0 ){
       if(this.deferredDeduceLanguage){
@@ -248,38 +249,21 @@ AutomaticDictionary.Class.prototype = {
     return context.recipients.to.length + context.recipients.cc.length > maxRecipients
   },
 
-  saveTos: async function(context, lang, stats){
-    const tos = context.recipients.to;
-
-    if( tos.length > 0 ){
-      this.logger.debug("Enter cond 1.x");
-      //The user has set the language for the recipients
-      //We update the assignment of language for those recipients
-      //We overwrite it if it's alone but not if it has CCs
-      const more_than_one = tos.length > 1
-      const empty_cc = context.recipients.cc.length == 0
-      const force = more_than_one || empty_cc;
-      await this.saveRecipientsToStructures({to: tos}, lang, stats,
-        {force: force});
-      if (tos.length > 1){
-        for( var i in tos ){
-          // Save the lang only if it has no lang setted!
-          await this.saveRecipientsToStructures({to:[tos[i]]}, lang, stats);
-        }
-      }
-    }
+  assignLangToFullCombination: async function(context, lang, stats){
+    await this.saveRecipientsToStructures(context.recipients, lang, stats,
+      { force: true });
   },
-  saveTosAndCcs: async function(context, lang, stats){
-    // Save a lang for tos and ccs
-    const ccs = context.recipients.cc;
-    if (ccs.length > 0) {
-      this.logger.debug("Enter cond 2");
-      await this.saveRecipientsToStructures(context.recipients, lang, stats, { force: true });
+  assignLangToFullTo: async function(context, lang, stats){
+    if(context.recipients.to.length == 1) return;
 
-      // Add recipients alone if they are undefined
-      for (var i = 0; i < ccs.length; i++) {
-        await this.saveRecipientsToStructures({ to: [ccs[i]] }, lang, stats);
-      }
+    await this.saveRecipientsToStructures({to: context.recipients.to}, lang, stats,
+      { force: true });
+  },
+
+  assignLangToAllIndividuallyIfNew: async function(context, lang, stats){
+    const all = context.recipients.to.concat(context.recipients.cc);
+    for( var i in all ){
+      await this.saveRecipientsToStructures({to:[all[i]]}, lang, stats);
     }
   },
   // @param recipients [Hash] with "to" and "cc" keys
@@ -288,9 +272,11 @@ AutomaticDictionary.Class.prototype = {
     var key = this.getKeyForRecipients(recipients);
     var force = options.force;
     var previous_language = await this.getLangFor(key);
+    const language_changed = previous_language && previous_language != lang;
 
-    if( !previous_language || force ){
+    if( !previous_language || (force && language_changed) ){
       // Store it!
+      this.logger.debug("assigning language "+ lang + " to key "+ key);
       await this.data.set(key, lang);
       this.dispatchEvent({
         type: 'changed-recipient-language-assignment',
@@ -306,7 +292,7 @@ AutomaticDictionary.Class.prototype = {
 
   getKeyForRecipients: function(recipients){
     var key = this.stringifyRecipientsGroup( recipients.to );
-    if (recipients.cc){
+    if (recipients.cc && recipients.cc.length > 0){
       key += "[cc]" + this.stringifyRecipientsGroup( recipients.cc );
     }
     return key;
