@@ -39,14 +39,7 @@ AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function
 AutomaticDictionary.logger.debug("Logger started");
 
 AutomaticDictionary.logException = function( e ){
-  try {
-    AutomaticDictionary.logger.error( e.toString() );
-    if(e.stack){
-      AutomaticDictionary.logger.error( e.stack.toString() );
-    }
-  }catch(e){
-    console.error(e);
-  }
+  AutomaticDictionary.logger.error(e);
 };
 
 //Shuts down all instances
