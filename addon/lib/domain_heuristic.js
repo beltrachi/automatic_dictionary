@@ -64,7 +64,6 @@ DomainHeuristic.prototype = {
     if( parts[1] ){
       await this.freq_suffix.add(parts[1], lang);
     }
-    await this.freq_suffix.pairs();
   },
 
   removeHeuristic: async function(recipient, lang){
