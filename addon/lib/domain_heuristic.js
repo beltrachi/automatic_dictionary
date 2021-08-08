@@ -34,9 +34,15 @@ DomainHeuristic.prototype = {
         _this.removeHeuristic(pair[0],pair[1]);
       }
     });
+    this.setListenersOnAd();
+  },
+
+  setListenersOnAd: function(){
+    const _this = this;
     this.ad.addEventListener('changed-recipient-language-assignment', function(event){
       _this.onRecipientLanguageAssignmentChange(event)
     })
+    this.logger.debug('Setted event listener for changed-recipient-language-assignment')
   },
 
   onRecipientLanguageAssignmentChange: async function(event){

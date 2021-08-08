@@ -73,7 +73,6 @@ AutomaticDictionary.Class = function(options, callback){
   if( typeof(options.deduceOnLoad) == "undefined") options.deduceOnLoad = true;
 
   // Basic initialization
-  AutomaticDictionary.instances.push(this);
   this.window = options.window;
   this.shutdown_chain = [];
   this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function(msg){
@@ -90,7 +89,7 @@ AutomaticDictionary.Class = function(options, callback){
     _this.prepareDataStructures();
     _this.prepareServices(options.compose_window_builder);
     _this.setShutdown();
-
+    AutomaticDictionary.instances.push(_this);
     // Count the number of times it has been initialized.
     _this.storage.inc('stats.usages');
     _this.dispatchEvent({ type: "load" });
@@ -434,19 +433,23 @@ AutomaticDictionary.Class.prototype = {
   prepareDataStructures: function(){
     if(AutomaticDictionary.instances[0]){
       // Singleton on data structures
+      this.logger.debug('reusing data structures')
       var instance = AutomaticDictionary.instances[0]
       this.data = instance.data;
       this.domainHeuristic = instance.domainHeuristic;
+      this.domainHeuristic.ad = this;
+      this.domainHeuristic.setListenersOnAd();
+    }else{
+      this.logger.info("Initializing data");
+      this.initializeData();
+      this.initialized = true;
+      this.domainHeuristic = new DomainHeuristic(
+        this.storage,
+        this.data,
+        this.logger,
+        this.FREQ_TABLE_KEY,
+        this)
     }
-    this.logger.info("before initialize data");
-    this.initializeData();
-    this.initialized = true;
-    this.domainHeuristic = this.domainHeuristic || new DomainHeuristic(
-      this.storage,
-      this.data,
-      this.logger,
-      this.FREQ_TABLE_KEY,
-      this)
   },
 
   prepareServices: function(compose_window_builder){
