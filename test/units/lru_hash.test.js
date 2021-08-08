@@ -1,14 +1,7 @@
-import { apply } from "./../../addon/lib/lru_hash_v2";
-
-var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
-
-import { apply as sorted_set_apply } from "./../../addon/lib/sorted_set";
-sorted_set_apply(AutomaticDictionary);
+import { LRUHashV2 } from "./../../addon/lib/lru_hash_v2";
 
 test('LRU hash', () => {
-    var constructor = AutomaticDictionary.Lib.LRUHashV2;
-    var bm_options = { soft: true };
+    var constructor = LRUHashV2;
     var lru = new constructor({}, { size: 3 });
 
     lru.set("a", 1);

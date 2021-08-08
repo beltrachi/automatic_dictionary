@@ -1,17 +1,11 @@
-import { apply } from "./../../addon/lib/lru_hash_v2";
+import { LRUHashV2 } from "./../../addon/lib/lru_hash_v2";
 
 import { benchmark } from '../helpers/ad_test_helper.js'
-
-var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
-
-import { apply as sorted_set_apply } from "./../../addon/lib/sorted_set";
-sorted_set_apply(AutomaticDictionary);
 
 test('LRU hash performance', async (done) => {
     var size = 500;
     var amount = 1000;
-    var lru = new AutomaticDictionary.Lib.LRUHashV2( {}, { size: size } );
+    var lru = new LRUHashV2( {}, { size: size } );
 
     expect(lru.size()).toBe(0)
 

@@ -9,11 +9,8 @@ import * as version from './version.js';
 version.apply(AutomaticDictionary);
 import * as lib from './lib.js';
 lib.apply(AutomaticDictionary);
-import * as sorted_set from './lib/sorted_set.js';
-sorted_set.apply(AutomaticDictionary);
-import * as lru_hash_v2 from './lib/lru_hash_v2.js';
-lru_hash_v2.apply(AutomaticDictionary);
 
+import { LRUHashV2 } from './lib/lru_hash_v2.js';
 import { PersistentObject } from './lib/persistent_object.js'
 
 import { apply as apply_shutdownable } from './lib/shutdownable.js';
@@ -185,7 +182,7 @@ AutomaticDictionary.Class.prototype = {
         logger: this.logger
       },
       async function(){
-        return new AutomaticDictionary.Lib.LRUHashV2({}, {
+        return new LRUHashV2({}, {
           logger: _this.logger,
           size: await _this.storage.get('addressesInfo.maxSize')
         });

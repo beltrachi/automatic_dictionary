@@ -1,12 +1,9 @@
 //Test SortedSet
 
-import { apply } from "./../../addon/lib/sorted_set";
-
-var AutomaticDictionary = { Lib: {} };
-apply(AutomaticDictionary);
+import { SortedSet } from "./../../addon/lib/sorted_set";
 
 test('SortedSet', () => {
-  var ss = AutomaticDictionary.Lib.SortedSet();
+  var ss = SortedSet();
 
   ss.push("a");
   ss.push("b");
