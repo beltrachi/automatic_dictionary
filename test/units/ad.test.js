@@ -43,6 +43,9 @@ test('All instances share the same data objects', async (done) => {
             logLevel: 'error',
             deduceOnLoad: false
         }, async (other_ad) => {
+            ad.data._test_marker = Math.random();
+            ad.domainHeuristic._test_marker = Math.random();
+
             expect(ad.data).toStrictEqual(other_ad.data)
             expect(ad.domainHeuristic).toStrictEqual(other_ad.domainHeuristic)
 
