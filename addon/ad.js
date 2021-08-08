@@ -223,7 +223,10 @@ AutomaticDictionary.Class.prototype = {
     }
     this.last_lang_discarded = false;
     var stats = {saved_recipients:0};
-
+    if(context.recipients.to.length == 0){
+      this.logger.debug('Empty recipients, skipping language changed')
+      return;
+    }
     await this.assignLangToFullCombination(context, current_lang, stats);
     await this.assignLangToFullTo(context, current_lang, stats);
     await this.assignLangToAllIndividuallyIfNew(context, current_lang, stats);

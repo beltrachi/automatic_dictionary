@@ -183,6 +183,23 @@ test('Tos and ccs', async (done) => {
     })
 });
 
+test('Language change when no recipients is discarded', async (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        let status = { recipients: { "to": [], "cc": [] }, lang: 'en' }
+        mockComposeWindow(compose_window, status)
+        await ad.languageChanged();
+
+        expect(compose_window.changeLabel).not.toHaveBeenCalled();
+        done();
+    });
+});
 
 /*
     3. We have two TO's saved with diferent langs, we set them as the current
