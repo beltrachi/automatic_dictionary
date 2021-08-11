@@ -29,6 +29,7 @@ compose_window_stub.apply(AutomaticDictionary);
 import { LanguageDeducer } from './ad/language_deducer.js';
 import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
 import { DomainHeuristic } from './lib/domain_heuristic.js';
+import { LanguageAssigner } from './ad/language_assigner.js';
 
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function(msg){
   console.info(msg);
@@ -168,28 +169,6 @@ AutomaticDictionary.Class.prototype = {
     };
     return ifce;
   },
-  initializeData: async function(){
-    if(this.data) return;
-    var _this = this;
-    var persistent_wrapper = new PersistentObject(
-      this.ADDRESS_INFO_KEY,
-      this.storage,
-      {
-        read:["get", "keys", "pairs", "size","setExpirationCallback"],
-        write:["set"],
-        serializer: "toJSON",
-        loader:"fromJSON",
-        logger: this.logger
-      },
-      async function(){
-        return new LRUHashV2({}, {
-          logger: _this.logger,
-          size: await _this.storage.get('addressesInfo.maxSize')
-        });
-      }
-    );
-    this.data = persistent_wrapper;
-  },
 
   // Called when the user changes the language of the dictionary
   languageChanged: async function(){
@@ -199,27 +178,11 @@ AutomaticDictionary.Class.prototype = {
     this.logger.debug("languageChanged call and running");
     var current_lang = await this.getCurrentLang();
     var maxRecipients = await this.getMaxRecipients();
+    var stats = { saved_recipients: 0 };
 
     var context = await this.deducer.buildContext();
-    if( this.tooManyRecipients(context, maxRecipients) ){
-      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
-      await this.changeLabel( "warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
-      this.last_lang_discarded = current_lang;
-      return;
-    }
-    if (current_lang == this.last_lang && !this.contextChangedSinceLast(context)){
-      this.logger.debug('Same language and recipients as before '+current_lang);
-      return;
-    }
-    this.last_lang_discarded = false;
-    var stats = {saved_recipients:0};
-    if(context.recipients.to.length == 0){
-      this.logger.debug('Empty recipients, skipping language changed')
-      return;
-    }
-    await this.assignLangToFullCombination(context, current_lang, stats);
-    await this.assignLangToFullTo(context, current_lang, stats);
-    await this.assignLangToAllIndividuallyIfNew(context, current_lang, stats);
+    context.language = current_lang;
+    await this.languageAssigner.languageChanged(context, maxRecipients, stats);
 
     if( stats.saved_recipients > 0 ){
       if(this.deferredDeduceLanguage){
@@ -227,7 +190,6 @@ AutomaticDictionary.Class.prototype = {
         this.deferredDeduceLanguage = null;
       }
       this.last_lang = current_lang;
-      this.logger.debug("Enter cond 3");
 
       this.logger.debug("saved recipients are: " + stats.saved_recipients);
       await this.changeLabel("info",
@@ -235,59 +197,6 @@ AutomaticDictionary.Class.prototype = {
                                 [ current_lang, stats.saved_recipients ] )
                       );
     }
-  },
-
-  tooManyRecipients: function(context, maxRecipients){
-    return context.recipients.to.length + context.recipients.cc.length > maxRecipients
-  },
-
-  assignLangToFullCombination: async function(context, lang, stats){
-    await this.saveRecipientsToStructures(context.recipients, lang, stats,
-      { force: true });
-  },
-  assignLangToFullTo: async function(context, lang, stats){
-    if(context.recipients.to.length == 1) return;
-
-    await this.saveRecipientsToStructures({to: context.recipients.to}, lang, stats,
-      { force: true });
-  },
-
-  assignLangToAllIndividuallyIfNew: async function(context, lang, stats){
-    const all = context.recipients.to.concat(context.recipients.cc);
-    for( var i in all ){
-      await this.saveRecipientsToStructures({to:[all[i]]}, lang, stats);
-    }
-  },
-  // @param recipients [Hash] with "to" and "cc" keys
-  saveRecipientsToStructures: async function(recipients, lang, stats, options){
-    options = options || {};
-    var key = this.getKeyForRecipients(recipients);
-    var force = options.force;
-    var previous_language = await this.getLangFor(key);
-    const language_changed = previous_language && previous_language != lang;
-
-    if( !previous_language || (force && language_changed) ){
-      // Store it!
-      this.logger.debug("assigning language "+ lang + " to key "+ key);
-      await this.data.set(key, lang);
-      this.dispatchEvent({
-        type: 'changed-recipient-language-assignment',
-        recipients: recipients,
-        recipients_key: key,
-        previous_language: previous_language,
-        language: lang
-      })
-
-      stats.saved_recipients++;
-    }
-  },
-
-  getKeyForRecipients: function(recipients){
-    var key = this.stringifyRecipientsGroup( recipients.to );
-    if (recipients.cc && recipients.cc.length > 0){
-      key += "[cc]" + this.stringifyRecipientsGroup( recipients.cc );
-    }
-    return key;
   },
 
   // True when the value is something we consider nonData
@@ -397,14 +306,11 @@ AutomaticDictionary.Class.prototype = {
     return await this.domainHeuristic.heuristicGuess(recipients);
   },
 
-  // It returns a string representing the array of recipients not caring about the order
-  stringifyRecipientsGroup: function( arr ){
-    var sorted = [];
-    for( var k in arr ){
-      sorted.push( arr[k] );
-    }
-    sorted.sort();
-    return sorted.toString();
+  getKeyForRecipients: function(recipients){
+    return this.languageAssigner.getKeyForRecipients(recipients);
+  },
+  stringifyRecipientsGroup: function(list){
+    return this.languageAssigner.stringifyRecipientsGroup(list);
   },
 
   setCurrentLang: async function( target ){
@@ -428,17 +334,17 @@ AutomaticDictionary.Class.prototype = {
       // Singleton on data structures
       this.logger.debug('reusing data structures')
       var instance = AutomaticDictionary.instances[0]
-      this.data = instance.data;
+      this.languageAssigner = instance.languageAssigner;
       this.domainHeuristic = instance.domainHeuristic;
       this.domainHeuristic.ad = this;
       this.domainHeuristic.setListenersOnAd();
     }else{
       this.logger.info("Initializing data");
-      this.initializeData();
+      this.languageAssigner = new LanguageAssigner(this.logger, this.storage, this)
       this.initialized = true;
       this.domainHeuristic = new DomainHeuristic(
         this.storage,
-        this.data,
+        this.languageAssigner.data,
         this.logger,
         this.FREQ_TABLE_KEY,
         this)
@@ -479,11 +385,8 @@ AutomaticDictionary.Class.prototype = {
     return this.compose_window && await this.compose_window.canSpellCheck();
   },
 
-  getLangFor: async function( addr ){
-    var value = await this.data.get(addr);
-    if((typeof value) == "undefined" || value === "") value = null;
-
-    return Promise.resolve(value);
+  getLangFor: function( addr ){
+    return this.languageAssigner.getLangFor(addr)
   },
 
   getRecipients: function( recipientType ){

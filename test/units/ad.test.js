@@ -23,7 +23,7 @@ test('Initial boot', async (done) => {
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
-        let lruHash = await ad.data._object();
+        let lruHash = await ad.languageAssigner.data._object();
         expect(lruHash.max_size).toBe(1200)
 
         done()
@@ -43,10 +43,10 @@ test('All instances share the same data objects', async (done) => {
             logLevel: 'error',
             deduceOnLoad: false
         }, async (other_ad) => {
-            ad.data._test_marker = Math.random();
+            ad.languageAssigner._test_marker = Math.random();
             ad.domainHeuristic._test_marker = Math.random();
 
-            expect(ad.data).toStrictEqual(other_ad.data)
+            expect(ad.languageAssigner).toStrictEqual(other_ad.languageAssigner)
             expect(ad.domainHeuristic).toStrictEqual(other_ad.domainHeuristic)
 
             done()
@@ -86,7 +86,7 @@ test('Internal methods?', async (done) => {
         mockComposeWindow(compose_window, status)
 
         //Test internal methods
-        expect(ad.stringifyRecipientsGroup(["aa","bb","ab"])).toBe("aa,ab,bb");
+        expect(ad.languageAssigner.stringifyRecipientsGroup(["aa","bb","ab"])).toBe("aa,ab,bb");
 
         expect(AutomaticDictionary.version).toContain('.');
         expect(ad.canSpellCheck()).resolves.toBe(true)
@@ -512,7 +512,7 @@ test('Heuristics', async (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
         // Overwrite max_size of data hash
-        let lruHash = await ad.data._object();
+        let lruHash = await ad.languageAssigner.data._object();
         lruHash.max_size = 5;
 
         let status = { recipients: {}, lang: null }
@@ -696,9 +696,9 @@ test('LRU max size is read from config', async (done) => {
             logLevel: 'error',
             deduceOnLoad: false
         }, async (ad) => {
-            let lruHash = await ad.data._object();
+            let lruHash = await ad.languageAssigner.data._object();
             expect(lruHash.max_size).toBe(1234)
-            await ad.data.set('foo@bar.com', 'es')
+            await ad.languageAssigner.data.set('foo@bar.com', 'es')
             resolve()
         });
     }).then( async () => {
@@ -714,7 +714,7 @@ test('LRU max size is read from config', async (done) => {
             logLevel: 'error',
             deduceOnLoad: false
         }, async (ad) => {
-            let lruHash = await ad.data._object();
+            let lruHash = await ad.languageAssigner.data._object();
             expect(lruHash.max_size).toBe(222)
 
             done();
