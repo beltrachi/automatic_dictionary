@@ -309,10 +309,6 @@ AutomaticDictionary.Class.prototype = {
   getKeyForRecipients: function(recipients){
     return this.languageAssigner.getKeyForRecipients(recipients);
   },
-  stringifyRecipientsGroup: function(list){
-    return this.languageAssigner.stringifyRecipientsGroup(list);
-  },
-
   setCurrentLang: async function( target ){
     //Temporary disable language change detection that we trigger ourself
     this.logger.info("setCurrentLang "+target);
