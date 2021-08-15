@@ -541,6 +541,12 @@ test('Heuristics', async (done) => {
         expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
             [["bar.dom", "foobar", 1]],
         );
+        // After guessing, languageChange event should be discarded unless lang is different
+        const callsToChangeLableBefore = compose_window.changeLabel.mock.calls.length;
+        await ad.languageChanged();
+        // Nothing done.
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(callsToChangeLableBefore);
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('deducedLang.guess')
 
         //Check that the expired key is removed form the freq_suffix too
         status.recipients = {

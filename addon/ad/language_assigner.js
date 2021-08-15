@@ -36,14 +36,15 @@ LanguageAssigner.prototype = {
     if( this.tooManyRecipients(context, maxRecipients) ){
       this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
       await this.ad.changeLabel( "warn", this.ad.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
-      this.last_lang_discarded = context.language;
+      this.ad.last_lang_discarded = context.language;
       return;
     }
-    if (context.language == this.last_lang && !this.ad.contextChangedSinceLast(context)){
+    this.logger.debug("Lang: "+ context.language + " last_lang: "+this.ad.last_lang);
+    if (context.language == this.ad.last_lang && !this.ad.contextChangedSinceLast(context)){
       this.logger.debug('Same language and recipients as before '+context.language);
       return;
     }
-    this.last_lang_discarded = false;
+    this.ad.last_lang_discarded = false;
     if(context.recipients.to.length == 0){
       this.logger.debug('Empty recipients, skipping language changed')
       return;
