@@ -165,7 +165,6 @@ var windowListener = new class extends ExtensionCommon.EventEmitter {
 
     if (this.callbackCount == 1) {
       ExtensionSupport.registerWindowListener("compose_ext-windowListener", {
-        //TODO: set composer url.
         chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
         onLoadWindow: function(window) {
           windowListener.subscribeLanguageChangeEvents(window);
