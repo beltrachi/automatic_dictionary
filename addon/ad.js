@@ -183,7 +183,7 @@ AutomaticDictionary.Class.prototype = {
 
     var context = await this.deducer.buildContext();
     context.language = current_lang;
-    await this.languageAssigner.languageChanged(context, maxRecipients, stats);
+    await this.languageAssigner.languageChanged(this, context, maxRecipients, stats);
 
     if( stats.saved_recipients > 0 ){
       if(this.deferredDeduceLanguage){
@@ -335,7 +335,7 @@ AutomaticDictionary.Class.prototype = {
       this.domainHeuristic = instance.domainHeuristic;
     }else{
       this.logger.info("Initializing data");
-      this.languageAssigner = new LanguageAssigner(this.logger, this.storage, this)
+      this.languageAssigner = new LanguageAssigner(this.logger, this.storage)
       this.initialized = true;
       this.domainHeuristic = new DomainHeuristic(
         this.storage,

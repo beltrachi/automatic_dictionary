@@ -2,10 +2,9 @@ import { PersistentObject } from "./../lib/persistent_object.js";
 import { LRUHashV2 } from "./../lib/lru_hash_v2.js";
 import { EventDispatcher } from './../lib/event_dispatcher.js';
 
-export const LanguageAssigner = function(logger, storage, ad){
+export const LanguageAssigner = function(logger, storage){
   this.logger = logger;
   this.storage = storage;
-  this.ad = ad;
 
   this.initializeData();
 }
@@ -33,19 +32,19 @@ LanguageAssigner.prototype = {
     );
     this.data = persistent_wrapper;
   },
-  languageChanged: async function(context, maxRecipients, stats){
+  languageChanged: async function(ad, context, maxRecipients, stats){
     if( this.tooManyRecipients(context, maxRecipients) ){
       this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
-      await this.ad.changeLabel( "warn", this.ad.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
-      this.ad.last_lang_discarded = context.language;
+      await ad.changeLabel( "warn", ad.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
+      ad.last_lang_discarded = context.language;
       return;
     }
-    this.logger.debug("Lang: "+ context.language + " last_lang: "+this.ad.last_lang);
-    if (context.language == this.ad.last_lang && !this.ad.contextChangedSinceLast(context)){
+    this.logger.debug("Lang: "+ context.language + " last_lang: "+ad.last_lang);
+    if (context.language == ad.last_lang && !ad.contextChangedSinceLast(context)){
       this.logger.debug('Same language and recipients as before '+context.language);
       return;
     }
-    this.ad.last_lang_discarded = false;
+    ad.last_lang_discarded = false;
     if(context.recipients.to.length == 0){
       this.logger.debug('Empty recipients, skipping language changed')
       return;
