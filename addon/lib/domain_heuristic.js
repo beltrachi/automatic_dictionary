@@ -2,17 +2,16 @@ import { FreqTable } from "./freq_table.js";
 import { PersistentObject } from "./persistent_object.js";
 import { FreqSuffix } from "./freq_suffix.js";
 
-export const DomainHeuristic = function(storage, lru_hash, logger, pref_key, ad){
+export const DomainHeuristic = function(storage, lru_hash, logger, pref_key, languageAssigner){
   this.storage = storage;
   this.logger = logger;
   this.freqTablekey = pref_key,
-  this.ad = ad;
 
-  this.initFreqSuffix(lru_hash);
+  this.initFreqSuffix(lru_hash, languageAssigner);
 }
 
 DomainHeuristic.prototype = {
-  initFreqSuffix: function(lru_hash){
+  initFreqSuffix: function(lru_hash, languageAssigner){
     //Build the object that will manage the storage for the object
     var persistent_wrapper = new PersistentObject(
       this.freqTablekey,
@@ -34,12 +33,12 @@ DomainHeuristic.prototype = {
         _this.removeHeuristic(pair[0],pair[1]);
       }
     });
-    this.setListenersOnAd();
+    this.setListeners(languageAssigner);
   },
 
-  setListenersOnAd: function(){
+  setListeners: function(languageAssigner){
     const _this = this;
-    this.ad.addEventListener('changed-recipient-language-assignment', function(event){
+    languageAssigner.addEventListener('changed-recipient-language-assignment', function(event){
       _this.onRecipientLanguageAssignmentChange(event)
     })
     this.logger.debug('Setted event listener for changed-recipient-language-assignment')

@@ -1,5 +1,6 @@
 import { PersistentObject } from "./../lib/persistent_object.js";
 import { LRUHashV2 } from "./../lib/lru_hash_v2.js";
+import { EventDispatcher } from './../lib/event_dispatcher.js';
 
 export const LanguageAssigner = function(logger, storage, ad){
   this.logger = logger;
@@ -87,7 +88,7 @@ LanguageAssigner.prototype = {
       // Store it!
       this.logger.debug("assigning language "+ lang + " to key "+ key);
       await this.data.set(key, lang);
-      this.ad.dispatchEvent({
+      this.dispatchEvent({
         type: 'changed-recipient-language-assignment',
         recipients: recipients,
         recipients_key: key,
@@ -122,3 +123,4 @@ LanguageAssigner.prototype = {
     return sorted.toString();
   }
 }
+Object.assign(LanguageAssigner.prototype, EventDispatcher);

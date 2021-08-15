@@ -333,8 +333,6 @@ AutomaticDictionary.Class.prototype = {
       var instance = AutomaticDictionary.instances[0]
       this.languageAssigner = instance.languageAssigner;
       this.domainHeuristic = instance.domainHeuristic;
-      this.domainHeuristic.ad = this;
-      this.domainHeuristic.setListenersOnAd();
     }else{
       this.logger.info("Initializing data");
       this.languageAssigner = new LanguageAssigner(this.logger, this.storage, this)
@@ -344,7 +342,7 @@ AutomaticDictionary.Class.prototype = {
         this.languageAssigner.data,
         this.logger,
         this.FREQ_TABLE_KEY,
-        this)
+        this.languageAssigner)
     }
   },
 
@@ -479,6 +477,5 @@ Object.assign(AutomaticDictionary.Class.prototype,
 
 Object.assign(AutomaticDictionary.Class.prototype,
   AutomaticDictionary.Lib.Shutdownable);
-
 
 export { AutomaticDictionary };
