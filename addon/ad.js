@@ -17,8 +17,9 @@ import { apply as apply_shutdownable } from './lib/shutdownable.js';
 apply_shutdownable(AutomaticDictionary);
 import * as logger from './lib/logger.js';
 logger.apply(AutomaticDictionary);
-import * as event_dispatcher from './lib/event_dispatcher.js';
-event_dispatcher.apply(AutomaticDictionary);
+
+import { EventDispatcher } from './lib/event_dispatcher.js';
+
 import * as migrations from './ad/migrations.js';
 migrations.apply(AutomaticDictionary);
 import * as compose_window from './ad/compose_window.js';
@@ -471,13 +472,13 @@ AutomaticDictionary.Class.prototype = {
 };
 
 Object.assign(AutomaticDictionary.Class.prototype,
-                           AutomaticDictionary.EventDispatcher);
+  EventDispatcher);
 
 Object.assign(AutomaticDictionary.Class.prototype,
-                           AutomaticDictionary.Migrations);
+  AutomaticDictionary.Migrations);
 
 Object.assign(AutomaticDictionary.Class.prototype,
-                           AutomaticDictionary.Lib.Shutdownable);
+  AutomaticDictionary.Lib.Shutdownable);
 
 
 export { AutomaticDictionary };
