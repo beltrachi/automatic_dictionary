@@ -56,7 +56,7 @@ LanguageDeducer.prototype = {
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
   rememberByTos: async function(context){
-    const alltogether_key = context.ad.getKeyForRecipients( context.recipients.to );
+    const alltogether_key = context.ad.getKeyForRecipients( {to: context.recipients.to} );
     const lang = await context.ad.getLangFor( alltogether_key );
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
