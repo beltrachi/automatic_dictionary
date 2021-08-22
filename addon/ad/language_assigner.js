@@ -1,5 +1,5 @@
 import { PersistentObject } from "./../lib/persistent_object.js";
-import { LRUHashV2 } from "./../lib/lru_hash_v2.js";
+import { LRUHash } from "./../lib/lru_hash_v2.js";
 import { EventDispatcher } from './../lib/event_dispatcher.js';
 
 export const LanguageAssigner = function(logger, storage){
@@ -24,7 +24,7 @@ LanguageAssigner.prototype = {
         logger: this.logger
       },
       async function(){
-        return new LRUHashV2({}, {
+        return new LRUHash({}, {
           logger: _this.logger,
           size: await _this.storage.get('addressesInfo.maxSize')
         });

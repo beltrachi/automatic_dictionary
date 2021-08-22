@@ -10,7 +10,7 @@ version.apply(AutomaticDictionary);
 import * as lib from './lib.js';
 lib.apply(AutomaticDictionary);
 
-import { LRUHashV2 } from './lib/lru_hash_v2.js';
+import { LRUHash } from './lib/lru_hash_v2.js';
 import { PersistentObject } from './lib/persistent_object.js'
 
 import { apply as apply_shutdownable } from './lib/shutdownable.js';

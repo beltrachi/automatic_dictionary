@@ -1,12 +1,12 @@
 import { LoggerStub } from './logger_stub.js';
 import { SortedSet } from './sorted_set.js';
 
-export const LRUHashV2 = function (hash, options) {
+export const LRUHash = function (hash, options) {
   hash = hash || {};
   this.initialize(hash, options);
 }
 
-LRUHashV2.prototype = {
+LRUHash.prototype = {
   max_size: null,
   sorted_keys: null,
   hash: {},

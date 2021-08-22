@@ -1,11 +1,11 @@
-import { LRUHashV2 } from "./../../addon/lib/lru_hash_v2";
+import { LRUHash } from "./../../addon/lib/lru_hash_v2";
 
 import { benchmark } from '../helpers/ad_test_helper.js'
 
 test('LRU hash performance', async (done) => {
     var size = 500;
     var amount = 1000;
-    var lru = new LRUHashV2( {}, { size: size } );
+    var lru = new LRUHash( {}, { size: size } );
 
     expect(lru.size()).toBe(0)
 
@@ -26,7 +26,7 @@ test('LRU hash performance', async (done) => {
     expect(lru.size()).toBe(size)
 
     var str = lru.toJSON();
-    var lru2 = new LRUHashV2();
+    var lru2 = new LRUHash();
     lru2.fromJSON(str);
 
     expect(lru2.size()).toBe(size)

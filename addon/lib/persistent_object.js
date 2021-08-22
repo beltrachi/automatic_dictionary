@@ -32,7 +32,7 @@ p = new PersistentObject(
     loader:"fromJSON",
     reload: "reload"
   },
-  function(){return new LRUHashV2();}
+  function(){return new LRUHash();}
 );
 
 **/

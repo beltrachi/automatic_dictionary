@@ -1,7 +1,7 @@
-import { LRUHashV2 } from "./../../addon/lib/lru_hash_v2";
+import { LRUHash } from "./../../addon/lib/lru_hash_v2";
 
 test('LRU hash', () => {
-    var constructor = LRUHashV2;
+    var constructor = LRUHash;
     var lru = new constructor({}, { size: 3 });
 
     lru.set("a", 1);
