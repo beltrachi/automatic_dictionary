@@ -1,4 +1,4 @@
-import { LRUHash } from "./../../addon/lib/lru_hash_v2";
+import { LRUHash } from "./../../addon/lib/lru_hash";
 
 test('LRU hash', () => {
     var constructor = LRUHash;

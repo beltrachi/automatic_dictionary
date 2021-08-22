@@ -1,4 +1,4 @@
-import { LRUHash } from "./../../addon/lib/lru_hash_v2";
+import { LRUHash } from "./../../addon/lib/lru_hash";
 
 import { benchmark } from '../helpers/ad_test_helper.js'
 
