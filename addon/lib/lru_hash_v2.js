@@ -88,17 +88,6 @@ LRUHashV2.prototype = {
   size: function () {
     return this.sorted_keys.size();
   },
-  // O(n)
-  // Deprecated: we need an eval to recover it and eval is not safe Use toJSON instead
-  serialize: function () {
-    var out = JSON.stringify(this.hash);
-    out += ",";
-    out += JSON.stringify({
-      "sorted_keys": this.sorted_keys.toArray(),
-      "size": this.max_size
-    });
-    return "new LRUHashV2(" + out + ")";
-  },
   /* Retruns a JSON with data to recover the object
    *       {
    *          hash: ... ,

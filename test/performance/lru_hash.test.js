@@ -25,8 +25,9 @@ test('LRU hash performance', async (done) => {
 
     expect(lru.size()).toBe(size)
 
-    var str = lru.serialize();
-    var lru2 = eval( str );
+    var str = lru.toJSON();
+    var lru2 = new LRUHashV2();
+    lru2.fromJSON(str);
 
     expect(lru2.size()).toBe(size)
     expect(lru.get("a" + (amount-1))).toBe("v"+(amount-1))
