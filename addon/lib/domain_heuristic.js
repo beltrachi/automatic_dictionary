@@ -38,10 +38,10 @@ DomainHeuristic.prototype = {
 
   setListeners: function(languageAssigner){
     const _this = this;
-    languageAssigner.addEventListener('changed-recipient-language-assignment', function(event){
+    languageAssigner.addEventListener('assignment-changed', function(event){
       _this.onRecipientLanguageAssignmentChange(event)
     })
-    this.logger.debug('Setted event listener for changed-recipient-language-assignment')
+    this.logger.debug('Setted event listener for assignment-changed')
   },
 
   onRecipientLanguageAssignmentChange: async function(event){

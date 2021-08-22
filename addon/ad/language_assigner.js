@@ -95,7 +95,7 @@ LanguageAssigner.prototype = {
       this.logger.debug("assigning language "+ lang + " to key "+ key);
       await this.data.set(key, lang);
       this.dispatchEvent({
-        type: 'changed-recipient-language-assignment',
+        type: 'assignment-changed',
         recipients: recipients,
         recipients_key: key,
         previous_language: previous_language,
