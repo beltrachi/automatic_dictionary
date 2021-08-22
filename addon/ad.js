@@ -336,7 +336,6 @@ AutomaticDictionary.Class.prototype = {
     }else{
       this.logger.info("Initializing data");
       this.languageAssigner = new LanguageAssigner(this.logger, this.storage)
-      this.initialized = true;
       this.domainHeuristic = new DomainHeuristic(
         this.storage,
         this.languageAssigner.data,
@@ -344,6 +343,7 @@ AutomaticDictionary.Class.prototype = {
         this.FREQ_TABLE_KEY,
         this.languageAssigner)
     }
+    this.initialized = true;
   },
 
   prepareServices: function(compose_window_builder){
