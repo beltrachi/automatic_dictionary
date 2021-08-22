@@ -30,6 +30,13 @@ LanguageAssigner.prototype = {
         });
       }
     );
+    persistent_wrapper.setExpirationCallback(function(pair){
+      _this.dispatchEvent({
+        type: 'assignment-removed',
+        recipientsKey: pair[0],
+        language:pair[1]
+      });
+    });
     this.data = persistent_wrapper;
   },
   languageChanged: async function(ad, context, maxRecipients, stats){

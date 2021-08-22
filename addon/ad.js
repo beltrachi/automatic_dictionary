@@ -338,7 +338,6 @@ AutomaticDictionary.Class.prototype = {
       this.languageAssigner = new LanguageAssigner(this.logger, this.storage)
       this.domainHeuristic = new DomainHeuristic(
         this.storage,
-        this.languageAssigner.data,
         this.logger,
         this.FREQ_TABLE_KEY,
         this.languageAssigner)
