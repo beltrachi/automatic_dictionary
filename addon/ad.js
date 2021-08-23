@@ -196,10 +196,6 @@ AutomaticDictionary.Class.prototype = {
     }
   },
 
-  inspect: function (values){
-    return JSON.stringify(values);
-  },
-
   // Updates the interface with the lang deduced from the recipients
   deduceLanguage: async function( opt ){
     if(!opt) opt = {};
@@ -243,7 +239,8 @@ AutomaticDictionary.Class.prototype = {
         this.dispatchEvent({type:"deduction-completed"});
         return;
       }else{
-        this.logger.debug("Detected changes on langs (from-to): "+ this.inspect([await this.getCurrentLang(), lang]));
+        this.logger.debug("Detected changes on langs (from-to): " +
+          JSON.stringify([await this.getCurrentLang(), lang]));
       }
     }
 
