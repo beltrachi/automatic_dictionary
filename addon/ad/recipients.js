@@ -8,11 +8,16 @@ function stringifyRecipientsGroup(arr) {
   return sorted.toString();
 }
 
-export const Recipients = {
-  getKeyForRecipients: function (recipients) {
-    var key = stringifyRecipientsGroup(recipients.to);
-    if (recipients.cc && recipients.cc.length > 0) {
-      key += "[cc]" + stringifyRecipientsGroup(recipients.cc);
+export const Recipients = function (combination) {
+  this.to = combination.to
+  this.cc = combination.cc
+}
+
+Recipients.prototype = {
+  getKey: function(){
+    var key = stringifyRecipientsGroup(this.to);
+    if (this.cc && this.cc.length > 0) {
+      key += "[cc]" + stringifyRecipientsGroup(this.cc);
     }
     return key;
   }

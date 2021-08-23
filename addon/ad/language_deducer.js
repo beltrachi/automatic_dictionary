@@ -1,5 +1,6 @@
 // Using Chain of responsability to detect the language.
 // Each logic will have its class and the first that succeeds is used.
+import { Recipients } from './recipients.js';
 
 const Deduction = function(language, method, recipients){
   this.language = language;
@@ -42,21 +43,21 @@ LanguageDeducer.prototype = {
   buildContext: async function(){
     return {
       ad: this.ad,
-      recipients: {
+      recipients: new Recipients({
         to: await this.ad.getRecipients(),
         cc: await this.ad.getRecipients('cc')
-      }
+      })
     }
   },
 
   rememberByAllRecipients: async function (context) {
-    const toandcc_key = context.ad.getKeyForRecipients(context.recipients);
+    const toandcc_key = context.recipients.getKey();
     context.ad.logger.debug("Deducing language for: " + toandcc_key);
     const lang = await context.ad.getLangFor(toandcc_key);
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
   rememberByTos: async function(context){
-    const alltogether_key = context.ad.getKeyForRecipients( {to: context.recipients.to} );
+    const alltogether_key = new Recipients({to: context.recipients.to}).getKey();
     const lang = await context.ad.getLangFor( alltogether_key );
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },

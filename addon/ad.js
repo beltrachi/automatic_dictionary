@@ -263,8 +263,8 @@ AutomaticDictionary.Class.prototype = {
   contextChangedSinceLast(deduction){
     if(!this.lastDeduction) return true;
 
-    const last_key = this.getKeyForRecipients(this.lastDeduction.recipients);
-    return last_key != this.getKeyForRecipients(deduction.recipients);
+    const last_key = this.lastDeduction.recipients.getKey();
+    return last_key != deduction.recipients.getKey();
   },
 
   deferDeduceLanguage: function(opt){
@@ -292,9 +292,6 @@ AutomaticDictionary.Class.prototype = {
     return await this.domainHeuristic.heuristicGuess(recipients);
   },
 
-  getKeyForRecipients: function(recipients){
-    return Recipients.getKeyForRecipients(recipients);
-  },
   setCurrentLang: async function( target ){
     //Temporary disable language change detection that we trigger ourself
     this.logger.info("setCurrentLang "+target);

@@ -86,7 +86,7 @@ LanguageAssigner.prototype = {
   // @param recipients [Hash] with "to" and "cc" keys
   saveRecipientsToStructures: async function(recipients, lang, stats, options){
     options = options || {};
-    var key = Recipients.getKeyForRecipients(recipients);
+    var key = new Recipients(recipients).getKey();
     var force = options.force;
     var previous_language = await this.getLangFor(key);
     const language_changed = previous_language && previous_language != lang;
