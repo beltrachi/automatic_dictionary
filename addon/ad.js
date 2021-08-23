@@ -223,10 +223,6 @@ AutomaticDictionary.Class.prototype = {
       return;
     }
     var lang = null, method;
-    // TO all and CC all
-    var ccs = await this.getRecipients("cc");
-    var toandcc_key = this.getKeyForRecipients({to: recipients, cc: ccs});
-
     var deduction = await this.deducer.deduce();
 
     lang = (deduction && deduction.language) || null;
