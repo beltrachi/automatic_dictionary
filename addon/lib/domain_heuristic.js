@@ -47,10 +47,10 @@ DomainHeuristic.prototype = {
   onRecipientLanguageAssignmentChange: async function(event){
     if(!this.isSingle(event.recipients)) return;
 
-    if(event.previous_language){
-      await this.removeHeuristic(event.recipients_key, event.previous_language);
+    if(event.previousLanguage){
+      await this.removeHeuristic(event.recipientsKey, event.previousLanguage);
     }
-    await this.saveHeuristic(event.recipients_key, event.language);
+    await this.saveHeuristic(event.recipientsKey, event.language);
   },
 
   isSingle(recipients){

@@ -98,8 +98,8 @@ LanguageAssigner.prototype = {
       this.dispatchEvent({
         type: 'assignment-changed',
         recipients: recipients,
-        recipients_key: key,
-        previous_language: previous_language,
+        recipientsKey: key,
+        previousLanguage: previous_language,
         language: lang
       })
 
