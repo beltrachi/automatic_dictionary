@@ -1,6 +1,7 @@
 import { PersistentObject } from "./../lib/persistent_object.js";
 import { LRUHash } from "./../lib/lru_hash.js";
 import { EventDispatcher } from './../lib/event_dispatcher.js';
+import { Recipients } from './recipients.js';
 
 export const LanguageAssigner = function(logger, storage){
   this.logger = logger;
@@ -85,7 +86,7 @@ LanguageAssigner.prototype = {
   // @param recipients [Hash] with "to" and "cc" keys
   saveRecipientsToStructures: async function(recipients, lang, stats, options){
     options = options || {};
-    var key = this.getKeyForRecipients(recipients);
+    var key = Recipients.getKeyForRecipients(recipients);
     var force = options.force;
     var previous_language = await this.getLangFor(key);
     const language_changed = previous_language && previous_language != lang;
@@ -106,27 +107,11 @@ LanguageAssigner.prototype = {
     }
   },
 
-  getKeyForRecipients: function(recipients){
-    var key = this.stringifyRecipientsGroup( recipients.to );
-    if (recipients.cc && recipients.cc.length > 0){
-      key += "[cc]" + this.stringifyRecipientsGroup( recipients.cc );
-    }
-    return key;
-  },
   getLangFor: async function( addr ){
     var value = await this.data.get(addr);
     if((typeof value) == "undefined" || value === "") value = null;
 
     return Promise.resolve(value);
-  },
-  // It returns a string representing the array of recipients not caring about the order
-  stringifyRecipientsGroup: function( arr ){
-    var sorted = [];
-    for( var k in arr ){
-      sorted.push( arr[k] );
-    }
-    sorted.sort();
-    return sorted.toString();
   }
 }
 Object.assign(LanguageAssigner.prototype, EventDispatcher);

@@ -110,7 +110,7 @@ test('Internal methods?', async (done) => {
         mockComposeWindow(compose_window, status)
 
         //Test internal methods
-        expect(ad.languageAssigner.stringifyRecipientsGroup(["aa","bb","ab"])).toBe("aa,ab,bb");
+        expect(ad.getKeyForRecipients({to: ["aa","bb","ab"]})).toBe("aa,ab,bb");
 
         expect(AutomaticDictionary.version).toContain('.');
         expect(ad.canSpellCheck()).resolves.toBe(true)
