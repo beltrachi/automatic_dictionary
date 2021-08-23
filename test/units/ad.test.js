@@ -9,6 +9,7 @@ import { jest } from '@jest/globals'
 import { mockComposeWindow } from '../helpers/ad_test_helper.js'
 
 beforeEach(async () => {
+    jest.setTimeout(1000);
     browser._flushStorage();
     AutomaticDictionary.instances = [];
 })
@@ -478,6 +479,10 @@ test('When error on change language', async (done) => {
 });
 
 describe('deduce language when spellchecker is not ready', () => {
+    beforeEach( () => {
+        jest.setTimeout(5000);
+    })
+
     test('it retires and success', async (done) => {
         new AutomaticDictionary.Class({
             window: window,
