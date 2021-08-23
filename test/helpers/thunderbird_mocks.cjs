@@ -9,7 +9,8 @@ let document = {
 
 // Mock thunderbird services
 let window = {
-    document: document
+    document: document,
+    id: 123412 // Random window id
 };
 document.documentElement = document;
 
@@ -71,7 +72,18 @@ let browser = {
     },
     mailingLists: { get: function(){} },
     runtime: { getURL: function(){} },
-    windows: { onRemoved: { addListener: function(){} } },
+    windows: {
+        onRemoved: {
+            addListener: function(callback){
+                pref_data._listeners = pref_data._listeners || {};
+                pref_data._listeners.onRemoved = pref_data._listeners.onRemoved || []
+                pref_data._listeners.onRemoved.push(callback);
+            },
+            getListeners: function(){
+                return pref_data._listeners.onRemoved || [];
+            }
+        }
+    },
     _flushStorage: function(){ pref_data = {} },
     _dumpStorage: function() { return pref_data }
 }

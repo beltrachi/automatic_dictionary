@@ -68,6 +68,29 @@ test('Shutdown shuts down existing instances', async (done) => {
     });
 });
 
+test('On removing window we call shutdown', async (done) => {
+    var ad = new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        ad.dispatchEvent = jest.fn();
+        // Different window id will be discarded.
+        browser.windows.onRemoved.getListeners().forEach(listener => {
+            listener(42)
+        });
+        expect(ad.dispatchEvent).toHaveBeenCalledTimes(0);
+
+        // Same window id
+        browser.windows.onRemoved.getListeners().forEach(listener => {
+            listener(window.id)
+        });
+        expect(ad.dispatchEvent).toHaveBeenCalledWith({type:'shutdown'})
+        done()
+    });
+});
+
 test('Internal methods?', async (done) => {
     /**
         Cases:
