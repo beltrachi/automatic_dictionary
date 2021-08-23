@@ -3,7 +3,7 @@ import { LRUHash } from "./../lib/lru_hash.js";
 import { EventDispatcher } from './../lib/event_dispatcher.js';
 import { Recipients } from './recipients.js';
 
-export const LanguageAssigner = function(logger, storage){
+export const LanguageAssigner = function (logger, storage) {
   this.logger = logger;
   this.storage = storage;
 
@@ -12,48 +12,48 @@ export const LanguageAssigner = function(logger, storage){
 
 LanguageAssigner.prototype = {
   ADDRESS_INFO_KEY: 'addressesInfo',
-  initializeData: function(){
+  initializeData: function () {
     const _this = this;
     var persistent_wrapper = new PersistentObject(
       this.ADDRESS_INFO_KEY,
       this.storage,
       {
-        read:["get", "keys", "pairs", "size","setExpirationCallback"],
-        write:["set"],
+        read: ["get", "keys", "pairs", "size", "setExpirationCallback"],
+        write: ["set"],
         serializer: "toJSON",
-        loader:"fromJSON",
+        loader: "fromJSON",
         logger: this.logger
       },
-      async function(){
+      async function () {
         return new LRUHash({}, {
           logger: _this.logger,
           size: await _this.storage.get('addressesInfo.maxSize')
         });
       }
     );
-    persistent_wrapper.setExpirationCallback(function(pair){
+    persistent_wrapper.setExpirationCallback(function (pair) {
       _this.dispatchEvent({
         type: 'assignment-removed',
         recipientsKey: pair[0],
-        language:pair[1]
+        language: pair[1]
       });
     });
     this.data = persistent_wrapper;
   },
-  languageChanged: async function(ad, context, maxRecipients, stats){
-    if( this.tooManyRecipients(context, maxRecipients) ){
-      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is "+maxRecipients+").");
-      await ad.changeLabel( "warn", ad.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients] ));
+  languageChanged: async function (ad, context, maxRecipients, stats) {
+    if (this.tooManyRecipients(context, maxRecipients)) {
+      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");
+      await ad.changeLabel("warn", ad.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients]));
       ad.last_lang_discarded = context.language;
       return;
     }
-    this.logger.debug("Lang: "+ context.language + " last_lang: "+ad.last_lang);
-    if (context.language == ad.last_lang && !ad.contextChangedSinceLast(context)){
-      this.logger.debug('Same language and recipients as before '+context.language);
+    this.logger.debug("Lang: " + context.language + " last_lang: " + ad.last_lang);
+    if (context.language == ad.last_lang && !ad.contextChangedSinceLast(context)) {
+      this.logger.debug('Same language and recipients as before ' + context.language);
       return;
     }
     ad.last_lang_discarded = false;
-    if(context.recipients.to.length == 0){
+    if (context.recipients.to.length == 0) {
       this.logger.debug('Empty recipients, skipping language changed')
       return;
     }
@@ -62,38 +62,38 @@ LanguageAssigner.prototype = {
     await this.assignLangToAllIndividuallyIfNew(context, context.language, stats);
   },
 
-  tooManyRecipients: function(context, maxRecipients){
+  tooManyRecipients: function (context, maxRecipients) {
     return context.recipients.to.length + context.recipients.cc.length > maxRecipients
   },
 
-  assignLangToFullCombination: async function(context, lang, stats){
+  assignLangToFullCombination: async function (context, lang, stats) {
     await this.saveRecipientsToStructures(context.recipients, lang, stats,
       { force: true });
   },
-  assignLangToFullTo: async function(context, lang, stats){
-    if(context.recipients.to.length == 1) return;
+  assignLangToFullTo: async function (context, lang, stats) {
+    if (context.recipients.to.length == 1) return;
 
-    await this.saveRecipientsToStructures({to: context.recipients.to}, lang, stats,
+    await this.saveRecipientsToStructures({ to: context.recipients.to }, lang, stats,
       { force: true });
   },
 
-  assignLangToAllIndividuallyIfNew: async function(context, lang, stats){
+  assignLangToAllIndividuallyIfNew: async function (context, lang, stats) {
     const all = context.recipients.to.concat(context.recipients.cc);
-    for( var i in all ){
-      await this.saveRecipientsToStructures({to:[all[i]]}, lang, stats);
+    for (var i in all) {
+      await this.saveRecipientsToStructures({ to: [all[i]] }, lang, stats);
     }
   },
   // @param recipients [Hash] with "to" and "cc" keys
-  saveRecipientsToStructures: async function(recipients, lang, stats, options){
+  saveRecipientsToStructures: async function (recipients, lang, stats, options) {
     options = options || {};
     var key = new Recipients(recipients).getKey();
     var force = options.force;
     var previous_language = await this.getLangFor(key);
     const language_changed = previous_language && previous_language != lang;
 
-    if( !previous_language || (force && language_changed) ){
+    if (!previous_language || (force && language_changed)) {
       // Store it!
-      this.logger.debug("assigning language "+ lang + " to key "+ key);
+      this.logger.debug("assigning language " + lang + " to key " + key);
       await this.data.set(key, lang);
       this.dispatchEvent({
         type: 'assignment-changed',
@@ -107,9 +107,9 @@ LanguageAssigner.prototype = {
     }
   },
 
-  getLangFor: async function( addr ){
+  getLangFor: async function (addr) {
     var value = await this.data.get(addr);
-    if((typeof value) == "undefined" || value === "") value = null;
+    if ((typeof value) == "undefined" || value === "") value = null;
 
     return Promise.resolve(value);
   }

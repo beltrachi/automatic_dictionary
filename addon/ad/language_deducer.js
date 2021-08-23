@@ -2,18 +2,18 @@
 // Each logic will have its class and the first that succeeds is used.
 import { Recipients } from './recipients.js';
 
-const Deduction = function(language, method, recipients){
+const Deduction = function (language, method, recipients) {
   this.language = language;
   this.method = method;
   this.recipients = recipients;
 }
 
 Deduction.METHODS = {
-  REMEMBER:"remember",
-  GUESS:"guess"
+  REMEMBER: "remember",
+  GUESS: "guess"
 }
 
-export const LanguageDeducer = function(ad){
+export const LanguageDeducer = function (ad) {
   this.ad = ad;
 
   this.deducerChain = [
@@ -25,22 +25,22 @@ export const LanguageDeducer = function(ad){
   ]
 }
 
-function buildDeduction(value, method, context){
-  return new Deduction(value,method, context.recipients);
+function buildDeduction(value, method, context) {
+  return new Deduction(value, method, context.recipients);
 }
 
 LanguageDeducer.prototype = {
-  deduce: async function(){
+  deduce: async function () {
     var context = await this.buildContext();
     var deduction = null;
-    for(const deducer of this.deducerChain) {
+    for (const deducer of this.deducerChain) {
       deduction = await deducer(context);
-      if(deduction.language) break;
+      if (deduction.language) break;
     }
     return deduction;
   },
 
-  buildContext: async function(){
+  buildContext: async function () {
     return {
       ad: this.ad,
       recipients: new Recipients({
@@ -56,33 +56,33 @@ LanguageDeducer.prototype = {
     const lang = await context.ad.getLangFor(toandcc_key);
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
-  rememberByTos: async function(context){
-    const alltogether_key = new Recipients({to: context.recipients.to}).getKey();
-    const lang = await context.ad.getLangFor( alltogether_key );
+  rememberByTos: async function (context) {
+    const alltogether_key = new Recipients({ to: context.recipients.to }).getKey();
+    const lang = await context.ad.getLangFor(alltogether_key);
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
-  rememberByAnyTo: async function(context){
+  rememberByAnyTo: async function (context) {
     var lang = null;
-    for( const recipient of context.recipients.to ){
-      lang = await context.ad.getLangFor( recipient );
-      if( lang ){
+    for (const recipient of context.recipients.to) {
+      lang = await context.ad.getLangFor(recipient);
+      if (lang) {
         break;
       }
     }
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
-  rememberByAnyCC: async function(context){
+  rememberByAnyCC: async function (context) {
     var lang = null;
-    for( const recipient of context.recipients.cc ){
-      lang = await context.ad.getLangFor( recipient );
-      if( lang ){
+    for (const recipient of context.recipients.cc) {
+      lang = await context.ad.getLangFor(recipient);
+      if (lang) {
         break;
       }
     }
     return buildDeduction(lang, Deduction.METHODS.REMEMBER, context);
   },
-  guessFromTos: async function(context){
-    if(await context.ad.allowHeuristic()){
+  guessFromTos: async function (context) {
+    if (await context.ad.allowHeuristic()) {
       const lang = await context.ad.heuristicGuess(context.recipients.to);
       return buildDeduction(lang, Deduction.METHODS.GUESS, context);
     }

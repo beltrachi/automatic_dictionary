@@ -15,7 +15,7 @@ apply(AutomaticDictionary);
 import { jest } from '@jest/globals'
 
 describe('ComposeWindow', () => {
-  var factory = function(){
+  var factory = function () {
     return new AutomaticDictionary.ComposeWindow({
       ad: {
         window: { id: 'stubbed-window-id' },
@@ -26,7 +26,7 @@ describe('ComposeWindow', () => {
       notification_time: 4000
     });
   };
-  var eventEmitterFactory = function(){
+  var eventEmitterFactory = function () {
     return {
       addListener: jest.fn(),
       addEventListener: jest.fn(),
@@ -44,7 +44,7 @@ describe('ComposeWindow', () => {
     };
     browser.windows.onFocusChanged = eventEmitterFactory();
     browser.windows.get = jest.fn().mockResolvedValue({
-      tabs: [{id: 'stubbed-tab-id' } ]
+      tabs: [{ id: 'stubbed-tab-id' }]
     })
   })
 
@@ -97,14 +97,14 @@ describe('ComposeWindow', () => {
       var compose_window = factory();
 
       expect(compose_window.getTabId()).resolves.toBe('stubbed-tab-id');
-      expect(browser.windows.get).toHaveBeenCalledWith('stubbed-window-id', {populate: true})
+      expect(browser.windows.get).toHaveBeenCalledWith('stubbed-window-id', { populate: true })
     })
   });
 
   describe('recipients', () => {
     describe('when recipients is a single string', () => {
       it('returns the recipients from that tab', async () => {
-        var details = {'to': 'Joe'}
+        var details = { 'to': 'Joe' }
         var compose_window = factory();
         browser.compose.getComposeDetails = jest.fn().mockResolvedValue(details);
 
@@ -114,7 +114,7 @@ describe('ComposeWindow', () => {
 
     describe('when recipients is an array of strings', () => {
       it('returns the recipients from that tab', async () => {
-        var details = {'to': ['Joe']}
+        var details = { 'to': ['Joe'] }
         var compose_window = factory();
         browser.compose.getComposeDetails = jest.fn().mockResolvedValue(details);
 
@@ -124,12 +124,12 @@ describe('ComposeWindow', () => {
 
     describe('when recipients is an array of strings that needs to be normalized', () => {
       it('returns the recipients normalized', async () => {
-        var details = {'to': ['Joe <joe@example.com>', 'Big band! <big.+band@example.com']}
+        var details = { 'to': ['Joe <joe@example.com>', 'Big band! <big.+band@example.com'] }
         var compose_window = factory();
         browser.compose.getComposeDetails = jest.fn().mockResolvedValue(details);
 
         expect(compose_window.recipients()).resolves.toStrictEqual(
-          ['joe@example.com','big.+band@example.com']);
+          ['joe@example.com', 'big.+band@example.com']);
       });
     })
 
@@ -138,16 +138,16 @@ describe('ComposeWindow', () => {
       it('returns the recipients from that tab', async () => {
         var composeDetails = {
           to: [
-            { type: 'contact', id: 'contact-recipient-id'},
-            { type: 'mailingList', id: 'mailing-list-recipient-id'}
+            { type: 'contact', id: 'contact-recipient-id' },
+            { type: 'mailingList', id: 'mailing-list-recipient-id' }
           ]
         }
         browser.compose.getComposeDetails = jest.fn().mockResolvedValue(composeDetails);
         browser.contacts.get = jest.fn().mockResolvedValue({
-          properties: { PrimaryEmail: 'contact-email@example.com'}
+          properties: { PrimaryEmail: 'contact-email@example.com' }
         })
         browser.mailingLists.get = jest.fn().mockResolvedValue({
-          properties: { name: 'mailinglist-email@example.com'}
+          properties: { name: 'mailinglist-email@example.com' }
         });
         var compose_window = factory();
 

@@ -64,7 +64,7 @@ test('Shutdown shuts down existing instances', async (done) => {
     }, async (ad) => {
         ad.dispatchEvent = jest.fn();
         AutomaticDictionary.shutdown();
-        expect(ad.dispatchEvent).toHaveBeenCalledWith({type:'shutdown'})
+        expect(ad.dispatchEvent).toHaveBeenCalledWith({ type: 'shutdown' })
         done()
     });
 });
@@ -87,7 +87,7 @@ test('On removing window we call shutdown', async (done) => {
         browser.windows.onRemoved.getListeners().forEach(listener => {
             listener(window.id)
         });
-        expect(ad.dispatchEvent).toHaveBeenCalledWith({type:'shutdown'})
+        expect(ad.dispatchEvent).toHaveBeenCalledWith({ type: 'shutdown' })
         done()
     });
 });
@@ -106,7 +106,7 @@ test('Internal methods?', async (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = {recipients: {"to":["foo"],"cc":[]}, lang: null}
+        let status = { recipients: { "to": ["foo"], "cc": [] }, lang: null }
         mockComposeWindow(compose_window, status)
 
         expect(AutomaticDictionary.version).toContain('.');
@@ -145,7 +145,7 @@ test('Internal methods?', async (done) => {
         // TODO: fix this. we set count 100 to not let it delay the deduce language
         // execution 1s and being an async execution. Count 100 is greater than 10
         // so it does not postpone it.
-        await ad.deduceLanguage({count: 100});
+        await ad.deduceLanguage({ count: 100 });
         expect(status.lang).toBe('other');
 
         //Enable again and everything ok.
@@ -155,13 +155,13 @@ test('Internal methods?', async (done) => {
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
 
         //test notificationLevel error
-        await ad.prefManager.set(ad.NOTIFICATION_LEVEL,"error");
+        await ad.prefManager.set(ad.NOTIFICATION_LEVEL, "error");
         status.lang = "other";
         await ad.deduceLanguage();
 
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(2);
         //Restore
-        await ad.prefManager.set(ad.NOTIFICATION_LEVEL,"info");
+        await ad.prefManager.set(ad.NOTIFICATION_LEVEL, "info");
 
         done(); return;
     });
@@ -459,14 +459,14 @@ test('When error on change language', async (done) => {
         status.lang = 'es';
 
         // Mock 3 times raise an error
-        [1,2,3].forEach(element => {
+        [1, 2, 3].forEach(element => {
             compose_window.changeLanguage.mockImplementationOnce(() => {
                 return new Promise(() => {
                     throw new Error("changeLanguage fake error");
                 });
             })
         });
-        ad.addEventListener('deduction-completed', function(){
+        ad.addEventListener('deduction-completed', function () {
             expect(status.lang).toBe('en');
             done();
         });
@@ -476,7 +476,7 @@ test('When error on change language', async (done) => {
 });
 
 describe('deduce language when spellchecker is not ready', () => {
-    beforeEach( () => {
+    beforeEach(() => {
         jest.setTimeout(5000);
     })
 
@@ -489,12 +489,12 @@ describe('deduce language when spellchecker is not ready', () => {
         }, async (ad) => {
             let compose_window = ad.compose_window;
 
-            let status = { recipients: {to: 'foo', cc: 'bar'}, lang: 'en' }
+            let status = { recipients: { to: 'foo', cc: 'bar' }, lang: 'en' }
             mockComposeWindow(compose_window, status)
 
             compose_window.canSpellCheck.mockResolvedValueOnce(false);
 
-            ad.addEventListener('deduction-completed', function(){
+            ad.addEventListener('deduction-completed', function () {
                 done();
             });
 
@@ -511,11 +511,11 @@ describe('deduce language when spellchecker is not ready', () => {
         }, async (ad) => {
             let compose_window = ad.compose_window;
 
-            let status = { recipients: {to: 'foo', cc: 'bar'}, lang: 'en' }
+            let status = { recipients: { to: 'foo', cc: 'bar' }, lang: 'en' }
             mockComposeWindow(compose_window, status)
 
             compose_window.canSpellCheck.mockResolvedValue(false);
-            ad.addEventListener('deduction-failed', function(){
+            ad.addEventListener('deduction-failed', function () {
                 done();
             });
 
@@ -600,11 +600,11 @@ test('Heuristics', async (done) => {
 
         expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
             [
-            ["bar3.dom", "foobar-x", 1],
-            ["bar4.dom", "foobar-x", 1],
-            ["bar5.dom", "foobar-x", 1],
-            ["bar2.dom", "foobar-changed", 1],
-        ]);
+                ["bar3.dom", "foobar-x", 1],
+                ["bar4.dom", "foobar-x", 1],
+                ["bar5.dom", "foobar-x", 1],
+                ["bar2.dom", "foobar-changed", 1],
+            ]);
 
         //Test its saved on storage
         expect((await browser.storage.local.get('freqTableData')).freqTableData).toStrictEqual(
@@ -732,7 +732,7 @@ test('LRU max size is read from config', async (done) => {
             await ad.languageAssigner.data.set('foo@bar.com', 'es')
             resolve()
         });
-    }).then( async () => {
+    }).then(async () => {
         // Flush memoized data structures
         AutomaticDictionary.instances = [];
 
@@ -751,4 +751,4 @@ test('LRU max size is read from config', async (done) => {
             done();
         });
     });
- });
+});

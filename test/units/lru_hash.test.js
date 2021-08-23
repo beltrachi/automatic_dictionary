@@ -46,7 +46,7 @@ test('LRU hash', () => {
     lru = new constructor({ a: "1", b: 2, c: 3 }, { size: 3, sorted_keys: ["a", "b", "c"] });
 
     var data_string = lru.toJSON();
-    var lru2 = new constructor({}, {size: 3});
+    var lru2 = new constructor({}, { size: 3 });
 
     var expired_pairs = [];
     lru2.expiration_callback = function (pair) {

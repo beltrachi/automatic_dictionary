@@ -20,7 +20,7 @@ test('Ad overall performance', async (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = {recipients: {"to":[],"cc":[]}, lang: null}
+        let status = { recipients: { "to": [], "cc": [] }, lang: null }
         mockComposeWindow(compose_window, status)
 
         /**
@@ -38,28 +38,28 @@ test('Ad overall performance', async (done) => {
         ];
 
         //Fill structures
-        for(i=0;i< size; i++){
+        for (i = 0; i < size; i++) {
             status.recipients = {
                 "to":
-                        ["username"+i+"@"+(sample_domains[(i % sample_domains.length)])],
-                "cc":   [""]
+                    ["username" + i + "@" + (sample_domains[(i % sample_domains.length)])],
+                "cc": [""]
             };
-            if(i%2 == 0){
-                status.recipients["cc"]=
-                    ["username"+(i+2)+"@"+(sample_domains[((i+2) % sample_domains.length)])]
+            if (i % 2 == 0) {
+                status.recipients["cc"] =
+                    ["username" + (i + 2) + "@" + (sample_domains[((i + 2) % sample_domains.length)])]
             }
-            status.lang = "lang"+(i%8);
+            status.lang = "lang" + (i % 8);
             await ad.languageChanged();
         }
-        status.recipients = {"to":["username-123@gmail.com"], "cc": []};
+        status.recipients = { "to": ["username-123@gmail.com"], "cc": [] };
         await benchmark(20,
-            async function(){
+            async function () {
                 status.lang = 'lang3'
                 await ad.languageChanged();
             }
         );
         await benchmark(20,
-            async function(){
+            async function () {
                 await ad.deduceLanguage();
             }
         )
