@@ -197,11 +197,6 @@ AutomaticDictionary.Class.prototype = {
     }
   },
 
-  // True when the value is something we consider nonData
-  isBlank: function( value ){
-    return ((typeof value) == "undefined" || value === "" ||value === null);
-  },
-
   inspect: function (values){
     return JSON.stringify(values);
   },
