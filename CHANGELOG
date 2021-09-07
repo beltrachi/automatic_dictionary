@@ -1,3 +1,17 @@
+=== 2.0.5
+
+* Workaround to work with Thunderbird 90+
+* Add script that makes it easy to update all locales at once
+* Remove any trace of promotions plugin
+* Addon was not using max size configuraiton
+* Removing migrations from 9 years ago. Users should be migrated after that
+* Fixing freq-suffix stored data due to previous bugs
+* Rescue error when storage is not ready to not break flow
+* Share data structures between instances
+* Fix heuristics to only count single emails
+* Fix removing heuristics when counter is zero
+* Migrate unit testing to jest
+* Migrate to circleci CI
 
 === 2.0.4
 
@@ -127,8 +141,8 @@
 
 * Added GoogleAnalytics support to track the activity of the plugin. All anonymous data.
 
-* Improoved the responsive of the plugin by looking for languages for recipients 
-only when the focus is changed on the compose window. It can be disabled by 
+* Improoved the responsive of the plugin by looking for languages for recipients
+only when the focus is changed on the compose window. It can be disabled by
 preferences.
 
 * Fix when message hides too fast.
