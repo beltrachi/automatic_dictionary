@@ -120,14 +120,14 @@ describe "AutomaticDictionary integration tests" do
     run("tail -f #{log_file} &")
     run("thunderbird --profile #{profile_path} --no-remote &")
 
-    sleep 4
+    sleep 2
 
     interactor.hit_key('Escape')
     interactor.hit_key('Escape')
 
     begin
       if thunderbird_version >= Gem::Version.new('76')
-        sleep 3
+        interactor.click_on_text('Could not connect to')
         # To enable the extension we need to click on the hamburguer menu.
         # As the hamburguer menu has no keyboard shortcut nor readable label,
         # we have to guess its position based on something we can read, the
