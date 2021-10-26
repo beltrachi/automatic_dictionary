@@ -52,7 +52,17 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
           } else {
             var buttons = options.buttons || [];
             var priority = nb.PRIORITY_INFO_HIGH;
-            n = nb.appendNotification(string, notification_value, options.logo_url, priority, buttons);
+            if(Services.appinfo.version >= '92.0'){
+              n = nb.appendNotification(
+                notification_value,
+                {
+                  image: options.logo_url,
+                  priority: priority,
+                  label: string
+                },
+                buttons);
+            }else
+              n = nb.appendNotification(string, notification_value, options.logo_url, priority, buttons);
           }
           // setup timeout
           if (options.notification_time) {
