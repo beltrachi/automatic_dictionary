@@ -1,11 +1,7 @@
 
 function stringifyRecipientsGroup(arr) {
-  var sorted = [];
-  for (var k in arr) {
-    sorted.push(arr[k]);
-  }
-  sorted.sort();
-  return sorted.toString();
+  const clone = [].concat(arr);
+  return clone.sort().toString();
 }
 
 export const Recipients = function (combination) {
