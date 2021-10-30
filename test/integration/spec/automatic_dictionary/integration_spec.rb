@@ -120,7 +120,7 @@ describe "AutomaticDictionary integration tests" do
     run("tail -f #{log_file} &")
     run("thunderbird --profile #{profile_path} --no-remote &")
 
-    sleep 2
+    sleep 5
 
     interactor.hit_key('Escape')
     interactor.hit_key('Escape')
