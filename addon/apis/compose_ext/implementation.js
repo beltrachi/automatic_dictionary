@@ -72,7 +72,7 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
           } else {
             var buttons = options.buttons || [];
             var priority = nb.PRIORITY_INFO_HIGH;
-            if(ThunderbirdVersionGreaterOrEqual('92')){
+            if(ThunderbirdVersionGreaterOrEqual('94')){
               n = nb.appendNotification(
                 notification_value,
                 {
