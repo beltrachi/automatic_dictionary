@@ -28,7 +28,6 @@ import { LanguageDeducer } from './ad/language_deducer.js';
 import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
 import { DomainHeuristic } from './lib/domain_heuristic.js';
 import { LanguageAssigner } from './ad/language_assigner.js';
-import { Recipients } from './ad/recipients.js';
 
 AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function (msg) {
   console.info(msg);
