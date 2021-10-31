@@ -70,6 +70,7 @@ AutomaticDictionary.Class = function (options, callback) {
   });
   this.logger.debug("ad: init");
   this.running = true;
+  this.ignored_contexts = [];
 
   this.setupDependencies();
 
@@ -213,11 +214,12 @@ AutomaticDictionary.Class.prototype = {
     }
 
     var recipients = await this.getRecipients();
-    if (!this.running || recipients.length == 0 || this.last_lang_discarded) {
-      // we stop deducing when last_lang_discarded because it means that
+    var is_ignored_context = this.isIgnoredContext(this.deducer.buildContext());
+    if (!this.running || recipients.length == 0 || is_ignored_context) {
+      // we stop deducing when context is ignored because it means that
       // the user setted a language but we did not store because it was bigger
       // than MaxRecipients
-      if (this.last_lang_discarded) {
+      if (is_ignored_context) {
         this.logger.debug("Last lang discarded for too much recipients")
       }
       this.dispatchEvent({ type: "deduction-completed" });
@@ -260,7 +262,16 @@ AutomaticDictionary.Class.prototype = {
     this.dispatchEvent({ type: "deduction-completed" });
   },
 
-  contextChangedSinceLast(deduction) {
+  isIgnoredContext: function(context){
+    for(const ignored_context of this.ignored_contexts) {
+      if(context.recipients.getKey() == ignored_context.recipients.getKey()){
+        return true;
+      }
+    }
+    return false;
+  },
+
+  contextChangedSinceLast: function (deduction) {
     if (!this.lastDeduction) return true;
 
     const last_key = this.lastDeduction.recipients.getKey();
