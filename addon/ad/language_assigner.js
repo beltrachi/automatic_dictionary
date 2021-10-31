@@ -40,21 +40,12 @@ LanguageAssigner.prototype = {
     });
     this.data = persistent_wrapper;
   },
-  languageChanged: async function (ad, context, maxRecipients, stats) {
-    if (this.tooManyRecipients(context, maxRecipients)) {
-      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");
-      await ad.changeLabel("warn", ad.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients]));
-      ad.last_lang_discarded = context.language;
-      ad.ignored_contexts.push(context)
-      return;
-    }
+  languageChanged: async function (ad, context, stats) {
     this.logger.debug("Lang: " + context.language + " last_lang: " + ad.last_lang);
     if (context.language == ad.last_lang && !ad.contextChangedSinceLast(context)) {
       this.logger.debug('Same language and recipients as before ' + context.language);
       return;
     }
-    ad.last_lang_discarded = false;
-    ad.ignored_contexts = [];
     if (context.recipients.to.length == 0) {
       this.logger.debug('Empty recipients, skipping language changed')
       return;
@@ -62,10 +53,6 @@ LanguageAssigner.prototype = {
     await this.assignLangToFullCombination(context, context.language, stats);
     await this.assignLangToFullTo(context, context.language, stats);
     await this.assignLangToAllIndividuallyIfNew(context, context.language, stats);
-  },
-
-  tooManyRecipients: function (context, maxRecipients) {
-    return context.recipients.to.length + context.recipients.cc.length > maxRecipients
   },
 
   assignLangToFullCombination: async function (context, lang, stats) {

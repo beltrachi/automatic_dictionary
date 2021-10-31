@@ -181,7 +181,16 @@ AutomaticDictionary.Class.prototype = {
 
     var context = await this.deducer.buildContext();
     context.language = current_lang;
-    await this.languageAssigner.languageChanged(this, context, maxRecipients, stats);
+
+    if (this.tooManyRecipients(context, maxRecipients)) {
+      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");
+      await this.changeLabel("warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients]));
+      this.ignored_contexts.push(context)
+      return;
+    }
+    this.ignored_contexts = [];
+
+    await this.languageAssigner.languageChanged(this, context, stats);
 
     if (stats.saved_recipients > 0) {
       if (this.deferredDeduceLanguage) {
@@ -196,6 +205,10 @@ AutomaticDictionary.Class.prototype = {
           [current_lang, stats.saved_recipients])
       );
     }
+  },
+
+  tooManyRecipients: function (context, maxRecipients) {
+    return context.recipients.to.length + context.recipients.cc.length > maxRecipients
   },
 
   // Updates the interface with the lang deduced from the recipients
