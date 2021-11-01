@@ -113,7 +113,6 @@ export function apply(AutomaticDictionary) {
     },
 
     getCurrentLang: async function () {
-      // TODO: use tab id!
       var lang = await browser.compose_ext.getCurrentLanguage(await this.getTabId());
       this.logger.debug("Current lang is " + lang);
       return lang;
