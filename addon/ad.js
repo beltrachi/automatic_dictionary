@@ -174,12 +174,11 @@ AutomaticDictionary.Class.prototype = {
 
     if (!this.running) return;
     this.logger.debug("languageChanged call and running");
-    var current_lang = await this.getCurrentLang();
     var maxRecipients = await this.getMaxRecipients();
     var stats = { saved_recipients: 0 };
 
     var context = await this.deducer.buildContext();
-    context.language = current_lang;
+    context.language = await this.getCurrentLang();
 
     if (this.tooManyRecipients(context, maxRecipients)) {
       this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");
@@ -198,22 +197,26 @@ AutomaticDictionary.Class.prototype = {
     await this.languageAssigner.languageChanged(context, stats);
 
     if (stats.saved_recipients > 0) {
-      if (this.deferredDeduceLanguage) {
-        this.deferredDeduceLanguage.stop();
-        this.deferredDeduceLanguage = null;
-      }
-      this.last_lang = current_lang;
+      this.stopDeferredDeduceLanguage();
+      this.last_lang = context.language;
 
       this.logger.debug("saved recipients are: " + stats.saved_recipients);
       await this.changeLabel("info",
         this.ft("savedForRecipients",
-          [current_lang, stats.saved_recipients])
+          [context.language, stats.saved_recipients])
       );
     }
   },
 
   tooManyRecipients: function (context, maxRecipients) {
-    return context.recipients.to.length + context.recipients.cc.length > maxRecipients
+    return context.recipients.to.length + context.recipients.cc.length > maxRecipients;
+  },
+
+  stopDeferredDeduceLanguage: function(){
+    if (this.deferredDeduceLanguage) {
+      this.deferredDeduceLanguage.stop();
+      this.deferredDeduceLanguage = null;
+    }
   },
 
   // Updates the interface with the lang deduced from the recipients
