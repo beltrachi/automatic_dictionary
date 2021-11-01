@@ -189,7 +189,13 @@ AutomaticDictionary.Class.prototype = {
     }
     this.ignored_contexts = [];
 
-    await this.languageAssigner.languageChanged(this, context, stats);
+    if (context.language == this.last_lang && !this.contextChangedSinceLast(context)) {
+      this.logger.debug('Same language and recipients as before ' + context.language);
+      return;
+    }
+
+    this.logger.debug("Lang: " + context.language + " last_lang: " + this.last_lang);
+    await this.languageAssigner.languageChanged(context, stats);
 
     if (stats.saved_recipients > 0) {
       if (this.deferredDeduceLanguage) {

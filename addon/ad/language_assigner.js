@@ -40,12 +40,7 @@ LanguageAssigner.prototype = {
     });
     this.data = persistent_wrapper;
   },
-  languageChanged: async function (ad, context, stats) {
-    this.logger.debug("Lang: " + context.language + " last_lang: " + ad.last_lang);
-    if (context.language == ad.last_lang && !ad.contextChangedSinceLast(context)) {
-      this.logger.debug('Same language and recipients as before ' + context.language);
-      return;
-    }
+  languageChanged: async function (context, stats) {
     if (context.recipients.to.length == 0) {
       this.logger.debug('Empty recipients, skipping language changed')
       return;
