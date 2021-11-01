@@ -17,7 +17,7 @@ test('LRU hash performance', async (done) => {
 
     expect(lru.size()).toBe(size)
 
-    await benchmark(20, function lru_hash_test_gets() {
+    await benchmark(30, function lru_hash_test_gets() {
         for (var i = 0; i < amount; i++) {
             lru.get("a" + i, "v" + i);
         }
