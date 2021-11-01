@@ -178,7 +178,6 @@ AutomaticDictionary.Class.prototype = {
     var stats = { saved_recipients: 0 };
 
     var context = await this.deducer.buildContext();
-    context.language = await this.getCurrentLang();
 
     if (this.tooManyRecipients(context, maxRecipients)) {
       this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");

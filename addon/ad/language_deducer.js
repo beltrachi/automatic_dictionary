@@ -46,7 +46,8 @@ LanguageDeducer.prototype = {
       recipients: new Recipients({
         to: await this.ad.getRecipients(),
         cc: await this.ad.getRecipients('cc')
-      })
+      }),
+      language: await this.ad.getCurrentLang()
     }
   },
 
