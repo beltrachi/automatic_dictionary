@@ -50,7 +50,7 @@ module Interactor
     def wait_for_text(text)
       # TODO: refactor this!
       logger.info "wait_for_text #{text}"
-      readers = (1 + retries).times.map { |attemt| Reader.new }
+      readers = (1 + retries).times.map { Reader.new }
       threads = readers.each_with_index.map do |reader, idx|
         Thread.new do
           sleep delay * idx
