@@ -127,7 +127,7 @@ describe "AutomaticDictionary integration tests" do
 
     begin
       if thunderbird_version >= Gem::Version.new('76')
-        interactor.click_on_text('Could not connect to')
+        interactor.click_on_text('Could not connect to', optional: true)
         # To enable the extension we need to click on the hamburguer menu.
         # As the hamburguer menu has no keyboard shortcut nor readable label,
         # we have to guess its position based on something we can read, the
