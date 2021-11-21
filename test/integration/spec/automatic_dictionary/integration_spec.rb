@@ -132,7 +132,12 @@ describe "AutomaticDictionary integration tests" do
         # As the hamburguer menu has no keyboard shortcut nor readable label,
         # we have to guess its position based on something we can read, the
         # Events label.
-        rescue_and_retry(2) do
+
+        # We need to retry on clicking on hamburguer because some times the
+        # menu does not open. Based on circleci logs, a simple operation like
+        # click can last up to 15s. Maybe it does not have the same CPU available
+        # all the time.
+        rescue_and_retry(3) do
           events_position = interactor.wait_for_text('Events')
           # Click 50 pixels on the left of Events label.
           interactor.click_on_position([events_position.first - 50, events_position.last])
