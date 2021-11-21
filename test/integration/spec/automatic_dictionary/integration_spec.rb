@@ -128,23 +128,7 @@ describe "AutomaticDictionary integration tests" do
     begin
       if thunderbird_version >= Gem::Version.new('76')
         interactor.click_on_text('Could not connect to', optional: true)
-        # To enable the extension we need to click on the hamburguer menu.
-        # As the hamburguer menu has no keyboard shortcut nor readable label,
-        # we have to guess its position based on something we can read, the
-        # Events label.
-
-        # We need to retry on clicking on hamburguer because some times the
-        # menu does not open. Based on circleci logs, a simple operation like
-        # click can last up to 15s. Maybe it does not have the same CPU available
-        # all the time.
-        rescue_and_retry(3) do
-          events_position = interactor.wait_for_text('Events')
-          # Click 50 pixels on the left of Events label.
-          interactor.click_on_position([events_position.first - 50, events_position.last])
-          interactor.click_on_text('Automatic Dictionary added')
-        end
-        interactor.wait_for_text('Enable')
-        interactor.hit_key('Alt+e')
+        enable_extension_in_thunderbird
       else
         # Popup asking to enable our plugin.
         sleep 1
@@ -163,6 +147,26 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Escape')
 
     sleep 1
+  end
+
+  def enable_extension_in_thunderbird
+    # To enable the extension we need to click on the hamburguer menu.
+    # As the hamburguer menu has no keyboard shortcut nor readable label,
+    # we have to guess its position based on something we can read, the
+    # Events label.
+
+    # We need to retry on clicking on hamburguer because some times the
+    # menu does not open. Based on circleci logs, a simple operation like
+    # click can last up to 15s. Maybe it does not have the same CPU available
+    # all the time.
+    rescue_and_retry(3) do
+      events_position = interactor.wait_for_text('Events')
+      # Click 50 pixels on the left of Events label.
+      interactor.click_on_position([events_position.first - 50, events_position.last])
+      interactor.click_on_text('Automatic Dictionary added')
+    end
+    interactor.wait_for_text('Enable')
+    interactor.hit_key('Alt+e')
   end
 
   after do |example|
