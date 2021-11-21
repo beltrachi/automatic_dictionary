@@ -125,22 +125,9 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Escape')
     interactor.hit_key('Escape')
 
-    begin
-      if thunderbird_version >= Gem::Version.new('76')
-        interactor.click_on_text('Could not connect to', optional: true)
-        enable_extension_in_thunderbird
-      else
-        # Popup asking to enable our plugin.
-        sleep 1
+    interactor.click_on_text('Could not connect to', optional: true)
+    enable_extension_in_thunderbird
 
-        begin
-          interactor.wait_for_text('Enable')
-          interactor.hit_key('Alt+e')
-        rescue
-          logger.warn("Enable extension popup not found")
-        end
-      end
-    end
     sleep 1
     interactor.hit_key('Escape')
     sleep 1
@@ -285,11 +272,10 @@ describe "AutomaticDictionary integration tests" do
   it 'preferences window' do
     interactor.hit_key('Alt+t p a', delay: 0.15)
     sleep 2
-    if thunderbird_version >= Gem::Version.new('76')
-      # 76 does not show extensions right away, we need to click on "Extensions" left tabs.
-      interactor.click_on_text('Extensions')
-      sleep 1
-    end
+
+    interactor.click_on_text('Extensions')
+    sleep 1
+
     interactor.click_on_text('Automatic Dictionary')
     # We want to click on preferences but as there is another word "preferences" on the
     # screen, we need to specify some context too. Luckly the center of "Details | Preferences"
