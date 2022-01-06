@@ -80,3 +80,22 @@ When we release a new version of the plugin we do:
 9. Go to Mozilla addons page and upload new version.
 
 Then you have to wait till they approve it.
+
+## Development
+
+To run unit tests:
+
+```
+docker run -v $PWD:/app -it node:15 bash -c "cd /app; npm test"
+```
+
+To run a single test:
+
+```
+docker run -v $PWD:/app -it node:15 bash -c "cd /app; npm test -- test/units/ad.test.js -t boot"
+```
+
+Integration tests:
+```
+./script/docker_integration_test.sh
+```
