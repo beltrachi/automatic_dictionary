@@ -4,9 +4,6 @@ let AutomaticDictionary = {};
 //window to compose mails
 AutomaticDictionary.window_managers = [];
 
-// Ugly thing to reduce changes needed on code.
-import * as version from './version.js';
-version.apply(AutomaticDictionary);
 import * as lib from './lib.js';
 lib.apply(AutomaticDictionary);
 

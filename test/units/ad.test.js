@@ -109,7 +109,6 @@ test('Internal methods?', async (done) => {
         let status = { recipients: { "to": ["foo"], "cc": [] }, lang: null }
         mockComposeWindow(compose_window, status)
 
-        expect(AutomaticDictionary.version).toContain('.');
         expect(ad.canSpellCheck()).resolves.toBe(true)
         expect(ad.compose_window.canSpellCheck()).resolves.toBe(true)
         await ad.deduceLanguage();
