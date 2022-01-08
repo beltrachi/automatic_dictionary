@@ -14,8 +14,11 @@ import { EventDispatcher } from './lib/event_dispatcher.js';
 
 import * as migrations from './ad/migrations.js';
 migrations.apply(AutomaticDictionary);
-import * as compose_window from './ad/compose_window.js';
-compose_window.apply(AutomaticDictionary);
+
+import { ComposeWindow } from './ad/compose_window.js';
+//Register compose window
+AutomaticDictionary.window_managers.push(ComposeWindow);
+
 import * as compose_window_stub from './ad/compose_window_stub.js';
 compose_window_stub.apply(AutomaticDictionary);
 

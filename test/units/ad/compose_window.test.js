@@ -2,21 +2,14 @@
  * @jest-environment ./test/helpers/jest-thunderbird-environment.cjs
  */
 
-import { apply } from "./../../../addon/ad/compose_window";
+import { ComposeWindow } from "./../../../addon/ad/compose_window";
 import { LoggerStub } from './../../../addon/lib/logger_stub.js';
-
-var AutomaticDictionary = {
-  Lib: {},
-  window_managers: []
-};
-
-apply(AutomaticDictionary);
 
 import { jest } from '@jest/globals'
 
 describe('ComposeWindow', () => {
   var factory = function () {
-    return new AutomaticDictionary.ComposeWindow({
+    return new ComposeWindow({
       ad: {
         window: { id: 'stubbed-window-id' },
         addEventListener: jest.fn()
@@ -56,7 +49,7 @@ describe('ComposeWindow', () => {
       ]
       matching_urls.forEach((url) => {
         var window_stub = { document: { location: url } };
-        expect(AutomaticDictionary.ComposeWindow.canManageWindow(window_stub)).toBe(true);
+        expect(ComposeWindow.canManageWindow(window_stub)).toBe(true);
       })
     });
 
@@ -67,7 +60,7 @@ describe('ComposeWindow', () => {
       ];
       rejected_urls.forEach((url) => {
         var window_stub = { document: { location: url } };
-        expect(AutomaticDictionary.ComposeWindow.canManageWindow(window_stub)).toBe(false);
+        expect(ComposeWindow.canManageWindow(window_stub)).toBe(false);
       })
     });
   });
