@@ -7,8 +7,7 @@ AutomaticDictionary.window_managers = [];
 import * as lib from './lib.js';
 lib.apply(AutomaticDictionary);
 
-import { apply as apply_shutdownable } from './lib/shutdownable.js';
-apply_shutdownable(AutomaticDictionary);
+import { Shutdownable } from './lib/shutdownable.js';
 import * as logger from './lib/logger.js';
 logger.apply(AutomaticDictionary);
 
@@ -485,6 +484,6 @@ Object.assign(AutomaticDictionary.Class.prototype,
   AutomaticDictionary.Migrations);
 
 Object.assign(AutomaticDictionary.Class.prototype,
-  AutomaticDictionary.Lib.Shutdownable);
+  Shutdownable);
 
 export { AutomaticDictionary };

@@ -28,7 +28,3 @@ export const Shutdownable = {
     }
   }
 }
-
-export function apply(AutomaticDictionary) {
-  AutomaticDictionary.Lib.Shutdownable = Shutdownable;
-}
