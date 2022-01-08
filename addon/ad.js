@@ -8,8 +8,7 @@ import * as lib from './lib.js';
 lib.apply(AutomaticDictionary);
 
 import { Shutdownable } from './lib/shutdownable.js';
-import * as logger from './lib/logger.js';
-logger.apply(AutomaticDictionary);
+import { Logger } from './lib/logger.js';
 
 import { EventDispatcher } from './lib/event_dispatcher.js';
 
@@ -25,7 +24,7 @@ import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
 import { DomainHeuristic } from './lib/domain_heuristic.js';
 import { LanguageAssigner } from './ad/language_assigner.js';
 
-AutomaticDictionary.logger = new AutomaticDictionary.Lib.Logger('warn', function (msg) {
+AutomaticDictionary.logger = new Logger('warn', function (msg) {
   console.info(msg);
 });
 AutomaticDictionary.logger.debug("Logger started");
@@ -60,7 +59,7 @@ AutomaticDictionary.Class = function (options, callback) {
   // Basic initialization
   this.window = options.window;
   this.shutdown_chain = [];
-  this.logger = new AutomaticDictionary.Lib.Logger(options.logLevel || 'debug', function (msg) {
+  this.logger = new Logger(options.logLevel || 'debug', function (msg) {
     console.info(msg);
   });
   this.logger.debug("ad: init");

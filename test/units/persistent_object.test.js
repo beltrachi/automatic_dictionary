@@ -4,11 +4,9 @@ import { PersistentObject } from "./../../addon/lib/persistent_object";
 
 var AutomaticDictionary = { Lib: {} };
 
-import { apply as apply_logger } from "./../../addon/lib/logger";
+import { Logger } from "./../../addon/lib/logger";
 
-apply_logger(AutomaticDictionary);
-
-var logger = new AutomaticDictionary.Lib.Logger('error', function (msg) {
+var logger = new Logger('error', function (msg) {
     console.info(msg);
 });
 
