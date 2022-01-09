@@ -12,7 +12,6 @@ export const ComposeWindowStub = (function (params) {
 });
 
 ComposeWindowStub.canManageWindow = function (window) {
-    //We can manage the messengercompose window.
     return false;
 };
 
@@ -25,15 +24,12 @@ Object.assign(ComposeWindowStub.prototype, {
     name: "ComposeWindowStub",
     logger: null,
 
-    setListeners: function () {
-        // Nothing to be done
-    },
-    getCurrentLang: function () { },
-
-    recipients: function (recipientType) {
+    setListeners: function () {},
+    getCurrentLang: async function () {},
+    recipients: async function (_recipientType) {
         return [];
     },
-
-    changeLabel: function (str) { }
-
+    changeLabel: async function (str) {},
+    changeLanguage: async function(){},
+    canSpellCheck: async function(){}
 });
