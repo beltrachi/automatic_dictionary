@@ -85,15 +85,6 @@ describe('ComposeWindow', () => {
     })
   });
 
-  describe('getTabId', () => {
-    it('returns what compose_ext returns', async () => {
-      var compose_window = factory();
-
-      expect(compose_window.getTabId()).resolves.toBe('stubbed-tab-id');
-      expect(browser.windows.get).toHaveBeenCalledWith('stubbed-window-id', { populate: true })
-    })
-  });
-
   describe('recipients', () => {
     describe('when recipients is a single string', () => {
       it('returns the recipients from that tab', async () => {

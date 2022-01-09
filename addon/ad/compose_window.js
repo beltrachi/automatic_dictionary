@@ -46,6 +46,17 @@ ComposeWindow.canManageWindow = function (window) {
   return regex.test(window.document.location);
 };
 
+const waitAnd = function (fn) {
+  setTimeout(fn, 800);
+}
+
+const getTabId = async function (self) {
+  if (self.tabId) return self.tabId
+  var window = await browser.windows.get(self.window.id, { populate: true });
+  self.tabId = window.tabs[0].id;
+  return self.tabId;
+}
+
 Object.assign(
   ComposeWindow.prototype,
   Shutdownable);
@@ -54,17 +65,13 @@ Object.assign(ComposeWindow.prototype, {
   name: "CompoWindow",
   logger: null,
 
-  waitAnd: function (fn) {
-    setTimeout(fn, 800);
-  },
-
   setListeners: function () {
     var _this = this;
     //capture language change event
     this.addListener(browser.compose_ext.onLanguageChange, async function (tabId, language) {
       try {
-        if (tabId != await _this.getTabId()) {
-          _this.logger.debug("Ignoring tab id, mine is " + (await _this.getTabId()));
+        if (tabId != await getTabId(_this)) {
+          _this.logger.debug("Ignoring tab id, mine is " + (await getTabId(_this)));
           return;
         }
         _this.ad.languageChanged();
@@ -73,11 +80,11 @@ Object.assign(ComposeWindow.prototype, {
       }
     });
     this.addListener(browser.compose_ext.onRecipientsChange, async function (tabId) {
-      if (tabId != await _this.getTabId()) {
-        _this.logger.debug("Ignoring tab id, mine is " + (await _this.getTabId()));
+      if (tabId != await getTabId(_this)) {
+        _this.logger.debug("Ignoring tab id, mine is " + (await getTabId(_this)));
         return;
       }
-      _this.waitAnd(function () {
+      waitAnd(function () {
         _this.ad.deduceLanguage();
       });
     });
@@ -88,7 +95,7 @@ Object.assign(ComposeWindow.prototype, {
         return
       }
 
-      _this.waitAnd(function () {
+      waitAnd(function () {
         _this.ad.deduceLanguage();
       });
     });
@@ -104,27 +111,15 @@ Object.assign(ComposeWindow.prototype, {
     });
   },
 
-  prepareWindow: function (window) {
-    // No need to create items because composewindow already has a
-    // notification box
-  },
-
   getCurrentLang: async function () {
-    var lang = await browser.compose_ext.getCurrentLanguage(await this.getTabId());
+    var lang = await browser.compose_ext.getCurrentLanguage(await getTabId(this));
     this.logger.debug("Current lang is " + lang);
     return lang;
   },
 
-  getTabId: async function () {
-    if (this.tabId) return this.tabId
-    var window = await browser.windows.get(this.window.id, { populate: true });
-    this.tabId = window.tabs[0].id;
-    return this.tabId;
-  },
-
   recipients: async function (recipientType) {
     recipientType = recipientType || "to";
-    var tabId = await this.getTabId();
+    var tabId = await getTabId(this);
     var details = await browser.compose.getComposeDetails(tabId);
     var recipients = details[recipientType];
     if (typeof (recipients) == "string") {
@@ -181,7 +176,7 @@ Object.assign(ComposeWindow.prototype, {
   changeLabel: async function (str) {
     this.logger.info("Changing label to: " + str);
     browser.compose_ext.showNotification(
-      await this.getTabId(),
+      await getTabId(this),
       str,
       {
         logo_url: this.params.logo_url,
@@ -190,9 +185,9 @@ Object.assign(ComposeWindow.prototype, {
     );
   },
   changeLanguage: async function (lang) {
-    browser.compose_ext.setSpellCheckerLanguage(await this.getTabId(), lang);
+    browser.compose_ext.setSpellCheckerLanguage(await getTabId(this), lang);
   },
   canSpellCheck: async function () {
-    return await browser.compose_ext.canSpellCheck(await this.getTabId());
+    return await browser.compose_ext.canSpellCheck(await getTabId(this));
   }
 });

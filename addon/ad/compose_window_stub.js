@@ -23,15 +23,12 @@ Object.assign(
 Object.assign(ComposeWindowStub.prototype, {
     shutdown_chain: [],
     name: "ComposeWindowStub",
+    logger: null,
 
     setListeners: function () {
         // Nothing to be done
     },
-
-    //Log function
-    log: function (msg) {
-        this.ad.logger.debug(this.name + ":: " + msg);
-    },
+    getCurrentLang: function () { },
 
     recipients: function (recipientType) {
         return [];
