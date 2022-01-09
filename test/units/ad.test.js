@@ -579,8 +579,6 @@ test('Heuristics', async (done) => {
         };
         status.lang = "foobar-x";
         await ad.languageChanged();
-        // TODO: OMG CURRENT IMPLEMENTATION DOES NOT HAVE MAX SIZE! :S only users that
-        // migrated from initial versions :facepalm: FIX IT
 
         //Max size is 5 but there is a key of all TOs composed which is the fifth position
         expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
