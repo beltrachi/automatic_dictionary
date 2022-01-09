@@ -1,47 +1,42 @@
+import { Shutdownable } from "./../lib/shutdownable.js";
+
 /*
  *
  * ComposeWindowStub not attached to any window
  *
  **/
-export function apply(AutomaticDictionary) {
-    AutomaticDictionary.ComposeWindowStub = (function (params) {
-        this.ad = params.ad;
-        this.params = params;
-        this.shutdown_chain = [];
-    });
+export const ComposeWindowStub = (function (params) {
+    this.ad = params.ad;
+    this.params = params;
+    this.shutdown_chain = [];
+});
 
-    AutomaticDictionary.ComposeWindowStub.canManageWindow = function (window) {
-        //We can manage the messengercompose window.
-        return false;
-    };
+ComposeWindowStub.canManageWindow = function (window) {
+    //We can manage the messengercompose window.
+    return false;
+};
 
-    Object.assign(
-        AutomaticDictionary.ComposeWindowStub.prototype,
-        AutomaticDictionary.Lib.Shutdownable);
+Object.assign(
+    ComposeWindowStub.prototype,
+    Shutdownable);
 
-    Object.assign(AutomaticDictionary.ComposeWindowStub.prototype, {
+Object.assign(ComposeWindowStub.prototype, {
+    shutdown_chain: [],
+    name: "ComposeWindowStub",
 
-        notificationbox_elem_id: "automatic_dictionary_notification",
+    setListeners: function () {
+        // Nothing to be done
+    },
 
-        name: "ComposeWindowStub",
+    //Log function
+    log: function (msg) {
+        this.ad.logger.debug(this.name + ":: " + msg);
+    },
 
-        setListeners: function () {
-            // Nothing to be done
-        },
+    recipients: function (recipientType) {
+        return [];
+    },
 
-        //Log function
-        log: function (msg) {
-            this.ad.logger.debug(this.name + ":: " + msg);
-        },
+    changeLabel: function (str) { }
 
-        recipients: function (recipientType) {
-            return [];
-        },
-
-        changeLabel: function (str) { }
-
-    });
-
-    //Register compose window?  Not needed. This compose window doesn't have to detect windows.
-
-}
+});

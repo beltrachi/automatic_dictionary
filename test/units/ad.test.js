@@ -3,6 +3,7 @@
  */
 
 import { AutomaticDictionary } from './../../addon/ad';
+import { ComposeWindowStub } from './../../addon/ad/compose_window_stub';
 
 import { jest } from '@jest/globals'
 
@@ -20,7 +21,7 @@ test('Initial boot', async (done) => {
     */
     var ad = new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -34,13 +35,13 @@ test('Initial boot', async (done) => {
 test('All instances share the same data objects', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
         var other_ad = new AutomaticDictionary.Class({
             window: window,
-            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            compose_window_builder: ComposeWindowStub,
             logLevel: 'error',
             deduceOnLoad: false
         }, async (other_ad) => {
@@ -58,7 +59,7 @@ test('All instances share the same data objects', async (done) => {
 test('Shutdown shuts down existing instances', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -72,7 +73,7 @@ test('Shutdown shuts down existing instances', async (done) => {
 test('On removing window we call shutdown', async (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -100,7 +101,7 @@ test('Internal methods?', async (done) => {
     */
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -175,7 +176,7 @@ test('Internal methods?', async (done) => {
 test('Tos and ccs', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -206,7 +207,7 @@ test('Tos and ccs', async (done) => {
 test('Language change when no recipients is discarded', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -229,7 +230,7 @@ test('Language change when no recipients is discarded', async (done) => {
 test('TOs priorization', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -271,7 +272,7 @@ test('TOs priorization', async (done) => {
 test('Do not overwrite individuals language when its a group language', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -330,7 +331,7 @@ test('Do not overwrite individuals language when its a group language', async (d
 test('Max recipients assignment', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -391,7 +392,7 @@ test('Max recipients assignment', async (done) => {
 test('Minimize notifications', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -441,7 +442,7 @@ test('Minimize notifications', async (done) => {
 test('When error on change language', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'fatal',
         deduceOnLoad: false
     }, async (ad) => {
@@ -482,7 +483,7 @@ describe('deduce language when spellchecker is not ready', () => {
     test('it retires and success', async (done) => {
         new AutomaticDictionary.Class({
             window: window,
-            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            compose_window_builder: ComposeWindowStub,
             logLevel: 'fatal',
             deduceOnLoad: false
         }, async (ad) => {
@@ -504,7 +505,7 @@ describe('deduce language when spellchecker is not ready', () => {
     test('after 10 retries, it stops', async (done) => {
         new AutomaticDictionary.Class({
             window: window,
-            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            compose_window_builder: ComposeWindowStub,
             logLevel: 'fatal',
             deduceOnLoad: false
         }, async (ad) => {
@@ -530,7 +531,7 @@ describe('deduce language when spellchecker is not ready', () => {
 test('Heuristics', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -649,7 +650,7 @@ test('Heuristics', async (done) => {
 test('when only data is on CC recipients', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -699,7 +700,7 @@ test('migration to fix freq-suffix data', async (done) => {
 
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
@@ -722,7 +723,7 @@ test('LRU max size is read from config', async (done) => {
     new Promise((resolve, reject) => {
         new AutomaticDictionary.Class({
             window: window,
-            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            compose_window_builder: ComposeWindowStub,
             logLevel: 'error',
             deduceOnLoad: false
         }, async (ad) => {
@@ -740,7 +741,7 @@ test('LRU max size is read from config', async (done) => {
 
         new AutomaticDictionary.Class({
             window: window,
-            compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+            compose_window_builder: ComposeWindowStub,
             logLevel: 'error',
             deduceOnLoad: false
         }, async (ad) => {

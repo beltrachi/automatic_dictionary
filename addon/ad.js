@@ -19,9 +19,6 @@ import { ComposeWindow } from './ad/compose_window.js';
 //Register compose window
 AutomaticDictionary.window_managers.push(ComposeWindow);
 
-import * as compose_window_stub from './ad/compose_window_stub.js';
-compose_window_stub.apply(AutomaticDictionary);
-
 import { LanguageDeducer } from './ad/language_deducer.js';
 import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
 import { DomainHeuristic } from './lib/domain_heuristic.js';

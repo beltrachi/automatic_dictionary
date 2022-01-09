@@ -3,6 +3,7 @@
  */
 
 import { AutomaticDictionary } from './../../addon/ad';
+import { ComposeWindowStub } from './../../addon/ad/compose_window_stub';
 
 import { mockComposeWindow, benchmark } from '../helpers/ad_test_helper.js'
 
@@ -14,7 +15,7 @@ beforeEach(async () => {
 test('Ad overall performance', async (done) => {
     new AutomaticDictionary.Class({
         window: window,
-        compose_window_builder: AutomaticDictionary.ComposeWindowStub,
+        compose_window_builder: ComposeWindowStub,
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
