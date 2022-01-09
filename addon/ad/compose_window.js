@@ -1,28 +1,8 @@
 import { Shutdownable } from "./../lib/shutdownable.js";
 
 /*
- * The main purpose of this is to allow to work on other windows besides compose, like
+ * The main purpose is to allow to work on other windows besides compose, like
  * conversations compose extension.
- *
- *
- * Interface of any compose_window implementation:
- *
- *   // type: can be "TO", "CC" or "BCC"
- *   // returns an array with the recipients
- *   recipients( type )
- *
- *   // It registers the listeners for:
- *   //
- *   //    start and stop, when windows loses focus, etc.
- *   //
- *   //    for dictionary change
- *   //
- *   //    for recipients changed
- *   //
- *   setListeners( ad_object )
- *
- *   // Shows a message to the user by some seconds.
- *   setLabel( message )
  **/
 
 /**
@@ -57,9 +37,45 @@ const getTabId = async function (self) {
   return self.tabId;
 }
 
-Object.assign(
-  ComposeWindow.prototype,
-  Shutdownable);
+function normalizeRecipients(list) {
+  var out = [];
+  for (var i = 0, size = list.length; i < size; i++) {
+    var item = list[i];
+    try {
+      out.push(extractEmail(item));
+    } catch (e) {
+      // Normalization could not find an email, lets use it as is.
+      out.push(item);
+    }
+  }
+  return out;
+}
+
+function extractEmail(text) {
+  return text.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi)[0];
+}
+
+async function getEmailFromRecipients(recipients) {
+  var out = [];
+  for (var i = 0, size = recipients.length; i < size; i++) {
+    var recipient = recipients[i];
+    switch (recipient.type) {
+      case "contact":
+        var contact = await browser.contacts.get(recipient.id);
+        out.push(contact.properties.PrimaryEmail);
+        break;
+      case "mailingList":
+        var list = await browser.mailingLists.get(recipient.id);
+        // Mailing list does not have an email so we try to get its name.
+        out.push(list.properties.name);
+        break;
+    }
+  }
+  return out;
+}
+
+Object.assign(ComposeWindow.prototype, Shutdownable);
+
 Object.assign(ComposeWindow.prototype, {
 
   name: "CompoWindow",
@@ -129,50 +145,14 @@ Object.assign(ComposeWindow.prototype, {
     // Array of String or ComposeRecipients
     if (recipients.length > 0 && typeof (recipients[0]) == "string") {
       // Normalize recipients only when its raw string.
-      recipients = this.normalizeRecipients(recipients);
+      recipients = normalizeRecipients(recipients);
     } else {
       // ComposeRecipients
-      recipients = await this.getEmailFromRecipients(recipients);
+      recipients = await getEmailFromRecipients(recipients);
     }
     return recipients;
   },
 
-  // Remove everything but the email because its the canonical part.
-  normalizeRecipients: function (list) {
-    var out = [];
-    for (var i = 0, size = list.length; i < size; i++) {
-      var item = list[i];
-      try {
-        out.push(this.extractEmails(item)[0]);
-      } catch (e) {
-        // Normalization could not find an email, lets use it as is.
-        out.push(item);
-      }
-    }
-    return out;
-  },
-  extractEmails: function (text) {
-    return text.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi);
-  },
-
-  getEmailFromRecipients: async function (recipients) {
-    var out = [];
-    for (var i = 0, size = recipients.length; i < size; i++) {
-      var recipient = recipients[i];
-      switch (recipient.type) {
-        case "contact":
-          var contact = await browser.contacts.get(recipient.id);
-          out.push(contact.properties.PrimaryEmail);
-          break;
-        case "mailingList":
-          var list = await browser.mailingLists.get(recipient.id);
-          // Mailing list does not have an email so we try to get its name.
-          out.push(list.properties.name);
-          break;
-      }
-    }
-    return out;
-  },
   changeLabel: async function (str) {
     this.logger.info("Changing label to: " + str);
     browser.compose_ext.showNotification(
