@@ -26,6 +26,8 @@ export function apply(AutomaticDictionary) {
           await this.migrations[migration_key](this);
           migrations_applied.push(migration_key);
           this.logger.info("migration " + migration_key + " applied successfully");
+        }else{
+          this.logger.debug('skipping migration '+ migration_key)
         }
       }
       await this.updateApplied(migrations_applied);
@@ -46,12 +48,24 @@ export function apply(AutomaticDictionary) {
         if (raw_data !== "") {
           data = JSON.parse(raw_data);
         }
+        if(this.weNeedToMigrateAllAgain(data)){
+          this.logger.info('Detected wrong migraiton data, re-migrating...')
+          data = [];
+        }
       }
 
       try {
         data = JSON.parse(data)
       } catch (e) { }
       return data;
+    },
+
+    weNeedToMigrateAllAgain: function(data){
+      return this.emptyLocalStorageButPrefsSayWeMigratedAlready(data);
+    },
+    emptyLocalStorageButPrefsSayWeMigratedAlready: function(data) {
+      const PREF_TO_STORAGE_MIGRATION = '202003231651'
+      return data.indexOf(PREF_TO_STORAGE_MIGRATION) > -1;
     },
 
     updateApplied: async function (migrations_applied) {
