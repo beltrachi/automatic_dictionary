@@ -20,7 +20,6 @@ import { ComposeWindow } from './ad/compose_window.js';
 AutomaticDictionary.window_managers.push(ComposeWindow);
 
 import { LanguageDeducer } from './ad/language_deducer.js';
-import { LegacyPrefManager } from './lib/legacy_pref_manager.js';
 import { DomainHeuristic } from './lib/domain_heuristic.js';
 import { LanguageAssigner } from './ad/language_assigner.js';
 
@@ -96,12 +95,10 @@ AutomaticDictionary.Class.prototype = {
   LOG_LEVEL: "logLevel",
 
   FREQ_TABLE_KEY: "freqTableData",
-  pref_prefix: "extensions.automatic_dictionary.",
 
   //Attributes
   initialized: false,
   running: false, //Stopped
-  prefManager: null,
   last_toandcc_key: null,
   name: "AutomaticDictionary",
   notification_time_ms: 4000,
@@ -330,7 +327,6 @@ AutomaticDictionary.Class.prototype = {
   },
 
   setupDependencies: function () {
-    this.prefManager = LegacyPrefManager(browser, this.defaults, this.logger, this.pref_prefix);
     this.storage = this.getStorage();
   },
 

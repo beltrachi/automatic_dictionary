@@ -155,13 +155,13 @@ test('Internal methods?', async (done) => {
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
 
         //test notificationLevel error
-        await ad.prefManager.set(ad.NOTIFICATION_LEVEL, "error");
+        await ad.storage.set(ad.NOTIFICATION_LEVEL, "error");
         status.lang = "other";
         await ad.deduceLanguage();
 
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(2);
         //Restore
-        await ad.prefManager.set(ad.NOTIFICATION_LEVEL, "info");
+        await ad.storage.set(ad.NOTIFICATION_LEVEL, "info");
 
         done(); return;
     });
@@ -748,33 +748,5 @@ test('LRU max size is read from config', async (done) => {
 
             done();
         });
-    });
-});
-
-
-test('Repeat migrations when user removed addon and added it again', async (done) => {
-    const PREF_TO_STORAGE_MIGRATION = '202003231651'
-    const migrationsAppliedPrefKey = 'extensions.automatic_dictionary.migrations_applied'
-
-    const maxRecipientsPrefKey = 'extensions.automatic_dictionary.maxRecipients'
-    const expectedMaxRecipients = 42;
-    await browser.prefs.setCharPref(migrationsAppliedPrefKey,
-        JSON.stringify([PREF_TO_STORAGE_MIGRATION, '202106051955']))
-    await browser.prefs.setIntPref(maxRecipientsPrefKey, JSON.stringify(expectedMaxRecipients))
-
-    new AutomaticDictionary.Class({
-        window: window,
-        compose_window_builder: ComposeWindowStub,
-        logLevel: 'error',
-        deduceOnLoad: false
-    }, async (ad) => {
-        const migrations_applied = JSON.parse(await browser.prefs.getCharPref(migrationsAppliedPrefKey))
-        expect(migrations_applied).toContain(PREF_TO_STORAGE_MIGRATION)
-
-        // Even if we said that it was already migrated, it migrated values again.
-        expect(await browser.storage.local.get('maxRecipients'))
-            .toEqual({maxRecipients: "" + expectedMaxRecipients})
-
-        done();
     });
 });

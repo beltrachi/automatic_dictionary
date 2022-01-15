@@ -9,7 +9,7 @@
   },
   "name": "Automatic Dictionary",
   "description": "Extension that remembers the language of the email when composing.",
-  "version": "2.0.7.1",
+  "version": "3.0.0",
   "default_locale": "en",
 
   "options_ui": {
@@ -22,20 +22,6 @@
 
   "permissions": [ "compose", "storage", "addressBooks" ],
   "experiment_apis": {
-    "prefs": {
-      "schema": "apis/prefs/schema.json",
-      "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "prefs"
-          ]
-        ],
-        "script": "apis/prefs/implementation.js"
-      }
-    },
     "compose_ext": {
       "schema": "apis/compose_ext/schema.json",
       "parent": {
