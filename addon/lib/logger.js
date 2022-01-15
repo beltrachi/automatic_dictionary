@@ -56,10 +56,11 @@ export const Logger = function (level, writer_fn) {
       this.log("fatal", msg);
     },
     setLevel: function (level) {
-      log_level_idx = levels.indexOf(level);
-      if (log_level_idx === -1) {
+      const new_level_idx = levels.indexOf(level);
+      if (new_level_idx === -1) {
         throw "Wrong logger level: " + level;
       }
+      log_level_idx = new_level_idx;
     },
     getLevel: function () {
       return levels[log_level_idx];
