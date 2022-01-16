@@ -9,9 +9,9 @@ module Interactor
         run("xdotool mousemove --sync #{position.first} #{position.last}")
         sleep 1
         run('xdotool mousedown --clearmodifiers 1')
-        sleep 0.2
+        sleep 0.1
         run('xdotool mouseup 1')
-        sleep 2
+        sleep 1
       end
     end
   end

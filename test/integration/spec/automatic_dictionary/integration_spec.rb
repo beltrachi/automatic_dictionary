@@ -122,9 +122,6 @@ describe "AutomaticDictionary integration tests" do
 
     sleep 5
 
-    interactor.hit_key('Escape')
-    interactor.hit_key('Escape')
-
     interactor.click_on_text('Could not connect to', optional: true)
     enable_extension_in_thunderbird
 
@@ -266,6 +263,7 @@ describe "AutomaticDictionary integration tests" do
 
     interactor.click_on_text('This is a test email')
     interactor.hit_key('Control+r')
+    sleep 2
     wait_for_label('Remembered es-ES')
   end
 
