@@ -11,7 +11,7 @@ module Interactor
     attr_accessor :retries, :delay, :hit_delay
 
     def initialize(options = {})
-      self.retries = options.fetch(:retries, 3)
+      self.retries = options.fetch(:retries, 0)
       self.delay = options.fetch(:delay, 1)
       self.hit_delay = options.fetch(:hit_delay, 0.2)
     end
