@@ -23,9 +23,9 @@ module Interactor
       create_screenshot
     end
 
-    def text_position(text)
+    def text_position(text, options = {})
       log_performance('text_position') do
-        position_of(text, readed_words)
+        position_of(text, readed_words, options)
       end
     end
 
@@ -67,14 +67,23 @@ module Interactor
       tmp
     end
 
-    def position_of(text, readed_words)
+    def position_of(text, readed_words, options = {})
       # It returns a list of separated words. We need to find them in order
       # and merge the data to create a bounding box.
       target_words = text.split(/\s/)
       found_words = find_words(target_words, readed_words)
       return unless found_words.first
+
+      found_words = apply_filter(found_words, options)
+
       logger.debug("Words found: #{found_words.first.inspect}")
       fix_ratio(found_words.first.reduce(:+).center)
+    end
+
+    def apply_filter(found_words, options)
+      return found_words unless options[:filter]
+
+      found_words.select { |group| options[:filter].call(group) }
     end
 
     # Returns the list of Word objects that contain the list of target words.

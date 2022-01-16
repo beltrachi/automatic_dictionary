@@ -51,7 +51,7 @@ module Interactor
       end
     end
 
-    def wait_for_text(text)
+    def wait_for_text(text, options = {})
       # TODO: refactor this!
       logger.info "wait_for_text #{text}"
       readers = (1 + retries).times.map { Reader.new }
@@ -64,7 +64,7 @@ module Interactor
       readers.each_with_index do |reader, attempt|
         threads[attempt].join # Make sure thread has captured screen.
         2.times do
-          position = reader.text_position(text)
+          position = reader.text_position(text, options)
           if position
             logger.info "Position found for #{text} at attempt number #{attempt}"
             return position

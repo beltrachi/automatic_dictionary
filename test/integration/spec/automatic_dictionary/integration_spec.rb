@@ -144,7 +144,9 @@ describe "AutomaticDictionary integration tests" do
     # click can last up to 15s. Maybe it does not have the same CPU available
     # all the time.
     rescue_and_retry(3) do
-      events_position = interactor.wait_for_text('Events')
+      events_position = interactor.wait_for_text('Events', filter: proc do |candidate_group|
+        candidate_group.all? { |word| word.x_start > 1000 }
+      end)
       # Click 50 pixels on the left of Events label.
       interactor.click_on_position([events_position.first - 50, events_position.last])
       interactor.click_on_text('Automatic Dictionary added')
