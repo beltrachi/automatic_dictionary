@@ -262,7 +262,7 @@ describe "AutomaticDictionary integration tests" do
       wait_for_label('Saved es-ES as default')
     end
 
-    interactor.click_on_text('This is a test email')
+    interactor.click_on_text('This is a test')
     interactor.hit_key('Control+r')
     sleep 2
     wait_for_label('Remembered es-ES')
