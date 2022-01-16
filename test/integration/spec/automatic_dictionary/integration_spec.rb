@@ -15,13 +15,11 @@ describe "AutomaticDictionary integration tests" do
 
   let(:profile_path) { Dir.mktmpdir }
   let(:logger) do
-    puts "DEBUG IS #{ENV['DEBUG']}"
     Logger.new(STDOUT).tap do |logger|
       logger.level = Logger::ERROR unless ENV['DEBUG']
     end
   end
 
-  # @return boolean false when command fails
   def run(command)
     logger.debug(command)
     system(command) || raise("Command failed: #{command}")
@@ -88,7 +86,6 @@ describe "AutomaticDictionary integration tests" do
   let(:local_tmp) { File.join(root, 'tmp') }
 
   let(:interactor) { Interactor.client }
-  let(:log_file) { "#{profile_path}/automatic_dictionary.log" }
   let(:thunderbird_version) do
     version = `thunderbird --version`.chomp
     logger.info("Thunderbird version: #{version}")
@@ -116,8 +113,6 @@ describe "AutomaticDictionary integration tests" do
     prepare_profile(profile_path)
     install_extension('automatic_dictionary.xpi', profile_path)
 
-    run("touch #{log_file}")
-    run("tail -f #{log_file} &")
     run("thunderbird --profile #{profile_path} --no-remote &")
 
     sleep 5
@@ -164,7 +159,6 @@ describe "AutomaticDictionary integration tests" do
       end
     end
     run("pkill -f thunderbird")
-    run("pkill tail")
   end
 
   def on_composer(to: nil, subject: nil, body: nil)
