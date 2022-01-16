@@ -113,6 +113,7 @@ describe "AutomaticDictionary integration tests" do
     prepare_profile(profile_path)
     install_extension('automatic_dictionary.xpi', profile_path)
 
+    log_thunderbird_version
     run("thunderbird --profile #{profile_path} --no-remote &")
 
     sleep 5
@@ -126,6 +127,10 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Escape')
 
     sleep 1
+  end
+
+  def log_thunderbird_version
+    thunderbird_version
   end
 
   def enable_extension_in_thunderbird
