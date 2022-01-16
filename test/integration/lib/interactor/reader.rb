@@ -54,7 +54,7 @@ module Interactor
       file = create_screenshot
       file = prepare_image_to_read(file)
       words = RTesseract.new(file, lang: 'eng').to_box
-      words.map!{|word| Word.new(word) }
+      words.map! { |word| Word.new(fix_word_ratio(word)) }
       logger.debug("Words: #{words.map(&:word)}")
       words
     end
@@ -72,12 +72,13 @@ module Interactor
       # and merge the data to create a bounding box.
       target_words = text.split(/\s/)
       found_words = find_words(target_words, readed_words)
-      return unless found_words.first
 
       found_words = apply_filter(found_words, options)
 
+      return unless found_words.first
+
       logger.debug("Words found: #{found_words.first.inspect}")
-      fix_ratio(found_words.first.reduce(:+).center)
+      found_words.first.reduce(:+).center
     end
 
     def apply_filter(found_words, options)
@@ -116,8 +117,16 @@ module Interactor
       end
     end
 
-    def fix_ratio(position)
-      position.map { |point| point / resize_ratio }
+    def fix_word_ratio(word_params)
+      word_params.map do |key, value|
+        next [key, value] unless dimension_key? key
+
+        [key, value / resize_ratio]
+      end.to_h
+    end
+
+    def dimension_key?(key)
+      key.to_s.start_with?('x_') || key.to_s.start_with?('y_')
     end
 
     def equal_words?(word, other_word)
