@@ -24,8 +24,8 @@ module Interactor
       text_position(text) || raise("Not found #{text}")
     end
 
-    def click_on_text(text, optional: false)
-      Clicker.click_on(wait_for_text(text))
+    def click_on_text(text, optional: false, filter: nil)
+      Clicker.click_on(wait_for_text(text, { filter: filter }))
     rescue StandardError
       raise unless optional
 

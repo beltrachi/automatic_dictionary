@@ -78,6 +78,8 @@ module Interactor
       return unless found_words.first
 
       logger.debug("Words found: #{found_words.first.inspect}")
+      word_appears_twice_error!(text) if found_words.size > 1
+
       found_words.first.reduce(:+).center
     end
 
@@ -137,6 +139,11 @@ module Interactor
       distance = levenshtein_distance(word, other_word)
       # True when changes needed are only 20% the other_word we are looking for.
       return ( distance / other_word.size.to_f ) < 0.20
+    end
+
+    def word_appears_twice_error!(text)
+      raise "Text '#{text}' appears twice, please choose a better identifier or " +
+        "filter by screen region"
     end
   end
 end

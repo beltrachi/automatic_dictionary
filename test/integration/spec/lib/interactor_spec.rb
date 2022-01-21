@@ -41,7 +41,7 @@ describe Interactor do
     let(:text) { 'foo' }
     before do
       expect_any_instance_of(Interactor::Reader).to receive(:text_position)
-        .with(text, {}).and_return(position)
+        .with(text, {filter: nil}).and_return(position)
     end
 
     # TODO: find a way to test that it actually works. Now it only calls
