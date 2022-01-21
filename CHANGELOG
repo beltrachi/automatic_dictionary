@@ -1,3 +1,30 @@
+=== 3.0.0
+
+Breaking changes:
+* Dropped support for legacy prefs. Users in 1.x versions should install 2.x version before this to have all data migrated.
+
+Changes summary (more details in git log):
+* CI - Raise error when the searched text appears more than once
+* Fixing integration beta tests (Events word appeared twice)
+* Migrate to tesseract v5 to fix randomly stuck executions
+* Fix ComposeWindowStub and add some test coverage
+* Migrate code to standalone modules that can be imported freely.
+* Format all files with vscode
+* Refactor Recipients into a class
+* Rename LRUHashV2 to LRUHash
+* Use events to update heuristics on LRU expiration
+* Fix LanguageAssigner data persistence between windows
+* Move laguage assignment to a separate module
+* Fix data structures sharing between instances
+* Refactoring languageChanged
+* Move heuristic logic to DomainHeuristic module
+* Remove conversations addon unused code
+* Remove plugin support completely
+* Use events instead of attaching to logger messages
+* Refactoring - deduction rules moved to separate class
+* Add coverage check on jest tests
+* Remove integration specs for TB < 76
+
 === 2.0.7.1
 
 * I did block version 2.0.7 by mistake on Thunderbird addons site. Need a new version.
