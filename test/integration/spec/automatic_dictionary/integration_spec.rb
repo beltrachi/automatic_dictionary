@@ -255,13 +255,12 @@ describe "AutomaticDictionary integration tests" do
       wait_for_label('Discarded to save language preferences as there are too much recipients')
     end
 
-    # Reply
-
     on_composer(to: 'alice <test@test.com>', subject: 'Un asunto') do
       change_spellchecker_language('spa')
       wait_for_label('Saved es-ES as default')
     end
 
+    # Reply
     interactor.click_on_text('This is a test')
     interactor.hit_key('Control+r')
     sleep 2
