@@ -12,7 +12,7 @@ beforeEach(async () => {
     AutomaticDictionary.instances = [];
 })
 
-test('Ad overall performance', async (done) => {
+test('Ad overall performance', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,

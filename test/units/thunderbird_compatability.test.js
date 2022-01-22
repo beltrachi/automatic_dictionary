@@ -5,7 +5,7 @@ import { default as readdirp } from 'readdirp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-test('Imports in thunderbird need .js', async (done) => {
+test('Imports in thunderbird need .js', (done) => {
   var addonPath = path.join(__dirname, '../../addon/');
 
   function searchWrongImport(fileFullPath) {

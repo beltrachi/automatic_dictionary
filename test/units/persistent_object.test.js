@@ -1,5 +1,4 @@
 
-import { TestScheduler } from "@jest/core";
 import { PersistentObject } from "./../../addon/lib/persistent_object";
 
 var AutomaticDictionary = { Lib: {} };
