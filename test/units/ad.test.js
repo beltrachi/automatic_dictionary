@@ -15,7 +15,7 @@ beforeEach(async () => {
     AutomaticDictionary.instances = [];
 })
 
-test('Initial boot', async (done) => {
+test('Initial boot', (done) => {
     /**
      * Just check that it can boot from empty data.
     */
@@ -28,11 +28,11 @@ test('Initial boot', async (done) => {
         let lruHash = await ad.languageAssigner.data._object();
         expect(lruHash.max_size).toBe(1200)
 
-        done()
+        done();
     });
 });
 
-test('All instances share the same data objects', async (done) => {
+test('All instances share the same data objects', (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -56,7 +56,7 @@ test('All instances share the same data objects', async (done) => {
     });
 });
 
-test('Shutdown shuts down existing instances', async (done) => {
+test('Shutdown shuts down existing instances', (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -70,7 +70,7 @@ test('Shutdown shuts down existing instances', async (done) => {
     });
 });
 
-test('On removing window we call shutdown', async (done) => {
+test('On removing window we call shutdown', (done) => {
     var ad = new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -93,7 +93,7 @@ test('On removing window we call shutdown', async (done) => {
     });
 });
 
-test('Internal methods?', async (done) => {
+test('Internal methods?', (done) => {
     /**
         Cases:
          1. Initial boot. We have empty hash, we set a recipient in the "TO", and set a lang.
@@ -173,7 +173,7 @@ test('Internal methods?', async (done) => {
     and check that it has been setted to the TO, to the CC alone, and the pair TO-CC.
 
 */
-test('Tos and ccs', async (done) => {
+test('Tos and ccs', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -204,7 +204,7 @@ test('Tos and ccs', async (done) => {
     })
 });
 
-test('Language change when no recipients is discarded', async (done) => {
+test('Language change when no recipients is discarded', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -227,7 +227,7 @@ test('Language change when no recipients is discarded', async (done) => {
     recipients and check that the lang used is the one from the first recipient.
 
 */
-test('TOs priorization', async (done) => {
+test('TOs priorization', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -269,7 +269,7 @@ test('TOs priorization', async (done) => {
     already setted.
 */
 
-test('Do not overwrite individuals language when its a group language', async (done) => {
+test('Do not overwrite individuals language when its a group language', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -328,7 +328,7 @@ test('Do not overwrite individuals language when its a group language', async (d
     The max would be a configuration parameter (migrations! :) )
 
 */
-test('Max recipients assignment', async (done) => {
+test('Max recipients assignment', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -389,7 +389,7 @@ test('Max recipients assignment', async (done) => {
     the user too much.
 
 */
-test('Minimize notifications', async (done) => {
+test('Minimize notifications', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -439,7 +439,7 @@ test('Minimize notifications', async (done) => {
     });
 });
 
-test('When error on change language', async (done) => {
+test('When error on change language', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -480,7 +480,7 @@ describe('deduce language when spellchecker is not ready', () => {
         jest.setTimeout(5000);
     })
 
-    test('it retires and success', async (done) => {
+    test('it retires and success', (done) => {
         new AutomaticDictionary.Class({
             window: window,
             compose_window_builder: ComposeWindowStub,
@@ -502,7 +502,7 @@ describe('deduce language when spellchecker is not ready', () => {
         });
     });
 
-    test('after 10 retries, it stops', async (done) => {
+    test('after 10 retries, it stops', (done) => {
         new AutomaticDictionary.Class({
             window: window,
             compose_window_builder: ComposeWindowStub,
@@ -528,7 +528,7 @@ describe('deduce language when spellchecker is not ready', () => {
 /*
     8. Test using heuristics
 */
-test('Heuristics', async (done) => {
+test('Heuristics', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -645,7 +645,7 @@ test('Heuristics', async (done) => {
 
 */
 
-test('when only data is on CC recipients', async (done) => {
+test('when only data is on CC recipients', (done) => {
     new AutomaticDictionary.Class({
         window: window,
         compose_window_builder: ComposeWindowStub,
@@ -682,7 +682,7 @@ test('when only data is on CC recipients', async (done) => {
     })
 });
 
-test('migration to fix freq-suffix data', async (done) => {
+test('migration to fix freq-suffix data', (done) => {
     // Setup previous freq-suffix data
     const freq_suffix_previous_data = {
         freqTableData: JSON.stringify(
@@ -694,59 +694,59 @@ test('migration to fix freq-suffix data', async (done) => {
             ]
         )
     }
-    await browser.storage.local.set(freq_suffix_previous_data)
-
-    new AutomaticDictionary.Class({
-        window: window,
-        compose_window_builder: ComposeWindowStub,
-        logLevel: 'error',
-        deduceOnLoad: false
-    }, async (ad) => {
-        const pairs = await ad.domainHeuristic.freq_suffix.pairs();
-        expect(pairs).toStrictEqual(
-            [
-                ["example.es", "es", 1],
-                ["example.com", "en", 1]
-            ]
-        )
-        done();
-    });
+    browser.storage.local.set(freq_suffix_previous_data).then(() => {
+        new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: ComposeWindowStub,
+            logLevel: 'error',
+            deduceOnLoad: false
+        }, async (ad) => {
+            const pairs = await ad.domainHeuristic.freq_suffix.pairs();
+            expect(pairs).toStrictEqual(
+                [
+                    ["example.es", "es", 1],
+                    ["example.com", "en", 1]
+                ]
+            )
+            done();
+        });
+    })
 });
 
-test('LRU max size is read from config', async (done) => {
+test('LRU max size is read from config', (done) => {
     // Setup previous freq-suffix data
     const max_size_value = { "addressesInfo.maxSize": 1234 }
-    await browser.storage.local.set(max_size_value)
+    browser.storage.local.set(max_size_value).then(() => {
+        new Promise((resolve, reject) => {
+            new AutomaticDictionary.Class({
+                window: window,
+                compose_window_builder: ComposeWindowStub,
+                logLevel: 'error',
+                deduceOnLoad: false
+            }, async (ad) => {
+                let lruHash = await ad.languageAssigner.data._object();
+                expect(lruHash.max_size).toBe(1234)
+                await ad.languageAssigner.data.set('foo@bar.com', 'es')
+                resolve()
+            });
+        }).then(async () => {
+            // Flush memoized data structures
+            AutomaticDictionary.instances = [];
 
-    new Promise((resolve, reject) => {
-        new AutomaticDictionary.Class({
-            window: window,
-            compose_window_builder: ComposeWindowStub,
-            logLevel: 'error',
-            deduceOnLoad: false
-        }, async (ad) => {
-            let lruHash = await ad.languageAssigner.data._object();
-            expect(lruHash.max_size).toBe(1234)
-            await ad.languageAssigner.data.set('foo@bar.com', 'es')
-            resolve()
-        });
-    }).then(async () => {
-        // Flush memoized data structures
-        AutomaticDictionary.instances = [];
+            const max_size_value = { "addressesInfo.maxSize": 222 }
+            await browser.storage.local.set(max_size_value)
 
-        const max_size_value = { "addressesInfo.maxSize": 222 }
-        await browser.storage.local.set(max_size_value)
+            new AutomaticDictionary.Class({
+                window: window,
+                compose_window_builder: ComposeWindowStub,
+                logLevel: 'error',
+                deduceOnLoad: false
+            }, async (ad) => {
+                let lruHash = await ad.languageAssigner.data._object();
+                expect(lruHash.max_size).toBe(222)
 
-        new AutomaticDictionary.Class({
-            window: window,
-            compose_window_builder: ComposeWindowStub,
-            logLevel: 'error',
-            deduceOnLoad: false
-        }, async (ad) => {
-            let lruHash = await ad.languageAssigner.data._object();
-            expect(lruHash.max_size).toBe(222)
-
-            done();
+                done();
+            });
         });
     });
 });
