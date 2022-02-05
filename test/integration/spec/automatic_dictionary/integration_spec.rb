@@ -182,8 +182,6 @@ describe "AutomaticDictionary integration tests" do
     interactor.input_text(to) if to
     interactor.hit_key('Tab')
 
-    # On tb>73 we need two tabs to jump to subject because
-    # first tab only confirms email.
     interactor.hit_key('Tab')
 
     interactor.input_text(subject) if subject
@@ -203,7 +201,6 @@ describe "AutomaticDictionary integration tests" do
       interactor.hit_key('Alt+n')
     end
 
-    # for TB 60
     if interactor.current_window_title.include? "Save Message"
       # Window did not close, lets try the "Discard" shortcut
       interactor.hit_key('Alt+d')
