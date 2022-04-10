@@ -262,7 +262,9 @@ describe "AutomaticDictionary integration tests" do
     end
 
     # Reply
-    interactor.click_on_text('This is a test')
+    # The email to reply has "This is a test email" as subject but
+    # "test" and "email" words are not always correctly read by the reader.
+    interactor.click_on_text('This')
     interactor.hit_key('Control+r')
     sleep 2
     wait_for_label('Remembered es-ES')
