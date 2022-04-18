@@ -6,7 +6,7 @@ GEM
     docile (1.4.0)
     memory_profiler (1.0.0)
     multipart-post (2.1.1)
-    rmagick (4.2.4)
+    rmagick (4.2.5)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
