@@ -84,10 +84,10 @@ Object.assign(ComposeWindow.prototype, {
   setListeners: function () {
     var _this = this;
     //capture language change event
-    this.addListener(browser.compose_ext.onLanguageChange, async function (tabId, language) {
+    this.addListener(browser.compose.onActiveDictionariesChanged, async function (tab, dictionaries) {
       try {
-        if (tabId != await getTabId(_this)) {
-          _this.logger.debug("Ignoring tab id, mine is " + (await getTabId(_this)));
+        if (tab.id != await getTabId(_this)) {
+          console.debug(`Ignoring tab id ${tab.id}, mine is ${await getTabId(_this)}`);
           return;
         }
         _this.ad.languageChanged();
@@ -128,7 +128,10 @@ Object.assign(ComposeWindow.prototype, {
   },
 
   getCurrentLang: async function () {
-    var lang = await browser.compose_ext.getCurrentLanguage(await getTabId(this));
+    let activeLanguages = await browser.compose.getActiveDictionaries(await getTabId(this));
+    let languages = Object.entries(activeLanguages).filter(e => e[1]).map(e => e[0]);
+    console.log({languages});
+    let lang = languages[0];
     this.logger.debug("Current lang is " + lang);
     return lang;
   },
@@ -165,9 +168,11 @@ Object.assign(ComposeWindow.prototype, {
     );
   },
   changeLanguage: async function (lang) {
-    browser.compose_ext.setSpellCheckerLanguage(await getTabId(this), lang);
+    browser.compose.setActiveDictionaries(await getTabId(this), [lang]);
   },
   canSpellCheck: async function () {
-    return await browser.compose_ext.canSpellCheck(await getTabId(this));
+    // The code returned true for TB > 89. This version is using the new spellchecker
+    // APIs which are available since 102 only, so we can now always return true.
+    return true;
   }
 });

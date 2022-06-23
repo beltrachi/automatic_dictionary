@@ -40,27 +40,6 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
       // Again, this key must have the same name.
       compose_ext: {
 
-        getCurrentLanguage: async function(tabId) {
-          return (await getTabWindow(tabId)).document.documentElement.getAttribute("lang");
-        },
-
-        canSpellCheck: async function(tabId) {
-          var window = await getTabWindow(tabId);
-          if(ThunderbirdVersionGreaterOrEqual('89')) return true;
-          return window.gSpellChecker && window.gSpellChecker.canSpellCheck && window.gSpellChecker.enabled;
-        },
-
-        setSpellCheckerLanguage: async function(tabId, lang) {
-          var window = await getTabWindow(tabId);
-          var fake_event = {
-            target: {
-              value: lang
-            },
-            stopPropagation: function(){}
-          };
-          return window.ChangeLanguage(fake_event);
-        },
-
         showNotification: async function(tabId, string, options){
           options = options || {};
           var window = await getTabWindow(tabId);
@@ -96,26 +75,6 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
         },
 
         // An event. Most of this is boilerplate you don't need to worry about, just copy it.
-        onLanguageChange: new ExtensionCommon.EventManager({
-          context,
-          name: "compose_ext.onLanguageChange",
-          // In this function we add listeners for any events we want to listen to, and return a
-          // function that removes those listeners. To have the event fire in your extension,
-          // call fire.async.
-          register(fire) {
-            function callback(event_name, event, language) {
-              let win = windowManager.wrapWindow(event.target.ownerGlobal);
-              var tab = tabManager.convert(win.activeTab.nativeTab);
-              return fire.async(tab.id, language);
-            }
-
-            windowListener.add(callback);
-            return function() {
-              windowListener.remove(callback);
-            };
-          },
-        }).api(),
-
         onRecipientsChange: new ExtensionCommon.EventManager({
           context,
           name: "compose_ext.onRecipientsChange",
@@ -242,7 +201,7 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
       recipientsChangeWindowListener.handleEvent(event);
     });
 
-    window.document.getElementById('content-frame').addEventListener('focus', function(event){
+    window.document.getElementById('messageEditor').addEventListener('focus', function(event){
       recipientsChangeWindowListener.handleEvent(event);
     });
   }

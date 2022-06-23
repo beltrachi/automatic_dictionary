@@ -3,50 +3,6 @@
     "namespace": "compose_ext",
     "functions": [
       {
-        "name": "getCurrentLanguage",
-        "type": "function",
-        "description": "Returns spellchecker language on that tab",
-        "async": true,
-        "parameters": [
-          {
-            "name": "tabId",
-            "type": "integer",
-            "description": "Id of the tab"
-          }
-        ]
-      },
-      {
-        "name": "setSpellCheckerLanguage",
-        "type": "function",
-        "description": "Updates spellchecker language on that tab",
-        "async": true,
-        "parameters": [
-          {
-            "name": "tabId",
-            "type": "integer",
-            "description": "tabId of the tab"
-          },
-          {
-            "name": "language",
-            "type": "string",
-            "description": "language"
-          }
-        ]
-      },
-      {
-        "name": "canSpellCheck",
-        "type": "function",
-        "description": "Returns spellchecker enabled and available",
-        "async": true,
-        "parameters": [
-          {
-            "name": "tabId",
-            "type": "integer",
-            "description": "tabId of the tab"
-          }
-        ]
-      },
-      {
         "name": "showNotification",
         "type": "function",
         "description": "Show notification on that tab",
@@ -73,29 +29,17 @@
     ],
     "events": [
       {
-        "name": "onLanguageChange",
-        "type": "function",
-        "description": "Fires when the user changes current language.",
-        "parameters": [
-          {
-            "name": "language",
-            "type": "string",
-            "description": "The name of the current language"
-          }
-        ]
-      },
-        {
-            "name": "onRecipientsChange",
-            "type": "function",
-            "description": "Fires when the recipients of a compose window change",
-            "parameters": [
-                {
-                    "name": "tabId",
-                    "type": "integer",
-                    "description": "The tabId that had the recipients changed"
-                }
-            ]
-        }
+          "name": "onRecipientsChange",
+          "type": "function",
+          "description": "Fires when the recipients of a compose window change",
+          "parameters": [
+              {
+                  "name": "tabId",
+                  "type": "integer",
+                  "description": "The tabId that had the recipients changed"
+              }
+          ]
+      }
     ]
   }
 ]
