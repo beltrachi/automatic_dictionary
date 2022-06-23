@@ -3,13 +3,13 @@
   "applications": {
     "gecko": {
       "id": "automatic_dictionary_extension@jordi_beltran.net",
-      "strict_min_version": "74.0",
-      "strict_max_version": "102.0"
+      "strict_min_version": "102.0",
+      "strict_max_version": "102.*"
     }
   },
   "name": "Automatic Dictionary",
   "description": "Extension that remembers the language of the email when composing.",
-  "version": "3.0.1",
+  "version": "3.2",
   "default_locale": "en",
 
   "options_ui": {
