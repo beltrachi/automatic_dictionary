@@ -13,6 +13,8 @@ describe "AutomaticDictionary integration tests" do
   # - It deduces langauge based on domain.
   # - Preferences window shows correctly.
 
+  INSTALLED_DICTIONARIES = %w[Spanish English].freeze
+
   let(:profile_path) { Dir.mktmpdir }
   let(:logger) do
     Logger.new(STDOUT).tap do |logger|
@@ -207,14 +209,25 @@ describe "AutomaticDictionary integration tests" do
     end
   end
 
-  def change_spellchecker_language(dict_name)
+  def change_spellchecker_language(language_name)
     interactor.hit_key('Ctrl+Shift+P')
     interactor.hit_key('Alt+l')
-    # Send chars separated by spaces to simulate keystokes
-    interactor.hit_key(dict_name.chars.join(' '))
-    sleep 0.5
-    interactor.hit_key('Return')
+
+    # Unchecking other dictionaries
+    (INSTALLED_DICTIONARIES - [language_name]).each do |language|
+      interactor.click_on_text(language, filter: current_window_words_filter)
+    end
+
+    interactor.click_on_text(language_name, filter: current_window_words_filter)
+
     interactor.hit_key('Alt+c')
+  end
+
+  def current_window_words_filter
+    current_window_geometry = interactor.current_window_geometry
+    proc do |words|
+      current_window_geometry.include?(*words.first.center)
+    end
   end
 
   def wait_for_label(text)
@@ -235,7 +248,7 @@ describe "AutomaticDictionary integration tests" do
     on_composer(to: 'en@en.en', subject: 'Some subject', body: 'Hi') do
       # Open a window without closing the other
       on_composer(to: 'es@es.es', subject:'Un asunto') do
-        change_spellchecker_language('spa')
+        change_spellchecker_language('Spanish')
         wait_for_label('Saved es-ES as default')
       end
     end
@@ -252,12 +265,12 @@ describe "AutomaticDictionary integration tests" do
     # Test when recipients are too much
     recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
     on_composer(to: recipients) do
-      change_spellchecker_language('spa')
+      change_spellchecker_language('Spanish')
       wait_for_label('Discarded to save language preferences as there are too much recipients')
     end
 
     on_composer(to: 'alice <test@test.com>', subject: 'Un asunto') do
-      change_spellchecker_language('spa')
+      change_spellchecker_language('Spanish')
       wait_for_label('Saved es-ES as default')
     end
 

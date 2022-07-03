@@ -2,6 +2,7 @@ require 'interactor/snapshooter'
 require 'interactor/reader'
 require 'interactor/clicker'
 require 'interactor/keyboard_hitter'
+require 'interactor/window_manager'
 
 module Interactor
   class Client
@@ -79,6 +80,10 @@ module Interactor
     def input_text(text)
       sleep delay
       KeyboardHitter.input_text(text)
+    end
+
+    def current_window_geometry
+      WindowManager.current_window_geometry
     end
 
     private
