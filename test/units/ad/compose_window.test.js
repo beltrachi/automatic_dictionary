@@ -35,6 +35,9 @@ describe('ComposeWindow', () => {
       setSpellCheckerLanguage: jest.fn(),
       canSpellCheck: jest.fn().mockResolvedValue(true)
     };
+    browser.compose = {
+      onActiveDictionariesChanged: eventEmitterFactory()
+    }
     browser.windows.onFocusChanged = eventEmitterFactory();
     browser.windows.get = jest.fn().mockResolvedValue({
       tabs: [{ id: 'stubbed-tab-id' }]
@@ -69,7 +72,7 @@ describe('ComposeWindow', () => {
     it('sets listeners on compose_ext', () => {
       var compose_window = factory();
       compose_window.setListeners();
-      expect(browser.compose_ext.onLanguageChange.addListener).toHaveBeenCalled()
+      expect(browser.compose.onActiveDictionariesChanged.addListener).toHaveBeenCalled()
       expect(browser.compose_ext.onRecipientsChange.addListener).toHaveBeenCalled()
       expect(browser.windows.onFocusChanged.addListener).toHaveBeenCalled();
     });
