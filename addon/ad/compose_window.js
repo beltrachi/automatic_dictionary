@@ -87,7 +87,7 @@ Object.assign(ComposeWindow.prototype, {
     this.addListener(browser.compose.onActiveDictionariesChanged, async function (tab, dictionaries) {
       try {
         if (tab.id != await getTabId(_this)) {
-          console.debug(`Ignoring tab id ${tab.id}, mine is ${await getTabId(_this)}`);
+          _this.logger.debug(`Ignoring tab id ${tab.id}, mine is ${await getTabId(_this)}`);
           return;
         }
         _this.ad.languageChanged();
@@ -130,7 +130,7 @@ Object.assign(ComposeWindow.prototype, {
   getCurrentLang: async function () {
     let activeLanguages = await browser.compose.getActiveDictionaries(await getTabId(this));
     let languages = Object.entries(activeLanguages).filter(e => e[1]).map(e => e[0]);
-    console.log({languages});
+    this.logger.debug(languages);
     let lang = languages[0];
     this.logger.debug("Current lang is " + lang);
     return lang;
