@@ -68,6 +68,7 @@ AutomaticDictionary.Class = function (options, callback) {
   this.setupDependencies();
 
   var _this = this;
+  this.initTime = this.currentTimestamp();
   this.migrate().then(function () {
     _this.setLogLevelFromConfig(options.logLevel);
     _this.prepareDataStructures();
@@ -165,6 +166,10 @@ AutomaticDictionary.Class.prototype = {
     this.logger.debug("languageChanged call");
 
     if (!this.running) return;
+    if(this.initTime + 500 > this.currentTimestamp()){
+      this.logger.debug('Window has just initialized, ignoring dictionary changes because its not a human who did them.')
+      return;
+    }
     this.logger.debug("languageChanged call and running");
     var maxRecipients = await this.getMaxRecipients();
     var stats = { saved_recipients: 0 };
@@ -469,6 +474,10 @@ AutomaticDictionary.Class.prototype = {
         await this.storage.set(k, this.defaults[k]);
       }
     }
+  },
+
+  currentTimestamp: function(){
+    return Date.now();
   }
 };
 

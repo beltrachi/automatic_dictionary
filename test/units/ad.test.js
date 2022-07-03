@@ -13,6 +13,13 @@ beforeEach(async () => {
     jest.setTimeout(1000);
     browser._flushStorage();
     AutomaticDictionary.instances = [];
+
+    // Mock CurrentTimestamp
+    var last_timestamp = Date.now();
+    AutomaticDictionary.Class.prototype.currentTimestamp = function(){
+        last_timestamp = last_timestamp + 501;
+        return last_timestamp;
+    }
 })
 
 test('Initial boot', (done) => {
