@@ -13,7 +13,6 @@ describe('ComposeWindowStub', () => {
     var compose_window_stub = factory();
     for (var method in ComposeWindow.prototype) {
       expect(compose_window_stub[method]).toBeDefined();
-      console.log(method)
       // Both methods are async?
       expectBothAsyncMethods(ComposeWindow.prototype[method], compose_window_stub[method]);
     }
