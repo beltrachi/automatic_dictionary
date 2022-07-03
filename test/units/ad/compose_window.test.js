@@ -36,7 +36,8 @@ describe('ComposeWindow', () => {
       canSpellCheck: jest.fn().mockResolvedValue(true)
     };
     browser.compose = {
-      onActiveDictionariesChanged: eventEmitterFactory()
+      onActiveDictionariesChanged: eventEmitterFactory(),
+      setActiveDictionaries: jest.fn()
     }
     browser.windows.onFocusChanged = eventEmitterFactory();
     browser.windows.get = jest.fn().mockResolvedValue({
@@ -165,11 +166,11 @@ describe('ComposeWindow', () => {
   });
 
   describe('changeLanguage', () => {
-    it('sets spellchecker language via compose_ext', async () => {
+    it('sets spellchecker language via compose', async () => {
       var compose_window = factory();
       await compose_window.changeLanguage('en')
 
-      expect(browser.compose_ext.setSpellCheckerLanguage).toHaveBeenCalledWith('stubbed-tab-id', 'en')
+      expect(browser.compose.setActiveDictionaries).toHaveBeenCalledWith('stubbed-tab-id', ['en'])
     })
   })
 
