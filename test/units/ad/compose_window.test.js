@@ -29,8 +29,11 @@ describe('ComposeWindow', () => {
   }
   beforeEach(() => {
     browser.compose_ext = {
+      onLanguageChange: eventEmitterFactory(),
       onRecipientsChange: eventEmitterFactory(),
       showNotification: jest.fn(),
+      setSpellCheckerLanguage: jest.fn(),
+      canSpellCheck: jest.fn().mockResolvedValue(true)
     };
     browser.windows.onFocusChanged = eventEmitterFactory();
     browser.windows.get = jest.fn().mockResolvedValue({
@@ -66,9 +69,20 @@ describe('ComposeWindow', () => {
     it('sets listeners on compose_ext', () => {
       var compose_window = factory();
       compose_window.setListeners();
+      expect(browser.compose_ext.onLanguageChange.addListener).toHaveBeenCalled()
       expect(browser.compose_ext.onRecipientsChange.addListener).toHaveBeenCalled()
       expect(browser.windows.onFocusChanged.addListener).toHaveBeenCalled();
     });
+  });
+
+  describe('getCurrentLang', () => {
+    it('returns what compose_ext returns', async () => {
+      var compose_window = factory();
+      browser.compose_ext.getCurrentLanguage = jest.fn().mockReturnValue('ca')
+
+      expect(await compose_window.getCurrentLang()).toBe('ca')
+      expect(browser.compose_ext.getCurrentLanguage).toHaveBeenCalledWith('stubbed-tab-id')
+    })
   });
 
   describe('recipients', () => {
@@ -146,4 +160,22 @@ describe('ComposeWindow', () => {
       )
     })
   });
+
+  describe('changeLanguage', () => {
+    it('sets spellchecker language via compose_ext', async () => {
+      var compose_window = factory();
+      await compose_window.changeLanguage('en')
+
+      expect(browser.compose_ext.setSpellCheckerLanguage).toHaveBeenCalledWith('stubbed-tab-id', 'en')
+    })
+  })
+
+  describe('canSpellCheck', () => {
+    it('returns true when spellchecker is available', async () => {
+      var compose_window = factory();
+      expect(await compose_window.canSpellCheck()).toBe(true)
+
+      expect(browser.compose_ext.canSpellCheck).toHaveBeenCalledWith('stubbed-tab-id')
+    })
+  })
 })
