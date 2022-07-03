@@ -175,11 +175,9 @@ describe('ComposeWindow', () => {
   })
 
   describe('canSpellCheck', () => {
-    it('returns true when spellchecker is available', async () => {
+    it('returns true all the time', async () => {
       var compose_window = factory();
       expect(await compose_window.canSpellCheck()).toBe(true)
-
-      expect(browser.compose_ext.canSpellCheck).toHaveBeenCalledWith('stubbed-tab-id')
     })
   })
 })

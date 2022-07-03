@@ -173,6 +173,7 @@ Object.assign(ComposeWindow.prototype, {
   canSpellCheck: async function () {
     // The code returned true for TB > 89. This version is using the new spellchecker
     // APIs which are available since 102 only, so we can now always return true.
+    // By now we leave it here just in case TB has some situations where its not ready.
     return true;
   }
 });
