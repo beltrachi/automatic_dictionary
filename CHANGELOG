@@ -1,3 +1,10 @@
+=== 3.1.0
+
+* Use new extension APIs available in Thunderbird 102.0 (Basic feature)
+
+This version still does not support more than one language per recipient.
+When addon detects languages used it just gets the first one.
+
 === 3.0.1
 
 * Add support for Thunderbird up to 102.0
