@@ -126,44 +126,44 @@ test('Internal methods?', (done) => {
 
         // Change the lang and trigger the event so language foolang gets associated
         // with foo.
-        status.lang = "foolang";
+        status.setLangs(["foolang"]);
         await ad.languageChanged();
         expect(compose_window.changeLanguage).toHaveBeenCalledTimes(0)
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(2)
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
 
         //Somewhere the lang is changed but you go back here and
-        status.lang = 'other'
+        status.setLangs(['other']);
         await ad.deduceLanguage();
 
-        expect(status.lang).toBe('foolang');
+        expect(status.getLangs()).toEqual(['foolang']);
 
         //Set stopped.
         ad.stop();
         //Deduce language is aborted despite we change dict
-        status.lang = "other";
+        status.setLangs(["other"]);
         await ad.deduceLanguage();
-        expect(status.lang).toBe('other');
+        expect(status.getLangs()).toEqual(['other']);
 
         //When spellcheck disabled, do nothing
         ad.start();
         status.spellchecker_enabled = false;
-        status.lang = "other";
+        status.setLangs(["other"]);
         // TODO: fix this. we set count 100 to not let it delay the deduce language
         // execution 1s and being an async execution. Count 100 is greater than 10
         // so it does not postpone it.
         await ad.deduceLanguage({ count: 100 });
-        expect(status.lang).toBe('other');
+        expect(status.getLangs()).toEqual(['other']);
 
         //Enable again and everything ok.
         status.spellchecker_enabled = true;
         await ad.deduceLanguage();
-        expect(status.lang).toBe('foolang');
+        expect(status.getLangs()).toEqual(['foolang']);
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
 
         //test notificationLevel error
         await ad.storage.set(ad.NOTIFICATION_LEVEL, "error");
-        status.lang = "other";
+        status.setLangs(["other"]);
         await ad.deduceLanguage();
 
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(2);
@@ -193,19 +193,19 @@ test('Tos and ccs', (done) => {
         mockComposeWindow(compose_window, status)
 
         //Change the lang and it gets stored
-        status.lang = 'foolang';
+        status.setLangs(['foolang']);
         await ad.languageChanged();
 
         // Setting individuals only will assign foolang too
         status.recipients = { "to": ["foo"] };
-        status.lang = 'other';
+        status.setLangs(['other']);
         await ad.deduceLanguage();
-        expect(status.lang).toBe('foolang');
+        expect(status.getLangs()).toEqual(['foolang']);
 
         status.recipients = { "to": ["bar"] };
-        status.lang = 'other';
+        status.setLangs(['other']);
         await ad.deduceLanguage();
-        expect(status.lang).toBe('foolang');
+        expect(status.getLangs()).toEqual(['foolang']);
 
         done();
     })
@@ -246,23 +246,23 @@ test('TOs priorization', (done) => {
         let status = { recipients: { "to": ["catalan"] }, lang: null }
         mockComposeWindow(compose_window, status)
 
-        status.lang = 'ca'
+        status.setLangs(['ca']);
         await ad.languageChanged();
 
         status.recipients = { "to": ["spanish"] };
-        status.lang = 'es';
+        status.setLangs(['es']);
         await ad.languageChanged();
 
         // Scenario is ready
 
         status.recipients = { "to": ["spanish", "catalan"] };
         await ad.deduceLanguage();
-        expect(status.lang).toBe('es')
+        expect(status.getLangs()).toEqual(['es']);
 
         status.recipients = { "to": ["catalan", "spanish"] };
 
         await ad.deduceLanguage();
-        expect(status.lang).toBe('ca')
+        expect(status.getLangs()).toEqual(['ca']);
 
         done();
     });
@@ -291,40 +291,40 @@ test('Do not overwrite individuals language when its a group language', (done) =
 
         //Prepare scenario
         status.recipients = { "to": ["A"] };
-        status.lang = "toA-lang";
+        status.setLangs(["toA-lang"]);
         await ad.languageChanged();
         status.recipients = { "to": ["A"], "cc": ["B"] };
-        status.lang = "toAccB-lang";
+        status.setLangs(["toAccB-lang"]);
         await ad.languageChanged();
         status.recipients = { "to": ["B"] };
-        status.lang = "toB-lang";
+        status.setLangs(["toB-lang"]);
         await ad.languageChanged();
 
         //Scenario ready
         status.recipients = { "to": ["A"], "cc": ["B"] };
-        status.lang = "new-toAccB-lang";
+        status.setLangs(["new-toAccB-lang"]);
         await ad.languageChanged();
         //Language is setted
         await ad.deduceLanguage();
-        expect(status.lang).toBe("new-toAccB-lang");
+        expect(status.getLangs()).toEqual(["new-toAccB-lang"]);
 
         //Check it has not affected the others
         status.recipients = { "to": ["A"] };
         await ad.deduceLanguage();
-        expect(status.lang).toBe("toA-lang");
+        expect(status.getLangs()).toEqual(["toA-lang"]);
 
         status.recipients = { "to": ["B"] };
         await ad.deduceLanguage();
-        expect(status.lang).toBe("toB-lang");
+        expect(status.getLangs()).toEqual(["toB-lang"]);
 
         // Setting lang to a group does not update the ones alone
         status.recipients = { "to": ["A", "B"] };
-        status.lang = "toA-toB-lang";
+        status.setLangs(["toA-toB-lang"]);
         await ad.languageChanged();
 
         status.recipients = { "to": ["A"] };
         await ad.deduceLanguage();
-        expect(status.lang).toBe("toA-lang");
+        expect(status.getLangs()).toEqual(["toA-lang"]);
         done(); return;
     })
 });
@@ -350,7 +350,7 @@ test('Max recipients assignment', (done) => {
 
         //Prepare scenario
         status.recipients = { "to": ["A"] };
-        status.lang = "toA-lang";
+        status.setLangs(["toA-lang"]);
         await ad.languageChanged();
 
         //Prepare scenario
@@ -361,30 +361,30 @@ test('Max recipients assignment', (done) => {
         }
 
         status.recipients = recipients;
-        status.lang = "ca_es";
+        status.setLangs(["ca_es"]);
         await ad.languageChanged();
 
         await ad.deduceLanguage();
-        expect(status.lang).toBe('ca_es');
+        expect(status.getLangs()).toEqual(['ca_es']);
 
         //More than maxRecipients is discarded
         recipients.to.push("toomuch");
 
-        status.lang = 'foobar';
+        status.setLangs(['foobar']);
         await ad.languageChanged();
         // We do not want to update the current lang because
         // the user has manually changed the lang and do not
         // want it to be reverted.
-        expect(status.lang).toBe('foobar');
+        expect(status.getLangs()).toEqual(['foobar']);
 
         // When the recipients goes lower the limit
         recipients.to.pop();
-        status.lang = 'andromeda';
+        status.setLangs(['andromeda']);
         await ad.languageChanged();
 
-        status.lang = 'other';
+        status.setLangs(['other']);
         await ad.deduceLanguage();
-        expect(status.lang).toBe("andromeda");
+        expect(status.getLangs()).toEqual(["andromeda"]);
         done();
     });
 
@@ -425,7 +425,7 @@ test('Minimize notifications', (done) => {
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(2)
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('noLangForRecipients')
 
-        status.lang = 'foobar';
+        status.setLangs(['foobar']);
         await ad.languageChanged();
 
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(3)
@@ -438,10 +438,10 @@ test('Minimize notifications', (done) => {
         //If it has changed it will update the lang but not notifying anybody
         //as this is what he has setted before. This happens when more than one
         //ad instance is open
-        status.lang = 'other';
+        status.setLangs(['other']);
         await ad.deduceLanguage();
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(3)
-        expect(status.lang).toBe('foobar');
+        expect(status.getLangs()).toEqual(['foobar']);
         done();
     });
 });
@@ -463,7 +463,7 @@ test('When error on change language', (done) => {
 
         await ad.languageChanged();
 
-        status.lang = 'es';
+        status.setLangs(['es']);
 
         // Mock 3 times raise an error
         [1, 2, 3].forEach(element => {
@@ -474,7 +474,7 @@ test('When error on change language', (done) => {
             })
         });
         ad.addEventListener('deduction-completed', function () {
-            expect(status.lang).toBe('en');
+            expect(status.getLangs()).toEqual(['en']);
             done();
         });
 
@@ -560,14 +560,14 @@ test('Heuristics', (done) => {
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('noLangForRecipients')
 
         status.recipients = { "to": ["foo@bar.dom"] };
-        status.lang = 'foobar';
+        status.setLangs(['foobar']);
         await ad.languageChanged();
 
-        status.lang = 'other';
+        status.setLangs(['other']);
         status.recipients = { "to": ["abc@bar.dom"] };
         await ad.deduceLanguage();
 
-        expect(status.lang).toBe('foobar');
+        expect(status.getLangs()).toEqual(['foobar']);
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('deducedLang.guess')
         //Test it's saved
         expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
@@ -584,7 +584,7 @@ test('Heuristics', (done) => {
         status.recipients = {
             "to": ["abc2@bar2.dom", "abc2@bar3.dom", "abc2@bar4.dom", "abc2@bar5.dom"]
         };
-        status.lang = "foobar-x";
+        status.setLangs(["foobar-x"]);
         await ad.languageChanged();
 
         //Max size is 5 but there is a key of all TOs composed which is the fifth position
@@ -598,7 +598,7 @@ test('Heuristics', (done) => {
         //When we change preference, unregiser from freq_suffix the old pref
         // and set the new one. In this case we change the abc2@bar2.com preference
         status.recipients = { "to": ["abc2@bar2.dom"] };
-        status.lang = "foobar-changed";
+        status.setLangs(["foobar-changed"]);
         await ad.languageChanged();
 
         await ad.deduceLanguage();
@@ -625,7 +625,7 @@ test('Heuristics', (done) => {
 
         //Test that on various recipients it ponderates the language.
         status.recipients = { "to": ["abc2@bar2.dom2"] };
-        status.lang = 'dom2lang';
+        status.setLangs(['dom2lang']);
         await ad.languageChanged()
 
         status.recipients = {
@@ -638,7 +638,7 @@ test('Heuristics', (done) => {
         };
 
         await ad.deduceLanguage();
-        expect(status.lang).toBe("dom2lang");
+        expect(status.getLangs()).toEqual(["dom2lang"]);
         done();
     });
 
@@ -666,25 +666,25 @@ test('when only data is on CC recipients', (done) => {
 
         //Prepare scenario
         status.recipients = { "to": ["a@a.com"] };
-        status.lang = "lang-a";
+        status.setLangs(["lang-a"]);
         await ad.languageChanged();
         //Scenario ready
 
         status.recipients = { "to": ["a@a.com", "b@b.com"] };
-        status.lang = 'other'
+        status.setLangs(['other']);
         //Language is setted
         await ad.deduceLanguage();
-        expect(status.lang).toBe('lang-a')
+        expect(status.getLangs()).toEqual(['lang-a']);
 
         // When we have a cc recipient with known data, we can deduce it
         status.recipients = {
             "to": ["c@c.com"],
             "cc": ["a@a.com"]
         };
-        status.lang = 'other'
+        status.setLangs(['other']);
 
         await ad.deduceLanguage();
-        expect(status.lang).toBe('lang-a')
+        expect(status.getLangs()).toEqual(['lang-a']);
         done();
     })
 });
