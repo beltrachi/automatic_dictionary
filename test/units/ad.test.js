@@ -114,7 +114,7 @@ test('Internal methods?', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: { "to": ["foo"], "cc": [] }, lang: null }
+        let status = { recipients: { "to": ["foo"], "cc": [] }, langs: [] }
         mockComposeWindow(compose_window, status)
 
         expect(ad.canSpellCheck()).resolves.toBe(true)
@@ -189,7 +189,7 @@ test('Tos and ccs', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: { "to": ["foo"], "cc": ["bar"] }, lang: null }
+        let status = { recipients: { "to": ["foo"], "cc": ["bar"] }, langs: [] }
         mockComposeWindow(compose_window, status)
 
         //Change the lang and it gets stored
@@ -220,7 +220,7 @@ test('Language change when no recipients is discarded', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: { "to": [], "cc": [] }, lang: 'en' }
+        let status = { recipients: { "to": [], "cc": [] }, langs: ['en'] }
         mockComposeWindow(compose_window, status)
         await ad.languageChanged();
 
@@ -243,7 +243,7 @@ test('TOs priorization', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
         // Store first the preference for each recipient
-        let status = { recipients: { "to": ["catalan"] }, lang: null }
+        let status = { recipients: { "to": ["catalan"] }, langs: [] }
         mockComposeWindow(compose_window, status)
 
         status.setLangs(['ca']);
@@ -286,7 +286,7 @@ test('Do not overwrite individuals language when its a group language', (done) =
         let compose_window = ad.compose_window;
 
         // Store first the preference for each recipient
-        let status = { recipients: {}, lang: null }
+        let status = { recipients: {}, langs: [] }
         mockComposeWindow(compose_window, status)
 
         //Prepare scenario
@@ -345,7 +345,7 @@ test('Max recipients assignment', (done) => {
         let compose_window = ad.compose_window;
 
         // Store first the preference for each recipient
-        let status = { recipients: {}, lang: null }
+        let status = { recipients: {}, langs: [] }
         mockComposeWindow(compose_window, status)
 
         //Prepare scenario
@@ -405,7 +405,7 @@ test('Minimize notifications', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: {}, lang: null }
+        let status = { recipients: {}, langs: [] }
         mockComposeWindow(compose_window, status)
 
         //Prepare scenario
@@ -455,7 +455,7 @@ test('When error on change language', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: {}, lang: 'en' }
+        let status = { recipients: {}, langs: ['en'] }
         mockComposeWindow(compose_window, status)
 
         //Prepare scenario
@@ -496,7 +496,7 @@ describe('deduce language when spellchecker is not ready', () => {
         }, async (ad) => {
             let compose_window = ad.compose_window;
 
-            let status = { recipients: { to: 'foo', cc: 'bar' }, lang: 'en' }
+            let status = { recipients: { to: 'foo', cc: 'bar' }, langs: ['en'] }
             mockComposeWindow(compose_window, status)
 
             compose_window.canSpellCheck.mockResolvedValueOnce(false);
@@ -518,7 +518,7 @@ describe('deduce language when spellchecker is not ready', () => {
         }, async (ad) => {
             let compose_window = ad.compose_window;
 
-            let status = { recipients: { to: 'foo', cc: 'bar' }, lang: 'en' }
+            let status = { recipients: { to: 'foo', cc: 'bar' }, langs: ['en'] }
             mockComposeWindow(compose_window, status)
 
             compose_window.canSpellCheck.mockResolvedValue(false);
@@ -547,7 +547,7 @@ test('Heuristics', (done) => {
         let lruHash = await ad.languageAssigner.data._object();
         lruHash.max_size = 5;
 
-        let status = { recipients: {}, lang: null }
+        let status = { recipients: {}, langs: [] }
         mockComposeWindow(compose_window, status)
 
         //Prepare scenario
@@ -661,7 +661,7 @@ test('when only data is on CC recipients', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: {}, lang: null }
+        let status = { recipients: {}, langs: [] }
         mockComposeWindow(compose_window, status)
 
         //Prepare scenario

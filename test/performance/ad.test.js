@@ -21,7 +21,7 @@ test('Ad overall performance', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: { "to": [], "cc": [] }, lang: null }
+        let status = { recipients: { "to": [], "cc": [] }, langs: [] }
         mockComposeWindow(compose_window, status)
 
         /**
