@@ -32,7 +32,7 @@ test('Initial boot', (done) => {
         logLevel: 'error',
         deduceOnLoad: false
     }, async (ad) => {
-        let lruHash = await ad.languageAssigner.data._object();
+        let lruHash = await ad.languageAssigner.lruHash._object();
         expect(lruHash.max_size).toBe(1200)
 
         done();
@@ -544,7 +544,7 @@ test('Heuristics', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
         // Overwrite max_size of data hash
-        let lruHash = await ad.languageAssigner.data._object();
+        let lruHash = await ad.languageAssigner.lruHash._object();
         lruHash.max_size = 5;
 
         let status = { recipients: {}, langs: [] }
@@ -731,9 +731,9 @@ test('LRU max size is read from config', (done) => {
                 logLevel: 'error',
                 deduceOnLoad: false
             }, async (ad) => {
-                let lruHash = await ad.languageAssigner.data._object();
+                let lruHash = await ad.languageAssigner.lruHash._object();
                 expect(lruHash.max_size).toBe(1234)
-                await ad.languageAssigner.data.set('foo@bar.com', 'es')
+                await ad.languageAssigner.lruHash.set('foo@bar.com', 'es')
                 resolve()
             });
         }).then(async () => {
@@ -749,7 +749,7 @@ test('LRU max size is read from config', (done) => {
                 logLevel: 'error',
                 deduceOnLoad: false
             }, async (ad) => {
-                let lruHash = await ad.languageAssigner.data._object();
+                let lruHash = await ad.languageAssigner.lruHash._object();
                 expect(lruHash.max_size).toBe(222)
 
                 done();

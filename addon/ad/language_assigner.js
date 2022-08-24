@@ -38,7 +38,7 @@ LanguageAssigner.prototype = {
         language: pair[1]
       });
     });
-    this.data = persistent_wrapper;
+    this.lruHash = persistent_wrapper;
   },
   languageChanged: async function (context, stats) {
     if (context.recipients.to.length == 0) {
@@ -78,7 +78,7 @@ LanguageAssigner.prototype = {
     if (!previous_language || (force && language_changed)) {
       // Store it!
       this.logger.debug("assigning language " + lang + " to key " + key);
-      await this.data.set(key, lang);
+      await this.lruHash.set(key, lang);
       this.dispatchEvent({
         type: 'assignment-changed',
         recipients: recipients,
@@ -92,7 +92,7 @@ LanguageAssigner.prototype = {
   },
 
   getLangFor: async function (addr) {
-    var value = await this.data.get(addr);
+    var value = await this.lruHash.get(addr);
     if ((typeof value) == "undefined" || value === "") value = null;
 
     return Promise.resolve(value);
