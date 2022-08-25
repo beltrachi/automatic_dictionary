@@ -256,7 +256,7 @@ AutomaticDictionary.Class.prototype = {
         return;
       } else {
         this.logger.debug("Detected changes on langs (from-to): " +
-          JSON.stringify([await this.getCurrentLang(), langs]));
+          JSON.stringify([await this.getCurrentLangs(), langs]));
       }
     }
     this.logger.debug('Lang in deduceLanguage is '+ langs)
@@ -390,11 +390,6 @@ AutomaticDictionary.Class.prototype = {
       AutomaticDictionary.logger.setLevel(level);
       _this.logger.setLevel(level);
     });
-  },
-
-  //Take care as this language is globally set.
-  getCurrentLang: function () {
-    return this.compose_window.getCurrentLang();
   },
 
   getCurrentLangs: function () {

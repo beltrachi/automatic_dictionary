@@ -24,7 +24,6 @@ export function mockComposeWindow(compose_window, options) {
     compose_window.changeLanguages = jest.fn(function (langs) {
         options.langs = langs;
     });
-    compose_window.getCurrentLang = jest.fn(function () { return options.langs[0] });
     compose_window.getCurrentLangs = jest.fn(function () {
         return options.langs
     });

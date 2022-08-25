@@ -25,7 +25,6 @@ Object.assign(ComposeWindowStub.prototype, {
     logger: null,
 
     setListeners: function () {},
-    getCurrentLang: async function () {},
     getCurrentLangs: async function () {},
     recipients: async function (_recipientType) {
         return [];

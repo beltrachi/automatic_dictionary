@@ -79,12 +79,12 @@ describe('ComposeWindow', () => {
     });
   });
 
-  describe('getCurrentLang', () => {
+  describe('getCurrentLangs', () => {
     it('returns what compose returns', async () => {
       var compose_window = factory();
       browser.compose.getActiveDictionaries = jest.fn().mockReturnValue({ca: true, en: false})
 
-      expect(await compose_window.getCurrentLang()).toBe('ca')
+      expect(await compose_window.getCurrentLangs()).toEqual(['ca'])
       expect(browser.compose.getActiveDictionaries).toHaveBeenCalledWith('stubbed-tab-id')
     })
   });
