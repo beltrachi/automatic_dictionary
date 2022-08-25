@@ -30,7 +30,9 @@ DomainHeuristic.prototype = {
     var _this = this;
     languageAssigner.addEventListener('assignment-removed', function (event) {
       if (_this.keyIsSingle(event.recipientsKey)) {
-        _this.removeHeuristic(event.recipientsKey, event.language);
+        event.languages.forEach(lang => {
+          _this.removeHeuristic(event.recipientsKey, lang);
+        });
       }
     });
     this.setListeners(languageAssigner);
@@ -47,10 +49,10 @@ DomainHeuristic.prototype = {
   onRecipientLanguageAssignmentChange: async function (event) {
     if (!this.isSingle(event.recipients)) return;
 
-    if (event.previousLanguage) {
-      await this.removeHeuristic(event.recipientsKey, event.previousLanguage);
+    if (event.previousLanguages) {
+      await this.removeHeuristic(event.recipientsKey, event.previousLanguages[0]);
     }
-    await this.saveHeuristic(event.recipientsKey, event.language);
+    await this.saveHeuristic(event.recipientsKey, event.languages[0]);
   },
 
   isSingle(recipients) {

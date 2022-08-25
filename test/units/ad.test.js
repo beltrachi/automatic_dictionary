@@ -211,6 +211,37 @@ test('Tos and ccs', (done) => {
     })
 });
 
+test('Multiple languages support', (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        let status = { recipients: { "to": ["foo"], "cc": ["bar"] }, langs: [] }
+        mockComposeWindow(compose_window, status)
+
+        //Change the lang and it gets stored
+        status.setLangs(['en', 'es']);
+        await ad.languageChanged();
+
+        // Setting individuals only will assign foolang too
+        status.recipients = { "to": ["foo"] };
+        status.setLangs(['other']);
+        await ad.deduceLanguage();
+        expect(status.getLangs()).toEqual(['en','es']);
+
+        status.recipients = { "to": ["bar"] };
+        status.setLangs(['other']);
+        await ad.deduceLanguage();
+        expect(status.getLangs()).toEqual(['en','es']);
+
+        done();
+    })
+});
+
 test('Language change when no recipients is discarded', (done) => {
     new AutomaticDictionary.Class({
         window: window,
@@ -590,8 +621,10 @@ test('Heuristics', (done) => {
         //Max size is 5 but there is a key of all TOs composed which is the fifth position
         expect(await ad.domainHeuristic.freq_suffix.pairs()).toStrictEqual(
             [
-                ["bar2.dom", "foobar-x", 1], ["bar3.dom", "foobar-x", 1],
-                ["bar4.dom", "foobar-x", 1], ["bar5.dom", "foobar-x", 1]
+                ["bar2.dom", "foobar-x", 1],
+                ["bar3.dom", "foobar-x", 1],
+                ["bar4.dom", "foobar-x", 1],
+                ["bar5.dom", "foobar-x", 1]
             ]
         );
 

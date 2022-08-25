@@ -26,10 +26,12 @@ Object.assign(ComposeWindowStub.prototype, {
 
     setListeners: function () {},
     getCurrentLang: async function () {},
+    getCurrentLangs: async function () {},
     recipients: async function (_recipientType) {
         return [];
     },
     changeLabel: async function (str) {},
     changeLanguage: async function(){},
+    changeLanguages: async function(){},
     canSpellCheck: async function(){}
 });

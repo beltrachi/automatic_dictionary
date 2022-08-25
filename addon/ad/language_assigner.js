@@ -35,7 +35,7 @@ LanguageAssigner.prototype = {
       _this.dispatchEvent({
         type: 'assignment-removed',
         recipientsKey: pair[0],
-        language: pair[1]
+        languages: pair[1]
       });
     });
     this.lruHash = persistent_wrapper;
@@ -45,46 +45,47 @@ LanguageAssigner.prototype = {
       this.logger.debug('Empty recipients, skipping language changed')
       return;
     }
-    await this.assignLangToFullCombination(context, context.language, stats);
-    await this.assignLangToFullTo(context, context.language, stats);
-    await this.assignLangToAllIndividuallyIfNew(context, context.language, stats);
+    await this.assignLangsToFullCombination(context, context.languages, stats);
+    await this.assignLangsToFullTo(context, context.languages, stats);
+    await this.assignLangsToAllIndividuallyIfNew(context, context.languages, stats);
   },
 
-  assignLangToFullCombination: async function (context, lang, stats) {
-    await this.saveRecipientsToStructures(context.recipients, lang, stats,
+  assignLangsToFullCombination: async function (context, langs, stats) {
+    await this.saveRecipientsToStructures(context.recipients, langs, stats,
       { force: true });
   },
-  assignLangToFullTo: async function (context, lang, stats) {
+  assignLangsToFullTo: async function (context, langs, stats) {
     if (context.recipients.to.length == 1) return;
 
-    await this.saveRecipientsToStructures({ to: context.recipients.to }, lang, stats,
+    await this.saveRecipientsToStructures({ to: context.recipients.to }, langs, stats,
       { force: true });
   },
 
-  assignLangToAllIndividuallyIfNew: async function (context, lang, stats) {
+  assignLangsToAllIndividuallyIfNew: async function (context, langs, stats) {
     const all = context.recipients.to.concat(context.recipients.cc);
     for (var i in all) {
-      await this.saveRecipientsToStructures({ to: [all[i]] }, lang, stats);
+      await this.saveRecipientsToStructures({ to: [all[i]] }, langs, stats);
     }
   },
   // @param recipients [Hash] with "to" and "cc" keys
-  saveRecipientsToStructures: async function (recipients, lang, stats, options) {
+  saveRecipientsToStructures: async function (recipients, langs, stats, options) {
     options = options || {};
     var key = new Recipients(recipients).getKey();
     var force = options.force;
-    var previous_language = await this.getLangFor(key);
-    const language_changed = previous_language && previous_language != lang;
+    var previous_languages = await this.getLangsFor(key);
+    const languages_changed = previous_languages && previous_languages != langs;
 
-    if (!previous_language || (force && language_changed)) {
+    if (!previous_languages || (force && languages_changed)) {
       // Store it!
-      this.logger.debug("assigning language " + lang + " to key " + key);
-      await this.lruHash.set(key, lang);
+      this.logger.debug("assigning language " + langs + " to key " + key);
+      await this.lruHash.set(key, langs);
       this.dispatchEvent({
         type: 'assignment-changed',
         recipients: recipients,
         recipientsKey: key,
-        previousLanguage: previous_language,
-        language: lang
+        previousLanguages: previous_languages,
+        language: langs[0],
+        languages: langs
       })
 
       stats.saved_recipients++;
@@ -92,6 +93,12 @@ LanguageAssigner.prototype = {
   },
 
   getLangFor: async function (addr) {
+    var value = await this.lruHash.get(addr);
+    if ((typeof value) == "undefined" || value === "") value = null;
+
+    return Promise.resolve(value);
+  },
+  getLangsFor: async function (addr) {
     var value = await this.lruHash.get(addr);
     if ((typeof value) == "undefined" || value === "") value = null;
 

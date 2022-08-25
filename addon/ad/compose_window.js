@@ -136,6 +136,14 @@ Object.assign(ComposeWindow.prototype, {
     return lang;
   },
 
+  getCurrentLangs: async function () {
+    let activeLanguages = await browser.compose.getActiveDictionaries(await getTabId(this));
+    let languages = Object.entries(activeLanguages).filter(e => e[1]).map(e => e[0]);
+    this.logger.debug(languages);
+    this.logger.debug("Current langs are " + languages);
+    return languages;
+  },
+
   recipients: async function (recipientType) {
     recipientType = recipientType || "to";
     var tabId = await getTabId(this);
