@@ -64,7 +64,7 @@ AutomaticDictionary.Class = function (options, callback) {
   this.logger.debug("ad: init");
   this.running = true;
   this.ignored_contexts = [];
-
+  this.last_langs = [];
   this.setupDependencies();
 
   var _this = this;
@@ -184,7 +184,7 @@ AutomaticDictionary.Class.prototype = {
     }
     this.ignored_contexts = [];
 
-    if (context.languages == this.last_langs && !this.contextChangedSinceLast(context)) {
+    if (this.equalLanguages(context.languages, this.last_langs) && !this.contextChangedSinceLast(context)) {
       this.logger.debug('Same languages and recipients as before ' + context.languages);
       return;
     }
