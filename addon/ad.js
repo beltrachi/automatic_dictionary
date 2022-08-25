@@ -321,18 +321,6 @@ AutomaticDictionary.Class.prototype = {
     return await this.domainHeuristic.heuristicGuess(recipients);
   },
 
-  setCurrentLang: async function (target) {
-    throw "NOOO";
-    //Temporary disable language change detection that we trigger ourself
-    this.logger.info("setCurrentLang " + target);
-    this.running = false;
-    try {
-      await this.compose_window.changeLanguage(target);
-    } finally {
-      this.running = true;
-    }
-  },
-
   setCurrentLangs: async function (targets) {
     //Temporary disable language change detection that we trigger ourself
     this.logger.info("setCurrentLangs " + targets);
