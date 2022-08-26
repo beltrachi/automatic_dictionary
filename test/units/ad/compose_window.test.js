@@ -165,10 +165,10 @@ describe('ComposeWindow', () => {
     })
   });
 
-  describe('changeLanguage', () => {
+  describe('changeLanguages', () => {
     it('sets spellchecker language via compose', async () => {
       var compose_window = factory();
-      await compose_window.changeLanguage('en')
+      await compose_window.changeLanguages(['en'])
 
       expect(browser.compose.setActiveDictionaries).toHaveBeenCalledWith('stubbed-tab-id', ['en'])
     })

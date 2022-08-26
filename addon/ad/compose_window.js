@@ -166,8 +166,8 @@ Object.assign(ComposeWindow.prototype, {
       }
     );
   },
-  changeLanguage: async function (lang) {
-    browser.compose.setActiveDictionaries(await getTabId(this), [lang]);
+  changeLanguages: async function (langs) {
+    browser.compose.setActiveDictionaries(await getTabId(this), langs);
   },
   canSpellCheck: async function () {
     // The code returned true for TB > 89. This version is using the new spellchecker

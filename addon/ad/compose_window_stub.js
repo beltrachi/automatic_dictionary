@@ -30,7 +30,6 @@ Object.assign(ComposeWindowStub.prototype, {
         return [];
     },
     changeLabel: async function (str) {},
-    changeLanguage: async function(){},
     changeLanguages: async function(){},
     canSpellCheck: async function(){}
 });

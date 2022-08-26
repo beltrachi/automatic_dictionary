@@ -18,9 +18,6 @@ export function mockComposeWindow(compose_window, options) {
     });
     compose_window.changeLabel = jest.fn();
     compose_window.showMessage = jest.fn();
-    compose_window.changeLanguage = jest.fn(function (lang) {
-        options.langs = [lang];
-    });
     compose_window.changeLanguages = jest.fn(function (langs) {
         options.langs = langs;
     });

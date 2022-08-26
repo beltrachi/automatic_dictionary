@@ -121,14 +121,14 @@ test('Internal methods?', (done) => {
         expect(ad.compose_window.canSpellCheck()).resolves.toBe(true)
         await ad.deduceLanguage();
 
-        expect(compose_window.changeLanguage).toHaveBeenCalledTimes(0);
+        expect(compose_window.changeLanguages).toHaveBeenCalledTimes(0);
         expect(compose_window.changeLabel).toHaveBeenCalledWith('noLangForRecipients');
 
         // Change the lang and trigger the event so language foolang gets associated
         // with foo.
         status.setLangs(["foolang"]);
         await ad.languageChanged();
-        expect(compose_window.changeLanguage).toHaveBeenCalledTimes(0)
+        expect(compose_window.changeLanguages).toHaveBeenCalledTimes(0)
         expect(compose_window.changeLabel).toHaveBeenCalledTimes(2)
         expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
 
@@ -498,9 +498,9 @@ test('When error on change language', (done) => {
 
         // Mock 3 times raise an error
         [1, 2, 3].forEach(element => {
-            compose_window.changeLanguage.mockImplementationOnce(() => {
+            compose_window.changeLanguages.mockImplementationOnce(() => {
                 return new Promise(() => {
-                    throw new Error("changeLanguage fake error");
+                    throw new Error("changeLanguages fake error");
                 });
             })
         });
