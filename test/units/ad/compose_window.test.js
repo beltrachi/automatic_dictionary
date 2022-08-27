@@ -45,30 +45,6 @@ describe('ComposeWindow', () => {
     })
   })
 
-  describe('canManageWindow', () => {
-    it("detects matching window locations", () => {
-      var matching_urls = [
-        'chrome://whatever/messengercompose.xul',
-        'chrome://whatever/messengercompose.xhtml'
-      ]
-      matching_urls.forEach((url) => {
-        var window_stub = { document: { location: url } };
-        expect(ComposeWindow.canManageWindow(window_stub)).toBe(true);
-      })
-    });
-
-    it('rejects other locations', () => {
-      var rejected_urls = [
-        'chrome://messenger/content/messenger.xhmtl',
-        'chrome://mozapps/content/extensions/aboutaddons.html'
-      ];
-      rejected_urls.forEach((url) => {
-        var window_stub = { document: { location: url } };
-        expect(ComposeWindow.canManageWindow(window_stub)).toBe(false);
-      })
-    });
-  });
-
   describe('setListeners', () => {
     it('sets listeners on compose_ext', () => {
       var compose_window = factory();

@@ -11,10 +11,6 @@ export const ComposeWindowStub = (function (params) {
     this.shutdown_chain = [];
 });
 
-ComposeWindowStub.canManageWindow = function (window) {
-    return false;
-};
-
 Object.assign(
     ComposeWindowStub.prototype,
     Shutdownable);

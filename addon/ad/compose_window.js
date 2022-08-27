@@ -21,11 +21,6 @@ export const ComposeWindow = (function (params) {
   this.window = this.ad.window;
 });
 
-ComposeWindow.canManageWindow = function (window) {
-  const regex = /chrome.*messengercompose\.(xul|xhtml)/
-  return regex.test(window.document.location);
-};
-
 const waitAnd = function (fn) {
   setTimeout(fn, 800);
 }
