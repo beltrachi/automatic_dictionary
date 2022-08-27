@@ -23,9 +23,9 @@
     "message": "Error: Could not set language to $1. Maybe its not installed any more?",
     "description": "errorSettingSpellLanguage"
   },
-  "DiscardedUpdateTooMuchRecipients": {
-    "message": "Discarded to save language preferences as there are too much recipients. (Max recipients are $1)",
-    "description": "DiscardedUpdateTooMuchRecipients"
+  "DiscardedUpdateTooManyRecipients": {
+    "message": "Discarded to save language preferences as there are too many recipients. (Max recipients are $1)",
+    "description": "DiscardedUpdateTooManyRecipients"
   },
   "IMOKWithIt": {
     "message": "I'm OK with it!",

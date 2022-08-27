@@ -177,8 +177,8 @@ AutomaticDictionary.Class.prototype = {
     var context = await this.deducer.buildContext();
 
     if (this.tooManyRecipients(context, maxRecipients)) {
-      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");
-      await this.changeLabel("warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients]));
+      this.logger.warn("Discarded to save data. Too many recipients (maxRecipients is " + maxRecipients + ").");
+      await this.changeLabel("warn", this.ft("DiscardedUpdateTooManyRecipients", [maxRecipients]));
       this.ignored_contexts.push(context)
       return;
     }
@@ -237,7 +237,7 @@ AutomaticDictionary.Class.prototype = {
       // the user setted a language but we did not store because it was bigger
       // than MaxRecipients
       if (is_ignored_context) {
-        this.logger.debug("Last lang discarded for too much recipients")
+        this.logger.debug("Last lang discarded for too many recipients")
       }
       this.dispatchEvent({ type: "deduction-completed" });
       return;

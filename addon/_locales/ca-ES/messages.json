@@ -23,9 +23,9 @@
     "message": "Error: No es pot posar el diccionari $1. Potser s'ha desinstal\\u00b7lat?",
     "description": "errorSettingSpellLanguage"
   },
-  "DiscardedUpdateTooMuchRecipients": {
+  "DiscardedUpdateTooManyRecipients": {
     "message": "Descartat guardar l'idioma. Masses destinataris. (M\\u00e0xims destinataris s\\u00f3n $1)",
-    "description": "DiscardedUpdateTooMuchRecipients"
+    "description": "DiscardedUpdateTooManyRecipients"
   },
   "IMOKWithIt": {
     "message": "Ho trobo b\\u00e9!",

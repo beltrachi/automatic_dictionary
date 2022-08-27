@@ -23,9 +23,9 @@
     "message": "Fehler: Wörterbuch kann nicht zu $1 geändert werden. Möglicherweise ist es nicht mehr installiert.",
     "description": "errorSettingSpellLanguage"
   },
-  "DiscardedUpdateTooMuchRecipients": {
+  "DiscardedUpdateTooManyRecipients": {
     "message": "Speichern der Spracheinstellungen abgebrochen, da zu viele Empfänger vorhanden sind (Maximale Empfänger sind $1)",
-    "description": "DiscardedUpdateTooMuchRecipients"
+    "description": "DiscardedUpdateTooManyRecipients"
   },
   "IMOKWithIt": {
     "message": "Das ist OK!",
