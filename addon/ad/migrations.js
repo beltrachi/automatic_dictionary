@@ -58,6 +58,17 @@ export function apply(AutomaticDictionary) {
       },
       "202106051955": async function (self) {
         await self.setDefaults();
+      },
+      "202209270000": async function (self) {
+        // TB 102 multilanguage support
+        // Migrate all pairs data from single value to array of languages.
+        let data = await self.storage.get('addressesInfo');
+        if (!data) return;
+        data = JSON.parse(data)
+        for(const key in data.hash){
+          data.hash[key] = [data.hash[key]]
+        }
+        await self.storage.set('addressesInfo', JSON.stringify(data))
       }
     }
   };

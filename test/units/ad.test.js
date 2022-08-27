@@ -786,6 +786,39 @@ test('migration to fix freq-suffix data', (done) => {
     })
 });
 
+test('migration to store array of languages in LRU hash', (done) => {
+    // Setup previous data
+    const previous_data = {
+        addressesInfo: JSON.stringify(
+            {
+                hash: {
+                    "foo@bar.com":"es",
+                    "x":"en"
+                },
+                options:{
+                    sorted_keys:["foo@bar.com","x"]
+                }
+            }
+        )
+    }
+    browser.storage.local.set(previous_data).then(() => {
+        new AutomaticDictionary.Class({
+            window: window,
+            compose_window_builder: ComposeWindowStub,
+            logLevel: 'error',
+            deduceOnLoad: false
+        }, async (ad) => {
+            const raw =  await browser.storage.local.get('addressesInfo');
+            const data = JSON.parse(raw.addressesInfo);
+            expect(data.hash["foo@bar.com"]).toEqual(['es'])
+            expect(data.hash["x"]).toEqual(['en'])
+            expect(data.options.sorted_keys.length).toBe(2)
+
+            done();
+        });
+    })
+});
+
 test('LRU max size is read from config', (done) => {
     // Setup previous freq-suffix data
     const max_size_value = { "addressesInfo.maxSize": 1234 }
