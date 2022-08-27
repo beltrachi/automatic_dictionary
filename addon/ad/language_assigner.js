@@ -84,7 +84,6 @@ LanguageAssigner.prototype = {
         recipients: recipients,
         recipientsKey: key,
         previousLanguages: previous_languages,
-        language: langs[0], //TODO: remove it
         languages: langs
       })
 
