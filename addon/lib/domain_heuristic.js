@@ -30,9 +30,7 @@ DomainHeuristic.prototype = {
     var _this = this;
     languageAssigner.addEventListener('assignment-removed', function (event) {
       if (_this.keyIsSingle(event.recipientsKey)) {
-        event.languages.forEach(lang => {
-          _this.removeHeuristic(event.recipientsKey, lang);
-        });
+        _this.removeHeuristic(event.recipientsKey, event.languages.join(','));
       }
     });
     this.setListeners(languageAssigner);
@@ -50,9 +48,9 @@ DomainHeuristic.prototype = {
     if (!this.isSingle(event.recipients)) return;
 
     if (event.previousLanguages) {
-      await this.removeHeuristic(event.recipientsKey, event.previousLanguages[0]);
+      await this.removeHeuristic(event.recipientsKey, event.previousLanguages.join(','));
     }
-    await this.saveHeuristic(event.recipientsKey, event.languages[0]);
+    await this.saveHeuristic(event.recipientsKey, event.languages.join(','));
   },
 
   isSingle(recipients) {
@@ -87,7 +85,7 @@ DomainHeuristic.prototype = {
     return false;
   },
 
-  //Tries to guess by other recipients domains
+  //Return the most frequent lang among all recipients
   heuristicGuess: async function (recipients) {
     var recipient, parts, rightside, lang,
       freq_table = new FreqTable();
@@ -101,6 +99,10 @@ DomainHeuristic.prototype = {
         freq_table.add(lang);
       }
     }
-    return freq_table.getFirst();
+    const result = freq_table.getFirst();
+    if (result) {
+      return result.split(',')
+    }
+    return result;
   }
 }

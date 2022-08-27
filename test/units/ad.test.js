@@ -677,6 +677,39 @@ test('Heuristics', (done) => {
 
 });
 
+test('Heuristics for multiple languages', (done) => {
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+        let status = { recipients: {}, langs: [] }
+        mockComposeWindow(compose_window, status)
+
+        //Prepare scenario
+        status.recipients = {
+            "to": ["foo@example.com"],
+        };
+        status.setLangs(['en','es'])
+
+        await ad.languageChanged();
+
+        status.recipients = {
+            "to": ["bar@example.com"],
+        };
+        status.setLangs([])
+
+        await ad.deduceLanguage();
+        expect(status.getLangs()).toEqual(['en','es']);
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('deducedLang.guess')
+
+        done();
+    });
+});
+
+
 /*
 
     9. Check when we set an unknown recipient and a known CC recipient. It should
