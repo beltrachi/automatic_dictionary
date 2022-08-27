@@ -388,10 +388,6 @@ AutomaticDictionary.Class.prototype = {
     return this.compose_window && await this.compose_window.canSpellCheck();
   },
 
-  getLangFor: function (addr) {
-    return this.languageAssigner.getLangFor(addr)
-  },
-
   getLangsFor: function (addr) {
     return this.languageAssigner.getLangsFor(addr)
   },
