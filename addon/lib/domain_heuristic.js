@@ -30,7 +30,7 @@ DomainHeuristic.prototype = {
     var _this = this;
     languageAssigner.addEventListener('assignment-removed', function (event) {
       if (_this.keyIsSingle(event.recipientsKey)) {
-        _this.removeHeuristic(event.recipientsKey, event.languages.join(','));
+        _this.removeHeuristic(event.recipientsKey, _this.serializeLangs(event.languages));
       }
     });
     this.setListeners(languageAssigner);
@@ -48,9 +48,9 @@ DomainHeuristic.prototype = {
     if (!this.isSingle(event.recipients)) return;
 
     if (event.previousLanguages) {
-      await this.removeHeuristic(event.recipientsKey, event.previousLanguages.join(','));
+      await this.removeHeuristic(event.recipientsKey, this.serializeLangs(event.previousLanguages));
     }
-    await this.saveHeuristic(event.recipientsKey, event.languages.join(','));
+    await this.saveHeuristic(event.recipientsKey, this.serializeLangs(event.languages));
   },
 
   isSingle(recipients) {
@@ -101,8 +101,14 @@ DomainHeuristic.prototype = {
     }
     const result = freq_table.getFirst();
     if (result) {
-      return result.split(',')
+      return this.deserializeLangs(result)
     }
     return result;
+  },
+  serializeLangs: function(langs){
+    return langs.join(',');
+  },
+  deserializeLangs: function(string){
+    return string.split(',')
   }
 }
