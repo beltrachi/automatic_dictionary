@@ -380,8 +380,9 @@ AutomaticDictionary.Class.prototype = {
     });
   },
 
-  getCurrentLangs: function () {
-    return this.compose_window.getCurrentLangs();
+  getCurrentLangs: async function () {
+    const langs = await this.compose_window.getCurrentLangs();
+    return langs.slice().sort();
   },
 
   canSpellCheck: async function () {
@@ -480,7 +481,8 @@ AutomaticDictionary.Class.prototype = {
     return Date.now();
   },
   equalLanguages: function(list1, list2){
-    return JSON.stringify(list1.sort()) == JSON.stringify(list2.sort())
+    // Using slice() to clone lists.
+    return JSON.stringify(list1.slice().sort()) == JSON.stringify(list2.slice().sort())
   }
 };
 

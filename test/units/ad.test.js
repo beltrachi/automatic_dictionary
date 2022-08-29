@@ -238,6 +238,21 @@ test('Multiple languages support', (done) => {
         await ad.deduceLanguage();
         expect(status.getLangs()).toEqual(['en','es']);
 
+        // If Thunderbird returns languages in different order, it still
+        // sees it as the same languages set and does nothing.
+        status.setLangs(['es', 'en']);
+        const callsBefore = compose_window.changeLabel.mock.calls.length;
+
+        await ad.languageChanged();
+        expect(status.getLangs().sort()).toEqual(['en','es']);
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(callsBefore);
+
+        // If current langs are same but unsorted from the deduction, it does
+        // nothing.
+        await ad.deduceLanguage();
+        expect(status.getLangs().sort()).toEqual(['en','es']);
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(callsBefore);
+
         done();
     })
 });
