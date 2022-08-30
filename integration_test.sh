@@ -7,7 +7,7 @@ source ~/.bash_profile
 export DEBUG=1
 
 # Set log level to debug
-sed -i 's/\s*"logLevel":.*/"logLevel":"debug",/g' addon/ad.js
+sed -i 's/"logLevel":.*/"logLevel":"debug",/g' addon/ad.js
 
 rm -rf test/tmp/*
 cd test/integration/
