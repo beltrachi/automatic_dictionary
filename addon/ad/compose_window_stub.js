@@ -11,10 +11,6 @@ export const ComposeWindowStub = (function (params) {
     this.shutdown_chain = [];
 });
 
-ComposeWindowStub.canManageWindow = function (window) {
-    return false;
-};
-
 Object.assign(
     ComposeWindowStub.prototype,
     Shutdownable);
@@ -25,11 +21,11 @@ Object.assign(ComposeWindowStub.prototype, {
     logger: null,
 
     setListeners: function () {},
-    getCurrentLang: async function () {},
+    getCurrentLangs: async function () {},
     recipients: async function (_recipientType) {
         return [];
     },
     changeLabel: async function (str) {},
-    changeLanguage: async function(){},
+    changeLanguages: async function(){},
     canSpellCheck: async function(){}
 });

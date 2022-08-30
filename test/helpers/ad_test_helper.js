@@ -1,16 +1,45 @@
 import { jest } from '@jest/globals'
 
 export function mockComposeWindow(compose_window, options) {
-    options.spellchecker_enabled = options.spellchecker_enabled || true
+    function shuffleArray(array) {
+        let curId = array.length;
+        // There remain elements to shuffle
+        while (0 !== curId) {
+            // Pick a remaining element
+            let randId = Math.floor(Math.random() * curId);
+            curId -= 1;
+            // Swap it with the current element.
+            let tmp = array[curId];
+            array[curId] = array[randId];
+            array[randId] = tmp;
+        }
+        return array;
+    }
 
-    compose_window.recipients = jest.fn(function (type) {
+    options.spellchecker_enabled = options.spellchecker_enabled || true
+    options.getLangs = function () {
+        return options.langs
+    }
+    options.setLangs = function (langs) {
+        // We randomize the order in which languages are provided to make sure
+        // implementation do not depend on that.
+        options.langs = shuffleArray(langs);
+    }
+
+    if (!options.langs) {
+        options.langs = []
+    }
+    compose_window.recipients = jest.fn(async function (type) {
         type = type || 'to';
         return options.recipients[type] || [];
     });
-    compose_window.changeLabel = jest.fn();
-    compose_window.showMessage = jest.fn();
-    compose_window.changeLanguage = jest.fn(function (lang) { options.lang = lang; });
-    compose_window.getCurrentLang = jest.fn(function () { return options.lang });
+    compose_window.changeLabel = jest.fn(async function(){});
+    compose_window.changeLanguages = jest.fn(function (langs) {
+        options.langs = langs;
+    });
+    compose_window.getCurrentLangs = jest.fn(async function () {
+        return options.langs
+    });
     compose_window.canSpellCheck = jest.fn(async function () { return options.spellchecker_enabled });
 }
 

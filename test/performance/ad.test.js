@@ -21,7 +21,7 @@ test('Ad overall performance', (done) => {
     }, async (ad) => {
         let compose_window = ad.compose_window;
 
-        let status = { recipients: { "to": [], "cc": [] }, lang: null }
+        let status = { recipients: { "to": [], "cc": [] }, langs: [] }
         mockComposeWindow(compose_window, status)
 
         /**
@@ -49,13 +49,13 @@ test('Ad overall performance', (done) => {
                 status.recipients["cc"] =
                     ["username" + (i + 2) + "@" + (sample_domains[((i + 2) % sample_domains.length)])]
             }
-            status.lang = "lang" + (i % 8);
+            status.setLangs(["lang" + (i % 8)]);
             await ad.languageChanged();
         }
         status.recipients = { "to": ["username-123@gmail.com"], "cc": [] };
         await benchmark(20,
             async function () {
-                status.lang = 'lang3'
+                status.setLangs(['lang3']);
                 await ad.languageChanged();
             }
         );
@@ -64,7 +64,7 @@ test('Ad overall performance', (done) => {
                 await ad.deduceLanguage();
             }
         )
-        expect(status.lang).toBe('lang3')
+        expect(status.getLangs()).toEqual(['lang3'])
         done();
     });
 });
