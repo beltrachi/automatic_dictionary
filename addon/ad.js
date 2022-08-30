@@ -230,8 +230,8 @@ AutomaticDictionary.Class.prototype = {
       return;
     }
 
-    var recipients = await this.getRecipients();
-    var is_ignored_context = this.isIgnoredContext(this.deducer.buildContext());
+    const recipients = await this.getRecipients();
+    const is_ignored_context = this.isIgnoredContext(this.deducer.buildContext());
     if (!this.running || recipients.length == 0 || is_ignored_context) {
       // we stop deducing when context is ignored because it means that
       // the user setted a language but we did not store because it was bigger
@@ -242,21 +242,21 @@ AutomaticDictionary.Class.prototype = {
       this.dispatchEvent({ type: "deduction-completed" });
       return;
     }
-    var langs = null, method;
-    var deduction = await this.deducer.deduce();
+    const deduction = await this.deducer.deduce();
 
-    langs = (deduction && deduction.languages) || [];
-    method = (deduction && deduction.method) || null;
+    const langs = (deduction && deduction.languages) || [];
+    const method = (deduction && deduction.method) || null;
     this.logger.debug("Language found: " + langs);
 
     if (!this.contextChangedSinceLast(deduction)) {
-      if (this.equalLanguages((await this.getCurrentLangs()),langs)) {
+      const currentLangs = await this.getCurrentLangs();
+      if (this.equalLanguages(currentLangs,langs)) {
         this.logger.debug("deduceLanguage detects that nothing changed");
         this.dispatchEvent({ type: "deduction-completed" });
         return;
       } else {
         this.logger.debug("Detected changes on langs (from-to): " +
-          JSON.stringify([await this.getCurrentLangs(), langs]));
+          JSON.stringify([currentLangs, langs]));
       }
     }
     this.logger.debug('Lang in deduceLanguage is '+ langs)
