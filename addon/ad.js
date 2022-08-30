@@ -118,7 +118,7 @@ AutomaticDictionary.Class.prototype = {
     "freqTableData": "",
 
     "notificationLevel": 'info', // or "warn" or "error"
-    "logLevel": "warn",
+    "logLevel":"debug",
     "stats.usages": 0
   },
 
