@@ -29,11 +29,11 @@ export function mockComposeWindow(compose_window, options) {
     if (!options.langs) {
         options.langs = []
     }
-    compose_window.recipients = jest.fn(function (type) {
+    compose_window.recipients = jest.fn(async function (type) {
         type = type || 'to';
         return options.recipients[type] || [];
     });
-    compose_window.changeLabel = jest.fn();
+    compose_window.changeLabel = jest.fn(async function(){});
     compose_window.showMessage = jest.fn();
     compose_window.changeLanguages = jest.fn(function (langs) {
         options.langs = langs;
