@@ -36,39 +36,13 @@ describe "AutomaticDictionary integration tests" do
     run("tar -xvf #{source} -C #{path}")
   end
 
-  def install_extension(extension_file, profile_path)
-    cmd = File.join(root, 'script/install_extension.sh')
-    extension = File.join(root, extension_file)
-    install = "#{cmd} --path #{profile_path} --extension #{extension}"
-    run(install)
-  end
-
   def in_main_window?
     title = interactor.current_window_title
     title.start_with?('Inbox') || title.start_with?('Home')
   end
 
-  def wait_for_main_window
-    5.times do
-      return if in_main_window?
-
-      sleep 1
-      yield
-    end
-    raise 'Main window not found'
-  end
-
   def window_title_include?(text)
     interactor.current_window_title.include?(text)
-  end
-
-  def wait_for_window(title_part)
-    10.times do
-      return if window_title_include?(title_part)
-
-      sleep 1
-    end
-    raise "Window including #{title_part} not found"
   end
 
   around do |example|
@@ -94,26 +68,11 @@ describe "AutomaticDictionary integration tests" do
     Gem::Version.new(version.match(/\d+\.\d+/)[0])
   end
 
-  # Some mouse interactions need two clicks (who knows why!?)
-  # To make it more manageable we pass the block to this method
-  def rescue_and_retry(max_attempts)
-    attempts ||= 1
-    yield
-  rescue StandardError
-    if attempts < max_attempts
-      attempts += 1
-      logger.warn("Retrying block once: #{caller[1]}")
-      retry
-    end
-    raise
-  end
-
   before do
     # Update build to lastest
     run("cd #{root} ; ./build.sh")
 
     prepare_profile(profile_path)
-    install_extension('automatic_dictionary.xpi', profile_path)
 
     log_thunderbird_version
     run("thunderbird --profile #{profile_path} --no-remote &")
@@ -121,7 +80,7 @@ describe "AutomaticDictionary integration tests" do
     sleep 5
 
     interactor.click_on_text('Could not connect to', optional: true)
-    enable_extension_in_thunderbird
+    install_extension
 
     sleep 1
     interactor.hit_key('Escape')
@@ -135,30 +94,24 @@ describe "AutomaticDictionary integration tests" do
     thunderbird_version
   end
 
-  def enable_extension_in_thunderbird
-    # To enable the extension we need to click on the hamburguer menu.
-    # As the hamburguer menu has no keyboard shortcut nor readable label,
-    # we have to guess its position based on something we can read, the
-    # Events label.
-
-    # We need to retry on clicking on hamburguer because some times the
-    # menu does not open. Based on circleci logs, a simple operation like
-    # click can last up to 15s. Maybe it does not have the same CPU available
-    # all the time.
-    rescue_and_retry(3) do
-      events_position = interactor.wait_for_text('Events', filter: right_side_of_screen_filter)
-      # Click 50 pixels on the left of Events label.
-      interactor.click_on_position([events_position.first - 50, events_position.last])
-      interactor.click_on_text('Automatic Dictionary added')
-    end
-    interactor.wait_for_text('Enable')
-    interactor.hit_key('Alt+e')
-  end
-
-  def right_side_of_screen_filter
-    proc do |candidate_group|
-      candidate_group.all? { |word| word.x_start > 500 }
-    end
+  def install_extension
+    # Open addons tab
+    interactor.hit_key('Alt+t a', clear_modifiers: false)
+    sleep 1
+    5.times { interactor.hit_key('Tab') } # Navigate to the options icon
+    interactor.hit_key('Return')
+    interactor.hit_key('i') # Install from file
+    sleep 0.5
+    interactor.hit_key('Ctrl+l')
+    interactor.input_text(File.join(root,'automatic_dictionary.xpi'))
+    interactor.hit_key('Return')
+    sleep 1
+    interactor.hit_key('Alt+a') # Hit Add button
+    sleep 1
+    interactor.hit_key('Alt+o') # Hit OK button
+    sleep 1
+    interactor.hit_key('Ctrl+w') # Close addons tab
+    sleep 1
   end
 
   after do |example|
