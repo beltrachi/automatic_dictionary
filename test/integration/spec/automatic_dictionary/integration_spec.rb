@@ -79,6 +79,7 @@ describe "AutomaticDictionary integration tests" do
 
     sleep 5
     # Close random thunderbird popups
+    interactor.click_on_text('Could not connect to', optional: true)
     interactor.hit_key('Escape')
     sleep 1
     interactor.hit_key('Escape')
@@ -104,6 +105,8 @@ describe "AutomaticDictionary integration tests" do
     interactor.input_text(File.join(root,'automatic_dictionary.xpi'))
     interactor.hit_key('Return')
     sleep 1
+    # Make sure the pseudo-popup has the focus
+    interactor.click_on_text('Automatic Dictionary')
     interactor.hit_key('Alt+a') # Hit Add button
     sleep 1
     interactor.hit_key('Alt+o') # Hit OK button
@@ -242,10 +245,10 @@ describe "AutomaticDictionary integration tests" do
     sleep 1
 
     interactor.click_on_text('Automatic Dictionary')
-    # We want to click on preferences but as there is another word "preferences" on the
-    # screen, we need to specify some context too. Luckly the center of "Details | Preferences"
-    # falls in the preferences button because the word is bigger.
-    interactor.click_on_text('Details Preferences')
+    # Go to preferences tab
+    interactor.hit_key('Tab')
+    interactor.hit_key('Right')
+    interactor.hit_key('Return')
     sleep 5
     interactor.wait_for_text('Notification level:')
     interactor.wait_for_text('1200')
