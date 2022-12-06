@@ -94,7 +94,13 @@ To run a single test:
 docker run -v $PWD:/app -it node:15 bash -c "cd /app; npm test -- test/units/ad.test.js -t boot"
 ```
 
-Integration tests:
+### Integration tests
+
 ```
 ./script/docker_integration_test.sh
+```
+
+To run them locally in debug mode:
+```
+./script/local_integration_tests.sh
 ```
