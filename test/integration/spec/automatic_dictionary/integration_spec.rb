@@ -78,14 +78,12 @@ describe "AutomaticDictionary integration tests" do
     run("thunderbird --profile #{profile_path} --no-remote &")
 
     sleep 5
+    # Close random thunderbird popups
+    interactor.hit_key('Escape')
+    sleep 1
+    interactor.hit_key('Escape')
 
-    interactor.click_on_text('Could not connect to', optional: true)
     install_extension
-
-    sleep 1
-    interactor.hit_key('Escape')
-    sleep 1
-    interactor.hit_key('Escape')
 
     sleep 1
   end
