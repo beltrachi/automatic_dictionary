@@ -193,7 +193,10 @@ var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmit
   }
 
   detectRecipientsChange(window) {
-    window.document.getElementById('recipientsContainer').addEventListener('change', function(event) {
+    window.document.getElementById('recipientsContainer').addEventListener('change', function (event) {
+      recipientsChangeWindowListener.handleEvent(event);
+    });
+    window.document.getElementById('recipientsContainer').addEventListener('focusout', function (event) {
       recipientsChangeWindowListener.handleEvent(event);
     });
 
