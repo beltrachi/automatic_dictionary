@@ -104,61 +104,6 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
 // (This file had a lowercase E in Thunderbird 65 and earlier.)
 var { ExtensionSupport } = ChromeUtils.import("resource:///modules/ExtensionSupport.jsm");
 
-// This object is just what we're using to listen for toolbar clicks. The implementation isn't
-// what this example is about, but you might be interested as it's a common pattern. We count the
-// number of callbacks waiting for events so that we're only listening if we need to be.
-var windowListener = new class extends ExtensionCommon.EventEmitter {
-  constructor() {
-    super();
-    this.callbackCount = 0;
-  }
-
-  handleEvent(event) {
-    var lang = event.target.getAttribute('lang');
-    windowListener.emit("language-changed", event, lang);
-  }
-
-  add(callback) {
-    this.on("language-changed", callback);
-    this.callbackCount++;
-
-    if (this.callbackCount == 1) {
-      ExtensionSupport.registerWindowListener("compose_ext-windowListener", {
-        chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
-        onLoadWindow: function(window) {
-          windowListener.subscribeLanguageChangeEvents(window);
-        },
-      });
-    }
-  }
-
-  remove(callback) {
-    this.off("language-changed", callback);
-    this.callbackCount--;
-
-    if (this.callbackCount == 0) {
-      ExtensionSupport.unregisterWindowListener("compose_ext-windowListener");
-    }
-  }
-
-  subscribeLanguageChangeEvents(window) {
-    //We don't capture "spellcheck-changed" event because it's only fired
-    //when language is changed in the context menu (rigt click menu). Not when changed
-    //from any other source.
-
-    // The document lang attribute is updated always so its the best way.
-    var langObserver = new window.MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.type == "attributes" && mutation.attributeName == "lang") {
-          windowListener.handleEvent(mutation);
-        }
-      });
-    });
-    langObserver.observe(window.document.documentElement, { attributes: true });
-  }
-};
-
-
 var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmitter {
   constructor() {
     super();
