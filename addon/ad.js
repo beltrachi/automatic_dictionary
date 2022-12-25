@@ -166,7 +166,7 @@ AutomaticDictionary.Class.prototype = {
     this.logger.debug("languageChanged call");
 
     if (!this.running) return;
-    if(this.initTime + 500 > this.currentTimestamp()){
+    if(this.initTime + 1500 > this.currentTimestamp()){
       this.logger.debug('Window has just initialized, ignoring dictionary changes because its not a human who did them.')
       return;
     }

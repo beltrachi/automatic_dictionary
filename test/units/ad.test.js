@@ -17,7 +17,8 @@ beforeEach(async () => {
     // Mock CurrentTimestamp
     var last_timestamp = Date.now();
     AutomaticDictionary.Class.prototype.currentTimestamp = function(){
-        last_timestamp = last_timestamp + 501;
+        // A bit more than the 1500 ms we mute any languageChanged event.
+        last_timestamp = last_timestamp + 1501;
         return last_timestamp;
     }
 })
