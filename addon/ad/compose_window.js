@@ -21,11 +21,6 @@ export const ComposeWindow = (function (params) {
   this.window = this.ad.window;
 });
 
-ComposeWindow.canManageWindow = function (window) {
-  const regex = /chrome.*messengercompose\.(xul|xhtml)/
-  return regex.test(window.document.location);
-};
-
 const waitAnd = function (fn) {
   setTimeout(fn, 800);
 }
@@ -127,13 +122,12 @@ Object.assign(ComposeWindow.prototype, {
     });
   },
 
-  getCurrentLang: async function () {
+  getCurrentLangs: async function () {
     let activeLanguages = await browser.compose.getActiveDictionaries(await getTabId(this));
     let languages = Object.entries(activeLanguages).filter(e => e[1]).map(e => e[0]);
     this.logger.debug(languages);
-    let lang = languages[0];
-    this.logger.debug("Current lang is " + lang);
-    return lang;
+    this.logger.debug("Current langs are " + languages);
+    return languages;
   },
 
   recipients: async function (recipientType) {
@@ -167,8 +161,8 @@ Object.assign(ComposeWindow.prototype, {
       }
     );
   },
-  changeLanguage: async function (lang) {
-    browser.compose.setActiveDictionaries(await getTabId(this), [lang]);
+  changeLanguages: async function (langs) {
+    browser.compose.setActiveDictionaries(await getTabId(this), langs);
   },
   canSpellCheck: async function () {
     // The code returned true for TB > 89. This version is using the new spellchecker

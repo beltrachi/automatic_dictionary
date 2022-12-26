@@ -64,7 +64,7 @@ AutomaticDictionary.Class = function (options, callback) {
   this.logger.debug("ad: init");
   this.running = true;
   this.ignored_contexts = [];
-
+  this.last_langs = [];
   this.setupDependencies();
 
   var _this = this;
@@ -118,7 +118,7 @@ AutomaticDictionary.Class.prototype = {
     "freqTableData": "",
 
     "notificationLevel": 'info', // or "warn" or "error"
-    "logLevel": "warn",
+    "logLevel":"debug",
     "stats.usages": 0
   },
 
@@ -177,29 +177,29 @@ AutomaticDictionary.Class.prototype = {
     var context = await this.deducer.buildContext();
 
     if (this.tooManyRecipients(context, maxRecipients)) {
-      this.logger.warn("Discarded to save data. Too much recipients (maxRecipients is " + maxRecipients + ").");
-      await this.changeLabel("warn", this.ft("DiscardedUpdateTooMuchRecipients", [maxRecipients]));
+      this.logger.warn("Discarded to save data. Too many recipients (maxRecipients is " + maxRecipients + ").");
+      await this.changeLabel("warn", this.ft("DiscardedUpdateTooManyRecipients", [maxRecipients]));
       this.ignored_contexts.push(context)
       return;
     }
     this.ignored_contexts = [];
 
-    if (context.language == this.last_lang && !this.contextChangedSinceLast(context)) {
-      this.logger.debug('Same language and recipients as before ' + context.language);
+    if (this.equalLanguages(context.languages, this.last_langs) && !this.contextChangedSinceLast(context)) {
+      this.logger.debug('Same languages and recipients as before ' + context.languages);
       return;
     }
 
-    this.logger.debug("Lang: " + context.language + " last_lang: " + this.last_lang);
+    this.logger.debug("Lang: " + context.languages + " last_lang: " + this.last_langs);
     await this.languageAssigner.languageChanged(context, stats);
 
     if (stats.saved_recipients > 0) {
       this.stopDeferredDeduceLanguage();
-      this.last_lang = context.language;
+      this.last_langs = context.languages;
 
       this.logger.debug("saved recipients are: " + stats.saved_recipients);
       await this.changeLabel("info",
         this.ft("savedForRecipients",
-          [context.language, stats.saved_recipients])
+          [context.languages, stats.saved_recipients])
       );
     }
   },
@@ -230,41 +230,42 @@ AutomaticDictionary.Class.prototype = {
       return;
     }
 
-    var recipients = await this.getRecipients();
-    var is_ignored_context = this.isIgnoredContext(this.deducer.buildContext());
+    const recipients = await this.getRecipients();
+    const is_ignored_context = this.isIgnoredContext(this.deducer.buildContext());
     if (!this.running || recipients.length == 0 || is_ignored_context) {
       // we stop deducing when context is ignored because it means that
       // the user setted a language but we did not store because it was bigger
       // than MaxRecipients
       if (is_ignored_context) {
-        this.logger.debug("Last lang discarded for too much recipients")
+        this.logger.debug("Last lang discarded for too many recipients")
       }
       this.dispatchEvent({ type: "deduction-completed" });
       return;
     }
-    var lang = null, method;
-    var deduction = await this.deducer.deduce();
+    const deduction = await this.deducer.deduce();
 
-    lang = (deduction && deduction.language) || null;
-    method = (deduction && deduction.method) || null;
-    this.logger.debug("Language found: " + lang);
+    const langs = (deduction && deduction.languages) || [];
+    const method = (deduction && deduction.method) || null;
+    this.logger.debug("Language found: " + langs);
 
     if (!this.contextChangedSinceLast(deduction)) {
-      if ((await this.getCurrentLang()) == lang) {
+      const currentLangs = await this.getCurrentLangs();
+      if (this.equalLanguages(currentLangs,langs)) {
         this.logger.debug("deduceLanguage detects that nothing changed");
         this.dispatchEvent({ type: "deduction-completed" });
         return;
       } else {
         this.logger.debug("Detected changes on langs (from-to): " +
-          JSON.stringify([await this.getCurrentLang(), lang]));
+          JSON.stringify([currentLangs, langs]));
       }
     }
+    this.logger.debug('Lang in deduceLanguage is '+ langs)
 
-    if (lang) {
+    if (langs && langs.length > 0) {
       try {
-        await this.setCurrentLang(lang);
+        await this.setCurrentLangs(langs);
         if (this.contextChangedSinceLast(deduction)) {
-          await this.changeLabel("info", this.ft("deducedLang." + method, [lang]))
+          await this.changeLabel("info", this.ft("deducedLang." + method, [langs]))
         }
       } catch (e) {
         AutomaticDictionary.logException(e);
@@ -274,7 +275,7 @@ AutomaticDictionary.Class.prototype = {
     } else {
       await this.changeLabel("info", this.t("noLangForRecipients"));
     }
-    this.last_lang = lang;
+    this.last_langs = langs;
     this.lastDeduction = deduction;
     this.dispatchEvent({ type: "deduction-completed" });
   },
@@ -320,12 +321,12 @@ AutomaticDictionary.Class.prototype = {
     return await this.domainHeuristic.heuristicGuess(recipients);
   },
 
-  setCurrentLang: async function (target) {
+  setCurrentLangs: async function (targets) {
     //Temporary disable language change detection that we trigger ourself
-    this.logger.info("setCurrentLang " + target);
+    this.logger.info("setCurrentLangs " + targets);
     this.running = false;
     try {
-      await this.compose_window.changeLanguage(target);
+      await this.compose_window.changeLanguages(targets);
     } finally {
       this.running = true;
     }
@@ -379,17 +380,17 @@ AutomaticDictionary.Class.prototype = {
     });
   },
 
-  //Take care as this language is globally set.
-  getCurrentLang: function () {
-    return this.compose_window.getCurrentLang();
+  getCurrentLangs: async function () {
+    const langs = await this.compose_window.getCurrentLangs();
+    return langs.slice().sort();
   },
 
   canSpellCheck: async function () {
     return this.compose_window && await this.compose_window.canSpellCheck();
   },
 
-  getLangFor: function (addr) {
-    return this.languageAssigner.getLangFor(addr)
+  getLangsFor: function (addr) {
+    return this.languageAssigner.getLangsFor(addr)
   },
 
   getRecipients: function (recipientType) {
@@ -478,6 +479,10 @@ AutomaticDictionary.Class.prototype = {
 
   currentTimestamp: function(){
     return Date.now();
+  },
+  equalLanguages: function(list1, list2){
+    // Using slice() to clone lists.
+    return JSON.stringify(list1.slice().sort()) == JSON.stringify(list2.slice().sort())
   }
 };
 

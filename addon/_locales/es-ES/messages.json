@@ -23,9 +23,9 @@
     "message": "Error: No se pudo poner el diccionario $1. \\u00bfQuiz\\u00e1 se ha desinstalado?",
     "description": "errorSettingSpellLanguage"
   },
-  "DiscardedUpdateTooMuchRecipients": {
+  "DiscardedUpdateTooManyRecipients": {
     "message": "Se descarta guardar idioma. Demasiados destinatarios. (M\\u00e1ximos destinatarios son $1)",
-    "description": "DiscardedUpdateTooMuchRecipients"
+    "description": "DiscardedUpdateTooManyRecipients"
   },
   "IMOKWithIt": {
     "message": "Me parece bien!",

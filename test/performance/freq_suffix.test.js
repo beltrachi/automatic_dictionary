@@ -16,7 +16,7 @@ test('FreqSuffix', (done) => {
         }
     }).then(() => {
         // Read
-        benchmark(20, function freq_suffix_test_read() {
+        benchmark(30, function freq_suffix_test_read() {
             var k;
             for (var i = 0; i < amount; i++) {
                 k = "b" + (i % 100) + ".c" + (i % 10);

@@ -45,30 +45,6 @@ describe('ComposeWindow', () => {
     })
   })
 
-  describe('canManageWindow', () => {
-    it("detects matching window locations", () => {
-      var matching_urls = [
-        'chrome://whatever/messengercompose.xul',
-        'chrome://whatever/messengercompose.xhtml'
-      ]
-      matching_urls.forEach((url) => {
-        var window_stub = { document: { location: url } };
-        expect(ComposeWindow.canManageWindow(window_stub)).toBe(true);
-      })
-    });
-
-    it('rejects other locations', () => {
-      var rejected_urls = [
-        'chrome://messenger/content/messenger.xhmtl',
-        'chrome://mozapps/content/extensions/aboutaddons.html'
-      ];
-      rejected_urls.forEach((url) => {
-        var window_stub = { document: { location: url } };
-        expect(ComposeWindow.canManageWindow(window_stub)).toBe(false);
-      })
-    });
-  });
-
   describe('setListeners', () => {
     it('sets listeners on compose_ext', () => {
       var compose_window = factory();
@@ -79,12 +55,12 @@ describe('ComposeWindow', () => {
     });
   });
 
-  describe('getCurrentLang', () => {
+  describe('getCurrentLangs', () => {
     it('returns what compose returns', async () => {
       var compose_window = factory();
       browser.compose.getActiveDictionaries = jest.fn().mockReturnValue({ca: true, en: false})
 
-      expect(await compose_window.getCurrentLang()).toBe('ca')
+      expect(await compose_window.getCurrentLangs()).toEqual(['ca'])
       expect(browser.compose.getActiveDictionaries).toHaveBeenCalledWith('stubbed-tab-id')
     })
   });
@@ -165,10 +141,10 @@ describe('ComposeWindow', () => {
     })
   });
 
-  describe('changeLanguage', () => {
+  describe('changeLanguages', () => {
     it('sets spellchecker language via compose', async () => {
       var compose_window = factory();
-      await compose_window.changeLanguage('en')
+      await compose_window.changeLanguages(['en'])
 
       expect(browser.compose.setActiveDictionaries).toHaveBeenCalledWith('stubbed-tab-id', ['en'])
     })
