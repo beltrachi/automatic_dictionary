@@ -1,4 +1,8 @@
 
+=== 3.2.1
+
+* Improve support for slow Thunderbirds (fixes #156)
+
 === 3.2.0
 
 * Support Thunderbird 102.0 new feature of spellchecking more than one language at a time.
