@@ -106,7 +106,8 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Return')
     sleep 1
     # Make sure the pseudo-popup has the focus
-    interactor.click_on_text('Automatic Dictionary')
+    interactor.wait_for_text('Automatic Dictionary?', retries: 10, delay: 5)
+    interactor.click_on_text('Automatic Dictionary?')
     interactor.hit_key('Alt+a') # Hit Add button
     sleep 1
     interactor.hit_key('Alt+o') # Hit OK button

@@ -55,10 +55,12 @@ module Interactor
     def wait_for_text(text, options = {})
       # TODO: refactor this!
       logger.info "wait_for_text #{text}"
-      readers = (1 + retries).times.map { Reader.new }
+      local_retries = options[:retries] || retries
+      local_delay = options[:delay] || delay
+      readers = (1 + local_retries).times.map { Reader.new }
       threads = readers.each_with_index.map do |reader, idx|
         Thread.new do
-          sleep delay * idx
+          sleep local_delay * idx
           reader.capture_screen
         end
       end
