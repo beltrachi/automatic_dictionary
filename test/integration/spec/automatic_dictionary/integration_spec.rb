@@ -162,6 +162,8 @@ describe "AutomaticDictionary integration tests" do
       # Window did not close, lets try the "Discard" shortcut
       interactor.hit_key('Alt+d')
     end
+
+    sleep 2 unless in_main_window?
   end
 
   def change_spellchecker_language(language_name)
