@@ -87,20 +87,5 @@ module Interactor
     def current_window_geometry
       WindowManager.current_window_geometry
     end
-
-    private
-
-    def sleep_if_faster_than(desired_delta)
-      start = Time.now.to_f
-
-      out = yield
-
-      delta = desired_delta - (Time.now.to_f - start)
-      if delta > 0
-        logger.debug("Sleeping #{delta} because faster than #{desired_delta}")
-        sleep(delta)
-      end
-      out
-    end
   end
 end
