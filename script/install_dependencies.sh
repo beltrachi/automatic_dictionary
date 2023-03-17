@@ -4,7 +4,7 @@ set -ex
 
 sudo apt-get update
 sudo apt-get install -y xvfb zip unzip fluxbox xserver-xephyr curl
-sudo apt-get install -y imagemagick libmagickwand-dev xvfb unzip imagemagick xdotool
+sudo apt-get install -y imagemagick libmagickwand-dev xvfb unzip xdotool
 
 # Tesseract 5
 sudo apt-get install -y apt-transport-https lsb-release
