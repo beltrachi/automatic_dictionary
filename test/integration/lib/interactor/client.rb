@@ -3,6 +3,7 @@ require 'interactor/reader'
 require 'interactor/clicker'
 require 'interactor/keyboard_hitter'
 require 'interactor/window_manager'
+require 'forwardable'
 
 module Interactor
   class Client
@@ -53,29 +54,18 @@ module Interactor
     end
 
     def wait_for_text(text, options = {})
-      # TODO: refactor this!
       logger.info "wait_for_text #{text}"
       local_retries = options[:retries] || retries
       local_delay = options[:delay] || delay
-      readers = (1 + local_retries).times.map { Reader.new }
-      threads = readers.each_with_index.map do |reader, idx|
-        Thread.new do
-          sleep local_delay * idx
-          reader.capture_screen
-        end
+      attempts = 1 + local_retries
+
+      delayed_readers = attempts.times.map do |index|
+        DelayedReader.new(local_delay * index)
       end
-      readers.each_with_index do |reader, attempt|
-        threads[attempt].join # Make sure thread has captured screen.
-        2.times do
-          position = reader.text_position(text, options)
-          if position
-            logger.info "Position found for #{text} at attempt number #{attempt}"
-            return position
-          end
-          # Increase zoom
-          reader.resize_ratio *= 2
-        end
-      end
+
+      position = text_position_from_delayed_readers(delayed_readers, text, options)
+      return position if position
+
       fail TextNotFound.new("Text '#{text}' not found")
     end
 
@@ -86,6 +76,40 @@ module Interactor
 
     def current_window_geometry
       WindowManager.current_window_geometry
+    end
+
+    private
+
+    def text_position_from_delayed_readers(delayed_readers, text, options)
+      delayed_readers.each_with_index do |delayed_reader, index|
+        2.times do
+          position = delayed_reader.text_position(text, options)
+          if position
+            logger.info "Position found for #{text} at attempt number #{index + 1}"
+            return position
+          end
+          # Increase zoom
+          delayed_reader.resize_ratio *= 2
+        end
+      end
+    end
+
+    class DelayedReader
+      extend Forwardable
+      def_delegators :@reader, :resize_ratio, :resize_ratio=
+
+      def initialize(delay)
+        @reader = Reader.new
+        @thread = Thread.new do
+          sleep delay
+          @reader.capture_screen
+        end
+      end
+
+      def text_position(*args)
+        @thread.join
+        @reader.text_position(*args)
+      end
     end
   end
 end
