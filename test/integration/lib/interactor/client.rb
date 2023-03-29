@@ -92,6 +92,8 @@ module Interactor
           delayed_reader.resize_ratio *= 2
         end
       end
+
+      nil
     end
 
     class DelayedReader
