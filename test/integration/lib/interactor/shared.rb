@@ -2,13 +2,27 @@ require 'benchmark'
 
 module Interactor
   module Shared
+    class CommandExecutionError < StandardError
+      attr_reader :command, :status_code
+
+      def initialize(command, status_code)
+        @command = command
+        @status_code = status_code
+      end
+    end
+
     def run(command)
       logger.info("Executing command #{command}")
       out = nil
+      status = nil
       delta = Benchmark.realtime do
         out = `#{command}`
+        status = $?
       end
       logger.debug("Command executed in #{delta}")
+
+      raise CommandExecutionError.new(command, status), "Command failed with status #{status}" unless status.success?
+
       out
     end
 
