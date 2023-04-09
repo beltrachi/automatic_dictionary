@@ -64,9 +64,12 @@ module Interactor
       end
 
       position = text_position_from_delayed_readers(delayed_readers, text, options)
+
       return position if position
 
-      fail TextNotFound.new("Text '#{text}' not found")
+      raise TextNotFound, "Text '#{text}' not found"
+    ensure
+      delayed_readers.map(&:stop)
     end
 
     def input_text(text)
@@ -102,15 +105,23 @@ module Interactor
 
       def initialize(delay)
         @reader = Reader.new
+        @stopped = false
+
         @thread = Thread.new do
           sleep delay
-          @reader.capture_screen
+          @reader.capture_screen unless @stopped
         end
       end
 
       def text_position(*args)
+        raise 'Asking for text_position to a stopped reader' if @stopped
+
         @thread.join
         @reader.text_position(*args)
+      end
+
+      def stop
+        @stopped = true
       end
     end
   end
