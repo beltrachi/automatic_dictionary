@@ -26,11 +26,13 @@ module Interactor
       out
     end
 
-    def rescue_and_retry_on(exception = StandardError, attempts: 2)
+    def rescue_and_retry_on(exception = StandardError, attempts: 2, delay: 0)
       attempts.times do |attempt|
         return yield
       rescue exception
         raise if attempt == attempts - 1
+
+        sleep delay
       end
     end
 

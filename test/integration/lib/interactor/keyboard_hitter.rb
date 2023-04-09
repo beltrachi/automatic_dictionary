@@ -16,12 +16,12 @@ module Interactor
       end
 
       def input_text(text)
-        escaped_text = text.gsub("'",'\\')
+        escaped_text = text.gsub("'", '\\')
         run("xdotool type -clearmodifiers '#{escaped_text}'")
       end
 
       def current_window_title
-        rescue_and_retry_on(CommandExecutionError) do
+        rescue_and_retry_on(CommandExecutionError, delay: 0.1) do
           run("xdotool getwindowname #{current_window_id}")
         end
       end
