@@ -21,7 +21,9 @@ module Interactor
       end
 
       def current_window_title
-        run("xdotool getwindowname #{current_window_id}")
+        rescue_and_retry_on(CommandExecutionError) do
+          run("xdotool getwindowname #{current_window_id}")
+        end
       end
 
       protected

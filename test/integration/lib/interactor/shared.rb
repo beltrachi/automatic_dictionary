@@ -26,6 +26,14 @@ module Interactor
       out
     end
 
+    def rescue_and_retry_on(exception = StandardError, attempts: 2)
+      attempts.times do |attempt|
+        return yield
+      rescue exception
+        raise if attempt == attempts - 1
+      end
+    end
+
     def logger
       Interactor.logger
     end
