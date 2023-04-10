@@ -66,9 +66,17 @@ describe Interactor do
         it 'detects that its overlapping and ignores it' do
           expect(instance.text_position(text)).to eql([25, 52])
         end
-      end
 
-      context 'when there are more than 2 occurrences' do
+        context 'when there are more than 2 occurrences' do
+          let(:extra_word) do
+            { word: 'This', x_start: 100, x_end: 1100, y_start: 1000, y_end: 1500 }
+          end
+          before { boxes.push(extra_word) }
+
+          it 'raises error' do
+            expect { instance.text_position(text) }.to raise_error(/appears twice/)
+          end
+        end
       end
     end
   end

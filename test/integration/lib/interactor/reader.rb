@@ -145,14 +145,30 @@ module Interactor
       return if words.size < 2
 
       unified_sentences = words.map { |words_list| words_list.reduce(:+) }
-      return if unified_sentences.first.overlaps?(unified_sentences[1])
+      groups = group_overlapping_sentences(unified_sentences)
 
-      word_appears_twice_error!(unified_sentences.first.word) if words.size > 1
+      return if groups.size < 2
+
+      word_appears_twice_error!(unified_sentences.first.word)
     end
 
     def word_appears_twice_error!(text)
       raise "Text '#{text}' appears twice, please choose a better identifier or " +
         "filter by screen region"
+    end
+
+    def group_overlapping_sentences(sentences)
+      sentences.inject([]) do |groups, sentence|
+        overlapping_group_index = groups.find_index { |group| group.overlaps? sentence }
+
+        if overlapping_group_index
+          groups[overlapping_group_index] += sentence
+        else
+          groups << sentence
+        end
+
+        groups
+      end
     end
   end
 end
