@@ -21,4 +21,3 @@ class ImageUploader
     @logger ||= Logger.new(STDOUT)
   end
 end
-

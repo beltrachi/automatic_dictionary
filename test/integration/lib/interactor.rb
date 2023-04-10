@@ -14,7 +14,7 @@ module Interactor
     end
 
     def debug?
-      ENV['DEBUG'] == "1"
+      ENV['DEBUG'] == '1'
     end
 
     def logger

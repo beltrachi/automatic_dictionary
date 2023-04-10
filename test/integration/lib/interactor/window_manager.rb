@@ -19,7 +19,7 @@ module Interactor
       attr_reader :width, :height, :position
 
       def initialize(position_x, position_y, width, height)
-        @position = {x: position_x, y: position_y}
+        @position = { x: position_x, y: position_y }
         @width = width
         @height = height
       end

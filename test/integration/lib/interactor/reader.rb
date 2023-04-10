@@ -154,7 +154,7 @@ module Interactor
     end
 
     def word_appears_twice_error!(text)
-      raise "Text '#{text}' appears twice, please choose a better identifier or " +
+      raise "Text '#{text}' appears twice, please choose a better identifier or "\
             'filter by screen region'
     end
 

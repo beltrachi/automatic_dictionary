@@ -9,7 +9,7 @@ module Interactor
 
       def create_screenshot
         file = tmp_file.path
-        # Note: we are using jpg because imagemagick png can last as much as 12s
+        # NOTE: we are using jpg because imagemagick png can last as much as 12s
         # when converting images. Jpg is 1s. Increased quality be less lossy.
         run("import -window root -quality 99% #{file}")
 
@@ -21,6 +21,7 @@ module Interactor
 
       def store_a_copy_for_debugging(img)
         return unless Interactor.debug?
+
         log_screenshot(img)
       end
 
@@ -41,7 +42,7 @@ module Interactor
         # happen when ruby process ends.
         @@tmp_files ||= []
         timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
-        Tempfile.new(["screenshot-#{timestamp}",'.jpg']).tap do |file|
+        Tempfile.new(["screenshot-#{timestamp}", '.jpg']).tap do |file|
           @@tmp_files << file
         end
       end
