@@ -60,7 +60,7 @@ module Interactor
     end
 
     def prepare_image_to_read(file)
-      tmp="#{Tempfile.new('for-tesseract').path}.jpg"
+      tmp = "#{Tempfile.new('for-tesseract').path}.jpg"
       run("convert #{file} -quality 99% -colorspace Gray "\
           " -resize #{resize_ratio * 100}%"\
           " #{tmp}")
@@ -95,11 +95,11 @@ module Interactor
       # words match the list of target words.
       needle = target_words.first
       readed_words.each_with_index.map do |word, index|
-        if equal_words?(word.word, needle)
-          # We did find the first word, lets see if following words
-          # match the target.
-          word_chain(target_words, readed_words, index)
-        end
+        next unless equal_words?(word.word, needle)
+
+        # We did find the first word, lets see if following words
+        # match the target.
+        word_chain(target_words, readed_words, index)
       end.compact
     end
 
@@ -111,11 +111,11 @@ module Interactor
           # Last word, we only need to match the first part
           part = readed_words[index].word.split(/\s/).first
           return unless equal_words?(part, word)
-        else
-          return if !equal_words?(readed_words[index].word, word)
+        elsif !equal_words?(readed_words[index].word, word)
+          return
         end
-        index+=1
-        acc << readed_words[index-1]
+        index += 1
+        acc << readed_words[index - 1]
       end
     end
 
@@ -133,12 +133,13 @@ module Interactor
 
     def equal_words?(word, other_word)
       return true if word == other_word
+
       size_ratio = word.size / other_word.size.to_f
-      return false if !(size_ratio).between?(0.9, 1.1)
+      return false unless size_ratio.between?(0.9, 1.1)
 
       distance = levenshtein_distance(word, other_word)
       # True when changes needed are only 20% the other_word we are looking for.
-      return ( distance / other_word.size.to_f ) < 0.20
+      (distance / other_word.size.to_f) < 0.20
     end
 
     def error_if_word_appears_twice!(words)
@@ -154,11 +155,11 @@ module Interactor
 
     def word_appears_twice_error!(text)
       raise "Text '#{text}' appears twice, please choose a better identifier or " +
-        "filter by screen region"
+            'filter by screen region'
     end
 
     def group_overlapping_sentences(sentences)
-      sentences.inject([]) do |groups, sentence|
+      sentences.each_with_object([]) do |sentence, groups|
         overlapping_group_index = groups.find_index { |group| group.overlaps? sentence }
 
         if overlapping_group_index
@@ -166,8 +167,6 @@ module Interactor
         else
           groups << sentence
         end
-
-        groups
       end
     end
   end
