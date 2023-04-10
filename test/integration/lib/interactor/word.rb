@@ -1,3 +1,5 @@
+require 'active_support/core_ext/range'
+
 module Interactor
   class Word
     attr_accessor :word, :x_start, :y_start, :x_end, :y_end
@@ -25,7 +27,11 @@ module Interactor
       ]
     end
 
-    private
+    def overlaps?(other)
+      x_range.overlaps?(other.x_range) && y_range.overlaps?(other.y_range)
+    end
+
+    protected
 
     def union_area(other)
       {
@@ -34,6 +40,14 @@ module Interactor
         x_end: [x_end, other.x_end].max,
         y_end: [y_end, other.y_end].max
       }
+    end
+
+    def x_range
+      (x_start..x_end)
+    end
+
+    def y_range
+      (y_start..y_end)
     end
   end
 end

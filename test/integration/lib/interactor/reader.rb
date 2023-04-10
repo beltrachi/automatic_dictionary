@@ -78,7 +78,7 @@ module Interactor
       return unless found_words.first
 
       logger.debug("Words found: #{found_words.first.inspect}")
-      word_appears_twice_error!(text) if found_words.size > 1
+      error_if_word_appears_twice!(found_words)
 
       found_words.first.reduce(:+).center
     end
@@ -139,6 +139,15 @@ module Interactor
       distance = levenshtein_distance(word, other_word)
       # True when changes needed are only 20% the other_word we are looking for.
       return ( distance / other_word.size.to_f ) < 0.20
+    end
+
+    def error_if_word_appears_twice!(words)
+      return if words.size < 2
+
+      unified_sentences = words.map { |words_list| words_list.reduce(:+) }
+      return if unified_sentences.first.overlaps?(unified_sentences[1])
+
+      word_appears_twice_error!(unified_sentences.first.word) if words.size > 1
     end
 
     def word_appears_twice_error!(text)

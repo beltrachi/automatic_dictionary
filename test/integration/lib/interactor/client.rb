@@ -18,12 +18,12 @@ module Interactor
       self.hit_delay = options.fetch(:hit_delay, 0.2)
     end
 
-    def text_position(text)
-      Reader.new.text_position(text)
+    def text_position(text, options = {})
+      Reader.new.text_position(text, options)
     end
 
-    def text_position!(text)
-      text_position(text) || raise("Not found #{text}")
+    def text_position!(text, options = {})
+      text_position(text, options) || raise("Not found #{text}")
     end
 
     def click_on_text(text, optional: false, filter: nil)
