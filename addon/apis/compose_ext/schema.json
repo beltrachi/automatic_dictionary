@@ -26,20 +26,6 @@
           }
         ]
       }
-    ],
-    "events": [
-      {
-          "name": "onRecipientsChange",
-          "type": "function",
-          "description": "Fires when the recipients of a compose window change",
-          "parameters": [
-              {
-                  "name": "tabId",
-                  "type": "integer",
-                  "description": "The tabId that had the recipients changed"
-              }
-          ]
-      }
     ]
   }
 ]

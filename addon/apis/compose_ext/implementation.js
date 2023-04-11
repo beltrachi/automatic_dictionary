@@ -69,85 +69,9 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
               nb.removeNotification( n );
             }, options.notification_time);
           }
-        },
-
-        // An event. Most of this is boilerplate you don't need to worry about, just copy it.
-        onRecipientsChange: new ExtensionCommon.EventManager({
-          context,
-          name: "compose_ext.onRecipientsChange",
-          // In this function we add listeners for any events we want to listen to, and return a
-          // function that removes those listeners. To have the event fire in your extension,
-          // call fire.async.
-          register(fire) {
-            function callback(event_name, event) {
-              let win = windowManager.wrapWindow(event.target.ownerGlobal);
-              var tab = tabManager.convert(win.activeTab.nativeTab);
-              return fire.async(tab.id);
-            }
-
-            recipientsChangeWindowListener.add(callback);
-            return function() {
-              recipientsChangeWindowListener.remove(callback);
-            };
-          },
-        }).api(),
+        }
 
       },
     };
-  }
-};
-
-// A helpful class for listening to windows opening and closing.
-// (This file had a lowercase E in Thunderbird 65 and earlier.)
-var { ExtensionSupport } = ChromeUtils.import("resource:///modules/ExtensionSupport.jsm");
-
-var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmitter {
-  constructor() {
-    super();
-    this.callbackCount = 0;
-  }
-
-  handleEvent(event) {
-    recipientsChangeWindowListener.emit("recipients-changed", event);
-  }
-
-  add(callback) {
-    this.on("recipients-changed", callback);
-    this.callbackCount++;
-
-    if (this.callbackCount == 1) {
-      ExtensionSupport.registerWindowListener("recipientsChangeWindowListener", {
-        chromeURLs: ["chrome://messenger/content/messengercompose/messengercompose.xhtml"],
-        onLoadWindow: function(window) {
-          recipientsChangeWindowListener.detectRecipientsChange(window);
-        },
-      });
-    }
-  }
-
-  remove(callback) {
-    this.off("recipients-changed", callback);
-    this.callbackCount--;
-
-    if (this.callbackCount == 0) {
-      ExtensionSupport.unregisterWindowListener("recipientsChangeWindowListener");
-    }
-  }
-
-  detectRecipientsChange(window) {
-    window.document.getElementById('recipientsContainer').addEventListener('change', function (event) {
-      recipientsChangeWindowListener.handleEvent(event);
-    });
-    window.document.getElementById('recipientsContainer').addEventListener('focusout', function (event) {
-      recipientsChangeWindowListener.handleEvent(event);
-    });
-
-    window.document.getElementById('msgSubject').addEventListener('focus', function(event) {
-      recipientsChangeWindowListener.handleEvent(event);
-    });
-
-    window.document.getElementById('messageEditor').addEventListener('focus', function(event){
-      recipientsChangeWindowListener.handleEvent(event);
-    });
   }
 };

@@ -29,11 +29,7 @@ describe('ComposeWindow', () => {
   }
   beforeEach(() => {
     browser.compose_ext = {
-      onLanguageChange: eventEmitterFactory(),
-      onRecipientsChange: eventEmitterFactory(),
       showNotification: jest.fn(),
-      setSpellCheckerLanguage: jest.fn(),
-      canSpellCheck: jest.fn().mockResolvedValue(true)
     };
     browser.compose = {
       onActiveDictionariesChanged: eventEmitterFactory(),
@@ -50,7 +46,6 @@ describe('ComposeWindow', () => {
       var compose_window = factory();
       compose_window.setListeners();
       expect(browser.compose.onActiveDictionariesChanged.addListener).toHaveBeenCalled()
-      expect(browser.compose_ext.onRecipientsChange.addListener).toHaveBeenCalled()
       expect(browser.windows.onFocusChanged.addListener).toHaveBeenCalled();
     });
   });
