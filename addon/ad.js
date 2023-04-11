@@ -100,7 +100,6 @@ AutomaticDictionary.Class.prototype = {
   //Attributes
   initialized: false,
   running: false, //Stopped
-  last_toandcc_key: null,
   name: "AutomaticDictionary",
   notification_time_ms: 4000,
 

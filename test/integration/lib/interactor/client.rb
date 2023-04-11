@@ -125,6 +125,7 @@ module Interactor
       end
 
       def stop
+        Interactor.logger.debug('stopping DelayedReader')
         @stopped = true
       end
     end

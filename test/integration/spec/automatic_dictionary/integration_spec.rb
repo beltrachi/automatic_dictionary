@@ -206,7 +206,7 @@ describe "AutomaticDictionary integration tests" do
 
   def wait_for_label(text)
     # Label lasts a little to appear. Let's wait a little bit.
-    sleep 1
+    sleep 1.5
     interactor.wait_for_text(text)
   end
 
