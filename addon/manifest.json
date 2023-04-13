@@ -20,5 +20,5 @@
     "page": "background.html"
   },
 
-  "permissions": [ "compose", "storage", "addressBooks", "notifications" ]
+  "permissions": [ "compose", "storage", "notifications" ]
 }
