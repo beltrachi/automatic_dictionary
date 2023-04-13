@@ -20,6 +20,7 @@ export const ComposeWindow = (function (params) {
   this.logger = params.logger;
   this.window = this.ad.window;
 });
+const NOTIFICATION_ID = "automatic-dictionary-addon"
 
 const waitAnd = function (fn) {
   setTimeout(fn, 800);
@@ -105,7 +106,7 @@ Object.assign(ComposeWindow.prototype, Shutdownable);
 
 Object.assign(ComposeWindow.prototype, {
 
-  name: "CompoWindow",
+  name: "ComposeWindow",
   logger: null,
 
   setListeners: function () {
@@ -181,14 +182,18 @@ Object.assign(ComposeWindow.prototype, {
 
   changeLabel: async function (str) {
     this.logger.info("Changing label to: " + str);
-    browser.compose_ext.showNotification(
-      await getTabId(this),
-      str,
-      {
-        logo_url: this.params.logo_url,
-        notification_time: this.params.notification_time
-      }
-    );
+    browser.notifications.create(NOTIFICATION_ID, {
+      type: "basic",
+      iconUrl: this.params.logo_url,
+      title: "Automatic Dictionary Addon",
+      message: str,
+    });
+    if (this.clearTimeoutId) {
+      clearTimeout(this.clearTimeoutId);
+    }
+    this.clearTimeoutId = setTimeout(function() {
+      browser.notifications.clear(NOTIFICATION_ID)
+    }, this.params.notification_time);
   },
   changeLanguages: async function (langs) {
     browser.compose.setActiveDictionaries(await getTabId(this), langs);

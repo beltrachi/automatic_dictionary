@@ -240,7 +240,7 @@ describe "AutomaticDictionary integration tests" do
     recipients = 11.times.map { |i| "fr#{i}@fr.fr" }.join(',')
     on_composer(to: recipients) do
       change_spellchecker_language('Spanish')
-      wait_for_label('Discarded to save language preferences as there are too many recipients')
+      wait_for_label('Discarded to save language')
     end
 
     on_composer(to: 'alice <test@test.com>', subject: 'Un asunto') do

@@ -7,7 +7,10 @@ import { LoggerStub } from './../../../addon/lib/logger_stub.js';
 
 import { jest } from '@jest/globals'
 
+jest.useFakeTimers();
+
 describe('ComposeWindow', () => {
+
   var factory = function () {
     return new ComposeWindow({
       ad: {
@@ -28,8 +31,12 @@ describe('ComposeWindow', () => {
     }
   }
   beforeEach(() => {
-    browser.compose_ext = {
-      showNotification: jest.fn(),
+    jest.restoreAllMocks();
+    jest.spyOn(global, 'setTimeout');
+
+    browser.notifications = {
+      create: jest.fn(),
+      clear: jest.fn(),
     };
     browser.compose = {
       onActiveDictionariesChanged: eventEmitterFactory(),
@@ -121,20 +128,31 @@ describe('ComposeWindow', () => {
   });
 
   describe('changeLabel', () => {
-    it('forwards to compose_ext', async () => {
+    it('forwards to notifications API', async () => {
       var compose_window = factory();
       await compose_window.changeLabel('message')
 
-      expect(browser.compose_ext.showNotification).toHaveBeenCalledWith(
-        'stubbed-tab-id',
-        'message',
+      expect(browser.notifications.create).toHaveBeenCalledWith(
+        'automatic-dictionary-addon',
         {
-          logo_url: 'stubbed-logo-url',
-          notification_time: 4000
+          type: 'basic',
+          iconUrl: 'stubbed-logo-url',
+          title: "Automatic Dictionary Addon",
+          message: 'message'
         }
       )
     })
-  });
+
+    it('schedules the clear of the notification', async () => {
+      var compose_window = factory();
+      await compose_window.changeLabel('message')
+
+      expect(global.setTimeout).toHaveBeenCalledTimes(1);
+      expect(global.setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 4000);
+      jest.runAllTimers();
+      expect(browser.notifications.clear).toHaveBeenCalledWith('automatic-dictionary-addon')
+    });
+});
 
   describe('changeLanguages', () => {
     it('sets spellchecker language via compose', async () => {
