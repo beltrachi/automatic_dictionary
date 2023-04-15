@@ -128,7 +128,7 @@ Object.assign(ComposeWindow.prototype, {
       if (_this.window.id != windowId) {
         // Another window has the focus now
         stopWatchingRecipients(_this);
-        _this.logger.debug("Ignoring onFocusChanged because different windowId");
+        _this.logger.debug("onFocusChanged of different windowId, skip deducingLanguage");
         return
       }
 
