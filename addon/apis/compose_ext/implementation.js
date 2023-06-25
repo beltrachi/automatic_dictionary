@@ -3,9 +3,6 @@
 // Get various parts of the WebExtension framework that we need.
 var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
 
-// You probably already know what this does.
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
-
 // Compare semver versions 'x.y.z' (only numbers)
 function compareVersion(v1, v2) {
   if (typeof v1 !== 'string') return false;
