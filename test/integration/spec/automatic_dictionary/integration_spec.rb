@@ -126,7 +126,14 @@ describe "AutomaticDictionary integration tests" do
         log_and_fail(example.exception)
       end
     end
-    run("pkill -f thunderbird")
+    stop_thunderbird
+  end
+
+  def stop_thunderbird
+    while system("pgrep -f thunderbird") do
+      logger.info("Stopping thunderbird...")
+      system("sleep 1 && pkill -f thunderbird")
+    end
   end
 
   def on_composer(to: nil, subject: nil, body: nil)
