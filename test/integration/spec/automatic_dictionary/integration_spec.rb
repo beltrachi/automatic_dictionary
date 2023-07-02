@@ -22,9 +22,14 @@ describe "AutomaticDictionary integration tests" do
     end
   end
 
+  # @return false when command failed
   def run(command)
     logger.debug(command)
-    system(command) || raise("Command failed: #{command}")
+    system(command)
+  end
+
+  def run!(command)
+    run(command) || raise("Command failed: #{command}")
   end
 
   let(:profile_base) do
@@ -33,7 +38,7 @@ describe "AutomaticDictionary integration tests" do
 
   def prepare_profile(path)
     source = File.join(root, profile_base)
-    run("tar -xvf #{source} -C #{path}")
+    run!("tar -xvf #{source} -C #{path}")
   end
 
   def in_main_window?
@@ -70,12 +75,12 @@ describe "AutomaticDictionary integration tests" do
 
   before do
     # Update build to lastest
-    run("cd #{root} ; ./build.sh")
+    run!("cd #{root} ; ./build.sh")
 
     prepare_profile(profile_path)
 
     log_thunderbird_version
-    run("thunderbird --profile #{profile_path} --no-remote &")
+    run!("thunderbird --profile #{profile_path} --no-remote &")
 
     sleep 5
     # Close random thunderbird popups
@@ -130,9 +135,9 @@ describe "AutomaticDictionary integration tests" do
   end
 
   def stop_thunderbird
-    while system("pgrep -f thunderbird") do
+    while run("pgrep -f thunderbird") do
       logger.info("Stopping thunderbird...")
-      system("sleep 1 && pkill -f thunderbird")
+      run("sleep 1 && pkill -f thunderbird")
     end
   end
 
