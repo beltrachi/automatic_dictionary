@@ -72,6 +72,10 @@ module Interactor
       delayed_readers.map(&:stop)
     end
 
+    def screen_text
+      Reader.new.words.join(' ')
+    end
+
     def input_text(text)
       sleep delay
       KeyboardHitter.input_text(text)
