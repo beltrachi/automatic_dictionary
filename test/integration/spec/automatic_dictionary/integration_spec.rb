@@ -83,6 +83,11 @@ describe "AutomaticDictionary integration tests" do
     run!("thunderbird --profile #{profile_path} --no-remote &")
 
     sleep 5
+    if thunderbird_version > Gem::Version.new('114')
+      # Skipping 'Thunderbird updating window'
+      interactor.wait_for_text('New Message', retries: 5, delay: 10)
+    end
+
     # Close random thunderbird popups
     interactor.click_on_text('Could not connect to', optional: true)
     interactor.hit_key('Escape')
@@ -266,7 +271,7 @@ describe "AutomaticDictionary integration tests" do
     interactor.hit_key('Return')
     sleep 5
     interactor.wait_for_text('Notification level:')
-    interactor.wait_for_text('1200')
+    expect(interactor.screen_text.scan('1200').count).to eql(2)
   end
 
   def left_side_menu_filter
