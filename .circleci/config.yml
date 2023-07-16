@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   unit-tests:
     docker:
-      - image: cimg/node:15.14
+      - image: cimg/node:20.4
     steps:
       - checkout
       - run: node --version
