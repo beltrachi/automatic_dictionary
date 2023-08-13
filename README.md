@@ -85,7 +85,7 @@ Then you have to wait till they approve it.
 To run unit tests:
 
 ```
-docker run -v $PWD:/app -it node bash -c "cd /app; npm test"
+docker run -v $PWD:/app -it node bash -c "cd /app; npm install; npm test"
 ```
 
 To run a single test:
