@@ -85,13 +85,13 @@ Then you have to wait till they approve it.
 To run unit tests:
 
 ```
-docker run -v $PWD:/app -it node:15 bash -c "cd /app; npm test"
+docker run -v $PWD:/app -it node bash -c "cd /app; npm test"
 ```
 
 To run a single test:
 
 ```
-docker run -v $PWD:/app -it node:15 bash -c "cd /app; npm test -- test/units/ad.test.js -t boot"
+docker run -v $PWD:/app -it node bash -c "cd /app; npm test -- test/units/ad.test.js -t boot"
 ```
 
 ### Integration tests
