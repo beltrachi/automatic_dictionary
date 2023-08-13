@@ -1,5 +1,5 @@
 # Container to run functional tests of the extension.
-FROM ruby:2.7.8
+FROM ruby:3.2.2
 
 # Configurable container argument
 ARG THUNDERBIRD_VERSION=stable
