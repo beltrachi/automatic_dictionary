@@ -1,5 +1,6 @@
 // my-custom-environment
-const NodeEnvironment = require('jest-environment-node');
+const NodeEnvironment = require('jest-environment-node').TestEnvironment;
+
 var { window, browser } = require('./thunderbird_mocks.cjs')
 
 class JestThunderbirdEnvironment extends NodeEnvironment {
