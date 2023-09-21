@@ -266,9 +266,7 @@ describe "AutomaticDictionary integration tests" do
 
     interactor.click_on_text('Automatic Dictionary')
     # Go to preferences tab
-    interactor.hit_key('Tab')
-    interactor.hit_key('Right')
-    interactor.hit_key('Return')
+    interactor.click_on_text('Preferences')
     sleep 5
     interactor.wait_for_text('Notification level:')
     expect(interactor.screen_text.scan('1200').count).to eql(2)
