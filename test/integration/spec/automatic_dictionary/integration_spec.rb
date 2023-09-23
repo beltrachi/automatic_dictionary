@@ -266,6 +266,7 @@ describe "AutomaticDictionary integration tests" do
 
     interactor.click_on_text('Automatic Dictionary')
     # Go to preferences tab
+    interactor.click_on_text('Details')
     interactor.click_on_text('Preferences')
     sleep 5
     interactor.wait_for_text('Notification level:')
