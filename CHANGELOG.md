@@ -1,3 +1,12 @@
+# [3.3.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.2.6...v3.3.0) (2023-09-24)
+
+
+### Features
+
+* Adding lint checks on PRs to follow conventional commits ([68d71ca](https://github.com/beltrachi/automatic_dictionary/commit/68d71ca49fef53b033240115eff830cc1891d9a2))
+
+
+
 ## [3.2.6](https://github.com/beltrachi/automatic_dictionary/compare/v3.2.5...v3.2.6) (2023-09-24)
 
 
