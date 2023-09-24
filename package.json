@@ -1,6 +1,6 @@
 {
   "name": "automatic_dictionary",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "<a href=\"https://codeclimate.com/github/beltrachi/automatic_dictionary\"><img src=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/gpa.svg\" /></a> <a href=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/coverage\"><img src=\"https://codeclimate.com/github/beltrachi/automatic_dictionary/badges/coverage.svg\" /></a>",
   "main": "index.js",
   "type": "module",
