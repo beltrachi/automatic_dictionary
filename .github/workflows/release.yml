@@ -21,4 +21,4 @@ jobs:
           github-token: ${{ secrets.github_token }}
           input-file: CHANGELOG.md
           version-file: addon/manifest.json
-          pre-commit: .github/workflows/pre-commit.js
+          pre-commit: .github/workflows/pre-commit.cjs
