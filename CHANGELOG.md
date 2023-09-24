@@ -1,39 +1,39 @@
-=== 3.2.5
+## 3.2.5
 
 * Support Thunderbird beta v118
 
-=== 3.2.4
+## 3.2.4
 
 * Support Thunderbird beta v117
 
-=== 3.2.3
+## 3.2.3
 
 * Support Thunderbird beta v115
 
-=== 3.2.2
+## 3.2.2
 
 * Support Thunderbird beta v112 and upcoming
 
-=== 3.2.1
+## 3.2.1
 
 * Improve support for slow Thunderbirds (fixes #156)
 
-=== 3.2.0
+## 3.2.0
 
 * Support Thunderbird 102.0 new feature of spellchecking more than one language at a time.
 
-=== 3.1.0
+## 3.1.0
 
 * Use new extension APIs available in Thunderbird 102.0 (Basic feature)
 
 This version still does not support more than one language per recipient.
 When addon detects languages used it just gets the first one.
 
-=== 3.0.1
+## 3.0.1
 
 * Add support for Thunderbird up to 102.0
 
-=== 3.0.0
+## 3.0.0
 
 Breaking changes:
 * Dropped support for legacy prefs. Users in 1.x versions should install 2.x version before this to have all data migrated.
@@ -60,20 +60,20 @@ Changes summary (more details in git log):
 * Add coverage check on jest tests
 * Remove integration specs for TB < 76
 
-=== 2.0.7.1
+## 2.0.7.1
 
 * I did block version 2.0.7 by mistake on Thunderbird addons site. Need a new version.
 
-=== 2.0.7
+## 2.0.7
 
 * Fix support for Thunderbird 92 and 93
 * Fix version detection for future TB +100 version
 
-=== 2.0.6
+## 2.0.6
 
 * Support current beta Thunderbird 94
 
-=== 2.0.5
+## 2.0.5
 
 * Workaround to work with Thunderbird 90+
 * Add script that makes it easy to update all locales at once
@@ -88,51 +88,51 @@ Changes summary (more details in git log):
 * Migrate unit testing to jest
 * Migrate to circleci CI
 
-=== 2.0.4
+## 2.0.4
 
 * Fix compatibility with Thunderbird 85 beta
 
-=== 2.0.3
+## 2.0.3
 
 * Fix reply emails on windows, now confirmed by beta testers (2nd attempt) (issue #62)
 
-=== 2.0.2
+## 2.0.2
 
 * Fix support on replying emails (issue #62)
 
-=== 2.0.1
+## 2.0.1
 
 * Fix support on replying emails (issue #40)
 * Fix support for thunderbird 80 (beta version)
 
-=== 2.0.0
+## 2.0.0
 
 * Migrated to MailExtension
 * Drop support for conversations
 * Broken compatibility with TB < 74
 * Removed unit test, only integration tests are working.
 
-=== 1.12.0
+## 1.12.0
 
 * Fix support for Thunderbird 68-69 (Broken compatibility with TB60)
 
-=== 1.11.0
+## 1.11.0
 
 * Remove Google Analytics data collection completely.
 
-=== 1.10.5
+## 1.10.5
 
 * Fix support for Thunderbird 64 and earlier
 
-=== 1.10.4
+## 1.10.4
 
 * Fix support for Thunderbird 60 (issue #32)
 
-=== 1.10.3
+## 1.10.3
 
 * Detect compose window init to deduce lang (issue #31)
 
-=== 1.10.2
+## 1.10.2
 
 * Fix support for Thunderbird 57.x
 * Fix thunderbird version detection
@@ -140,67 +140,67 @@ Changes summary (more details in git log):
 * Use document lang attribute to detect current language
 * Skip language detection when is triggered by us
 
-=== 1.10.1
+## 1.10.1
 
 * Fix support for Thunderbird 56.x
 
-=== 1.10.0
+## 1.10.0
 
 * Add support for Thunderbird 52.x
 
-=== 1.9.0
+## 1.9.0
 
 * Improve message when storing languages
 * Improve language change detection and dictionary boot delay
 * Fix Thunderbird38 window switching (do not set lang again)
 
-=== 1.8.2
+## 1.8.2
 
 * Fix behaviour when using maxRecipients = 1
 
-=== 1.8.1
+## 1.8.1
 
 * Add support for Thunderbird 38.x
 
-=== 1.8.0
+## 1.8.0
 
 * Add German language translations
 
-=== 1.7.1
+## 1.7.1
 
 * Fix language deduction when spellchecker is not ready.
 * Fix and improve localized messages and strings.
 
-=== 1.7.0
+## 1.7.0
 
 * Refactor logger calls
 * Add logger to file and button to send to developer.
 
-=== 1.6.0
+## 1.6.0
 
 * Add option to disable popups [resolves #10]
 
-=== 1.5.5
+## 1.5.5
 
 * Compatible with dictionary_switcher addon
 
-=== 1.5.4
+## 1.5.4
 
 * Fixing concurrent events when ifce not ready or slow
 
 * Fix message when spellchecking is disabled
 
-=== 1.5.0
+## 1.5.0
 
 * Detect language change from context menu on compose window.
 
 * Allow to say No when asking to collect anonymous data.
 
-=== 1.4.1
+## 1.4.1
 
 * Fix preferences window error shown in error console
 
-=== 1.4.0
+## 1.4.0
 
 * Restartless
 
@@ -210,7 +210,7 @@ Changes summary (more details in git log):
 
 * Collect event when user finally sends mail, to see if the plugin is being useful
 
-=== 1.3.0
+## 1.3.0
 
 * Added heuristics to guess language based on the domain of the recipients.
 
