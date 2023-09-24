@@ -1,3 +1,16 @@
+## [3.2.6](https://github.com/beltrachi/automatic_dictionary/compare/v3.2.5...v3.2.6) (2023-09-24)
+
+
+### Bug Fixes
+
+* build xpi on release ([d22175f](https://github.com/beltrachi/automatic_dictionary/commit/d22175f600ce63db4a688a576714174db8093b8e))
+* configure release to keep old changelog ([cab895c](https://github.com/beltrachi/automatic_dictionary/commit/cab895c60da0442be4f14ddd63fbde74c8691245))
+* pre commit hook should be a CommonJS file ([2ca3596](https://github.com/beltrachi/automatic_dictionary/commit/2ca3596f509480496bca1b483570b50000878b77))
+* read version from manifest.json ([cc5ee3e](https://github.com/beltrachi/automatic_dictionary/commit/cc5ee3ef981689459105bf721ecc605b197ffbfc))
+* You need to checkout code before creating release ([6b2d400](https://github.com/beltrachi/automatic_dictionary/commit/6b2d400d9c5e887dbf7e9a68311df00864c6a5e9))
+
+
+
 ## 3.2.5
 
 * Support Thunderbird beta v118
