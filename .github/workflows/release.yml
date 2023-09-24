@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Conventional Changelog Action
         uses: TriPSs/conventional-changelog-action@v4
         with:
