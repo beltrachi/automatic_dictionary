@@ -70,13 +70,8 @@ If the plugin does something you did not expect it will be helpful if you send u
 When we release a new version of the plugin we do:
 
 1. Merge the changes to master branch.
-2. Update manifest.json version tag with the new one (following SEMVER).
-3. Update the CHANGELOG file with changes since last release.
-4. Execute ./build.sh
-5. Commit all changes.
-6. Create tag with git.
-7. Push all changes.
-8. Go to Mozilla addons page and upload new version.
+2. Github action will automatically create new release following semver
+3. Go to Mozilla addons page and upload new version.
 
 Then you have to wait till they approve it.
 
