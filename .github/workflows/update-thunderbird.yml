@@ -15,7 +15,7 @@ jobs:
           curl -s https://ftp.mozilla.org/pub/thunderbird/releases/ |grep -oP "/releases/[^/]+/" |cut -d "/" -f 3 |sort -n | cut -d "b" -f 1 | tail -n 1 | tr -d "\n" > /tmp/latest-thunderbird
           echo "latest_version=$(cat /tmp/latest-thunderbird)" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update max version
         run: |
           mv addon/manifest.json addon/manifest.json.original
