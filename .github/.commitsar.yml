@@ -1,0 +1,4 @@
+version: 1
+verbose: true
+pull_request:
+  conventional: true
