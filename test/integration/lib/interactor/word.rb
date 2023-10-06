@@ -1,5 +1,5 @@
 require 'active_support'
-require 'active_support/core_ext/range/overlaps'
+require 'active_support/core_ext/range/overlap'
 
 module Interactor
   class Word
