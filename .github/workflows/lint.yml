@@ -21,9 +21,9 @@ jobs:
 
       # Check commits are conventional commits
       - name: Commitsar Action
-        uses: aevea/commitsar@v0.20.2
+        uses: beltrachi/commitsar@v0.20.2
         with:
-          config: .github/.commitsar.yml
+          config: .github/
 
       # Check PR title also follows it
       - uses: amannn/action-semantic-pull-request@v5
