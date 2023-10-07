@@ -21,7 +21,7 @@ jobs:
 
       # Check commits are conventional commits
       - name: Commitsar Action
-        uses: beltrachi/commitsar@v0.20.2
+        uses: beltrachi/commitsar@master
         with:
           config: .github/
 
