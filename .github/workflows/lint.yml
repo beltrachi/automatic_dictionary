@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Print new build number
+        run: git log ; git branch
+
       # Check commits are conventional commits
       - name: Commitsar Action
         uses: beltrachi/commitsar@master
