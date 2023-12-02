@@ -1,0 +1,19 @@
+name: ci
+
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21.1
+      - run: node --version
+      - run: npm install
+      - run: ./test.sh
