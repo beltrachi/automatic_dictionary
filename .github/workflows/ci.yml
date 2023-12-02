@@ -19,11 +19,20 @@ jobs:
       - run: ./test.sh
   integration:
     runs-on: ubuntu-latest
-    env:
-      THUNDERBIRD_VERSION: latest
     steps:
       -
         name: Checkout
         uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v2
-      - run: ./script/docker_integration_test.sh
+      -
+        name: latest version
+        env:
+          THUNDERBIRD_VERSION: latest
+        run: ./script/docker_integration_test.sh
+      # reusing same job to test beta, and save some time in docker image
+      # building
+      -
+        name: beta-latest version
+        env:
+          THUNDERBIRD_VERSION: beta-latest
+        run: ./script/docker_integration_test.sh
