@@ -4,6 +4,7 @@ on: [ push ]
 
 jobs:
   unit-tests:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       -
@@ -19,6 +20,7 @@ jobs:
       - run: ./test.sh
   integration:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       -
         name: Checkout
