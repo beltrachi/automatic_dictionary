@@ -3,7 +3,7 @@ name: ci
 on: [ push ]
 
 jobs:
-  build:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       -
@@ -17,3 +17,13 @@ jobs:
       - run: node --version
       - run: npm install
       - run: ./test.sh
+  integration:
+    runs-on: ubuntu-latest
+    env:
+      THUNDERBIRD_VERSION: latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v2
+      - run: ./script/docker_integration_test.sh
