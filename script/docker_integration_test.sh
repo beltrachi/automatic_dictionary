@@ -12,4 +12,4 @@ if [ "$DEVEL_MODE" = "1" ]; then
    DEVEL_MODE_MODIFIERS="-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY -e DEBUG=1 -e LOCAL_DEBUG=1 -v $PWD:/app "
 fi
 
-docker run --cap-add=SYS_PTRACE --cpus 2 -ti $DEVEL_MODE_MODIFIERS $DOCKER_IMAGE /bin/bash -l -c "./integration_test.sh"
+docker run --cap-add=SYS_PTRACE --cpus 2 $DEVEL_MODE_MODIFIERS $DOCKER_IMAGE /bin/bash -l -c "./integration_test.sh"
