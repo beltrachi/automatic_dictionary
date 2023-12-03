@@ -2,8 +2,7 @@
 FROM ruby:3.2.2 as base
 
 # Configure locale as utf to avoid encoding issues
-RUN apt-get update
-RUN apt-get install -y sudo
+RUN apt-get update && apt-get install -y sudo
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
