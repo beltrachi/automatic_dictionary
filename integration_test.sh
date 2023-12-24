@@ -6,6 +6,9 @@ source script/setup_test_env.sh
 source ~/.bash_profile
 export DEBUG=1
 
+# Limit tesseract multicore to make OCR predictable
+export OMP_THREAD_LIMIT=1
+
 # Set log level to debug
 sed -i 's/"logLevel":.*/"logLevel":"debug",/g' addon/ad.js
 
