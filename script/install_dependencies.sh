@@ -26,7 +26,6 @@ apt-get install -y `apt-cache depends thunderbird | awk '/Depends:/{print$2}'`
 PREV_PATH=$(pwd)
 
 cd test/integration/
-gem install bundler -v "~> 1.17"
 bundle install -j 3
 ruby -v
 
