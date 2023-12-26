@@ -32,6 +32,11 @@ describe "AutomaticDictionary integration tests" do
     run(command) || raise("Command failed: #{command}")
   end
 
+  def capture_command(command)
+    logger.debug(command)
+    `#{command}`.tap { |output| logger.debug(output) }
+  end
+
   let(:profile_base) do
     'test/integration/fixtures/test-profile.tar.gz'
   end
@@ -73,6 +78,34 @@ describe "AutomaticDictionary integration tests" do
     Gem::Version.new(version.match(/\d+\.\d+/)[0])
   end
 
+  def thunderbird_cpu
+    capture_command('ps auxf')
+    pid = capture_command('pgrep thunderbird').strip
+    capture_command("ps -p #{pid} -o %cpu=").strip.to_f
+  end
+
+  def start_thunderbird
+    10.times do
+      launch_thunderbird
+      sleep(5)
+      return if thunderbird_cpu < 90.0
+
+      handle_high_cpu_usage
+    end
+
+    raise "Thunderbird high CPU usage could not be worked around :skull:"
+  end
+
+  def launch_thunderbird
+    run!("thunderbird --profile #{profile_path} --no-remote &")
+  end
+
+  def handle_high_cpu_usage
+    logger.warn("Thunderbird CPU was too high (#{thunderbird_cpu})")
+
+    stop_thunderbird
+  end
+
   before do
     # Update build to lastest
     run!("cd #{root} ; ./build.sh")
@@ -80,9 +113,9 @@ describe "AutomaticDictionary integration tests" do
     prepare_profile(profile_path)
 
     log_thunderbird_version
-    run!("thunderbird --profile #{profile_path} --no-remote &")
 
-    sleep 5
+    start_thunderbird
+
     if thunderbird_version > Gem::Version.new('114')
       # Skipping 'Thunderbird updating window'
       interactor.wait_for_text('New Message', retries: 5, delay: 10)
@@ -140,9 +173,9 @@ describe "AutomaticDictionary integration tests" do
   end
 
   def stop_thunderbird
-    while run("pgrep -f thunderbird") do
+    while run("pgrep thunderbird") do
       logger.info("Stopping thunderbird...")
-      run("sleep 1 && pkill -f thunderbird")
+      run("sleep 1 && pkill thunderbird")
     end
   end
 
