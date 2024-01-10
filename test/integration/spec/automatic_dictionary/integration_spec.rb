@@ -88,7 +88,7 @@ describe "AutomaticDictionary integration tests" do
     10.times do
       launch_thunderbird
       sleep(5)
-      return if thunderbird_cpu < 90.0
+      return if thunderbird_cpu < 60.0
 
       handle_high_cpu_usage
     end
