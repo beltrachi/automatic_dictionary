@@ -169,6 +169,7 @@ describe "AutomaticDictionary integration tests" do
         log_and_fail(example.exception)
       end
     end
+  ensure
     stop_thunderbird
   end
 
