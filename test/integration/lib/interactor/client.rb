@@ -15,7 +15,7 @@ module Interactor
     def initialize(options = {})
       self.retries = options.fetch(:retries, 0)
       self.delay = options.fetch(:delay, 1)
-      self.hit_delay = options.fetch(:hit_delay, 0.2)
+      self.hit_delay = options.fetch(:hit_delay, 0.5)
     end
 
     def text_position(text, options = {})
