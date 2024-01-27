@@ -5,6 +5,7 @@ set -ex
 # Recreate daily to get latest thunderbird app
 DOCKER_IMAGE="automatic_dictionary:${THUNDERBIRD_VERSION}-$(date -I)"
 
+docker image inspect $DOCKER_IMAGE ||
   docker build --pull=true --no-cache --build-arg THUNDERBIRD_VERSION=$THUNDERBIRD_VERSION -t $DOCKER_IMAGE .
 
 if [ "$DEVEL_MODE" = "1" ]; then
