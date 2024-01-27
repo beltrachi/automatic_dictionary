@@ -1,3 +1,12 @@
+## [3.3.5](https://github.com/beltrachi/automatic_dictionary/compare/v3.3.4...v3.3.5) (2024-01-27)
+
+
+### Bug Fixes
+
+* **ci:** Thunderbird updater triggers CI now ([3bc3ec2](https://github.com/beltrachi/automatic_dictionary/commit/3bc3ec289b68c273c0749ac85745081634c9a196))
+
+
+
 ## [3.3.4](https://github.com/beltrachi/automatic_dictionary/compare/v3.3.3...v3.3.4) (2023-12-26)
 
 
