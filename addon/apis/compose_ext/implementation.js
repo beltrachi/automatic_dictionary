@@ -48,17 +48,14 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
           } else {
             var buttons = options.buttons || [];
             var priority = nb.PRIORITY_INFO_HIGH;
-            if(ThunderbirdVersionGreaterOrEqual('94')){
-              n = nb.appendNotification(
-                notification_value,
-                {
-                  image: options.logo_url,
-                  priority: priority,
-                  label: string
-                },
-                buttons);
-            }else
-              n = nb.appendNotification(string, notification_value, options.logo_url, priority, buttons);
+            n = nb.appendNotification(
+              notification_value,
+              {
+                image: options.logo_url,
+                priority: priority,
+                label: string
+              },
+              buttons);
           }
           // setup timeout
           if (options.notification_time) {
