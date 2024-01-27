@@ -24,6 +24,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           commit-message: "feat: Support latest Thunderbird release ${{steps.vars.outputs.latest_version}}"
           branch: 'github-action/update-to-latest-thunderbird'
           title: 'feat: support latest Thunderbird ${{steps.vars.outputs.latest_version}}'
