@@ -85,7 +85,7 @@ describe "AutomaticDictionary integration tests" do
   end
 
   def start_thunderbird
-    10.times do
+    20.times do
       launch_thunderbird
       sleep(5)
       return if thunderbird_cpu < 60.0
