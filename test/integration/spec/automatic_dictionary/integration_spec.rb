@@ -176,7 +176,7 @@ describe "AutomaticDictionary integration tests" do
   def stop_thunderbird
     while run("pgrep thunderbird") do
       logger.info("Stopping thunderbird...")
-      run("sleep 1 && pkill thunderbird")
+      run("sleep 1 && pkill -9 thunderbird")
     end
   end
 
