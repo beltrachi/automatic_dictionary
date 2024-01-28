@@ -229,7 +229,14 @@ AutomaticDictionary.Class.prototype = {
       // There is a retry queued. Stay quiet and wait for it.
       return;
     }
+    var _this = this;
+    await this.withLock('deduceLanguage', async function(){
+      await _this.deduceLanguageInternal(opt);
+    })
+  },
 
+  // Updates the interface with the lang deduced from the recipients
+  deduceLanguageInternal: async function (opt) {
     const recipients = await this.getRecipients();
     const is_ignored_context = this.isIgnoredContext(this.deducer.buildContext());
     if (!this.running || recipients.length == 0 || is_ignored_context) {
@@ -278,6 +285,20 @@ AutomaticDictionary.Class.prototype = {
     this.last_langs = langs;
     this.lastDeduction = deduction;
     this.dispatchEvent({ type: "deduction-completed" });
+  },
+
+  withLock: async function(lock_name, fn){
+    this.locks = this.locks || [];
+    if (this.locks[lock_name] == 1){
+      this.logger.debug('Lock blocks execution of '+lock_name);
+      return;
+    }
+    try {
+      this.locks[lock_name] = 1
+      await fn()
+    }finally{
+      this.locks[lock_name] = 0
+    }
   },
 
   isIgnoredContext: function(context){
