@@ -1,3 +1,17 @@
+# [3.4.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.3.5...v3.4.0) (2024-02-05)
+
+
+### Bug Fixes
+
+* notification box concurrency issues make appear double notifications ([1c71e42](https://github.com/beltrachi/automatic_dictionary/commit/1c71e423c60c6c01d557dc495f5451bef204613b))
+
+
+### Features
+
+* Support latest Thunderbird release 123.0 ([5a84739](https://github.com/beltrachi/automatic_dictionary/commit/5a847398bca9e64cc9447a3b9a94cd2b58854209))
+
+
+
 ## [3.3.5](https://github.com/beltrachi/automatic_dictionary/compare/v3.3.4...v3.3.5) (2024-01-27)
 
 
