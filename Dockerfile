@@ -1,5 +1,5 @@
 # Container to run functional tests of the extension.
-FROM ruby:3.3.0 as base
+FROM ruby:3.3.1 as base
 
 # Configure locale as utf to avoid encoding issues
 RUN apt-get update && apt-get install -y sudo
