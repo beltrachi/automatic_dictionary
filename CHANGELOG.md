@@ -1,3 +1,12 @@
+# [3.8.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.7.0...v3.8.0) (2024-05-16)
+
+
+### Features
+
+* Support latest Thunderbird release 127.0 ([97cb83d](https://github.com/beltrachi/automatic_dictionary/commit/97cb83ddfef572c6b04849decd70a3463bdd8aef))
+
+
+
 # [3.7.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.6.0...v3.7.0) (2024-05-08)
 
 
