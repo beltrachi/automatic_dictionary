@@ -1,0 +1,126 @@
+{
+  "savedForRecipients": {
+    "message": "Langue [$1] enregistrée par défaut pour $2 combinaisons",
+    "description": "savedForRecipients"
+  },
+  "noLangForRecipients": {
+    "message": "Aucune langue enregistrée pour ces destinataires",
+    "description": "noLangForRecipients"
+  },
+  "deducedLang.remember": {
+    "message": "Langue [$1] mémorisée",
+    "description": "deducedLang.remember"
+  },
+  "deducedLang.guess": {
+    "message": "Langue [$1] supposée",
+    "description": "deducedLang.guess"
+  },
+  "settingListenersError": {
+    "message": "Erreur interne (initialisation des écouteurs)",
+    "description": "settingListenersError"
+  },
+  "errorSettingSpellLanguage": {
+    "message": "Erreur : Impossible de régler la langue sur [$1]. Peut-être n’est-elle plus installée ?",
+    "description": "errorSettingSpellLanguage"
+  },
+  "DiscardedUpdateTooManyRecipients": {
+    "message": "Enregistrement des choix de langue ignoré (plus de $1 destinataires)",
+    "description": "DiscardedUpdateTooManyRecipients"
+  },
+  "IMOKWithIt": {
+    "message": "Je suis d’accord !",
+    "description": "IMOKWithIt"
+  },
+  "DontDoIt": {
+    "message": "Ne pas le faire",
+    "description": "DontDoIt"
+  },
+  "MoreInfo": {
+    "message": "En savoir plus",
+    "description": "MoreInfo"
+  },
+  "introduction.text": {
+    "message": "Paramètres avancés",
+    "description": "introduction.text"
+  },
+  "maxSize.label": {
+    "message": "Nombre maximum de paires stockées :",
+    "description": "maxSize.label"
+  },
+  "maxSize.info": {
+    "message": "Les associations destinataire ou groupe de destinataires et dictionnaire sont mémorisées. Quand la limite indiquée ci-dessus est atteinte, les entrées les plus anciennes et les moins utilisées sont supprimées pour laisser place aux nouvelles.",
+    "description": "maxSize.info"
+  },
+  "maxSize.recommendation": {
+    "message": "Valeur conseillée : 1200",
+    "description": "maxSize.recommendation"
+  },
+  "maxRecipients.label": {
+    "message": "Nombre maximum de destinataires par message :",
+    "description": "maxRecipients.label"
+  },
+  "maxRecipients.info": {
+    "message": "Aucune langue n’est enregistrée si ce nombre de destinataires (y compris en copie) est dépassé. Ce paramètre permet de ne pas traiter le courrier en masse.",
+    "description": "maxRecipients.info"
+  },
+  "maxRecipients.recommendation": {
+    "message": "Valeur conseillée : 10",
+    "description": "maxRecipients.recommendation"
+  },
+  "notificationLevel.label": {
+    "message": "Niveau de notification :",
+    "description": "notificationLevel.label"
+  },
+  "notificationLevel.description": {
+    "message": "Trois niveaux de notification sont proposés. « Information » notifie tout (changement de dictionnaire, détection de nouvelles langues, etc.). « Erreur » notifie uniquement ce qui se passe mal.",
+    "description": "notificationLevel.description"
+  },
+  "notificationLevel.recommendation": {
+    "message": "Choisir « Avertissement » pour ne pas être trop dérangé.",
+    "description": "notificationLevel.recommendation"
+  },
+  "notificationLevel.info": {
+    "message": "Information",
+    "description": "notificationLevel.info"
+  },
+  "notificationLevel.warn": {
+    "message": "Avertissement",
+    "description": "notificationLevel.warn"
+  },
+  "notificationLevel.error": {
+    "message": "Erreur",
+    "description": "notificationLevel.error"
+  },
+  "logLevel.label": {
+    "message": "Niveau de journalisation :",
+    "description": "logLevel.label"
+  },
+  "logLevel.description": {
+    "message": "Quatre niveaux de journalisation sont proposés.",
+    "description": "logLevel.description"
+  },
+  "logLevel.recommendation": {
+    "message": "Choisir « Avertissement » pour ne consigner que ce qui ne fonctionne pas bien.",
+    "description": "logLevel.recommendation"
+  },
+  "logLevel.debug": {
+    "message": "Débogage",
+    "description": "logLevel.debug"
+  },
+  "logLevel.info": {
+    "message": "Information",
+    "description": "logLevel.info"
+  },
+  "logLevel.warn": {
+    "message": "Avertissement",
+    "description": "logLevel.warn"
+  },
+  "logLevel.error": {
+    "message": "Erreur",
+    "description": "logLevel.error"
+  },
+  "savePreferences.button": {
+    "message": "Enregistrer",
+    "description": "Save preferences button"
+  }
+}
