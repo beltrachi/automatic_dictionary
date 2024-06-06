@@ -64,6 +64,7 @@ If the plugin does something you did not expect it will be helpful if you send u
 * Giacomo Ciani
 * ByteHamster
 * SimonSapin
+* denB10
 
 ## How to release a new version
 
