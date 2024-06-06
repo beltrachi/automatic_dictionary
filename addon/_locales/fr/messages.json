@@ -28,7 +28,7 @@
     "description": "DiscardedUpdateTooManyRecipients"
   },
   "IMOKWithIt": {
-    "message": "Je suis d’accord !",
+    "message": "Je suis d’accord !",
     "description": "IMOKWithIt"
   },
   "DontDoIt": {
@@ -44,7 +44,7 @@
     "description": "introduction.text"
   },
   "maxSize.label": {
-    "message": "Nombre maximum de paires stockées :",
+    "message": "Nombre maximum de paires stockées :",
     "description": "maxSize.label"
   },
   "maxSize.info": {
@@ -60,7 +60,7 @@
     "description": "maxRecipients.label"
   },
   "maxRecipients.info": {
-    "message": "Aucune langue n’est enregistrée si ce nombre de destinataires (y compris en copie) est dépassé. Ce paramètre permet de ne pas traiter le courrier en masse.",
+    "message": "Aucune langue n’est enregistrée si ce nombre de destinataires (y compris en copie) est dépassé. Ce paramètre permet de ne pas traiter le courrier en masse.",
     "description": "maxRecipients.info"
   },
   "maxRecipients.recommendation": {
@@ -72,11 +72,11 @@
     "description": "notificationLevel.label"
   },
   "notificationLevel.description": {
-    "message": "Trois niveaux de notification sont proposés. « Information » notifie tout (changement de dictionnaire, détection de nouvelles langues, etc.). « Erreur » notifie uniquement ce qui se passe mal.",
+    "message": "Trois niveaux de notification sont proposés. « Information » notifie tout (changement de dictionnaire, détection de nouvelles langues, etc.). « Erreur » notifie uniquement ce qui se passe mal.",
     "description": "notificationLevel.description"
   },
   "notificationLevel.recommendation": {
-    "message": "Choisir « Avertissement » pour ne pas être trop dérangé.",
+    "message": "Choisir « Avertissement » pour ne pas être trop dérangé.",
     "description": "notificationLevel.recommendation"
   },
   "notificationLevel.info": {
@@ -92,7 +92,7 @@
     "description": "notificationLevel.error"
   },
   "logLevel.label": {
-    "message": "Niveau de journalisation :",
+    "message": "Niveau de journalisation :",
     "description": "logLevel.label"
   },
   "logLevel.description": {
@@ -100,7 +100,7 @@
     "description": "logLevel.description"
   },
   "logLevel.recommendation": {
-    "message": "Choisir « Avertissement » pour ne consigner que ce qui ne fonctionne pas bien.",
+    "message": "Choisir « Avertissement » pour ne consigner que ce qui ne fonctionne pas bien.",
     "description": "logLevel.recommendation"
   },
   "logLevel.debug": {
