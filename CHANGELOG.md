@@ -1,3 +1,17 @@
+# [3.9.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.8.0...v3.9.0) (2024-06-07)
+
+
+### Bug Fixes
+
+* Use non breaking spaces in French translations ([7ff20d1](https://github.com/beltrachi/automatic_dictionary/commit/7ff20d1a8514e29251976aa66c8f3d482862dc7c))
+
+
+### Features
+
+* Add French locale ([b12a20d](https://github.com/beltrachi/automatic_dictionary/commit/b12a20d4c931ac28fe49e172464cd264de576915))
+
+
+
 # [3.8.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.7.0...v3.8.0) (2024-05-16)
 
 
