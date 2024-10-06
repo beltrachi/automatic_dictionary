@@ -3,7 +3,7 @@
 set -ex
 source script/setup_test_env.sh
 # load profile for rbenv to work
-source ~/.bash_profile
+source ~/.bash_profile || true
 export DEBUG=1
 
 # Limit tesseract multicore to make OCR predictable

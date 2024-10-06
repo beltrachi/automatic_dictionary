@@ -5,11 +5,11 @@ echo "and stores it back to tesing fixtures once thunderbird closes."
 
 set -ex
 
-export THUNDERBIRD_VERSION="latest"
+export THUNDERBIRD_VERSION="esr"
 IMAGE="automatic_dictionary:${THUNDERBIRD_VERSION}"
 
 docker image inspect $IMAGE ||
-  docker build --pull=true --build-arg THUNDERBIRD_VERSION=$THUNDERBIRD_VERSION -t $IMAGE .
+  docker build --no-cache --progress=plain --pull=true --build-arg THUNDERBIRD_VERSION=$THUNDERBIRD_VERSION -t $IMAGE .
 
 DEVEL_MODE_MODIFIERS="-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY -e DEBUG=1 -e LOCAL_DEBUG=1 -v $PWD:/app "
 
