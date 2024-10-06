@@ -27,12 +27,17 @@ jobs:
         uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       -
+        name: Extended support release
+        env:
+          THUNDERBIRD_VERSION: esr
+        run: ./script/docker_integration_test.sh
+      # reusing same job to test different versions, and save some time in docker image
+      # building
+      -
         name: latest version
         env:
           THUNDERBIRD_VERSION: latest
         run: ./script/docker_integration_test.sh
-      # reusing same job to test beta, and save some time in docker image
-      # building
       -
         name: beta-latest version
         env:
