@@ -1,3 +1,18 @@
+# [3.13.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.12.0...v3.13.0) (2024-10-06)
+
+
+### Bug Fixes
+
+* **ci:** latest thunderbird needs dbus-x11 package to not crash ([c28ffb4](https://github.com/beltrachi/automatic_dictionary/commit/c28ffb43b41950f9a23c62c4add6d50c2b6d22b3))
+
+
+### Features
+
+* **ci:** Adding Extended Support Release version tests ([1507440](https://github.com/beltrachi/automatic_dictionary/commit/1507440ff99f90455e5fb133088fe4f3fb2d55d5))
+* support Thunderbird 132 ([20d2daf](https://github.com/beltrachi/automatic_dictionary/commit/20d2daf015ce9f2de4566868fec4e59fc10b8a64))
+
+
+
 # [3.12.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.11.0...v3.12.0) (2024-08-11)
 
 
