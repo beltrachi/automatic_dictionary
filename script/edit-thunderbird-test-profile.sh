@@ -6,7 +6,7 @@ echo "and stores it back to tesing fixtures once thunderbird closes."
 set -ex
 
 export THUNDERBIRD_VERSION="esr"
-IMAGE="automatic_dictionary:${THUNDERBIRD_VERSION}"
+IMAGE="automatic_dictionary:${THUNDERBIRD_VERSION}-$(date -I)"
 
 docker image inspect $IMAGE ||
   docker build --no-cache --progress=plain --pull=true --build-arg THUNDERBIRD_VERSION=$THUNDERBIRD_VERSION -t $IMAGE .
