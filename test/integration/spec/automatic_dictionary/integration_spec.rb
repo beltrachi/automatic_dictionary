@@ -72,7 +72,7 @@ describe "AutomaticDictionary integration tests" do
   let(:local_tmp) { File.join(root, 'tmp') }
 
   let(:interactor) { Interactor.client }
-  let(:thunderbird_version) do
+  def thunderbird_version
     version = `thunderbird --version`.chomp
     logger.info("Thunderbird version: #{version}")
     Gem::Version.new(version.match(/\d+\.\d+/)[0])
