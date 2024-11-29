@@ -39,7 +39,7 @@ describe Interactor do
       let(:file) { 'spec/fixtures/this-is-a-text-appears-twice.png' }
 
       it 'raises error' do
-        expect { instance.text_position(text) }.to raise_error(/appears twice/)
+        expect { instance.text_position(text) }.to raise_error(Interactor::Reader::TextAppearsMoreThanOnceError)
       end
 
       context 'when we define a region of the screen' do
@@ -74,7 +74,7 @@ describe Interactor do
           before { boxes.push(extra_word) }
 
           it 'raises error' do
-            expect { instance.text_position(text) }.to raise_error(/appears twice/)
+            expect { instance.text_position(text) }.to raise_error(Interactor::Reader::TextAppearsMoreThanOnceError)
           end
         end
       end

@@ -118,7 +118,17 @@ describe "AutomaticDictionary integration tests" do
 
     if thunderbird_version > Gem::Version.new('114')
       # Skipping 'Thunderbird updating window'
-      interactor.wait_for_text('New Message', retries: 5, delay: 10)
+      begin
+        interactor.wait_for_text('Subject', retries: 5, delay: 10)
+      rescue Interactor::Client::TextNotFound
+        # When a promotional tab is open, we can't see subject button
+        # Lets switch to the inbox tab
+        begin
+          interactor.click_on_text('Inbox')
+        rescue Interactor::Reader::TextAppearsMoreThanOnceError
+          # When the inbox tab is already selected, it appears twice
+        end
+      end
     end
 
     # Close random thunderbird popups
@@ -292,7 +302,12 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    interactor.hit_key('Alt+t p a', delay: 0.15)
+    if thunderbird_version < Gem::Version.new('131')
+      interactor.hit_key('Alt+t p a', delay: 0.15)
+    else
+      interactor.hit_key('Alt+t a', delay: 0.15)
+    end
+
     sleep 2
 
     interactor.click_on_text('Extensions', filter: left_side_menu_filter)
