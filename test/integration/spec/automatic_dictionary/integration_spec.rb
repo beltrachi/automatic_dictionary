@@ -302,7 +302,7 @@ describe "AutomaticDictionary integration tests" do
   end
 
   it 'preferences window' do
-    if thunderbird_version < Gem::Version.new('131')
+    if thunderbird_version < Gem::Version.new('128')
       interactor.hit_key('Alt+t p a', delay: 0.15)
     else
       interactor.hit_key('Alt+t a', delay: 0.15)
