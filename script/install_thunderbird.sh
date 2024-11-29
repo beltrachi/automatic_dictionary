@@ -5,7 +5,7 @@ set -ex
 # ESR releases are not downloadable like latest or beta. ESR are the versions included
 # in the package manager of each stable distro.
 if [ "$THUNDERBIRD_VERSION" == "esr" ]; then
-  apt-get install -y thunderbird
+  apt-get update && apt-get install -y thunderbird
   exit 0
 fi
 
