@@ -11,6 +11,8 @@ module Interactor
     include Shared
     include Gem::Text
 
+    class TextAppearsMoreThanOnceError < StandardError ; end
+
     attr_accessor :resize_ratio
 
     def initialize(options = {})
@@ -78,7 +80,7 @@ module Interactor
       return unless found_words.first
 
       logger.debug("Words found: #{found_words.first.inspect}")
-      error_if_word_appears_twice!(found_words)
+      error_if_word_appears_more_than_once!(found_words)
 
       found_words.first.reduce(:+).center
     end
@@ -142,7 +144,7 @@ module Interactor
       (distance / other_word.size.to_f) < 0.20
     end
 
-    def error_if_word_appears_twice!(words)
+    def error_if_word_appears_more_than_once!(words)
       return if words.size < 2
 
       unified_sentences = words.map { |words_list| words_list.reduce(:+) }
@@ -150,12 +152,12 @@ module Interactor
 
       return if groups.size < 2
 
-      word_appears_twice_error!(unified_sentences.first.word)
+      word_appears_more_than_once_error!(unified_sentences.first.word)
     end
 
-    def word_appears_twice_error!(text)
-      raise "Text '#{text}' appears twice, please choose a better identifier or "\
-            'filter by screen region'
+    def word_appears_more_than_once_error!(text)
+      raise TextAppearsMoreThanOnceError, "Text '#{text}' appears more than once,"\
+        " please choose a better identifier or filter by screen region"
     end
 
     def group_overlapping_sentences(sentences)
