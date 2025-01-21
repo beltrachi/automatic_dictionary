@@ -14,11 +14,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Conventional Changelog Action
         uses: TriPSs/conventional-changelog-action@v6
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           input-file: CHANGELOG.md
           version-file: addon/manifest.json
           pre-commit: .github/workflows/pre-commit.cjs
