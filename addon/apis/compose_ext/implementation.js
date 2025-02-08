@@ -1,8 +1,5 @@
 /* eslint-disable object-shorthand */
 
-// Get various parts of the WebExtension framework that we need.
-var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
-
 // Compare semver versions 'x.y.z' (only numbers)
 function compareVersion(v1, v2) {
   if (typeof v1 !== 'string') return false;
@@ -95,8 +92,9 @@ var compose_ext = class extends ExtensionCommon.ExtensionAPI {
 };
 
 // A helpful class for listening to windows opening and closing.
-// (This file had a lowercase E in Thunderbird 65 and earlier.)
-var { ExtensionSupport } = ChromeUtils.import("resource:///modules/ExtensionSupport.jsm");
+const { ExtensionSupport } = ChromeUtils.importESModule(
+  "resource:///modules/ExtensionSupport.sys.mjs"
+);
 
 var recipientsChangeWindowListener = new class extends ExtensionCommon.EventEmitter {
   constructor() {
