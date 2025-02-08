@@ -1,3 +1,17 @@
+# [3.16.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.15.0...v3.16.0) (2025-02-08)
+
+
+### Bug Fixes
+
+* compatibility with Thunderbird 136 ([e631669](https://github.com/beltrachi/automatic_dictionary/commit/e63166988c8fc373fc80791fbe677525af57498e))
+
+
+### Features
+
+* Support latest Thunderbird release 136.0 ([f60bf9a](https://github.com/beltrachi/automatic_dictionary/commit/f60bf9adc2f4e938a849fa4e8e62d81f396af526))
+
+
+
 # [3.15.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.14.0...v3.15.0) (2025-01-21)
 
 
