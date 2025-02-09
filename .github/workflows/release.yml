@@ -20,6 +20,7 @@ jobs:
       - name: Conventional Changelog Action
         uses: TriPSs/conventional-changelog-action@v6
         with:
+          preset: "conventionalcommits"
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           input-file: CHANGELOG.md
           version-file: addon/manifest.json
