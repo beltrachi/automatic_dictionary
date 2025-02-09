@@ -1,3 +1,18 @@
+# [4.0.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.16.0...v4.0.0) (2025-02-09)
+
+
+### Features
+
+* remove Thunderbird support for older than 128 ([804cf02](https://github.com/beltrachi/automatic_dictionary/commit/804cf02903cb3b61eaee487cace2886df5925797))
+
+
+### BREAKING CHANGES
+
+* Older versions of Thunderbird do not
+support ESM loading
+
+
+
 # [3.16.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.15.0...v3.16.0) (2025-02-08)
 
 
