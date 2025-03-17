@@ -1,3 +1,10 @@
+## [4.1.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.0.0...v4.1.0) (2025-03-17)
+
+
+### Features
+
+* Support latest Thunderbird release 137.0 ([f42acf9](https://github.com/beltrachi/automatic_dictionary/commit/f42acf9d8e0607e506e42548b7a34ffa01f08eef))
+
 # [4.0.0](https://github.com/beltrachi/automatic_dictionary/compare/v3.16.0...v4.0.0) (2025-02-09)
 
 
