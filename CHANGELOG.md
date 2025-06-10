@@ -1,3 +1,10 @@
+## [4.4.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.3.0...v4.4.0) (2025-06-10)
+
+
+### Features
+
+* Read latest beta version from download URL ([653f0e9](https://github.com/beltrachi/automatic_dictionary/commit/653f0e9db790dd6572ae79752f189e801943c759))
+
 ## [4.3.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.2.0...v4.3.0) (2025-05-02)
 
 
