@@ -9,10 +9,12 @@ jobs:
   createPullRequest:
     runs-on: ubuntu-latest
     steps:
-      - name: Get last Thunderbird version
+      - name: Get last Thunderbird beta version
         id: vars
         run: |
-          curl -s https://ftp.mozilla.org/pub/thunderbird/releases/ |grep -oP "/releases/[\d\.]+/" |cut -d "/" -f 3 |sort -V | cut -d "b" -f 1 | tail -n 1 | tr -d "\n" > /tmp/latest-thunderbird
+          curl -s -I "https://download.mozilla.org/?product=thunderbird-beta-latest&os=win&lang=en-US" | \
+            grep Location | grep -oP "/releases/[\d\.]+" | cut -d "/" -f 3 | tr -d "\n" > /tmp/latest-thunderbird
+
           echo "latest_version=$(cat /tmp/latest-thunderbird)" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v4
