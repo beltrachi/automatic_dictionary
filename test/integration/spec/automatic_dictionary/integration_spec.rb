@@ -150,7 +150,8 @@ describe "AutomaticDictionary integration tests" do
     # Open addons tab
     interactor.hit_key('Alt+t a', clear_modifiers: false)
     sleep 1
-    5.times { interactor.hit_key('Tab') } # Navigate to the options icon
+    interactor.click_on_text('Manage Your Extensions')
+    interactor.hit_key('Tab') # Navigate to the options icon
     interactor.hit_key('Return')
     interactor.hit_key('i') # Install from file
     sleep 0.5
