@@ -17,7 +17,7 @@ jobs:
 
           echo "latest_version=$(cat /tmp/latest-thunderbird)" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Update max version
         run: |
           mv addon/manifest.json addon/manifest.json.original
