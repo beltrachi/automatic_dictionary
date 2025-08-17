@@ -13,7 +13,7 @@ describe "AutomaticDictionary integration tests" do
   # - It deduces langauge based on domain.
   # - Preferences window shows correctly.
 
-  INSTALLED_DICTIONARIES = %w[Spanish English].freeze
+  INSTALLED_DICTIONARIES = ["Spanish", "English (United States)"].freeze
 
   let(:profile_path) { Dir.mktmpdir }
   let(:logger) do
