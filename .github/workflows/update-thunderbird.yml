@@ -38,6 +38,6 @@ jobs:
       - name: Comment on PR to trigger notification
         if: steps.create_pr.outputs.pull-request-number
         run: |
-          gh pr comment ${{ steps.create_pr.outputs.pull-request-number }} --body "@jbeltran New Thunderbird version ${{steps.vars.outputs.latest_version}} is available. Please review and merge this PR."
+          gh pr comment ${{ steps.create_pr.outputs.pull-request-number }} --body "@beltrachi New Thunderbird version ${{steps.vars.outputs.latest_version}} is available. Please review and merge this PR."
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
