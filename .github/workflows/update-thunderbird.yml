@@ -21,7 +21,8 @@ jobs:
       - name: Update max version
         run: |
           mv addon/manifest.json addon/manifest.json.original
-          jq ".applications.gecko.strict_max_version |= \"${{steps.vars.outputs.latest_version}}\"" addon/manifest.json.original > addon/manifest.json
+          # Add a timestamp to force a change even if version is the same
+          jq ".applications.gecko.strict_max_version |= \"${{steps.vars.outputs.latest_version}}\" | .description |= . + \" [Updated: $(date -u +%Y-%m-%dT%H:%M:%SZ)]\"" addon/manifest.json.original > addon/manifest.json
           rm addon/manifest.json.original
       - name: Create Pull Request
         id: create_pr
