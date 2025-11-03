@@ -4,6 +4,7 @@
     "config:recommended"
   ],
   "automerge": true,
+  "separateMinorPatch": true,
   "ignorePaths": [
     "**/node_modules/**",
     "**/bower_components/**",
@@ -32,6 +33,12 @@
     {
       "matchDatasources": ["custom.thunderbird"],
       "extractVersion": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
+    },
+    {
+    "matchUpdateTypes": ["patch"],
+    "groupName": "all patch updates",
+    "automerge": true
     }
-  ]
+  ],
+  "repositories": [ "beltrachi/automatic_dictionary" ]
 }
