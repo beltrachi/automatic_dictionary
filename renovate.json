@@ -8,5 +8,30 @@
     "**/node_modules/**",
     "**/bower_components/**",
     "**/vendor/**"
+  ],
+  "customDatasources": {
+    "thunderbird": {
+      "defaultRegistryUrlTemplate": "https://ftp.mozilla.org/pub/thunderbird/releases/",
+      "format": "html"
+    }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^addon/manifest\\.json$"],
+      "matchStrings": [
+        "\"strict_max_version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "custom.thunderbird",
+      "depNameTemplate": "thunderbird-max-version",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["custom.thunderbird"],
+      "extractVersion": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
+    }
   ]
 }
