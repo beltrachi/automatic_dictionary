@@ -1,3 +1,10 @@
+## [4.10.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.9.0...v4.10.0) (2025-11-03)
+
+
+### Features
+
+* configure Renovate to track Thunderbird max version ([1bdc93b](https://github.com/beltrachi/automatic_dictionary/commit/1bdc93bab3fa571a9a048fcc6e0636a9670edeee))
+
 ## [4.9.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.8.0...v4.9.0) (2025-10-26)
 
 
