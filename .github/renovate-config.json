@@ -15,7 +15,7 @@
       "defaultRegistryUrlTemplate": "https://ftp.mozilla.org/pub/thunderbird/releases/",
       "format": "html",
       "transformTemplates": [
-        "{ \"releases\": $map($filter($.*.href, function($v) { $v ~> $contains('/releases/') and $v ~> $contains('.') and not($v ~> $contains('rc')) and not($v ~> $contains('b')) and not($v ~> $contains('esr')) }), function($v) { { \"version\": $replace($v, /^\\/pub\\/thunderbird\\/releases\\/([\\d\\.]+)\\/$/, '$1') } }) }"
+        "{\"releases\":[$map($filter($.*.href,function($v){$contains($v,'/releases/')and$contains($v,'.')and not$contains($v,'rc')and not$contains($v,'b')and not$contains($v,'esr')}),function($v){{'version':$replace($v,/^\\/pub\\/thunderbird\\/releases\\/([\\d\\.]+)\\/$/, '$1')}})]}"
       ]
     }
   },
