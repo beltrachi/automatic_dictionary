@@ -1,3 +1,10 @@
+## [4.10.3](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.2...v4.10.3) (2025-11-09)
+
+
+### Bug Fixes
+
+* remove transformTemplates and rely on automatic HTML parsing ([4ce88f8](https://github.com/beltrachi/automatic_dictionary/commit/4ce88f813525c3d3ce102bae84eed73152af0e89))
+
 ## [4.10.2](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.1...v4.10.2) (2025-11-09)
 
 
