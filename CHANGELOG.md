@@ -1,3 +1,22 @@
+## [4.10.1](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.0...v4.10.1) (2025-11-09)
+
+
+### Bug Fixes
+
+* compact JSONata expression and fix array wrapping ([744b19c](https://github.com/beltrachi/automatic_dictionary/commit/744b19cd02fef9cc2f2caa10dd18ade84a7efcc0))
+* correct JSONata syntax in transformTemplates ([9d7ac97](https://github.com/beltrachi/automatic_dictionary/commit/9d7ac979eee9a7a7c17163a035955b1c3f8cdcb2))
+* improve Renovate Thunderbird version detection ([6cf390d](https://github.com/beltrachi/automatic_dictionary/commit/6cf390d51ea2d39baa14cc16b0c2ae518609d2bc))
+* remove double braces in function return for JSONata ([b1aa73e](https://github.com/beltrachi/automatic_dictionary/commit/b1aa73ec5409def7f911e40a2b0cef4b8b1a3b58))
+* restore transformTemplates for Thunderbird version detection ([d110db4](https://github.com/beltrachi/automatic_dictionary/commit/d110db4f0a28d31300ebd6f1598f9c105d8cef1c))
+* return array directly from transformTemplates ([49a43c1](https://github.com/beltrachi/automatic_dictionary/commit/49a43c149a54bffacbf897121a72707ea60faf61))
+* update regex to match absolute hrefs and filter ESR ([b0bb96f](https://github.com/beltrachi/automatic_dictionary/commit/b0bb96f44c1d8798115e889c83a3ca6a8d908900))
+* use $not function instead of not operator in JSONata predicate ([35091a7](https://github.com/beltrachi/automatic_dictionary/commit/35091a7db54ec1190cfa9ea4b7342510b78d4f4d))
+* use JSONata object transform syntax to avoid Handlebars conflict ([5feaae4](https://github.com/beltrachi/automatic_dictionary/commit/5feaae47968927333f500431350a49f3e59baf51))
+* use JSONata predicate and transform syntax instead of functions ([6b043d6](https://github.com/beltrachi/automatic_dictionary/commit/6b043d6151746965db19cf8ae452d745697eb564))
+* use single quotes for inner JSONata object properties ([1b04929](https://github.com/beltrachi/automatic_dictionary/commit/1b049297ac606fb5515544eed93aed4e8df608c1))
+* use variable assignment to separate filtering from object construction ([897cf52](https://github.com/beltrachi/automatic_dictionary/commit/897cf52890caefcbf1295e4fffa46d1a1724fcd3))
+* wrap releases array in object for Renovate schema ([0e2b36e](https://github.com/beltrachi/automatic_dictionary/commit/0e2b36e09e177d35d55c490e55bfc37db1d5b5ca))
+
 ## [4.10.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.9.0...v4.10.0) (2025-11-03)
 
 
