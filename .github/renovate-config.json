@@ -13,10 +13,7 @@
   "customDatasources": {
     "thunderbird": {
       "defaultRegistryUrlTemplate": "https://ftp.mozilla.org/pub/thunderbird/releases/",
-      "format": "html",
-      "transformTemplates": [
-        "{ \"releases\": [{\"version\": \"145.0\"}, {\"version\": \"144.0\"}] }"
-      ]
+      "format": "html"
     }
   },
   "customManagers": [
