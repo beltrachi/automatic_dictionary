@@ -1,3 +1,10 @@
+## [4.10.2](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.1...v4.10.2) (2025-11-09)
+
+
+### Bug Fixes
+
+* wrap filtered array in parentheses before object transform ([e46bf47](https://github.com/beltrachi/automatic_dictionary/commit/e46bf47bc09c8eefc5b58d2969b40a2919a60413))
+
 ## [4.10.1](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.0...v4.10.1) (2025-11-09)
 
 
