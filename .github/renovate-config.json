@@ -25,14 +25,13 @@
       ],
       "datasourceTemplate": "custom.thunderbird",
       "depNameTemplate": "thunderbird-max-version",
-      "versioningTemplate": "loose",
-      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
+      "versioningTemplate": "loose"
     }
   ],
   "packageRules": [
     {
       "matchDatasources": ["custom.thunderbird"],
-      "extractVersion": "^(?<version>\\d+(?:\\.\\d+)*?)\\/$"
+      "extractVersion": "^\\[(?<version>\\d+\\.\\d+(?:\\.\\d+)?(?:b\\d+)?)\\/$"
     },
     {
     "matchUpdateTypes": ["patch"],
