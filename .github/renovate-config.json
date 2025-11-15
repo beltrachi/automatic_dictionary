@@ -31,7 +31,7 @@
   "packageRules": [
     {
       "matchDatasources": ["custom.thunderbird"],
-      "extractVersion": "^\\[(?<version>\\d+\\.\\d+(?:\\.\\d+)?(?:b\\d+)?)\\/$"
+      "extractVersion": "^\\[(?<version>\\d+\\.\\d+(?:\\.\\d+)?(?:b\\d+)?)\\/\\]$"
     },
     {
     "matchUpdateTypes": ["patch"],
