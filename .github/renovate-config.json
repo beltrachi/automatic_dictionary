@@ -33,9 +33,14 @@
   ],
   "packageRules": [
     {
-    "matchUpdateTypes": ["patch"],
-    "groupName": "all patch updates",
-    "automerge": true
+      "matchDatasources": ["custom.thunderbird"],
+      "semanticCommitType": "feat",
+      "semanticCommitScope": null
+    },
+    {
+      "matchUpdateTypes": ["patch"],
+      "groupName": "all patch updates",
+      "automerge": true
     }
   ],
   "repositories": [ "beltrachi/automatic_dictionary" ]
