@@ -13,7 +13,10 @@
   "customDatasources": {
     "thunderbird": {
       "defaultRegistryUrlTemplate": "https://ftp.mozilla.org/pub/thunderbird/releases/",
-      "format": "html"
+      "format": "html",
+      "transformTemplates": [
+        "{ \"releases\": $filter($.releases, function($v) { $not($contains($v.version, 'esr')) and $not($contains($v.version, 'rc')) and $not($contains($v.version, '..')) }).{ \"version\": $replace(version, /^\\[(.+)\\/\\]$/, '$1') } }"
+      ]
     }
   },
   "customManagers": [
@@ -29,10 +32,6 @@
     }
   ],
   "packageRules": [
-    {
-      "matchDatasources": ["custom.thunderbird"],
-      "extractVersion": "^\\[(?<version>\\d+\\.\\d+(?:\\.\\d+)?(?:b\\d+)?)\\/\\]$"
-    },
     {
     "matchUpdateTypes": ["patch"],
     "groupName": "all patch updates",
