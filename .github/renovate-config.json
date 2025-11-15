@@ -15,7 +15,7 @@
       "defaultRegistryUrlTemplate": "https://ftp.mozilla.org/pub/thunderbird/releases/",
       "format": "html",
       "transformTemplates": [
-        "{ \"releases\": [{\"version\": \"146.0b2\"}, {\"version\": \"146.0b1\"}, {\"version\": \"145.0\"}] }"
+        "{ \"releases\": $map($filter($.releases, function($v) { $not($contains($v.version, 'esr')) and $not($contains($v.version, 'rc')) and $not($contains($v.version, '..')) and $not($contains($v.version, 'latest')) and $not($contains($v.version, 'custom')) }), function($v) { { 'version': $replace($v.version, /^\\[(.+)\\/\\]$/, '$1') } }) }"
       ]
     }
   },
