@@ -43,3 +43,12 @@ jobs:
         env:
           THUNDERBIRD_VERSION: beta-latest
         run: ./script/docker_integration_test.sh
+      -
+        name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots-${{ github.run_id }}
+          path: /tmp/test-screenshots/
+          retention-days: 7
+          if-no-files-found: ignore
