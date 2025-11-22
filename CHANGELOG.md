@@ -1,3 +1,10 @@
+## [4.10.7](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.6...v4.10.7) (2025-11-22)
+
+
+### Bug Fixes
+
+* ignore semanticPrefixFixDepsChoreOthers preset to allow custom commit types ([a3dfdcd](https://github.com/beltrachi/automatic_dictionary/commit/a3dfdcd84c086d0b364ac80ef9b7ac9336805506))
+
 ## [4.10.6](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.5...v4.10.6) (2025-11-22)
 
 
