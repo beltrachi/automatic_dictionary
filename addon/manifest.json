@@ -4,7 +4,7 @@
     "gecko": {
       "id": "automatic_dictionary_extension@jordi_beltran.net",
       "strict_min_version": "128.0",
-      "strict_max_version": "144.0"
+      "strict_max_version": "146.0b3"
     }
   },
   "name": "Automatic Dictionary",
