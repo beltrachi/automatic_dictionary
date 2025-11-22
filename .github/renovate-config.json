@@ -27,7 +27,7 @@
       "datasourceTemplate": "custom.thunderbird",
       "depNameTemplate": "thunderbird-max-version",
       "versioningTemplate": "loose",
-      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
+      "extractVersionTemplate": "/(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
     }
   ],
   "packageRules": [
