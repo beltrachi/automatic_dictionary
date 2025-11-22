@@ -1,3 +1,10 @@
+## [4.10.5](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.4...v4.10.5) (2025-11-22)
+
+
+### Bug Fixes
+
+* use HTML format with extractVersion for Thunderbird releases ([9c10751](https://github.com/beltrachi/automatic_dictionary/commit/9c10751db9f9074924f75c13eac1ccedf4006a0e))
+
 ## [4.10.4](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.3...v4.10.4) (2025-11-22)
 
 
