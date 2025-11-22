@@ -100,6 +100,15 @@ The extension uses `browser.storage.local` with these key settings:
 4. Extension sets spell-check language via compose API
 5. User language changes are stored via `LanguageAssigner`
 
+## Commit Message Conventions
+
+Use semantic commit prefixes:
+- `fix:` - Bug fixes to the addon itself (triggers patch release)
+- `feat:` - New features for the addon (triggers minor release)
+- `chore:` - Changes not related to the addon: CI, tests, scripts, docs (no release)
+
+Example: CI workflow changes, test infrastructure updates, or build script modifications should use `chore:`, not `fix:`.
+
 ## Release Process
 
 1. Merge changes to master branch

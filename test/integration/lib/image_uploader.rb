@@ -1,18 +1,17 @@
-require 'net/http/post/multipart'
+require 'fileutils'
 
-# This class uploads the image to uploads.im, a service
-# where you can upload pictures of 10MB max.
-# The url is shown in stdout.
-# This is useful when running tests on CI and you want to
-# see what was on the screen then.
+# This class saves screenshots to an artifact directory for GitHub Actions.
+# Screenshots are uploaded as workflow artifacts and can be downloaded
+# from the GitHub Actions run page when tests fail.
 class ImageUploader
+  ARTIFACT_DIR = '/tmp/test-screenshots'
+
   def upload(filepath)
-    url = URI.parse('https://file.io/?expires=1w')
-    json = `curl -F "file=@#{filepath}" #{url}`
-    logger.info(
-      'Uploaded screenshot: ' +
-      JSON.parse(json)['link']
-    )
+    FileUtils.mkdir_p(ARTIFACT_DIR)
+    timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
+    dest = File.join(ARTIFACT_DIR, "screenshot-#{timestamp}.jpg")
+    FileUtils.cp(filepath, dest)
+    logger.info("Screenshot saved for artifact upload: #{dest}")
   end
 
   private
