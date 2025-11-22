@@ -1,3 +1,10 @@
+## [4.10.4](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.3...v4.10.4) (2025-11-22)
+
+
+### Bug Fixes
+
+* enable semanticCommits for feat commit type to work ([4147d93](https://github.com/beltrachi/automatic_dictionary/commit/4147d93ce7b87e2b301f90759b2656e8a29812e2))
+
 ## [4.10.3](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.2...v4.10.3) (2025-11-09)
 
 
