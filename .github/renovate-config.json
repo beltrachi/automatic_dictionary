@@ -3,7 +3,9 @@
   "extends": [
     "config:recommended"
   ],
+  "ignorePresets": [":semanticPrefixFixDepsChoreOthers"],
   "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
   "automerge": true,
   "separateMinorPatch": true,
   "ignorePaths": [
