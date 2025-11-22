@@ -1,3 +1,10 @@
+## [4.10.6](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.5...v4.10.6) (2025-11-22)
+
+
+### Bug Fixes
+
+* update extractVersion regex to match full path URLs ([2bc1e8e](https://github.com/beltrachi/automatic_dictionary/commit/2bc1e8e93c3a08f8792d6c18112d06f4ff255e00))
+
 ## [4.10.5](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.4...v4.10.5) (2025-11-22)
 
 
