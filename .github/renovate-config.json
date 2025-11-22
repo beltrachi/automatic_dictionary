@@ -14,10 +14,7 @@
   "customDatasources": {
     "thunderbird": {
       "defaultRegistryUrlTemplate": "https://ftp.mozilla.org/pub/thunderbird/releases/",
-      "format": "html",
-      "transformTemplates": [
-        "{ \"releases\": [{\"version\": \"146.0b3\"}, {\"version\": \"146.0b2\"}, {\"version\": \"146.0b1\"}, {\"version\": \"145.0\"}] }"
-      ]
+      "format": "html"
     }
   },
   "customManagers": [
@@ -29,7 +26,8 @@
       ],
       "datasourceTemplate": "custom.thunderbird",
       "depNameTemplate": "thunderbird-max-version",
-      "versioningTemplate": "loose"
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+(?:\\.\\d+)?)/$"
     }
   ],
   "packageRules": [
