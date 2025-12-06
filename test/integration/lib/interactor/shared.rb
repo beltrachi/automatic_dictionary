@@ -12,7 +12,7 @@ module Interactor
     end
 
     def run(command)
-      logger.info("Executing command #{command}")
+      logger.debug("Executing command #{command}")
       out = nil
       status = nil
       delta = Benchmark.realtime do
