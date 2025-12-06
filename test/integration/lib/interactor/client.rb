@@ -19,14 +19,17 @@ module Interactor
     end
 
     def text_position(text, options = {})
+      logger.info("text_position(#{text.inspect})")
       Reader.new.text_position(text, options)
     end
 
     def text_position!(text, options = {})
+      logger.info("text_position!(#{text.inspect})")
       text_position(text, options) || raise("Not found #{text}")
     end
 
     def click_on_text(text, optional: false, filter: nil)
+      logger.info("click_on_text(#{text.inspect})")
       Clicker.click_on(wait_for_text(text, { filter: filter }))
     rescue StandardError
       raise unless optional
@@ -35,14 +38,17 @@ module Interactor
     end
 
     def click_on_position(position)
+      logger.info("click_on_position(#{position.inspect})")
       Clicker.click_on(position)
     end
 
     def create_screenshot
+      logger.info("create_screenshot()")
       Snapshooter.create_screenshot
     end
 
     def hit_key(*args)
+      logger.info("hit_key(#{args.map(&:inspect).join(', ')})")
       sleep hit_delay
       KeyboardHitter.hit_key(*args)
     end
@@ -73,15 +79,18 @@ module Interactor
     end
 
     def screen_text
+      logger.info("screen_text()")
       Reader.new.words.join(' ')
     end
 
     def input_text(text)
+      logger.info("input_text(#{text.inspect})")
       sleep delay
       KeyboardHitter.input_text(text)
     end
 
     def current_window_geometry
+      logger.info("current_window_geometry()")
       WindowManager.current_window_geometry
     end
 
