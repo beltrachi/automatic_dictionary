@@ -78,32 +78,9 @@ describe "AutomaticDictionary integration tests" do
     Gem::Version.new(version.match(/\d+\.\d+/)[0])
   end
 
-  def thunderbird_cpu
-    capture_command('ps auxf')
-    pid = capture_command('pgrep thunderbird').strip
-    capture_command("ps -p #{pid} -o %cpu=").strip.to_f
-  end
-
   def start_thunderbird
-    20.times do
-      launch_thunderbird
-      sleep(5)
-      return if thunderbird_cpu < 60.0
-
-      handle_high_cpu_usage
-    end
-
-    raise "Thunderbird high CPU usage could not be worked around :skull:"
-  end
-
-  def launch_thunderbird
     run!("thunderbird --profile #{profile_path} --no-remote &")
-  end
-
-  def handle_high_cpu_usage
-    logger.warn("Thunderbird CPU was too high (#{thunderbird_cpu})")
-
-    stop_thunderbird
+    sleep(5)
   end
 
   before do
