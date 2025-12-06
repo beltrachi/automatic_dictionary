@@ -94,9 +94,10 @@ describe "AutomaticDictionary integration tests" do
     start_thunderbird
 
     if thunderbird_version > Gem::Version.new('114')
-      # Skipping 'Thunderbird updating window'
+      # Skipping 'Thunderbird updating window' or promotional tabs that hide
+      # the inbox tab.
       begin
-        interactor.wait_for_text('Subject', retries: 5, delay: 10)
+        interactor.wait_for_text('Subject', retries: 4, delay: 5)
       rescue Interactor::Client::TextNotFound
         # When a promotional tab is open, we can't see subject button
         # Lets switch to the inbox tab
