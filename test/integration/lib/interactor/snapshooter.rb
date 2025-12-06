@@ -33,7 +33,7 @@ module Interactor
         Dir.mkdir(local_tmp) unless Dir.exist?(local_tmp)
         target_path = File.join(local_tmp, File.basename(img))
         FileUtils.cp(img, target_path)
-        logger.info("Copied screenshot to #{target_path}")
+        logger.debug("Copied screenshot to #{target_path}")
       end
 
       def tmp_file
