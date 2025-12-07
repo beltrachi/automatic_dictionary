@@ -28,10 +28,10 @@ module Interactor
       text_position(text, options) || raise("Not found #{text}")
     end
 
-    def click_on_text(text, optional: false, filter: nil)
+    def click_on_text(text, optional: false, filter: nil, skip_promotional_check: false)
       logger.info("click_on_text(#{text.inspect})")
-      Clicker.click_on(wait_for_text(text, { filter: filter }))
-    rescue StandardError
+      Clicker.click_on(wait_for_text(text, { filter: filter, skip_promotional_check: skip_promotional_check }))
+    rescue TextNotFound
       raise unless optional
 
       logger.info("Could not find optional #{text}. Going on...")
@@ -61,6 +61,11 @@ module Interactor
 
     def wait_for_text(text, options = {})
       logger.info "wait_for_text #{text}"
+
+      # Check if we're on a promotional tab before searching
+      # Skip check if explicitly requested to avoid infinite recursion
+      check_and_close_promotional_tab unless options[:skip_promotional_check]
+
       local_retries = options[:retries] || retries
       local_delay = options[:delay] || delay
       attempts = 1 + local_retries
@@ -95,6 +100,19 @@ module Interactor
     end
 
     private
+
+    def check_and_close_promotional_tab
+      title = KeyboardHitter.current_window_title
+      expected_patterns = ['test@test.com', 'Inbox', 'Write:', 'Add-ons', 'Check Spelling']
+      logger.debug("Checking window title '#{title}' for promotional content")
+      return if expected_patterns.any? { |pattern| title.include?(pattern) }
+
+      logger.info("Unexpected window title detected: '#{title}', switching to Inbox")
+      click_on_text('Inbox', optional: true, skip_promotional_check: true)
+      sleep 1
+    rescue => e
+      logger.debug("Failed to check/close promotional tab: #{e.message}")
+    end
 
     def text_position_from_delayed_readers(delayed_readers, text, options)
       delayed_readers.each_with_index do |delayed_reader, index|
