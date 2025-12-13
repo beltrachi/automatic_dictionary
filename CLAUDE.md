@@ -18,14 +18,24 @@ npm test
 # Run unit tests via Docker
 docker run -v $PWD:/app -it node bash -c "cd /app; npm install; npm test"
 
-# Run a single test
+# Run a single unit test
 docker run -v $PWD:/app -it node bash -c "cd /app; npm test -- test/units/ad.test.js -t boot"
 
-# Run integration tests
+# Run full integration tests (end-to-end with Thunderbird)
 ./script/docker_integration_test.sh
 
 # Run integration tests locally in debug mode
 ./script/local_integration_tests.sh
+
+# Run integration test infrastructure unit tests (test/integration/spec/lib)
+# These test the Ruby integration test helpers and interactor classes
+# Uses existing Docker image with local code mounted for fast iteration
+docker run --rm -v $PWD:/app automatic_dictionary:esr-$(date -I) \
+  /bin/bash -l -c "cd /app/test/integration && bundle exec rspec spec/lib/interactor_spec.rb -fd"
+
+# Run a specific integration infrastructure test
+docker run --rm -v $PWD:/app automatic_dictionary:esr-$(date -I) \
+  /bin/bash -l -c "cd /app/test/integration && bundle exec rspec spec/lib/interactor_spec.rb:152 -fd"
 ```
 
 ### Building
@@ -80,6 +90,9 @@ This creates `automatic_dictionary.xpi` by zipping the `addon/` directory conten
 
 - `test/units/` - Jest unit tests for core functionality
 - `test/integration/` - Ruby-based integration tests with real Thunderbird
+  - `test/integration/spec/automatic_dictionary/` - End-to-end integration tests
+  - `test/integration/spec/lib/` - Unit tests for integration test infrastructure (Interactor classes)
+  - `test/integration/lib/interactor/` - Integration test helper classes (Client, Reader, Clicker, etc.)
 - `test/helpers/` - Test utilities and Thunderbird mocks
 - `test/performance/` - Performance benchmarks
 
@@ -122,3 +135,7 @@ Example: CI workflow changes, test infrastructure updates, or build script modif
 - Integration tests require Docker and simulate real Thunderbird environment
 - Tests use mocked Thunderbird APIs via `test/helpers/thunderbird_mocks.cjs`
 - Performance tests benchmark core data structures and algorithms
+- Integration infrastructure tests (`test/integration/spec/lib/`) can be run quickly by mounting local code into existing Docker image
+  - These tests validate the Ruby integration test framework itself
+  - They test the Interactor classes that control Thunderbird via X11 (Reader, Clicker, KeyboardHitter, etc.)
+  - Much faster than full integration tests as they don't require rebuilding the Docker image
