@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "jest": "^30.0.0",
-    "readdirp": "^4.0.0"
+    "readdirp": "^5.0.0"
   },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --coverageDirectory='coverage' -w=1"
