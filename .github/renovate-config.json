@@ -39,6 +39,12 @@
       "semanticCommitScope": null
     },
     {
+      "matchDatasources": ["docker", "ruby-version"],
+      "matchPackageNames": ["ruby"],
+      "groupName": "Ruby",
+      "commitMessageTopic": "dependency ruby"
+    },
+    {
       "matchUpdateTypes": ["patch"],
       "groupName": "all patch updates",
       "automerge": true
