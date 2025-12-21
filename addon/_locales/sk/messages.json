@@ -1,0 +1,126 @@
+{
+  "savedForRecipients": {
+    "message": "Uložené $1 ako predvolené pre kombinácie $2",
+    "description": "savedForRecipients"
+  },
+  "noLangForRecipients": {
+    "message": "Pre týchto príjemcov nie je uložený žiadny jazyk",
+    "description": "noLangForRecipients"
+  },
+  "deducedLang.remember": {
+    "message": "Zapamätané $1",
+    "description": "deducedLang.remember"
+  },
+  "deducedLang.guess": {
+    "message": "Odhadnuté $1",
+    "description": "deducedLang.guess"
+  },
+  "settingListenersError": {
+    "message": "Interná chyba (Init. listeners)",
+    "description": "settingListenersError"
+  },
+  "errorSettingSpellLanguage": {
+    "message": "Chyba: Nepodarilo sa nastaviť jazyk na $1. Možno už nie je nainštalovaný?",
+    "description": "errorSettingSpellLanguage"
+  },
+  "DiscardedUpdateTooManyRecipients": {
+    "message": "Uloženir jazykových nastavení bolo zrušené, pretože príjemcov je príliš veľa. (Maximálny počet príjemcov je $1)",
+    "description": "DiscardedUpdateTooManyRecipients"
+  },
+  "IMOKWithIt": {
+    "message": "Súhlasím!",
+    "description": "IMOKWithIt"
+  },
+  "DontDoIt": {
+    "message": "Nerobiť toto",
+    "description": "DontDoIt"
+  },
+  "MoreInfo": {
+    "message": "Viac informácií",
+    "description": "MoreInfo"
+  },
+  "introduction.text": {
+    "message": "Rozšírené parametre",
+    "description": "introduction.text"
+  },
+  "maxSize.label": {
+    "message": "Max. počet uložených párov:",
+    "description": "maxSize.label"
+  },
+  "maxSize.info": {
+    "message": "Maximálny počet asociácií medzi príjemcom alebo skupinou príjemcov \na jazykom slovníka. Keď úložisko dosiahne túto maximálnu veľkosť, najstaršie \na najmenej používané údaje sa odstránia, čím sa uvoľní miesto pre nové priradenia. (známe ako LRU).",
+    "description": "maxSize.info"
+  },
+  "maxSize.recommendation": {
+    "message": "Odporúčaná hodnota: 1200.",
+    "description": "maxSize.recommendation"
+  },
+  "maxRecipients.label": {
+    "message": "Max. počet spracovávaných príjemcov na email:",
+    "description": "maxRecipients.label"
+  },
+  "maxRecipients.info": {
+    "message": "Ak má email viac príjemcov ako je toto číslo, neuloží sa pre nich žiadny jazyk.\n (súčet Komu a Skrytá kópia). Užitočné na zabránenie spracovania hromadných emailov.",
+    "description": "maxRecipients.info"
+  },
+  "maxRecipients.recommendation": {
+    "message": "Odporúčaná hodnota: 10.",
+    "description": "maxRecipients.recommendation"
+  },
+  "notificationLevel.label": {
+    "message": "Úroveň upozornení:",
+    "description": "notificationLevel.label"
+  },
+  "notificationLevel.description": {
+    "message": "Úroveň, na ktorej má doplnok zobrazovať upozornenia. 'Info' vám povie všetko, čo robí, napríklad zmenu slovníka alebo detekciu nových jazykov (predvolené). 'Chyba' vám ukáže len keď sa niečo pokazí.",
+    "description": "notificationLevel.description"
+  },
+  "notificationLevel.recommendation": {
+    "message": "Nastavte na 'Varovanie', ak nechcete byť príliš vyrušovaní.",
+    "description": "notificationLevel.recommendation"
+  },
+  "notificationLevel.info": {
+    "message": "Info",
+    "description": "notificationLevel.info"
+  },
+  "notificationLevel.warn": {
+    "message": "Varovanie",
+    "description": "notificationLevel.warn"
+  },
+  "notificationLevel.error": {
+    "message": "Chyba",
+    "description": "notificationLevel.error"
+  },
+  "logLevel.label": {
+    "message": "Úroveň zaznamenávania:",
+    "description": "logLevel.label"
+  },
+  "logLevel.description": {
+    "message": "Úroveň, na ktorej má doplnok zaznamenávať udalosti do záznamu.",
+    "description": "logLevel.description"
+  },
+  "logLevel.recommendation": {
+    "message": "Nastavte na 'Upozornenie', aby sa zaznamenávali iba udalosti, keď niečo nefunguje dobre.",
+    "description": "logLevel.recommendation"
+  },
+  "logLevel.debug": {
+    "message": "Ladenie",
+    "description": "logLevel.debug"
+  },
+  "logLevel.info": {
+    "message": "Info",
+    "description": "logLevel.info"
+  },
+  "logLevel.warn": {
+    "message": "Varovanie",
+    "description": "logLevel.warn"
+  },
+  "logLevel.error": {
+    "message": "Chyba",
+    "description": "logLevel.error"
+  },
+  "savePreferences.button": {
+    "message": "Uložiť",
+    "description": "Save preferences button"
+  }
+}
