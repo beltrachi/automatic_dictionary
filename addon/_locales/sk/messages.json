@@ -24,7 +24,7 @@
     "description": "errorSettingSpellLanguage"
   },
   "DiscardedUpdateTooManyRecipients": {
-    "message": "Uloženir jazykových nastavení bolo zrušené, pretože príjemcov je príliš veľa. (Maximálny počet príjemcov je $1)",
+    "message": "Uloženie jazykových nastavení bolo zrušené, pretože príjemcov je príliš veľa. (Maximálny počet príjemcov je $1)",
     "description": "DiscardedUpdateTooManyRecipients"
   },
   "IMOKWithIt": {
