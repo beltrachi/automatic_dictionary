@@ -1,3 +1,15 @@
+## [4.12.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.11.0...v4.12.0) (2025-12-27)
+
+
+### Features
+
+* Add Slovak localization ([56c12cf](https://github.com/beltrachi/automatic_dictionary/commit/56c12cff79ef50213f928f5cdb8ff657eaf12d9d))
+
+
+### Bug Fixes
+
+* typo on Slovak translation ([0a35118](https://github.com/beltrachi/automatic_dictionary/commit/0a35118f8bcfa90b722dc52268a891425d20e9bb))
+
 ## [4.11.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.10.7...v4.11.0) (2025-12-14)
 
 
