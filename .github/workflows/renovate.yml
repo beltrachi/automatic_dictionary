@@ -21,10 +21,10 @@ jobs:
           repositories: 'automatic_dictionary'
 
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
 
       - name: Self-hosted Renovate
-        uses: renovatebot/github-action@v44.2.4
+        uses: renovatebot/github-action@v44.2.6
         with:
           configurationFile: .github/renovate-config.json
           token: '${{ steps.get_token.outputs.token }}'
