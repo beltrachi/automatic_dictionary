@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          persist-credentials: true
 
       - name: Conventional Changelog Action
         uses: TriPSs/conventional-changelog-action@v6
