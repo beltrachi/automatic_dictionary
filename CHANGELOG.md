@@ -1,3 +1,10 @@
+## [4.15.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.14.0...v4.15.0) (2026-05-21)
+
+
+### Features
+
+* update dependency thunderbird-max-version to v151 ([586f705](https://github.com/beltrachi/automatic_dictionary/commit/586f705293599879cbc0b6b0be0880c8bb937b40))
+
 ## [4.14.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.13.0...v4.14.0) (2026-04-08)
 
 
