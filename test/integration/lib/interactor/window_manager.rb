@@ -1,4 +1,5 @@
 require 'interactor/shared'
+require 'shellwords'
 
 module Interactor
   module WindowManager
@@ -12,6 +13,17 @@ module Interactor
         size = geo.match(/Geometry: (?<width>\d+)x(?<height>\d+)/).named_captures
 
         WindowGeometry.new(position['x'].to_i, position['y'].to_i, size['width'].to_i, size['height'].to_i)
+      end
+
+      # Activate (raise and focus) the first window whose title matches the
+      # given regexp pattern. Returns true if a matching window was found and
+      # activated, false otherwise.
+      def activate_window_matching(pattern)
+        window_id = run("xdotool search --name #{Shellwords.escape(pattern)}").split("\n").first
+        return false if window_id.nil? || window_id.empty?
+
+        run("xdotool windowactivate #{window_id}")
+        true
       end
     end
 

@@ -101,14 +101,37 @@ module Interactor
 
     private
 
+    EXPECTED_WINDOW_TITLE_PATTERNS = ['test@test.com', 'Inbox', 'Write:', 'Add-ons', 'Check Spelling'].freeze
+
+    def as_expected_window_title?(title)
+      EXPECTED_WINDOW_TITLE_PATTERNS.any? { |pattern| title.include?(pattern) }
+    end
+
     def check_and_close_promotional_tab
       title = KeyboardHitter.current_window_title
-      expected_patterns = ['test@test.com', 'Inbox', 'Write:', 'Add-ons', 'Check Spelling']
       logger.debug("Checking window title '#{title}' for promotional content")
-      return if expected_patterns.any? { |pattern| title.include?(pattern) }
+      return if as_expected_window_title?(title)
 
-      logger.info("Unexpected window title detected: '#{title}', switching to Inbox")
-      click_on_text('Inbox', optional: true, skip_promotional_check: true)
+      logger.info("Unexpected window title detected: '#{title}', attempting to recover")
+
+      # Dismiss modal dialogs (e.g. first-run "System Integration" prompt).
+      # Re-check before doing anything more destructive, since Escape alone
+      # is often enough and further steps could otherwise close the wrong
+      # window/tab.
+      KeyboardHitter.hit_key('Escape')
+      sleep 1
+      return if as_expected_window_title?(KeyboardHitter.current_window_title)
+
+      # Close promotional/appeal tabs opened in the main window.
+      KeyboardHitter.hit_key('Ctrl+w')
+      sleep 1
+      return if as_expected_window_title?(KeyboardHitter.current_window_title)
+
+      # If a compose window was interrupted, restore focus to it instead of
+      # leaving focus on the main window. Otherwise fall back to Inbox.
+      unless WindowManager.activate_window_matching('^Write:')
+        click_on_text('Inbox', optional: true, skip_promotional_check: true)
+      end
       sleep 1
     rescue => e
       logger.debug("Failed to check/close promotional tab: #{e.message}")

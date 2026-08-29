@@ -205,26 +205,79 @@ describe Interactor do
 
     context 'when window title indicates promotional tab' do
       let(:window_title) { 'Help Keep Thunderbird Alive - Mozilla Thunderbird' }
+      let(:resolved_title) { 'Inbox - test@test.com - Mozilla Thunderbird' }
 
       before do
+        allow(Interactor::KeyboardHitter).to receive(:hit_key)
+        allow(Interactor::WindowManager).to receive(:activate_window_matching)
+          .with('^Write:').and_return(false)
         # Mock the click_on_text call that happens during promotional tab detection
         allow(instance).to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
       end
 
-      it 'attempts to close promotional tab by clicking Inbox' do
-        expect(instance).to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
+      context 'when nothing resolves the unexpected window' do
+        it 'dismisses dialogs, closes the tab, then falls back to Inbox' do
+          expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Escape')
+          expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Ctrl+w')
+          expect(instance).to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
 
-        instance.wait_for_text(text)
+          instance.wait_for_text(text)
+        end
+
+        it 'logs the unexpected window title' do
+          expect(Interactor.logger).to receive(:info)
+            .with("wait_for_text Subject").ordered
+          expect(Interactor.logger).to receive(:info)
+            .with("Unexpected window title detected: '#{window_title}', attempting to recover").ordered
+          allow(Interactor.logger).to receive(:info) # Allow other log calls
+
+          instance.wait_for_text(text)
+        end
       end
 
-      it 'logs the unexpected window title' do
-        expect(Interactor.logger).to receive(:info)
-          .with("wait_for_text Subject").ordered
-        expect(Interactor.logger).to receive(:info)
-          .with("Unexpected window title detected: '#{window_title}', switching to Inbox").ordered
-        allow(Interactor.logger).to receive(:info) # Allow other log calls
+      context 'when Escape alone dismisses a modal dialog' do
+        before do
+          allow(Interactor::KeyboardHitter).to receive(:current_window_title)
+            .and_return(window_title, resolved_title)
+        end
 
-        instance.wait_for_text(text)
+        it 'does not close any tab or touch the compose window' do
+          expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Escape')
+          expect(Interactor::KeyboardHitter).not_to receive(:hit_key).with('Ctrl+w')
+          expect(Interactor::WindowManager).not_to receive(:activate_window_matching)
+          expect(instance).not_to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
+
+          instance.wait_for_text(text)
+        end
+      end
+
+      context 'when Ctrl+w is needed to close the tab' do
+        before do
+          allow(Interactor::KeyboardHitter).to receive(:current_window_title)
+            .and_return(window_title, window_title, resolved_title)
+        end
+
+        it 'does not attempt to restore a compose window or click Inbox' do
+          expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Escape')
+          expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Ctrl+w')
+          expect(Interactor::WindowManager).not_to receive(:activate_window_matching)
+          expect(instance).not_to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
+
+          instance.wait_for_text(text)
+        end
+      end
+
+      context 'when a compose window is present and still needed after recovery' do
+        before do
+          allow(Interactor::WindowManager).to receive(:activate_window_matching)
+            .with('^Write:').and_return(true)
+        end
+
+        it 'restores focus to the compose window instead of clicking Inbox' do
+          expect(instance).not_to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
+
+          instance.wait_for_text(text)
+        end
       end
     end
 
@@ -237,18 +290,6 @@ describe Interactor do
         expect(Interactor::KeyboardHitter).not_to receive(:current_window_title)
 
         instance.wait_for_text(text, skip_promotional_check: true)
-      end
-    end
-
-    context 'when checking for promotional tab and clicking Inbox' do
-      let(:window_title) { 'Help Keep Thunderbird Alive - Mozilla Thunderbird' }
-
-      it 'passes skip_promotional_check flag to avoid recursion' do
-        # Should call click_on_text with skip_promotional_check: true
-        expect(instance).to receive(:click_on_text)
-          .with('Inbox', optional: true, skip_promotional_check: true)
-
-        instance.wait_for_text(text)
       end
     end
   end
