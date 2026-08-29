@@ -195,6 +195,11 @@ AutomaticDictionary.Class.prototype = {
     if (stats.saved_recipients > 0) {
       this.stopDeferredDeduceLanguage();
       this.last_langs = context.languages;
+      // Record this as the last deduction too, so a deduceLanguage() call
+      // triggered right after by an unrelated event (e.g. the compose
+      // window regaining focus once the spellchecker dialog closes) sees
+      // nothing has changed and doesn't overwrite this notification.
+      this.lastDeduction = context;
 
       this.logger.debug("saved recipients are: " + stats.saved_recipients);
       await this.changeLabel("info",

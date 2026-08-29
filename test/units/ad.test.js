@@ -175,6 +175,41 @@ test('Internal methods?', (done) => {
     });
 });
 
+test('deduceLanguage does not overwrite a just-saved notification', (done) => {
+    /**
+     * languageChanged (a manual language change by the user) can be
+     * followed by an unrelated deduceLanguage() call for the same
+     * recipients (e.g. triggered by the compose window regaining focus
+     * once the spellchecker dialog closes). Since nothing actually
+     * changed, it should stay quiet instead of replacing the
+     * "savedForRecipients" notification with a "Remembered" one.
+     */
+    new AutomaticDictionary.Class({
+        window: window,
+        compose_window_builder: ComposeWindowStub,
+        logLevel: 'error',
+        deduceOnLoad: false
+    }, async (ad) => {
+        let compose_window = ad.compose_window;
+
+        let status = { recipients: { "to": ["foo"], "cc": [] }, langs: [] }
+        mockComposeWindow(compose_window, status)
+
+        status.setLangs(["foolang"]);
+        await ad.languageChanged();
+        expect(compose_window.changeLabel).toHaveBeenLastCalledWith('savedForRecipients')
+        const callsAfterSave = compose_window.changeLabel.mock.calls.length;
+
+        // Same recipients, same language: nothing actually changed.
+        await ad.deduceLanguage();
+
+        expect(compose_window.changeLabel).toHaveBeenCalledTimes(callsAfterSave);
+        expect(status.getLangs()).toEqual(['foolang']);
+
+        done();
+    });
+});
+
 /*
 
     2. We have an empty hash and we set a "TO" and a "CC". We set the dict,
