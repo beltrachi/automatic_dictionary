@@ -1,3 +1,10 @@
+## [4.15.1](https://github.com/beltrachi/automatic_dictionary/compare/v4.15.0...v4.15.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* do not overwrite a just-saved language notification ([cd3aad7](https://github.com/beltrachi/automatic_dictionary/commit/cd3aad7eb5cb3994b1c4ccc6a4caf335401f069c))
+
 ## [4.15.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.14.0...v4.15.0) (2026-05-21)
 
 
