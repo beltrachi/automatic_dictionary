@@ -106,7 +106,7 @@ module Interactor
 
     private
 
-    EXPECTED_WINDOW_TITLE_PATTERNS = ['test@test.com', 'Inbox', 'Write:', 'Add-ons', 'Check Spelling'].freeze
+    EXPECTED_WINDOW_TITLE_PATTERNS = ['test@test.com', 'Inbox', 'Write:', 'Add-ons', 'Check Spelling', 'Select add-on to install'].freeze
 
     def as_expected_window_title?(title)
       EXPECTED_WINDOW_TITLE_PATTERNS.any? { |pattern| title.include?(pattern) }
