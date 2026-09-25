@@ -49,6 +49,11 @@ module Interactor
 
     def hit_key(*args)
       logger.info("hit_key(#{args.map(&:inspect).join(', ')})")
+      # A promotional/appeal window can steal focus at any time (not just
+      # while waiting for text), which would otherwise send these keystrokes
+      # to the wrong window and silently corrupt multi-step key sequences
+      # like change_spellchecker_language.
+      check_and_close_promotional_tab
       sleep hit_delay
       KeyboardHitter.hit_key(*args)
     end

@@ -157,11 +157,31 @@ describe Interactor do
 
     before do
       allow(Interactor::KeyboardHitter).to receive(:hit_key).and_return(true)
+      allow(Interactor::KeyboardHitter).to receive(:current_window_title)
+        .and_return('Inbox - test@test.com - Mozilla Thunderbird')
     end
 
     it 'hits the key' do
       expect(Interactor::KeyboardHitter).to receive(:hit_key).with(key)
       expect(instance.hit_key(key)).to be_truthy
+    end
+
+    context 'when a promotional tab has stolen focus' do
+      before do
+        allow(Interactor::KeyboardHitter).to receive(:current_window_title)
+          .and_return('Help Keep Thunderbird Alive - Mozilla Thunderbird')
+        allow(Interactor::WindowManager).to receive(:activate_window_matching)
+          .with('^Write:').and_return(false)
+        allow(instance).to receive(:click_on_text).with('Inbox', optional: true, skip_promotional_check: true)
+      end
+
+      it 'recovers focus before sending the keystroke' do
+        expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Escape')
+        expect(Interactor::KeyboardHitter).to receive(:hit_key).with('Ctrl+w')
+        expect(Interactor::KeyboardHitter).to receive(:hit_key).with(key)
+
+        instance.hit_key(key)
+      end
     end
   end
 
