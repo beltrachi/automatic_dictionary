@@ -1,3 +1,10 @@
+## [4.15.2](https://github.com/beltrachi/automatic_dictionary/compare/v4.15.1...v4.15.2) (2026-09-27)
+
+
+### Bug Fixes
+
+* do not close Thunderbird's own still-starting main window ([4f8b9e3](https://github.com/beltrachi/automatic_dictionary/commit/4f8b9e38621ea6b92c7cadeb46635927c601a341))
+
 ## [4.15.1](https://github.com/beltrachi/automatic_dictionary/compare/v4.15.0...v4.15.1) (2026-09-25)
 
 
