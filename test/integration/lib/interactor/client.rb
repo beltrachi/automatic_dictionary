@@ -109,6 +109,14 @@ module Interactor
     EXPECTED_WINDOW_TITLE_PATTERNS = ['test@test.com', 'Inbox', 'Write:', 'Add-ons', 'Check Spelling', 'Select add-on to install', 'Save Message'].freeze
 
     def as_expected_window_title?(title)
+      # Thunderbird's main window briefly shows this bare title while it is
+      # still starting up, before the profile has loaded and it gains a
+      # document-specific title (e.g. "Inbox - ... - Mozilla Thunderbird").
+      # It must be matched exactly, not as a substring, since promotional
+      # tabs (e.g. "Help Keep Thunderbird Alive - Mozilla Thunderbird") also
+      # end in "Mozilla Thunderbird" and must still be treated as unexpected.
+      return true if title.strip == 'Mozilla Thunderbird'
+
       EXPECTED_WINDOW_TITLE_PATTERNS.any? { |pattern| title.include?(pattern) }
     end
 
