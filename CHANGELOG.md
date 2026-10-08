@@ -1,3 +1,10 @@
+## [4.17.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.16.0...v4.17.0) (2026-10-08)
+
+
+### Features
+
+* update dependency thunderbird-max-version to v157 ([fcc7eda](https://github.com/beltrachi/automatic_dictionary/commit/fcc7edad3ee3964b48e4224312f8f5335c33b248))
+
 ## [4.16.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.15.2...v4.16.0) (2026-09-28)
 
 
