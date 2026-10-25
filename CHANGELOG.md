@@ -1,3 +1,10 @@
+## [4.19.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.18.0...v4.19.0) (2026-10-25)
+
+
+### Features
+
+* **deps:** update all patch updates ([fdddd72](https://github.com/beltrachi/automatic_dictionary/commit/fdddd72604e8201281ef95ec1d272fd0c34a7ec3))
+
 ## [4.18.0](https://github.com/beltrachi/automatic_dictionary/compare/v4.17.0...v4.18.0) (2026-10-15)
 
 
